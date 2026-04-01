@@ -8,12 +8,6 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "scripts": {
-    "build": "vp pack",
-    "compile": "cross-env BUILD_EXE=true pnpm dotenvx run -f ../../packages/env/.env -- vp pack",
-    "dev": "pnpm dotenvx run -f ../../packages/env/.env -- node --import tsx --watch src/index.ts",
-    "start": "pnpm dotenvx run -f ../../packages/env/.env -- node .output/index.mjs"
-  },
   "dependencies": {
     "@dotenvx/dotenvx": "catalog:",
     "@hono/node-server": "catalog:",

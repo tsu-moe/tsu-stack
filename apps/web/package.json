@@ -27,6 +27,7 @@
     "@tsu-stack/auth": "workspace:*",
     "@tsu-stack/db": "workspace:*",
     "@tsu-stack/i18n": "workspace:*",
+    "@tsu-stack/server": "workspace:*",
     "@tsu-stack/ui": "workspace:*",
     "drizzle-orm": "catalog:",
     "localforage": "catalog:",

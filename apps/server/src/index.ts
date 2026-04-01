@@ -1,8 +1,6 @@
 import { hostname } from "node:os";
 import { join } from "node:path/posix";
 
-import { serve } from "@hono/node-server";
-import { getConnInfo } from "@hono/node-server/conninfo";
 import { SmartCoercionPlugin } from "@orpc/json-schema";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -12,6 +10,7 @@ import { experimental_RethrowHandlerPlugin as RethrowHandlerPlugin } from "@orpc
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { getConnInfo } from "hono/vercel";
 
 import { createContext } from "@tsu-stack/api/context";
 import { appRouter } from "@tsu-stack/api/routers/index";
@@ -181,16 +180,4 @@ app.use("/*", async (c, next) => {
 
 void (async () => {
   await migrateDatabase();
-
-  serve(
-    {
-      fetch: app.fetch,
-      port: 5000,
-    },
-    (info) => {
-      logger.info(
-        `Server is running on http://localhost:${info.port}${new URL(ENV_SERVER.VITE_SERVER_URL).pathname}`,
-      );
-    },
-  );
 })();

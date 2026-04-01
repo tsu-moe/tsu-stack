@@ -1,37 +1,6 @@
 name: tsu-stack
 
 services:
-  server:
-    container_name: tsu-stack-server
-    build:
-      context: .
-      dockerfile: apps/server/Dockerfile
-      args:
-        - "SOURCE_COMMIT=${SOURCE_COMMIT}"
-        - "VITE_SERVER_URL=${SERVICE_URL_SERVER}"
-        - "VITE_WEB_URL=${SERVICE_URL_WEB}"
-        - "DATABASE_URL=postgresql://${SERVICE_USER_POSTGRESQL}:${SERVICE_PASSWORD_POSTGRESQL}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-        - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
-    environment:
-      - SERVICE_URL_SERVER_5000
-      - "VITE_SERVER_URL=${SERVICE_URL_SERVER}"
-      - "VITE_WEB_URL=${SERVICE_URL_WEB}"
-      - "DATABASE_URL=postgresql://${SERVICE_USER_POSTGRESQL}:${SERVICE_PASSWORD_POSTGRESQL}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-      - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
-      - "ENABLE_OPEN_API_DOCS=${ENABLE_OPEN_API_DOCS:-false}"
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "wget -qO- http://127.0.0.1:5000$(echo $SERVICE_URL_SERVER | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/health/live || exit 1",
-        ]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   web:
     container_name: tsu-stack-web
     build:
@@ -51,6 +20,7 @@ services:
       - "VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL:-}"
       - "DATABASE_URL=postgresql://${SERVICE_USER_POSTGRESQL}:${SERVICE_PASSWORD_POSTGRESQL}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
       - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
+      - "ENABLE_OPEN_API_DOCS=${ENABLE_OPEN_API_DOCS:-false}"
     healthcheck:
       test:
         [

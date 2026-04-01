@@ -388,6 +388,9 @@ importers:
       '@tsu-stack/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@tsu-stack/server':
+        specifier: workspace:*
+        version: link:../server
       '@tsu-stack/ui':
         specifier: workspace:*
         version: link:../../packages/ui
