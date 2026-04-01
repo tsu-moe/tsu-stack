@@ -225,7 +225,7 @@ For the web app, use the following environment variables:
 ## Merging Server to Web App
 
 > [!TIP]
-> An example can be found in the [`variant/merged`](https://github.com/tsu-moe/tsu-stack/compare/variant/merged) branch. You can check [this commit](https://github.com/tsu-moe/tsu-stack/commit/74eaefde39e3656f6ead0d52bf9cd6d44cc3ea3c) to see the changes needed.
+> An example can be found in the [`variant/merged`](https://github.com/tsu-moe/tsu-stack/compare/variant/merged) branch. You can check [this commit](https://github.com/tsu-moe/tsu-stack/commit/cf576db302cc1380bf0f5f27017cf0951ea1c6c5) to see the changes needed.
 
 Since Hono is built on web standards, you can mount the Hono App into the TanStack Start web server.
 
