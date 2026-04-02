@@ -33,8 +33,5 @@
     "eslint-plugin-react-hooks": "catalog:",
     "vite-plus": "catalog:"
   },
-  "engines": {
-    "node": "25.8.2"
-  },
   "packageManager": "pnpm@10.33.0"
 }
