@@ -60,7 +60,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       ],
       meta: [
         {
-          title: appConfig.site.shortName,
+          title: appConfig.site.longName,
         },
         {
           charSet: "utf-8",
