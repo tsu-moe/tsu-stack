@@ -18,20 +18,24 @@ export * from "drizzle-orm/sql";
 
 const { relations: authRelations, ...schema } = schemas;
 
-const client = postgres(ENV_SERVER.DATABASE_URL);
+export function createDb() {
+  const client = postgres(ENV_SERVER.DATABASE_URL, {
+    max: 1,
+  });
 
-export const db = drizzle({
-  client,
-  schema,
-  // IMPORTANT: authRelations must come first, since it's using defineRelations as the main relation
-  // https://orm.drizzle.team/docs/relations-v2#relations-parts
-  relations: { ...authRelations, ...relations },
-  casing: "snake_case",
-});
+  return drizzle({
+    client,
+    schema,
+    // IMPORTANT: authRelations must come first, since it's using defineRelations as the main relation
+    // https://orm.drizzle.team/docs/relations-v2#relations-parts
+    relations: { ...authRelations, ...relations },
+    casing: "snake_case",
+  });
+}
 
 export async function checkIsDbReady(): Promise<boolean> {
   try {
-    await db.execute(sql`SELECT 1`);
+    await createDb().execute(sql`SELECT 1`);
     return true;
   } catch {
     return false;
@@ -64,7 +68,7 @@ export async function migrateDatabase(): Promise<void> {
 
   childLogger.info("⏳ Migrating database...");
   try {
-    await migrate(db, {
+    await migrate(createDb(), {
       migrationsFolder: join(import.meta.dirname, "migrations"),
     });
     childLogger.info("[{fn}] ✅ Database migration completed");

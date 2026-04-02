@@ -14,7 +14,7 @@ import { getConnInfo } from "hono/vercel";
 
 import { createContext } from "@tsu-stack/api/context";
 import { appRouter } from "@tsu-stack/api/routers/index";
-import { auth } from "@tsu-stack/auth/index";
+import { createAuth } from "@tsu-stack/auth/index";
 import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 import { LOGGER_CATEGORIES_SERVER, getLogger } from "@tsu-stack/logger/server";
@@ -60,11 +60,11 @@ app.on(["POST", "GET"], "/auth/reference", (c) =>
 app.get("/auth/open-api/generate-schema", async (c) => {
   // IMPORTANT: Need to explicitly do this instead of relying on the OpenAPI plugin's built-in schema generation
   // Otherwise, it will 404 with the /auth/* endpoint
-  const schema = await auth.api.generateOpenAPISchema();
+  const schema = await createAuth().api.generateOpenAPISchema();
   return c.json(schema);
 });
 
-app.on(["POST", "GET"], "/auth/*", async (c) => auth.handler(c.req.raw));
+app.on(["POST", "GET"], "/auth/*", (c) => createAuth().handler(c.req.raw));
 
 export const openApiHandler = new OpenAPIHandler(appRouter, {
   interceptors: [
