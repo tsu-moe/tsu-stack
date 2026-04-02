@@ -50,14 +50,14 @@ export const auth = betterAuth({
     //
     // This avoids Safari ITP issues entirely and allows the strongest cookie settings:
     //   - SameSite=Strict in production: cookies are never sent on cross-site requests
-    //   - SameSite=Lax in development: Safari doesn't accept Secure without a certificate on localhost
+    //   - SameSite=None in development: Safari doesn't accept Secure without a certificate on localhost
     //
     // secure: true in production - cookie only sent over HTTPS, prevents interception
     // httpOnly: true - cookie inaccessible to JS, prevents XSS-based token theft
     defaultCookieAttributes: {
+      sameSite: isProduction ? "strict" : "none",
       httpOnly: true,
-      sameSite: isProduction ? "strict" : "lax",
-      secure: isProduction,
+      secure: true,
     },
 
     telemetry: {
