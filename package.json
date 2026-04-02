@@ -8,6 +8,7 @@
     "test": "vp run -r test",
     "dev": "pnpm -r --parallel dev",
     "build": "vp run -r build",
+    "deploy": "vp run -r deploy",
     "prepare": "vp config",
     "deps": "vpx taze@latest -Ilwr",
     "deps:major": "vpx taze@latest major -Ilwr",
@@ -32,9 +33,6 @@
     "@tanstack/eslint-plugin-router": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "vite-plus": "catalog:"
-  },
-  "engines": {
-    "node": "25.8.2"
   },
   "packageManager": "pnpm@10.33.0"
 }

@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm dotenvx run -f ../../packages/env/.env -- vp dev",
-    "preview": "pnpm dotenvx run -f ../../packages/env/.env -- vp preview",
-    "start": "pnpm dotenvx run -f ../../packages/env/.env -- node .output/server/index.mjs",
+    "deploy": "pnpm dotenvx run -f ../../packages/env/.env -- pnpm wrangler deploy",
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {

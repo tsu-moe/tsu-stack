@@ -20,13 +20,16 @@
     },
   },
   "secrets": {
-    "required": [
-      "ENABLE_OPEN_API_DOCS",
-      "VITE_SERVER_URL",
-      "VITE_WEB_URL",
-      "SOURCE_COMMIT",
-      "BETTER_AUTH_SECRET",
-      "DATABASE_URL",
-    ],
+    // IMPORTANT: You should add secrets that are required during app runtime here
+    // They will serve as "safeguards" for your deployments
+    // preventing you from accidentally deploying without setting these secrets in the Cloudflare dashboard
+    // It can be set in `Workers & Pages > your project > Settings > Variables & Secrets`
+    // See: https://developers.cloudflare.com/workers/configuration/environment-variables/
+    "required": ["VITE_SERVER_URL", "VITE_WEB_URL", "BETTER_AUTH_SECRET", "DATABASE_URL"],
+    // PITFALL: These are DIFFERENT from *BUILD Variables and secrets*,
+    // which are variables required in the build process rather than deployed runtime
+    // Those will be parsed in the Cloudflare build process and error out if not set
+    // It can be set in `Workers & Pages > your project > Settings > Build > Variables and secrets`
+    // See: https://developers.cloudflare.com/workers/ci-cd/builds/configuration/
   },
 }
