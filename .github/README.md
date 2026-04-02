@@ -44,7 +44,7 @@
       - [Web Deployment](#web-deployment)
     - [Option 2: Docker Compose](#option-2-docker-compose)
   - [Cloudflare Workers](#cloudflare-workers)
-    - [Git-based CI/CD](#git-based-ci-cd)
+    - [Git-based CI/CD](#git-based-cicd)
   - [Deploying to Other Platforms](#deploying-to-other-platforms)
   - [Subpath Support](#subpath-support)
 - [Environment Variables](#environment-variables)
