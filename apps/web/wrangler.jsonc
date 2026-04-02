@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tsu-stack",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": true,
+      "persist": true,
+      "head_sampling_rate": 1,
+    },
+  },
+  "secrets": {
+    "required": [
+      "ENABLE_OPEN_API_DOCS",
+      "VITE_SERVER_URL",
+      "VITE_WEB_URL",
+      "SOURCE_COMMIT",
+      "BETTER_AUTH_SECRET",
+      "DATABASE_URL",
+    ],
+  },
+}

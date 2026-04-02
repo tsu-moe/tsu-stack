@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
+    "@cloudflare/vite-plugin": "catalog:",
     "@dotenvx/dotenvx": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
@@ -63,9 +64,9 @@
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "cross-env": "catalog:",
-    "nitro": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "wrangler": "catalog:"
   }
 }
