@@ -46,7 +46,6 @@
   - [Cloudflare Workers](#cloudflare-workers)
     - [Git-based CI/CD](#git-based-cicd)
   - [Deploying to Other Platforms](#deploying-to-other-platforms)
-  - [Subpath Support](#subpath-support)
 - [Environment Variables](#environment-variables)
   - [Server](#server)
   - [Web](#web)
@@ -389,12 +388,6 @@ However, the benefit is singular deployments and lower memory usage for websites
   - Other than that, you may need to set up a root sitemap index that links to as many sitemaps for every app you deploy in multiple subpaths.
     - At the moment, the `__root.tsx` points to the subpath-specific sitemap, so you may want to consider pointing it to the root if you decide to opt into that architecture.
   - Alternatively, you can simply deploy the web app in the root so that the files are hosted in `example.com/robots.txt` and `example.com/sitemap.xml` instead of `example.com/web/robots.txt` and `example.com/web/sitemap.xml`.
-
-## Build Settings and Secrets
-
-| **Build Settings**                                     | **Secrets & Variables**                                     |
-| ------------------------------------------------------ | ----------------------------------------------------------- |
-| ![Build Settings](https://via.placeholder.com/300x200) | ![Secrets & Variables](https://via.placeholder.com/300x200) |
 
 ## Contributing
 
