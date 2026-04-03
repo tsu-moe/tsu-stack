@@ -12,6 +12,7 @@ const link = new RPCLink({
   fetch(url, options) {
     return fetch(url, {
       ...options,
+      credentials: "include",
     });
   },
   url: `${ENV_WEB_ISOMORPHIC.VITE_SERVER_URL}/rpc`,
