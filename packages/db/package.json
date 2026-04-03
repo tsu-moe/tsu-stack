@@ -10,7 +10,7 @@
     "./schema": "./src/schema/index.ts"
   },
   "scripts": {
-    "db": "drizzle-kit",
+    "db": "pnpm dotenvx run -f ../env/.env -- drizzle-kit",
     "db:dev:start": "docker compose -f docker-compose.dev.yaml up -d",
     "db:dev:stop": "docker compose -f docker-compose.dev.yaml stop",
     "auth:generate": "vpx https://pkg.pr.new/better-auth/better-auth/@better-auth/cli@6913 generate --config ../auth/src/index.ts --y --output ./src/schema/auth.schema.ts"
@@ -22,6 +22,7 @@
     "postgres": "catalog:"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "catalog:",
     "@tsu-stack/env": "workspace:*",
     "@tsu-stack/tsconfig": "workspace:*",
     "@types/node": "catalog:",
