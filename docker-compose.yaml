@@ -47,7 +47,7 @@ services:
       - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}"
       - "POSTGRES_DB=${POSTGRES_DB:-tsu-stack}"
     volumes:
-      - tsu-stack-pg-data:/var/lib/postgresql/data
+      - tsu-stack-pg-data:/var/lib/postgresql
     networks:
       - tsu-stack-network
     healthcheck:
