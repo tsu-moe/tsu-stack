@@ -55,7 +55,7 @@ COPY --from=builder --chown=web:nodejs /app/apps/web/.output /app/.output
 
 # Ensure the migrations directory exists so that the build doesn't fail when trying to copy it in the production stage.
 RUN mkdir -p packages/db/migrations
-COPY --from=builder --chown=server:nodejs /app/packages/db/migrations /app/.output/migrations
+COPY --from=builder --chown=server:nodejs /app/packages/db/migrations /app/.output/server/_ssr/migrations
 
 USER web
 
