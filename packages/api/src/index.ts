@@ -1,8 +1,8 @@
 import { ORPCError, os } from "@orpc/server";
 
-import { type Context } from "#@/context";
+import { type OrpcContext } from "#@/utils/context/types";
 
-export const o = os.$context<Context>();
+export const o = os.$context<OrpcContext>();
 
 export const publicProcedure = o;
 

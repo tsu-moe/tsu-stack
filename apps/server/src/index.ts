@@ -12,8 +12,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { getConnInfo } from "hono/vercel";
 
-import { createContext } from "@tsu-stack/api/context";
 import { appRouter } from "@tsu-stack/api/routers/index";
+import { createContext } from "@tsu-stack/api/utils/context/hono/create-context";
 import { createAuth } from "@tsu-stack/auth/index";
 import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
