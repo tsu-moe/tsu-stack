@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { orpc } from "@tsu-stack/api/client/orpc";
+import { orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
 import { m } from "@tsu-stack/i18n/messages";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";

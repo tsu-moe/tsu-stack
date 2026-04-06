@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { orpc } from "@tsu-stack/api/client/orpc";
+import { orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { type To } from "@tsu-stack/i18n/tanstack-start/types";

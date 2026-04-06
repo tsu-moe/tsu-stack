@@ -2,7 +2,7 @@ import { type ErrorRouteComponent } from "@tanstack/react-router";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
-import { orpc } from "@tsu-stack/api/client/orpc";
+import { orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
 import { LOGGER_CATEGORIES_CLIENT, configureLoggerSync, getLogger } from "@tsu-stack/logger/client";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 
