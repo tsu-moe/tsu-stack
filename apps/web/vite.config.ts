@@ -84,7 +84,6 @@ export default defineConfig({
   // Restart the dev server when env files in this directory change
   envDir: resolve(import.meta.dirname, "../../packages/env"),
   resolve: {
-    dedupe: ["react", "react-dom"],
     tsconfigPaths: true,
   },
   define: {
@@ -123,8 +122,10 @@ export default defineConfig({
        * We need to add this or else we will get `Error: Cannot find module 'react'` during prod.
        * FIXME: I haven't found a fix or related issue yet, but this is where I got the idea to trace the deps:
        * @see {@link https://github.com/nuxt/nuxt/issues/20773}
+       * Recent Discord discussion on the matter
+       * @see {@link https://discord.com/channels/719702312431386674/1490005967067414608}
        */
-      traceDeps: ["react"],
+      traceDeps: ["react", "react-dom"],
     }),
     viteReact(),
     /** @see {@link https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler} */
