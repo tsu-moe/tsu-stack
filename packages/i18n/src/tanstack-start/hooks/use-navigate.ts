@@ -3,14 +3,12 @@ import { useNavigate as rawUseNavigate } from "@tanstack/react-router";
 
 import { baseLocale, getLocale } from "#@/paraglide/runtime";
 import { LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
-import {
-  type LocalizedNavigate,
-  type NavigateProps,
-  type NavigateTo,
-} from "#@/tanstack-start/types/index";
+import { type LocalizedNavigate, type NavigateProps } from "#@/tanstack-start/types/index";
 import { stripLocalePrefix } from "#@/tanstack-start/utils/strip-locale-prefix";
 
-export function useNavigate(_defaultOpts?: { from?: NavigateTo }) {
+export function useNavigate<TDefaultFrom extends string = string>(_defaultOpts?: {
+  from?: TDefaultFrom;
+}): LocalizedNavigate<TDefaultFrom> {
   const navigate = rawUseNavigate(
     _defaultOpts?.from
       ? {
@@ -21,17 +19,7 @@ export function useNavigate(_defaultOpts?: { from?: NavigateTo }) {
 
   const locale = getLocale();
 
-  const localizedNavigate: LocalizedNavigate = <TRelaxedTo extends string = string>(
-    args:
-      | NavigateProps
-      | {
-          to: TRelaxedTo;
-          replace?: boolean;
-          resetScroll?: boolean;
-          // oxlint-disable-next-line typescript-eslint(no-explicit-any)
-          [key: string]: any;
-        },
-  ) => {
+  return ((args: NavigateProps): Promise<void> => {
     const { to, params, ...rest } = args;
 
     // Strip any existing locale prefix to avoid duplication
@@ -46,7 +34,5 @@ export function useNavigate(_defaultOpts?: { from?: NavigateTo }) {
       to: localizedTo,
       ...rest,
     });
-  };
-
-  return localizedNavigate;
+  }) as unknown as LocalizedNavigate<TDefaultFrom>;
 }
