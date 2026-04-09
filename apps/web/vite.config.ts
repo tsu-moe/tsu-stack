@@ -49,6 +49,18 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  environments: {
+    ssr: {
+      optimizeDeps: {
+        /**
+         * Force react-dom/server to be pre-bundled in the initial optimization pass otherwise, we'll get "Invalid hook call." in dev. It works in prod though.
+         * Track this GitHub issue for updates:
+         * @see {@link https://github.com/TanStack/router/issues/7119}
+         */
+        include: ["react-dom/server"],
+      },
+    },
+  },
   define: {
     __BUILD_NODE_ENV__: JSON.stringify(ENV_WEB_SERVER.NODE_ENV),
     __BUILD_SOURCE_COMMIT__: JSON.stringify(ENV_WEB_SERVER.SOURCE_COMMIT),
