@@ -1,32 +1,41 @@
-import { type AnyRedirect } from "@tanstack/react-router";
+import {
+  type AnyRedirect,
+  type NavigateOptions,
+  type RegisteredRouter,
+} from "@tanstack/react-router";
 import { redirect as rawRedirect } from "@tanstack/react-router";
 
 import { baseLocale, getLocale } from "#@/paraglide/runtime";
-import { type NavigateTo } from "#@/tanstack-start/types/index";
-
-const LOCALE_ROUTE_PREFIX = "{-$locale}" as const;
-
-type LocalizedRedirectOpts = {
-  to: NavigateTo;
-  params?: Record<string, unknown>;
-  search?: Record<string, unknown>;
-  hash?: string;
-  replace?: boolean;
-  code?: number;
-  headers?: Record<string, string>;
-  from?: string;
-  throw?: boolean;
-} & Record<string, unknown>;
+import { type LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
+import { stripLocalePrefix } from "#@/tanstack-start/utils/strip-locale-prefix";
 
 /**
- * Localized redirect helper similar to Link and useNavigate.
- * Automatically prepends the locale route prefix and adds locale to params.
+ * Typed alias for a localized redirect call. Mirrors the shape of
+ * `LocalizedNavigate` but returns `AnyRedirect` instead of `Promise<void>` so
+ * it can be used with `throw redirect(...)` in loaders and `beforeLoad`.
+ *
+ * `to` accepts locale-stripped paths (e.g. `/sign-in`). The `/{-$locale}` prefix
+ * and the `locale` param are injected automatically.
  */
-export function redirect(opts: LocalizedRedirectOpts): AnyRedirect {
-  const locale = getLocale();
+export type LocalizedRedirect = <TTo extends string>(
+  opts: Omit<
+    NavigateOptions<RegisteredRouter, string, `/${typeof LOCALE_ROUTE_PREFIX}${TTo}`>,
+    "to" | "from"
+  > & {
+    to: TTo;
+    code?: number;
+    headers?: Record<string, string>;
+  },
+) => AnyRedirect;
 
-  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
-  const localizedTo = `/${LOCALE_ROUTE_PREFIX}${opts.to}` as any;
+export const redirect: LocalizedRedirect = ((opts: {
+  to: string;
+  params?: Record<string, unknown>;
+  [key: string]: unknown;
+}): AnyRedirect => {
+  const locale = getLocale();
+  const cleanTo = stripLocalePrefix(opts.to);
+  const localizedTo = `/{-$locale}${cleanTo}`;
 
   return rawRedirect({
     ...opts,
@@ -35,6 +44,5 @@ export function redirect(opts: LocalizedRedirectOpts): AnyRedirect {
       ...(typeof opts.params === "object" ? opts.params : {}),
     },
     to: localizedTo,
-    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
-  } as any);
-}
+  } as unknown as Parameters<typeof rawRedirect>[0]);
+}) as unknown as LocalizedRedirect;

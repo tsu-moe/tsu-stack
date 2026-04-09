@@ -1,4 +1,8 @@
-import { type LinkComponentProps, type NavigateOptions } from "@tanstack/react-router";
+import {
+  type LinkComponentProps,
+  type NavigateOptions,
+  type RegisteredRouter,
+} from "@tanstack/react-router";
 import type React from "react";
 
 import { type LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
@@ -16,11 +20,7 @@ type LocalizedLinkProps = {
   to?: To;
 } & Omit<LinkComponentProps, "to">;
 
-type LocalizedNavigateOptions = Omit<
-  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
-  NavigateOptions<any, any, NavigateTo>,
-  "to" | "from"
-> & {
+type LocalizedNavigateOptions = Omit<NavigateOptions, "to" | "from"> & {
   to: NavigateTo;
   from?: NavigateTo;
 };
@@ -57,16 +57,23 @@ export type LinkProps = InternalLinkProps | ExternalLinkProps;
 export type NavigateProps = LocalizedNavigateOptions;
 export type { NavigateTo, To };
 
-// Hook return type
-export type LocalizedNavigate = {
-  <TRelaxedTo extends string = string>(
-    opts:
-      | NavigateProps
-      | {
-          to: TRelaxedTo;
-          replace?: boolean;
-          resetScroll?: boolean;
-          [key: string]: unknown;
-        },
-  ): Promise<void>;
-};
+// Hook return type - mirrors UseNavigateResult from TanStack Router.
+// TDefaultFrom is inferred from useNavigate({ from: '...' }) so relative
+// search/params are validated against the correct starting route.
+export type LocalizedNavigate<TDefaultFrom extends string = string> = <
+  TRouter extends RegisteredRouter = RegisteredRouter,
+  TTo extends string | undefined = undefined,
+  TFrom extends string = TDefaultFrom,
+>(
+  opts: Omit<
+    NavigateOptions<
+      TRouter,
+      `/${typeof LOCALE_ROUTE_PREFIX}${TFrom}`,
+      TTo extends string ? `/${typeof LOCALE_ROUTE_PREFIX}${TTo}` : undefined
+    >,
+    "to" | "from"
+  > & {
+    to: TTo;
+    from?: TFrom;
+  },
+) => Promise<void>;

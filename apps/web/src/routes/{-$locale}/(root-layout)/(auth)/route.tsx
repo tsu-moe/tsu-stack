@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { Outlet, createFileRoute, useLocation } from "@tanstack/react-router";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { useLocation } from "@tsu-stack/i18n/tanstack-start/hooks/use-location";
 import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
 import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/utils/get-route-tree-paths-localized";
 import { redirect } from "@tsu-stack/i18n/tanstack-start/utils/redirect";
@@ -65,13 +66,11 @@ function RequiresAuthLayout() {
         return;
       }
 
-      // Strip locale prefix from pathname to avoid duplication
-      const cleanPathname = stripLocalePrefix(location.pathname);
       const redirectTo = validateNavigateTo({
         fallbackTo: "/",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: cleanPathname,
+        to: location.pathname,
       });
 
       void navigate({
