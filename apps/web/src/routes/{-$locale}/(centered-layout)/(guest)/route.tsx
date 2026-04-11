@@ -26,6 +26,8 @@ const guestSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
+  validateSearch: zodValidator(guestSearchSchema),
+  component: Outlet,
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.ensureQueryData({
       ...getAuthQueryOptions(),
@@ -46,6 +48,4 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
       redirectTo,
     };
   },
-  component: Outlet,
-  validateSearch: zodValidator(guestSearchSchema),
 });

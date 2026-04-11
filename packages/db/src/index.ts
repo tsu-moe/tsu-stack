@@ -56,22 +56,16 @@ export async function migrateDatabase(): Promise<void> {
   migrationFnCalled = true;
 
   if (ENV_SERVER.IS_BUILD) {
-    childLogger.info(
-      "[{fn}] Skipping database migration during build process: ({env})",
-      {
-        env: ENV_SERVER.NODE_ENV,
-      },
-    );
+    childLogger.info("[{fn}] Skipping database migration during build process: ({env})", {
+      env: ENV_SERVER.NODE_ENV,
+    });
     return;
   }
 
   if (ENV_SERVER.NODE_ENV !== "production") {
-    childLogger.info(
-      "[{fn}] Skipping database migration in non-production environment: ({env})",
-      {
-        env: ENV_SERVER.NODE_ENV,
-      },
-    );
+    childLogger.info("[{fn}] Skipping database migration in non-production environment: ({env})", {
+      env: ENV_SERVER.NODE_ENV,
+    });
     return;
   }
 
