@@ -12,7 +12,44 @@ import { defineConfig } from "vite-plus";
 
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { ENV_WEB_SERVER } from "@tsu-stack/env/web/env.server";
+import { locales } from "@tsu-stack/i18n/runtime";
 import { paraglideVitePlugin } from "@tsu-stack/i18n/vite/plugin";
+
+import { type FileRouteTypes } from "@/routeTree.gen";
+
+/**
+ * IMPORTANT: We define this explicitly here instead of crawling from the root (/) because
+ * crawling can sometimes miss i18n routes that are not directly linked from the root.
+ * We type it as FileRouteTypes['fullPaths'][] since prerender needs to have the `/` suffix or else we will get `Error: redirect count exceeded` on build.
+ */
+const ROUTES_TO_PRERENDER: FileRouteTypes["fullPaths"][] = [
+  "/{-$locale}/",
+  "/{-$locale}/playground/",
+  "/{-$locale}/privacy-policy/",
+  "/{-$locale}/sign-in/",
+  "/{-$locale}/create-an-account/",
+  "/sitemap.xml",
+  "/robots.txt",
+];
+
+const PAGES_PRERENDER_CONFIG = [
+  // Also prerender the default locale without the locale prefix
+  ...ROUTES_TO_PRERENDER.map((path) => {
+    return {
+      path: path.replace("{-$locale}/", ""),
+      prerender: { enabled: true },
+    };
+  }),
+  // Prerender all locales with their locale prefix (including base locale since the prefix is removed on the client via router)
+  ...locales.flatMap((loc) =>
+    ROUTES_TO_PRERENDER.map((path) => {
+      return {
+        path: path.replace("{-$locale}", loc),
+        prerender: { enabled: true },
+      };
+    }),
+  ),
+];
 
 export default defineConfig({
   run: {
@@ -73,6 +110,14 @@ export default defineConfig({
     mdx(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart({
+      pages: PAGES_PRERENDER_CONFIG,
+      prerender: {
+        enabled: true,
+        // Only prerender paths defined in the PAGES_PRERENDER_CONFIG object
+        autoStaticPathsDiscovery: false,
+        // Disable crawling to avoid missing i18n routes, we are explicitly defining them in PAGES_PRERENDER_CONFIG
+        crawlLinks: false,
+      },
       server: {
         build: {
           // Don't allow changing of process.env.NODE_ENV at runtime
