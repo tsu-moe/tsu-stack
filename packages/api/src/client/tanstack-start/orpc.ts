@@ -18,8 +18,8 @@ const getORPCClient = createIsomorphicFn()
         const headers = getRequestHeaders();
         const session = await createAuth().api.getSession({ headers });
         return {
-          session,
           logger: getLogger(LOGGER_CATEGORIES_SERVER.SERVER),
+          session,
         };
       },
     }),

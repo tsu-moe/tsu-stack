@@ -22,9 +22,10 @@ import { Input } from "@tsu-stack/ui/components/input";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { appConfig } from "@/shared/config/app.config";
 import { Container } from "@/shared/ui/container";
 import { LogoIcon } from "@/shared/ui/logo";
+
+import { appConfig } from "@/config/app.config";
 
 export function SignInForm({
   redirectTo = "/",

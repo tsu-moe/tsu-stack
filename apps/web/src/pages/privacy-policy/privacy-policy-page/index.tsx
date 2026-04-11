@@ -1,5 +1,6 @@
-import Content from "@/pages/privacy-policy/content/index.mdx";
 import { Container } from "@/shared/ui/container";
+
+import Content from "./content.mdx";
 
 export function PrivacyPolicyPage() {
   return (

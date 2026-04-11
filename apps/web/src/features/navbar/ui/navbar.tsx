@@ -8,11 +8,12 @@ import { Button } from "@tsu-stack/ui/components/button";
 import { useScroll } from "@tsu-stack/ui/hooks/use-scroll.hook";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { LocaleSwitcher } from "@/features/locale-switcher/@x/navbar";
-import { MobileNav } from "@/features/navbar/ui/mobile-nav";
-import { UserDropdown } from "@/features/navbar/ui/user-dropdown";
-import { ThemeSwitcher } from "@/features/theme-switcher/@x/navbar";
+import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { LogoWordmark } from "@/shared/ui/logo";
+import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
+
+import { MobileNav } from "./mobile-nav";
+import { UserDropdown } from "./user-dropdown";
 
 export type NavbarLink =
   | { label: string; href: LinkProps["href"]; to?: never }

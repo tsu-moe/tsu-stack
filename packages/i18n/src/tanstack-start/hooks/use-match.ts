@@ -57,8 +57,8 @@ export function useMatch<
     ) => {
       const stripped = {
         ...match,
-        pathname: stripLocalePrefix(match.pathname),
         fullPath: stripLocalePrefix(match.fullPath),
+        pathname: stripLocalePrefix(match.pathname),
       } as typeof match;
       return select ? select(stripped as Parameters<NonNullable<typeof select>>[0]) : stripped;
     },

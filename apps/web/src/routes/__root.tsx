@@ -12,12 +12,13 @@ import { getLocale } from "@tsu-stack/i18n/runtime";
 import { type getLogger } from "@tsu-stack/logger/client";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
 
-import { ThemeProvider } from "@/features/theme-switcher";
 import { DefaultErrorPage } from "@/pages/default-error";
-import { appConfig } from "@/shared/config/app.config";
-import { ProgressProvider } from "@/shared/providers/progress.provider";
 
+import { ProgressProvider } from "@/shared/providers/progress.provider";
 import appCss from "@/shared/styles/app.css?url";
+import { ThemeProvider } from "@/shared/ui/theme-switcher";
+
+import { appConfig } from "@/config/app.config";
 
 // Root route with shared context for the entire app, inject them in router.tsx
 type RouterAppContext = {

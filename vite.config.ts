@@ -42,11 +42,36 @@ export default defineConfig({
           elementNamePattern: ["@tsu-stack/**"],
           groupName: "@tsu-stack",
         },
+        {
+          elementNamePattern: ["@/pages/**"],
+          groupName: "pages",
+        },
+        {
+          elementNamePattern: ["@/widgets/**"],
+          groupName: "widgets",
+        },
+        {
+          elementNamePattern: ["@/features/**"],
+          groupName: "features",
+        },
+        {
+          elementNamePattern: ["@/entities/**"],
+          groupName: "entities",
+        },
+        {
+          elementNamePattern: ["@/shared/**"],
+          groupName: "shared",
+        },
       ],
       groups: [
         "builtin",
         "external",
         "@tsu-stack",
+        "pages",
+        "widgets",
+        "features",
+        "entities",
+        "shared",
         ["internal", "subpath"],
         ["parent", "sibling", "index"],
         "style",
@@ -94,6 +119,7 @@ export default defineConfig({
         name: "eslint-tanstack-query",
         specifier: "@tanstack/eslint-plugin-query",
       },
+      { name: "fsd", specifier: "eslint-plugin-fsd-lint" },
     ],
     options: { typeAware: true, typeCheck: true },
     plugins: [
@@ -109,6 +135,38 @@ export default defineConfig({
     ],
 
     rules: {
+      /**
+       * Recommended rules for enforcing Feature Sliced Design (FSD) architecture.
+       *
+       * FIXME: Oxlint does not support nested monorepo package/app config merging or variations. Running `vp check` will *always* use the monorepo root config.
+       * This means that we can only enable FSD for a single app only via `rootPath`.
+       * There is currently an [open issue](https://github.com/voidzero-dev/vite-plus/pull/1115) regarding this in the Vite+ repository.
+       * @see {@link https://github.com/effozen/eslint-plugin-fsd-lint?tab=readme-ov-file#manual-configuration}
+       */
+      "fsd/forbidden-imports": [
+        "error",
+        {
+          alias: {
+            value: "@",
+            withSlash: false,
+          },
+          rootPath: "/apps/web/src/",
+        },
+      ],
+      "fsd/no-relative-imports": ["error", { allowSameSlice: true }],
+      "fsd/no-public-api-sidestep": "error",
+      "fsd/no-cross-slice-dependency": [
+        "error",
+        {
+          allowTypeImports: false,
+          excludeLayers: ["shared"],
+          featuresOnly: false,
+          rootPath: "/apps/web/src/",
+        },
+      ],
+      "fsd/no-ui-in-business-logic": "error",
+      "fsd/no-global-store-imports": "error",
+
       // Tanstack Router rules, ref: https://tanstack.com/router/latest/docs/eslint/eslint-plugin-router
       "eslint-tanstack-router/create-route-property-order": "error",
       // Tanstack Query rules, ref: https://tanstack.com/query/latest/docs/eslint/eslint-plugin-query
@@ -154,49 +212,43 @@ export default defineConfig({
       "react-hooks-js/rule-suppression": "off",
       "react-hooks-js/syntax": "off",
       "react-hooks-js/todo": "off",
+
       // You can add more rules from: https://oxc.rs/docs/guide/usage/linter/rules.html?sort=fix&dir=asc&has_fix=true
-      "arrow-body-style": [
-        "error",
-        "as-needed",
-        { requireReturnForObjectLiteral: true },
-      ],
-      "ban-ts-comment": "error",
-      "consistent-indexed-object-style": ["error", "record"],
-      "consistent-test-it": ["error", { fn: "it" }],
-      "consistent-type-definitions": ["error", "type"],
-      "consistent-type-imports": [
+      "eslint/arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true }],
+      "typescript/ban-ts-comment": "error",
+      "typescript/consistent-indexed-object-style": ["error", "record"],
+      "jest/consistent-test-it": ["error", { fn: "it" }],
+      "typescript/consistent-type-definitions": ["error", "type"],
+      "typescript/consistent-type-imports": [
         "error",
         { fixStyle: "inline-type-imports", prefer: "type-imports" },
       ],
-      "consistent-type-specifier-style": ["error", "prefer-inline"],
-      curly: ["error", "multi-line"],
-      "escape-case": "warn",
-      "explicit-length-check": "warn",
-      "jsx-fragments": ["error", "syntax"],
-      "jsx-props-no-spread-multi": "error",
-      "no-aria-hidden-on-focusable": "error",
-      "no-array-reverse": "warn",
-      "no-array-sort": "warn",
-      "no-console": ["warn", { allow: ["debug"] }],
-      "no-else-return": "error",
-      "no-explicit-any": [
-        "error",
-        { fixToUnknown: true, ignoreRestArgs: true },
-      ],
-      "no-new-statics": "error",
-      "no-redundant-roles": "error",
-      "no-relative-parent-imports": "error",
-      "no-var": "warn",
-      "prefer-array-flat-map": "error",
-      "prefer-const": "warn",
-      "prefer-nullish-coalescing": "error",
-      "prefer-object-spread": "error",
-      "prefer-spread": "warn",
-      "switch-case-braces": ["error", "avoid"],
-      "switch-exhaustiveness-check": "error",
-      "throw-new-error": "error",
-      "valid-title": "error",
-      yoda: "warn",
+      "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+      "eslint/curly": ["error", "multi-line"],
+      "unicorn/escape-case": "warn",
+      "unicorn/explicit-length-check": "warn",
+      "react/jsx-fragments": ["error", "syntax"],
+      "react/jsx-props-no-spread-multi": "error",
+      "jsx-a11y/no-aria-hidden-on-focusable": "error",
+      "unicorn/no-array-reverse": "warn",
+      "unicorn/no-array-sort": "warn",
+      "eslint/no-console": ["warn", { allow: ["debug"] }],
+      "eslint/no-else-return": "error",
+      "typescript/no-explicit-any": ["error", { fixToUnknown: true, ignoreRestArgs: true }],
+      "promise/no-new-statics": "error",
+      "jsx-a11y/no-redundant-roles": "error",
+      "import/no-relative-parent-imports": "error",
+      "eslint/no-var": "warn",
+      "unicorn/prefer-array-flat-map": "error",
+      "eslint/prefer-const": "warn",
+      "typescript/prefer-nullish-coalescing": "error",
+      "eslint/prefer-object-spread": "error",
+      "eslint/prefer-spread": "warn",
+      "unicorn/switch-case-braces": ["error", "avoid"],
+      "typescript/switch-exhaustiveness-check": "error",
+      "unicorn/throw-new-error": "error",
+      "jest/valid-title": "error",
+      "eslint/yoda": "warn",
     },
   },
 });

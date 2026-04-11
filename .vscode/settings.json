@@ -12,11 +12,20 @@
     "unknown": "off"
   },
 
-  // Prefer non-relative (../ or ./) imports to be auto-imported as absolute (@/ or package name)
-  "ts.preferences.importModuleSpecifier": "non-relative",
-  "js.preferences.importModuleSpecifier": "non-relative",
-  "js.preferences.importModuleSpecifierEnding": "minimal",
-  "ts.preferences.importModuleSpecifierEnding": "minimal",
+  // Use tsgo for faster TypeScript and JavaScript language features
+  "js/ts.experimental.useTsgo": true,
+
+  // Use relative imports as much as possible, except when the relative import path would leave the package or project directory
+  "js/ts.preferences.importModuleSpecifier": "project-relative",
+
+  // When auto-importing, prefer to include the file extension for JavaScript and TypeScript files
+  "js/ts.preferences.importModuleSpecifierEnding": "minimal",
+
+  // When a file is moved, update the imports to reflect the new location
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+
+  // When "Go to Definition" is triggered on a symbol, prefer going to the source file instead of the declaration file (if available).
+  "js/ts.preferGoToSourceDefinition": true,
 
   // TanStack Start-specific settings
   "files.watcherExclude": {

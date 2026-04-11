@@ -14,8 +14,8 @@ function stripMatchesLocale(matches: readonly Match[]): Match[] {
   return matches.map((match) => {
     return {
       ...match,
-      pathname: stripLocalePrefix(match.pathname),
       fullPath: stripLocalePrefix(match.fullPath),
+      pathname: stripLocalePrefix(match.pathname),
     };
   });
 }

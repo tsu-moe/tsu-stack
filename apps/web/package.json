@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "check": "vp check",
+    "check:fix": "vp check --fix",
     "dev": "pnpm dotenvx run -f ../../packages/env/.env -- vp dev",
     "deploy": "pnpm dotenvx run -f ../../packages/env/.env -- pnpm wrangler deploy",
     "ui": "vpx shadcn@latest"

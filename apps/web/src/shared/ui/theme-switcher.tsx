@@ -3,6 +3,7 @@ import { useTheme } from "next-themes";
 
 import { type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Button } from "@tsu-stack/ui/components/button";
+export { ThemeProvider } from "next-themes";
 
 type ThemeSwitcherProps = {
   className?: string;
