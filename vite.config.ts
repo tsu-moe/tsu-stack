@@ -109,8 +109,20 @@ export default defineConfig({
     ],
 
     rules: {
-      // ref: https://github.com/TheAlexLichter/oxlint-react-compiler-rules/issues/1
+      // Tanstack Router rules, ref: https://tanstack.com/router/latest/docs/eslint/eslint-plugin-router
+      "eslint-tanstack-router/create-route-property-order": "error",
+      // Tanstack Query rules, ref: https://tanstack.com/query/latest/docs/eslint/eslint-plugin-query
+      "eslint-tanstack-query/exhaustive-deps": "error",
+      "eslint-tanstack-query/no-rest-destructuring": "error",
+      "eslint-tanstack-query/stable-query-client": "error",
+      "eslint-tanstack-query/no-unstable-deps": "error",
+      "eslint-tanstack-query/infinite-query-property-order": "error",
+      "eslint-tanstack-query/no-void-query-fn": "warn",
+      "eslint-tanstack-query/mutation-property-order": "error",
+      "eslint-tanstack-query/prefer-query-options": "warn",
+
       // Recommended rules (from LintRulePreset.Recommended)
+      // ref: https://github.com/TheAlexLichter/oxlint-react-compiler-rules/issues/1
       "react-hooks-js/component-hook-factories": "error",
       "react-hooks-js/config": "error",
       "react-hooks-js/error-boundaries": "error",
@@ -126,8 +138,10 @@ export default defineConfig({
       "react-hooks-js/static-components": "error",
       "react-hooks-js/unsupported-syntax": "error",
       "react-hooks-js/use-memo": "error",
+
       // Recommended-latest rules (from LintRulePreset.RecommendedLatest)
       "react-hooks-js/void-use-memo": "error",
+
       // Off rules (LintRulePreset.Off) - not enabled by default
       "react-hooks-js/automatic-effect-dependencies": "off",
       "react-hooks-js/capitalized-calls": "off",
@@ -141,7 +155,11 @@ export default defineConfig({
       "react-hooks-js/syntax": "off",
       "react-hooks-js/todo": "off",
       // You can add more rules from: https://oxc.rs/docs/guide/usage/linter/rules.html?sort=fix&dir=asc&has_fix=true
-      "arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true }],
+      "arrow-body-style": [
+        "error",
+        "as-needed",
+        { requireReturnForObjectLiteral: true },
+      ],
       "ban-ts-comment": "error",
       "consistent-indexed-object-style": ["error", "record"],
       "consistent-test-it": ["error", { fn: "it" }],
@@ -161,7 +179,10 @@ export default defineConfig({
       "no-array-sort": "warn",
       "no-console": ["warn", { allow: ["debug"] }],
       "no-else-return": "error",
-      "no-explicit-any": ["error", { fixToUnknown: true, ignoreRestArgs: true }],
+      "no-explicit-any": [
+        "error",
+        { fixToUnknown: true, ignoreRestArgs: true },
+      ],
       "no-new-statics": "error",
       "no-redundant-roles": "error",
       "no-relative-parent-imports": "error",
