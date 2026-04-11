@@ -29,7 +29,7 @@ export function CallToAction() {
               {m.home_page__cta_github()}
             </Link>
           </Button>
-          <Button asChild light="skeumorphic">
+          <Button asChild light="skeuomorphic">
             <Link target="_blank" href="https://github.com/tsu-moe/tsu-stack">
               {m.home_page__cta_documentation()}
             </Link>

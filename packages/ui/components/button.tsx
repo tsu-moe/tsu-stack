@@ -23,7 +23,7 @@ const buttonVariants = cva(
     variants: {
       light: {
         none: "",
-        skeumorphic: [
+        skeuomorphic: [
           // Tune the opacity according to your theme
           // The first shadow is the main sharp highlight, second shadow is the subtle depth
           `shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_2px_2px_rgba(255,255,255,0.08)]`,

@@ -27,6 +27,8 @@
     "auth:generate": "vp run --filter @tsu-stack/db auth:generate"
   },
   "devDependencies": {
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
     "@dotenvx/dotenvx": "catalog:",
     "@tanstack/eslint-plugin-query": "catalog:",
     "@tanstack/eslint-plugin-router": "catalog:",
@@ -35,6 +37,11 @@
     "eslint-plugin-react-hooks": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "vite-plus": "catalog:"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "packageManager": "pnpm@10.33.0"
 }

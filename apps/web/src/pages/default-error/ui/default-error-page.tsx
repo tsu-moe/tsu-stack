@@ -41,7 +41,7 @@ export function DefaultErrorPage({ error, reset }: { error: Error; reset: () => 
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button light="skeumorphic" asChild>
+            <Button light="skeuomorphic" asChild>
               <Link to="/">
                 <IconHome data-icon="inline-start" />
                 {m.error_500__go_home()}
