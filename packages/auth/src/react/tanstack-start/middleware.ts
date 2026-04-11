@@ -1,7 +1,7 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { setResponseStatus } from "@tanstack/react-start/server";
 
-import { _getUser } from "./functions";
+import { _getUser } from "#@/react/tanstack-start/functions";
 
 // https://tanstack.com/start/latest/docs/framework/react/guide/middleware
 // These are example middlewares that you can modify and use in your server functions or routes.

@@ -12,9 +12,10 @@ import { Button } from "@tsu-stack/ui/components/button";
 import { Portal, PortalBackdrop } from "@tsu-stack/ui/components/portal";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { LocaleSwitcher } from "@/features/locale-switcher/@x/navbar";
-import { navLinks } from "@/features/navbar/ui/navbar";
-import { ThemeSwitcher } from "@/features/theme-switcher/@x/navbar";
+import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
+import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
+
+import { navLinks } from "./navbar";
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);

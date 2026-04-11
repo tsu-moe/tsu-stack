@@ -2,7 +2,7 @@ import type React from "react";
 
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { appConfig } from "@/shared/config/app.config";
+import { appConfig } from "@/config/app.config";
 
 export function LogoIcon(props: React.SVGProps<SVGSVGElement> & { className?: string }) {
   return (

@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute, notFound, redirect } from "@tanstack/react-router";
 
-import { appConfig } from "@/shared/config/app.config";
+import { appConfig } from "@/config/app.config";
 
 export const Route = createFileRoute("/{-$locale}")({
   beforeLoad: ({ params, location }) => {

@@ -14,8 +14,12 @@ export const ENV_SERVER = createEnv({
   emptyStringAsUndefined: true,
   runtimeEnv: process.env,
   server: {
-    VITE_SERVER_URL: isProduction ? z.url() : z.url().default("http://localhost:5000/server"),
-    VITE_WEB_URL: isProduction ? z.url() : z.url().default("http://localhost:3000/web"),
+    VITE_SERVER_URL: isProduction
+      ? z.url()
+      : z.url().default("http://localhost:5000/server"),
+    VITE_WEB_URL: isProduction
+      ? z.url()
+      : z.url().default("http://localhost:3000/web"),
     DATABASE_URL: z.string().min(1),
     BETTER_AUTH_SECRET: z.string().min(32),
     NODE_ENV: z.enum(["development", "production"]).default("development"),

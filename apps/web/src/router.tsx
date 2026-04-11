@@ -7,9 +7,11 @@ import { LOGGER_CATEGORIES_CLIENT, configureLoggerSync, getLogger } from "@tsu-s
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 
 import { DefaultNotFoundPage } from "@/pages/default-not-found";
-import { routeTree } from "@/routeTree.gen";
+
 import { LoggerProvider } from "@/shared/providers/logger-provider";
 import { QueryClientProvider, getQueryClient } from "@/shared/providers/query-client.provider";
+
+import { routeTree } from "@/routeTree.gen";
 
 configureLoggerSync();
 

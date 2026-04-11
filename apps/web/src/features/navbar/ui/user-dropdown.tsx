@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@tsu-stack/ui/components/dropdown-menu";
 
-import { NavbarUnauthenticatedButtons } from "@/features/navbar/ui/navbar-unauthenticated-buttons";
+import { NavbarUnauthenticatedButtons } from "./navbar-unauthenticated-buttons";
 
 export function UserDropdown() {
   const queryClient = useQueryClient();

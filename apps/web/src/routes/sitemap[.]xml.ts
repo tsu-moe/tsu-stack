@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/utils/get-route-tree-paths-localized";
 
+import { appConfig } from "@/config/app.config";
 import { routeTree } from "@/routeTree.gen";
-import { appConfig } from "@/shared/config/app.config";
 
 /**
  * If you're using subpaths, on your root domain, you need to make a sitemap index to link the subpath sitemaps.

@@ -1,6 +1,6 @@
-import { CallToAction } from "@/pages/home/ui/call-to-action";
-import { HeroSection } from "@/pages/home/ui/hero-section";
-import { IntegrationsSection } from "@/pages/home/ui/integrations-section";
+import { CallToAction } from "./call-to-action";
+import { HeroSection } from "./hero-section";
+import { IntegrationsSection } from "./integrations-section";
 
 export function HomePage() {
   return (

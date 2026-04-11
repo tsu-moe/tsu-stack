@@ -55,8 +55,8 @@ export const auth = betterAuth({
     // secure: true in production - cookie only sent over HTTPS, prevents interception
     // httpOnly: true - cookie inaccessible to JS, prevents XSS-based token theft
     defaultCookieAttributes: {
-      sameSite: isProduction ? "strict" : "none",
       httpOnly: true,
+      sameSite: isProduction ? "strict" : "none",
       secure: true,
     },
 

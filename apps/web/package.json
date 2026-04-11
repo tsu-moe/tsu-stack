@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "check": "vp check",
+    "check:fix": "vp check --fix",
     "dev": "pnpm dotenvx run -f ../../packages/env/.env -- vp dev",
     "preview": "pnpm dotenvx run -f ../../packages/env/.env -- vp preview",
     "start": "pnpm dotenvx run -f ../../packages/env/.env -- node .output/server/index.mjs",
