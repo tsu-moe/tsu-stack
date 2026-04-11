@@ -204,7 +204,7 @@ export function CreateAnAccountForm({
 
           <Field>
             <Button
-              light="skeumorphic"
+              light="skeuomorphic"
               type="submit"
               disabled={signUpMutation.isPending || signUpMutation.isSuccess}
             >

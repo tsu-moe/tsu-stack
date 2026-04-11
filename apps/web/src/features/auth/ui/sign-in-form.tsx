@@ -151,7 +151,7 @@ export function SignInForm({
 
           <Field>
             <Button
-              light="skeumorphic"
+              light="skeuomorphic"
               type="submit"
               disabled={signInMutation.isPending || signInMutation.isSuccess}
             >

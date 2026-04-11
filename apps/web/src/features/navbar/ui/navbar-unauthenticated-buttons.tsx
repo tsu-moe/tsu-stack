@@ -16,7 +16,7 @@ export function NavbarUnauthenticatedButtons() {
         </Link>
       </Button>
       <Link to="/create-an-account" search={redirect ? { redirect } : undefined}>
-        <Button light="skeumorphic" size="sm">
+        <Button light="skeuomorphic" size="sm">
           {m.navbar__get_started()}
         </Button>
       </Link>
