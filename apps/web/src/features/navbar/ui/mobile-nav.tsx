@@ -100,7 +100,7 @@ function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
             Sign In
           </Link>
         </Button>
-        <Button onClick={onNavigate} className="w-full" light="skeumorphic" asChild>
+        <Button onClick={onNavigate} className="w-full" light="skeuomorphic" asChild>
           <Link to="/create-an-account" search={redirect ? { redirect } : undefined}>
             Get Started
           </Link>

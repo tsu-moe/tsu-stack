@@ -28,7 +28,7 @@ export function DefaultNotFoundPage() {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button light="skeumorphic" size="lg" asChild>
+            <Button light="skeuomorphic" size="lg" asChild>
               <Link to="/">
                 <IconHome data-icon="inline-start" />
                 {m.error_404__go_home()}
