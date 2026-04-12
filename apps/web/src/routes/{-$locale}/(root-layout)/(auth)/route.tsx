@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { useLocation } from "@tsu-stack/i18n/tanstack-start/hooks/use-location";
 import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
 import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/utils/get-route-tree-paths-localized";
@@ -26,7 +26,7 @@ function isGuestRoute(pathname: string): boolean {
 export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
   beforeLoad: async ({ context, location }) => {
     const user = await context.queryClient.ensureQueryData({
-      ...getAuthQueryOptions(),
+      ...getAuthUserQueryOptions(),
       revalidateIfStale: true,
     });
 
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
 function RequiresAuthLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: user } = useQuery(getAuthQueryOptions());
+  const { data: user } = useQuery(getAuthUserQueryOptions());
   const { logger } = Route.useRouteContext();
 
   useEffect(() => {
