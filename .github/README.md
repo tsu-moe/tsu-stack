@@ -93,8 +93,10 @@ Here is a non-exhaustive list of the main technologies used in this project, alo
 1. **Clone the repository and install dependencies:**
 
    ```bash
-   git clone https://github.com/tsu-moe/tsu-stack.git
-   cd tsu-stack
+   vpx tiged https://github.com/tsu-moe/tsu-stack#main my-tsu-stack-app
+   # Available branch specifiers: `main` | `variant/merged` | `variant/merged-cloudflare`
+   
+   cd my-tsu-stack-app
    vp env install    # install Node.js version specified in package.json
    vp install        # install all packages in the monorepo
    ```
