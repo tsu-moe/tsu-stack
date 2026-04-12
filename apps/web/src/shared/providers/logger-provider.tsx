@@ -22,7 +22,7 @@ export function LoggerProvider({ children }: { children: React.ReactNode }) {
   return <LoggerContext.Provider value={{ logger }}>{children}</LoggerContext.Provider>;
 }
 
-export function useLogger(): ReturnType<typeof getLogger> {
+function useLogger(): ReturnType<typeof getLogger> {
   const context = useContext(LoggerContext);
   if (!context) {
     const logger = getLogger(LOGGER_CATEGORIES_CLIENT.WEB);

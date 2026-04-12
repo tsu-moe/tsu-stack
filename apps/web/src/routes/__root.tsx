@@ -1,4 +1,5 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
 import { type QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
@@ -117,6 +118,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   name: "TanStack Router",
                   render: <TanStackRouterDevtoolsPanel />,
                 },
+                formDevtoolsPlugin(),
               ]}
             />
             <Scripts />

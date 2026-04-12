@@ -5,32 +5,22 @@
   "exports": {
     "./*": "./*.ts",
     "./styles/globals.css": "./styles/globals.css",
-    "./lib/theme-provider": "./lib/theme-provider.tsx",
     "./components/*": "./components/*.tsx"
   },
   "scripts": {
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {
-    "@base-ui/react": "catalog:",
     "@lonik/oh-image": "catalog:",
-    "@radix-ui/react-dialog": "catalog:",
-    "@radix-ui/react-navigation-menu": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
-    "@tanstack/react-form-start": "catalog:",
-    "@tanstack/react-router": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "lucide-react": "catalog:",
-    "motion": "catalog:",
     "next-themes": "catalog:",
     "radix-ui": "catalog:",
-    "shadcn": "catalog:",
     "sonner": "catalog:",
     "std-env": "catalog:",
     "tailwind-merge": "catalog:",
-    "tw-animate-css": "catalog:",
-    "zod": "catalog:"
+    "tw-animate-css": "catalog:"
   },
   "devDependencies": {
     "@tsu-stack/tsconfig": "workspace:*",

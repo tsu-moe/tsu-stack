@@ -15,7 +15,7 @@ import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 import { MobileNav } from "./mobile-nav";
 import { UserDropdown } from "./user-dropdown";
 
-export type NavbarLink =
+type NavbarLink =
   | { label: string; href: LinkProps["href"]; to?: never }
   | { label: string; href?: never; to: LinkProps["to"] };
 

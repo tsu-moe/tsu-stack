@@ -25,7 +25,7 @@
 
     "apps/server": {
       // vite.config.ts uses `vite-plus` not `vite`, so it isn't auto-detected
-      "entry": ["src/index.ts", "vite.config.ts"],
+      "entry": ["vite.config.ts"],
       "ignoreDependencies": [
         // Used as a Node.js loader via `node --import tsx`, not as a standalone binary
         "tsx",
