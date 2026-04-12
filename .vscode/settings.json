@@ -32,13 +32,15 @@
     "**/routeTree.gen.ts": true
   },
   "search.exclude": {
-    "**/routeTree.gen.ts": true
+    "**/routeTree.gen.ts": true,
+    "pnpm-lock.yaml": true
   },
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },
 
   // Vite Plus Defaults
+  "prettier.enable": false,
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "oxc.fmt.configPath": "./vite.config.ts",
   "editor.formatOnSave": true,
@@ -48,6 +50,17 @@
     "source.fixAll.oxc": "always"
   },
 
+  // Nest config files together in the explorer
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+    "package.json": "LICENSE, package-lock.json, renovate.*, knip.*, pnpm*, components.json, commitlint*, .nvmrc, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, .gitignore, bun.lock",
+    "router.tsx": "routeTree.gen.ts",
+    "docker-compose.yaml": ".dockerignore, Dockerfile*, docker-compose.*.yaml, .env.docker*"
+  },
+
+  // Allow loading these json schemas
   "json.schemas": [
     {
       "fileMatch": ["components.json"],
@@ -56,6 +69,10 @@
     {
       "fileMatch": ["packages/i18n/messages/*.json"],
       "url": "https://inlang.com/schema/inlang-message-format"
+    },
+    {
+      "fileMatch": ["knip.json", "knip.jsonc"],
+      "url": "https://unpkg.com/knip@6/schema.json"
     }
   ]
 }

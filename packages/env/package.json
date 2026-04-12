@@ -9,7 +9,6 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "catalog:",
     "@t3-oss/env-core": "catalog:",
     "std-env": "catalog:",
     "zod": "catalog:"

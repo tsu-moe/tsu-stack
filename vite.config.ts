@@ -214,11 +214,7 @@ export default defineConfig({
       "react-hooks-js/todo": "off",
 
       // You can add more rules from: https://oxc.rs/docs/guide/usage/linter/rules.html?sort=fix&dir=asc&has_fix=true
-      "eslint/arrow-body-style": [
-        "error",
-        "as-needed",
-        { requireReturnForObjectLiteral: true },
-      ],
+      "eslint/arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true }],
       "typescript/ban-ts-comment": "error",
       "typescript/consistent-indexed-object-style": ["error", "record"],
       "jest/consistent-test-it": ["error", { fn: "it" }],
@@ -238,10 +234,7 @@ export default defineConfig({
       "unicorn/no-array-sort": "warn",
       "eslint/no-console": ["warn", { allow: ["debug"] }],
       "eslint/no-else-return": "error",
-      "typescript/no-explicit-any": [
-        "error",
-        { fixToUnknown: true, ignoreRestArgs: true },
-      ],
+      "typescript/no-explicit-any": ["error", { fixToUnknown: true, ignoreRestArgs: true }],
       "promise/no-new-statics": "error",
       "jsx-a11y/no-redundant-roles": "error",
       "import/no-relative-parent-imports": "error",

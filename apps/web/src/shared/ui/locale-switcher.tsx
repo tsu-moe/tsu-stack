@@ -1,4 +1,4 @@
-import { IconCheck, IconLanguage } from "@tabler/icons-react";
+import { Check, Languages } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { getLocale, locales, setLocale } from "@tsu-stack/i18n/runtime";
@@ -29,7 +29,7 @@ export function LocaleSwitcher({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button aria-label="Switch language" className={className} size={size} variant={variant}>
-          <IconLanguage aria-hidden="true" size={18} />
+          <Languages aria-hidden="true" size={18} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -42,7 +42,7 @@ export function LocaleSwitcher({
               onClick={() => setLocale(locale)}
             >
               <span className="flex-1">{m.language_name(undefined, { locale })}</span>
-              {isActive && <IconCheck aria-hidden="true" className="opacity-60" />}
+              {isActive && <Check aria-hidden="true" className="opacity-60" />}
             </DropdownMenuItem>
           );
         })}

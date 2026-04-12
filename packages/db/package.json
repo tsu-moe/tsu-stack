@@ -18,7 +18,6 @@
   "dependencies": {
     "@tsu-stack/logger": "workspace:*",
     "drizzle-orm": "catalog:",
-    "nanoid": "catalog:",
     "postgres": "catalog:"
   },
   "devDependencies": {

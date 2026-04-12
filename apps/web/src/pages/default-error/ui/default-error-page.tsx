@@ -1,4 +1,4 @@
-import { IconHome, IconRefresh } from "@tabler/icons-react";
+import { Home, RefreshCw } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
@@ -43,13 +43,13 @@ export function DefaultErrorPage({ error, reset }: { error: Error; reset: () => 
           <div className="flex gap-2">
             <Button light="skeuomorphic" asChild>
               <Link to="/">
-                <IconHome data-icon="inline-start" />
+                <Home data-icon="inline-start" />
                 {m.error_500__go_home()}
               </Link>
             </Button>
 
             <Button onClick={handleRefresh} variant="outline">
-              <IconRefresh data-icon="inline-start" />
+              <RefreshCw data-icon="inline-start" />
               {m.error_500__try_again()}
             </Button>
           </div>

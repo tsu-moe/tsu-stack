@@ -9,9 +9,7 @@
     "./messages": "./src/paraglide/messages.js",
     "./runtime": "./src/paraglide/runtime.js",
     "./server": "./src/paraglide/server.js",
-    "./config": "./src/config.ts",
     "./vite/plugin": "./src/vite/plugin.js",
-    "./constants": "./src/constants.js",
     "./tanstack-start/*": "./src/tanstack-start/*.ts",
     "./tanstack-start/components/link": "./src/tanstack-start/components/link.tsx",
     "./tanstack-start/types": "./src/tanstack-start/types/index.ts"
