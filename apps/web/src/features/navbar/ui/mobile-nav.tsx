@@ -1,6 +1,6 @@
-import { IconLogout, IconMenu2, IconX } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useRouterState } from "@tanstack/react-router";
+import { LogOut, Menu, X } from "lucide-react";
 import React, { Suspense } from "react";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
@@ -35,7 +35,7 @@ export function MobileNav() {
         size="icon"
         variant="outline"
       >
-        {open ? <IconX className="size-4.5" /> : <IconMenu2 className="size-4.5" />}
+        {open ? <X className="size-4.5" /> : <Menu className="size-4.5" />}
       </Button>
       {open && (
         <Portal className="top-(--navbar-height)" id="mobile-menu">
@@ -127,7 +127,7 @@ function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
         </div>
       </div>
       <Button className="w-full" variant="destructive" onClick={handleSignOut}>
-        <IconLogout aria-hidden="true" size={16} />
+        <LogOut aria-hidden="true" size={16} />
         Logout
       </Button>
     </div>

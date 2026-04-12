@@ -16,8 +16,7 @@
     "@logtape/logtape": "catalog:",
     "@tanstack/react-start": "catalog:",
     "defu": "catalog:",
-    "hono": "catalog:",
-    "std-env": "catalog:"
+    "hono": "catalog:"
   },
   "devDependencies": {
     "@tsu-stack/tsconfig": "workspace:*",

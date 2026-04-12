@@ -1,4 +1,4 @@
-import { IconHome } from "@tabler/icons-react";
+import { Home } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
@@ -30,7 +30,7 @@ export function DefaultNotFoundPage() {
           <div className="flex gap-2">
             <Button light="skeuomorphic" size="lg" asChild>
               <Link to="/">
-                <IconHome data-icon="inline-start" />
+                <Home data-icon="inline-start" />
                 {m.error_404__go_home()}
               </Link>
             </Button>

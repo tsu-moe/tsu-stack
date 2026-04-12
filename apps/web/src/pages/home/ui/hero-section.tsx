@@ -1,4 +1,4 @@
-import { IconArrowRight } from "@tabler/icons-react";
+import { ArrowRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Suspense, lazy } from "react";
 
@@ -70,7 +70,7 @@ export function HeroSection() {
               target="_blank"
             >
               <span className="relative z-10">{m.home_page__hero_cta()}</span>
-              <IconArrowRight
+              <ArrowRight
                 aria-hidden
                 className="relative z-10 size-5.5 transition-transform duration-300"
               />
