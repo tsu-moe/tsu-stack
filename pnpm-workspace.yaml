@@ -17,47 +17,47 @@ catalog:
   "@logtape/logtape": ^2.0.5
   "@lonik/oh-image": ^3.3.0
   "@mdx-js/rollup": ^3.1.1
-  "@orpc/client": ^1.13.13
-  "@orpc/json-schema": ^1.13.13
-  "@orpc/openapi": ^1.13.13
-  "@orpc/server": ^1.13.13
-  "@orpc/tanstack-query": ^1.13.13
-  "@orpc/zod": ^1.13.13
-  "@paper-design/shaders-react": ^0.0.72
+  "@orpc/client": ^1.13.14
+  "@orpc/json-schema": ^1.13.14
+  "@orpc/openapi": ^1.13.14
+  "@orpc/server": ^1.13.14
+  "@orpc/tanstack-query": ^1.13.14
+  "@orpc/zod": ^1.13.14
+  "@paper-design/shaders-react": ^0.0.73
   "@rolldown/plugin-babel": ^0.2.2
   "@t3-oss/env-core": ^0.13.11
   "@tailwindcss/vite": ^4.2.2
   "@tanstack/devtools-a11y": ^0.1.2
   "@tanstack/devtools-vite": ^0.6.0
-  "@tanstack/eslint-plugin-query": ^5.96.2
+  "@tanstack/eslint-plugin-query": ^5.99.0
   "@tanstack/eslint-plugin-router": ^1.161.6
   "@tanstack/react-devtools": ^0.10.2
-  "@tanstack/react-form": ^1.28.6
-  "@tanstack/react-form-devtools": ^0.2.20
-  "@tanstack/react-query": ^5.96.2
-  "@tanstack/react-query-devtools": ^5.96.2
-  "@tanstack/react-query-persist-client": ^5.96.2
-  "@tanstack/react-router": ^1.168.10
-  "@tanstack/react-router-devtools": ^1.166.11
-  "@tanstack/react-router-ssr-query": ^1.166.10
-  "@tanstack/react-start": ^1.167.16
+  "@tanstack/react-form": ^1.29.0
+  "@tanstack/react-form-devtools": ^0.2.21
+  "@tanstack/react-query": ^5.99.0
+  "@tanstack/react-query-devtools": ^5.99.0
+  "@tanstack/react-query-persist-client": ^5.99.0
+  "@tanstack/react-router": ^1.168.18
+  "@tanstack/react-router-devtools": ^1.166.13
+  "@tanstack/react-router-ssr-query": ^1.166.11
+  "@tanstack/react-start": ^1.167.32
   "@tanstack/zod-adapter": ^1.166.9
   "@types/babel__core": ^7.20.5
   "@types/mdx": ^2.0.13
-  "@types/node": ^25.5.2
+  "@types/node": ^25.6.0
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260411.1
+  "@typescript/native-preview": 7.0.0-dev.20260412.1
   "@vitejs/plugin-react": ^6.0.1
   babel-plugin-react-compiler: ^1.0.0
-  better-auth: 1.6.1
+  better-auth: 1.6.2
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
   cross-env: ^10.1.0
   defu: ^6.1.7
   drizzle-kit: beta
   drizzle-orm: beta
-  eslint-plugin-fsd-lint: ^1.0.11
+  eslint-plugin-fsd-lint: ^1.0.12
   eslint-plugin-react-hooks: ^7.0.1
   hono: ^4.12.12
   localforage: ^1.10.0
