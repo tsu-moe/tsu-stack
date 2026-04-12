@@ -40,6 +40,7 @@
   },
 
   // Vite Plus Defaults
+  "prettier.enable": false,
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "oxc.fmt.configPath": "./vite.config.ts",
   "editor.formatOnSave": true,
