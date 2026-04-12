@@ -80,6 +80,7 @@ catalog:
   typescript: ^6.0.2
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plus: 0.1.16
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
   zod: ^4.3.6
 
 catalogMode: prefer

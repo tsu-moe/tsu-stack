@@ -7,8 +7,6 @@
 
   "workspaces": {
     ".": {
-      // Root vite.config.ts uses `vite-plus` not `vite`, so knip's Vite plugin doesn't auto-detect it
-      "entry": ["vite.config.ts"],
       "ignoreDependencies": [
         // Git commit-message hook binary managed by vite-plus (vp config)
         "@commitlint/cli",
@@ -20,12 +18,12 @@
         "oxlint-tsgolint",
         // TypeScript compiler implementation; resolved implicitly by the build toolchain
         "@typescript/native-preview",
+        // Enforced in pnpm-workspace.yaml to exist since it's needed for Vite+
+        "vitest",
       ],
     },
 
     "apps/server": {
-      // vite.config.ts uses `vite-plus` not `vite`, so it isn't auto-detected
-      "entry": ["vite.config.ts"],
       "ignoreDependencies": [
         // Used as a Node.js loader via `node --import tsx`, not as a standalone binary
         "tsx",
@@ -33,7 +31,6 @@
     },
 
     "apps/web": {
-      // src/server.ts is the Nitro server entry; not a convention knip knows about
       "entry": ["src/server.ts", "src/start.ts", "src/router.tsx"],
       "ignoreDependencies": [
         // Loaded via CSS `url()` in shared/styles/fonts.css, not via JS import
