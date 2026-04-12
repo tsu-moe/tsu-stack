@@ -6,7 +6,7 @@ export const authQueryKeys = {
   user: ["user"],
 };
 
-export function getAuthQueryOptions() {
+export function getAuthUserQueryOptions() {
   return queryOptions({
     staleTime: 1000 * 60 * 5, // 5 minute (matches /packages/auth/src/index.ts)
     gcTime: 1000 * 60 * 10, // 10 minutes

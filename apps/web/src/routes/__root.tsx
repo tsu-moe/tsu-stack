@@ -6,7 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { type orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
 import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
-import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { getLocale } from "@tsu-stack/i18n/runtime";
 import { type getLogger } from "@tsu-stack/logger/client";
@@ -38,7 +38,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     if (!preload) {
       // Prefetch (don't await) the user data on app load to have it ready for any route that needs it, and to set the auth state early
       // oxlint-disable-next-line typescript-eslint(no-floating-promises)
-      context.queryClient.prefetchQuery(getAuthQueryOptions());
+      context.queryClient.prefetchQuery(getAuthUserQueryOptions());
     }
   },
   head: () => {
