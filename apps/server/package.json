@@ -26,7 +26,6 @@
     "@tsu-stack/db": "workspace:*",
     "@tsu-stack/env": "workspace:*",
     "@tsu-stack/logger": "workspace:*",
-    "better-auth": "catalog:",
     "hono": "catalog:",
     "zod": "catalog:"
   },

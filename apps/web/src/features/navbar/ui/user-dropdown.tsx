@@ -1,12 +1,6 @@
-import {
-  IconContract,
-  IconGraph,
-  IconLock,
-  IconLogout,
-  IconUserSquareRounded,
-} from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { FileText, BarChart2, Lock, LogOut, UserSquare } from "lucide-react";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
@@ -52,7 +46,7 @@ export function UserDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button aria-label="Open account menu" size="icon" variant="ghost">
-          <IconUserSquareRounded aria-hidden="true" />
+          <UserSquare aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="max-w-sm min-w-fit">
@@ -74,7 +68,7 @@ export function UserDropdown() {
         <DropdownMenuGroup>
           <DropdownMenuItem asChild className="cursor-pointer">
             <Link to="/dashboard">
-              <IconGraph aria-hidden="true" className="opacity-60" size={16} />
+              <BarChart2 aria-hidden="true" className="opacity-60" size={16} />
               <span>{m.user_dropdown__dashboard()}</span>
             </Link>
           </DropdownMenuItem>
@@ -83,20 +77,20 @@ export function UserDropdown() {
         <DropdownMenuGroup>
           <DropdownMenuItem asChild className="cursor-pointer">
             <Link to="/privacy-policy">
-              <IconLock aria-hidden="true" className="opacity-60" size={16} />
+              <Lock aria-hidden="true" className="opacity-60" size={16} />
               <span>{m.user_dropdown__privacy_policy()}</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="cursor-pointer">
             <Link to="/terms-of-service">
-              <IconContract aria-hidden="true" className="opacity-60" size={16} />
+              <FileText aria-hidden="true" className="opacity-60" size={16} />
               <span>{m.user_dropdown__terms_of_service()}</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" variant="destructive" onClick={handleSignOut}>
-          <IconLogout aria-hidden="true" className="opacity-60" />
+          <LogOut aria-hidden="true" className="opacity-60" />
           <button onClick={handleSignOut}>{m.user_dropdown__logout()}</button>
         </DropdownMenuItem>
       </DropdownMenuContent>

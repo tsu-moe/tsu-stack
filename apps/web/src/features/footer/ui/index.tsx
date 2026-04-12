@@ -1,4 +1,4 @@
-import { IconBrandGithub } from "@tabler/icons-react";
+import { FaGithub } from "react-icons/fa";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { type LinkProps } from "@tsu-stack/i18n/tanstack-start/components/link";
@@ -30,7 +30,7 @@ const socialLinks: (FooterLink & { icon: React.ReactNode })[] = [
   },
   {
     href: "https://github.com/tsu-moe/tsu-stack",
-    icon: <IconBrandGithub className="size-4" />,
+    icon: <FaGithub className="size-4" />,
     label: m.footer__github(),
   },
 ];

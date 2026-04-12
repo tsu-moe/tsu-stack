@@ -6,18 +6,6 @@ settings:
 
 catalogs:
   default:
-    '@babel/core':
-      specifier: ^7.29.0
-      version: 7.29.0
-    '@base-ui/react':
-      specifier: ^1.3.0
-      version: 1.3.0
-    '@better-auth/drizzle-adapter':
-      specifier: https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@6913
-      version: 1.5.0-beta.13
-    '@bprogress/react':
-      specifier: ^1.2.7
-      version: 1.2.7
     '@commitlint/cli':
       specifier: ^20.5.0
       version: 20.5.0
@@ -27,240 +15,27 @@ catalogs:
     '@dotenvx/dotenvx':
       specifier: 1.61.0
       version: 1.61.0
-    '@fontsource-variable/inter':
-      specifier: ^5.2.8
-      version: 5.2.8
-    '@hono/node-server':
-      specifier: ^1.19.13
-      version: 1.19.13
-    '@inlang/cli':
-      specifier: ^3.1.9
-      version: 3.1.9
-    '@inlang/paraglide-js':
-      specifier: ^2.15.3
-      version: 2.15.3
-    '@logtape/logtape':
-      specifier: ^2.0.5
-      version: 2.0.5
-    '@lonik/oh-image':
-      specifier: ^3.3.0
-      version: 3.3.0
-    '@mdx-js/rollup':
-      specifier: ^3.1.1
-      version: 3.1.1
-    '@orpc/client':
-      specifier: ^1.13.13
-      version: 1.13.13
-    '@orpc/json-schema':
-      specifier: ^1.13.13
-      version: 1.13.13
-    '@orpc/openapi':
-      specifier: ^1.13.13
-      version: 1.13.13
-    '@orpc/server':
-      specifier: ^1.13.13
-      version: 1.13.13
-    '@orpc/tanstack-query':
-      specifier: ^1.13.13
-      version: 1.13.13
-    '@orpc/zod':
-      specifier: ^1.13.13
-      version: 1.13.13
-    '@paper-design/shaders-react':
-      specifier: ^0.0.72
-      version: 0.0.72
-    '@radix-ui/react-dialog':
-      specifier: ^1.1.15
-      version: 1.1.15
-    '@radix-ui/react-icons':
-      specifier: ^1.3.2
-      version: 1.3.2
-    '@radix-ui/react-navigation-menu':
-      specifier: ^1.2.14
-      version: 1.2.14
-    '@radix-ui/react-slot':
-      specifier: ^1.2.4
-      version: 1.2.4
-    '@remixicon/react':
-      specifier: ^4.9.0
-      version: 4.9.0
-    '@rolldown/plugin-babel':
-      specifier: ^0.2.2
-      version: 0.2.2
-    '@t3-oss/env-core':
-      specifier: ^0.13.11
-      version: 0.13.11
-    '@tabler/icons-react':
-      specifier: ^3.41.1
-      version: 3.41.1
-    '@tailwindcss/vite':
-      specifier: ^4.2.2
-      version: 4.2.2
-    '@tanstack/devtools-a11y':
-      specifier: ^0.1.2
-      version: 0.1.2
-    '@tanstack/devtools-vite':
-      specifier: ^0.6.0
-      version: 0.6.0
     '@tanstack/eslint-plugin-query':
       specifier: ^5.96.2
       version: 5.96.2
     '@tanstack/eslint-plugin-router':
       specifier: ^1.161.6
       version: 1.161.6
-    '@tanstack/react-devtools':
-      specifier: ^0.10.2
-      version: 0.10.2
-    '@tanstack/react-form':
-      specifier: ^1.28.6
-      version: 1.28.6
-    '@tanstack/react-form-devtools':
-      specifier: ^0.2.20
-      version: 0.2.20
-    '@tanstack/react-form-start':
-      specifier: ^1.28.6
-      version: 1.28.6
-    '@tanstack/react-query':
-      specifier: ^5.96.2
-      version: 5.96.2
-    '@tanstack/react-query-devtools':
-      specifier: ^5.96.2
-      version: 5.96.2
-    '@tanstack/react-query-persist-client':
-      specifier: ^5.96.2
-      version: 5.96.2
-    '@tanstack/react-router':
-      specifier: ^1.168.10
-      version: 1.168.10
-    '@tanstack/react-router-devtools':
-      specifier: ^1.166.11
-      version: 1.166.11
-    '@tanstack/react-router-ssr-query':
-      specifier: ^1.166.10
-      version: 1.166.10
-    '@tanstack/react-start':
-      specifier: ^1.167.16
-      version: 1.167.16
-    '@tanstack/zod-adapter':
-      specifier: ^1.166.9
-      version: 1.166.9
-    '@types/babel__core':
-      specifier: ^7.20.5
-      version: 7.20.5
-    '@types/mdx':
-      specifier: ^2.0.13
-      version: 2.0.13
-    '@types/node':
-      specifier: ^25.5.2
-      version: 25.5.2
-    '@types/react':
-      specifier: ^19.2.14
-      version: 19.2.14
-    '@types/react-dom':
-      specifier: ^19.2.3
-      version: 19.2.3
     '@typescript/native-preview':
       specifier: 7.0.0-dev.20260411.1
       version: 7.0.0-dev.20260411.1
-    '@vitejs/plugin-react':
-      specifier: ^6.0.1
-      version: 6.0.1
-    babel-plugin-react-compiler:
-      specifier: ^1.0.0
-      version: 1.0.0
-    better-auth:
-      specifier: 1.6.1
-      version: 1.6.1
-    class-variance-authority:
-      specifier: ^0.7.1
-      version: 0.7.1
-    clsx:
-      specifier: ^2.1.1
-      version: 2.1.1
-    cross-env:
-      specifier: ^10.1.0
-      version: 10.1.0
-    defu:
-      specifier: ^6.1.7
-      version: 6.1.7
-    drizzle-kit:
-      specifier: beta
-      version: 1.0.0-beta.21
-    drizzle-orm:
-      specifier: beta
-      version: 1.0.0-beta.20
     eslint-plugin-fsd-lint:
       specifier: ^1.0.11
       version: 1.0.11
     eslint-plugin-react-hooks:
       specifier: ^7.0.1
       version: 7.0.1
-    hono:
-      specifier: ^4.12.12
-      version: 4.12.12
-    localforage:
-      specifier: ^1.10.0
-      version: 1.10.0
-    motion:
-      specifier: ^12.38.0
-      version: 12.38.0
-    nanoid:
-      specifier: ^5.1.7
-      version: 5.1.7
-    next-themes:
-      specifier: ^0.4.6
-      version: 0.4.6
-    nitro:
-      specifier: npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e
-      version: 3.0.1-20260128-211656-ae83c97e
     oxlint-tsgolint:
       specifier: ^0.20.0
       version: 0.20.0
-    postgres:
-      specifier: ^3.4.9
-      version: 3.4.9
-    radix-ui:
-      specifier: ^1.4.3
-      version: 1.4.3
-    react:
-      specifier: ^19.2.5
-      version: 19.2.5
-    react-dom:
-      specifier: ^19.2.5
-      version: 19.2.5
-    shadcn:
-      specifier: ^4.2.0
-      version: 4.2.0
-    sharp:
-      specifier: ^0.34.5
-      version: 0.34.5
-    sonner:
-      specifier: ^2.0.7
-      version: 2.0.7
-    std-env:
-      specifier: ^4.0.0
-      version: 4.0.0
-    tailwind-merge:
-      specifier: ^3.5.0
-      version: 3.5.0
-    tailwindcss:
-      specifier: ^4.2.2
-      version: 4.2.2
-    tsx:
-      specifier: ^4.21.0
-      version: 4.21.0
-    tw-animate-css:
-      specifier: ^1.4.0
-      version: 1.4.0
-    typescript:
-      specifier: ^6.0.2
-      version: 6.0.2
     vite-plus:
       specifier: 0.1.16
       version: 0.1.16
-    zod:
-      specifier: ^4.3.6
-      version: 4.3.6
 
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@latest
@@ -376,12 +151,6 @@ importers:
       '@paper-design/shaders-react':
         specifier: 'catalog:'
         version: 0.0.72(@types/react@19.2.14)(react@19.2.5)
-      '@remixicon/react':
-        specifier: 'catalog:'
-        version: 4.9.0(react@19.2.5)
-      '@tabler/icons-react':
-        specifier: 'catalog:'
-        version: 3.41.1(react@19.2.5)
       '@tanstack/react-form':
         specifier: 'catalog:'
         version: 1.28.6(@tanstack/react-start@1.167.16(@voidzero-dev/vite-plus-core@0.1.12(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.2))(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -423,10 +192,13 @@ importers:
         version: link:../../packages/ui
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)
+        version: 1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)
       localforage:
         specifier: 'catalog:'
         version: 1.10.0
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.8.0(react@19.2.5)
       motion:
         specifier: 'catalog:'
         version: 12.38.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -442,6 +214,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.2.5(react@19.2.5)
+      react-icons:
+        specifier: 'catalog:'
+        version: 5.6.0(react@19.2.5)
       sharp:
         specifier: 'catalog:'
         version: 0.34.5
@@ -520,7 +295,7 @@ importers:
         version: 10.1.0
       nitro:
         specifier: 'catalog:'
-        version: nitro-nightly@3.0.1-20260128-211656-ae83c97e(@azure/identity@4.13.0)(@voidzero-dev/vite-plus-core@0.1.12(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.2))(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))(lru-cache@11.2.7)(rolldown@1.0.0-rc.12)(rollup@4.60.0)
+        version: nitro-nightly@3.0.1-20260128-211656-ae83c97e(@azure/identity@4.13.0)(@voidzero-dev/vite-plus-core@0.1.12(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.2))(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))(lru-cache@11.2.7)(rolldown@1.0.0-rc.12)(rollup@4.60.0)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.2.2
@@ -627,7 +402,7 @@ importers:
         version: link:../logger
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)
+        version: 1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)
       nanoid:
         specifier: 'catalog:'
         version: 5.1.7
@@ -752,21 +527,12 @@ importers:
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@radix-ui/react-icons':
-        specifier: 'catalog:'
-        version: 1.3.2(react@19.2.5)
       '@radix-ui/react-navigation-menu':
         specifier: 'catalog:'
         version: 1.2.14(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@radix-ui/react-slot':
         specifier: 'catalog:'
         version: 1.2.4(@types/react@19.2.14)(react@19.2.5)
-      '@remixicon/react':
-        specifier: 'catalog:'
-        version: 4.9.0(react@19.2.5)
-      '@tabler/icons-react':
-        specifier: 'catalog:'
-        version: 3.41.1(react@19.2.5)
       '@tanstack/react-form-start':
         specifier: 'catalog:'
         version: 1.28.6(@tanstack/react-start@1.167.16(crossws@0.4.4(srvx@0.11.13))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vite@8.0.0(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2)))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -779,6 +545,9 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.8.0(react@19.2.5)
       motion:
         specifier: 'catalog:'
         version: 12.38.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2952,11 +2721,6 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@radix-ui/react-icons@1.3.2':
-    resolution: {integrity: sha512-fyQIhGDhzfc9pK2kH6Pl9c4BDJGfMkPqkyIgYDthyNYoNg3wVhoJMMh19WS4Up/1KMPFVpNsT2q3WmXn2N1m6g==}
-    peerDependencies:
-      react: ^16.x || ^17.x || ^18.x || ^19.0.0 || ^19.0.0-rc
-
   '@radix-ui/react-id@1.1.1':
     resolution: {integrity: sha512-kGkGegYIdQsOb4XjsfM97rXsiHaBwco+hFI66oO4s9LU+PLAC5oJ7khdOVFxkhsmlbpUqDAvXw11CluXP+jkHg==}
     peerDependencies:
@@ -3406,11 +3170,6 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@remixicon/react@4.9.0':
-    resolution: {integrity: sha512-5/jLDD4DtKxH2B4QVXTobvV1C2uL8ab9D5yAYNtFt+w80O0Ys1xFOrspqROL3fjrZi+7ElFUWE37hBfaAl6U+Q==}
-    peerDependencies:
-      react: '>=18.2.0'
-
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     resolution: {integrity: sha512-pv1y2Fv0JybcykuiiD3qBOBdz6RteYojRFY1d+b95WVuzx211CRh+ytI/+9iVyWQ6koTh5dawe4S/yRfOFjgaA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3848,14 +3607,6 @@ packages:
         optional: true
       zod:
         optional: true
-
-  '@tabler/icons-react@3.41.1':
-    resolution: {integrity: sha512-kUgweE+DJtAlMZVIns1FTDdcbpRVnkK7ZpUOXmoxy3JAF0rSHj0TcP4VHF14+gMJGnF+psH2Zt26BLT6owetBA==}
-    peerDependencies:
-      react: '>= 16'
-
-  '@tabler/icons@3.41.1':
-    resolution: {integrity: sha512-OaRnVbRmH2nHtFeg+RmMJ/7m2oBIF9XCJAUD5gQnMrpK9f05ydj8MZrAf3NZQqOXyxGN1UBL0D5IKLLEUfr74Q==}
 
   '@tailwindcss/node@4.2.2':
     resolution: {integrity: sha512-pXS+wJ2gZpVXqFaUEjojq7jzMpTGf8rU6ipJz5ovJV6PUGmlJ+jvIwGrzdHdQ80Sg+wmQxUFuoW1UAAwHNEdFA==}
@@ -5438,8 +5189,8 @@ packages:
       zod:
         optional: true
 
-  drizzle-orm@1.0.0-beta.20:
-    resolution: {integrity: sha512-7qiuw+Z6yGr+ywt3PS5dP6UCfdymIuFT/ni6GnPGzLhkBIolNBTo4ByMBWTxJ7dW/Ya6d73GtkeuKfcVcriVHA==}
+  drizzle-orm@1.0.0-beta.21:
+    resolution: {integrity: sha512-HZcIbVn5J9T/Z91Wj12Pn7Pi8/1aykS/GPJf2lXeZnEuPjxaBfQ+YAt0Sl+XI+9R/D1BpK+2fdIqbpuaTbcvqA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -6458,6 +6209,11 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  lucide-react@1.8.0:
+    resolution: {integrity: sha512-WuvlsjngSk7TnTBJ1hsCy3ql9V9VOdcPkd3PKcSmM34vJD8KG6molxz7m7zbYFgICwsanQWmJ13JlYs4Zp7Arw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -7030,6 +6786,11 @@ packages:
     resolution: {integrity: sha512-J5bAZz+DXMMwW/wV3xzKke59Af6CHY7G4uYLN1OvBcKEsWOs4pQExj86BBKamxl/Ik5bx9whOrvBlSDfWzgSag==}
     peerDependencies:
       react: ^19.2.5
+
+  react-icons@5.6.0:
+    resolution: {integrity: sha512-RH93p5ki6LfOiIt0UtDyNg/cee+HLVR6cHHtW3wALfo+eOHTp8RnU2kRkI6E+H19zMIs03DyxUG/GfZMOGvmiA==}
+    peerDependencies:
+      react: '*'
 
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
@@ -9882,10 +9643,6 @@ snapshots:
       '@types/react': 19.2.14
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
 
-  '@radix-ui/react-icons@1.3.2(react@19.2.5)':
-    dependencies:
-      react: 19.2.5
-
   '@radix-ui/react-id@1.1.1(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
       '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.14)(react@19.2.5)
@@ -10391,10 +10148,6 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@remixicon/react@4.9.0(react@19.2.5)':
-    dependencies:
-      react: 19.2.5
-
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     optional: true
 
@@ -10643,13 +10396,6 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.2
       zod: 4.3.6
-
-  '@tabler/icons-react@3.41.1(react@19.2.5)':
-    dependencies:
-      '@tabler/icons': 3.41.1
-      react: 19.2.5
-
-  '@tabler/icons@3.41.1': {}
 
   '@tailwindcss/node@4.2.2':
     dependencies:
@@ -11591,7 +11337,7 @@ snapshots:
       tinybench: 2.9.0
       tinyexec: 1.0.4
       tinyglobby: 0.2.15
-      vite: 8.0.0(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 8.0.0(@types/node@25.5.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2)
       ws: 8.19.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
@@ -12049,9 +11795,9 @@ snapshots:
 
   dayjs@1.11.20: {}
 
-  db0@0.3.4(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)):
+  db0@0.3.4(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)):
     optionalDependencies:
-      drizzle-orm: 1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)
+      drizzle-orm: 1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)
 
   debug@4.4.3:
     dependencies:
@@ -12144,7 +11890,7 @@ snapshots:
       postgres: 3.4.9
       zod: 4.3.6
 
-  drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6):
+  drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6):
     dependencies:
       '@types/mssql': 9.1.9(@azure/core-client@1.10.1)
       mssql: 11.0.1(@azure/core-client@1.10.1)
@@ -13117,6 +12863,10 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  lucide-react@1.8.0(react@19.2.5):
+    dependencies:
+      react: 19.2.5
+
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -13544,11 +13294,11 @@ snapshots:
 
   nf3@0.3.14: {}
 
-  nitro-nightly@3.0.1-20260128-211656-ae83c97e(@azure/identity@4.13.0)(@voidzero-dev/vite-plus-core@0.1.12(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.2))(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))(lru-cache@11.2.7)(rolldown@1.0.0-rc.12)(rollup@4.60.0):
+  nitro-nightly@3.0.1-20260128-211656-ae83c97e(@azure/identity@4.13.0)(@voidzero-dev/vite-plus-core@0.1.12(@types/node@25.5.2)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.2))(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))(lru-cache@11.2.7)(rolldown@1.0.0-rc.12)(rollup@4.60.0):
     dependencies:
       consola: 3.4.2
       crossws: 0.4.4(srvx@0.10.1)
-      db0: 0.3.4(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))
+      db0: 0.3.4(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))
       h3: 2.0.1-rc.20(crossws@0.4.4(srvx@0.10.1))
       jiti: 2.6.1
       nf3: 0.3.14
@@ -13559,7 +13309,7 @@ snapshots:
       srvx: 0.10.1
       undici: 7.24.4
       unenv: 2.0.0-rc.24
-      unstorage: 2.0.0-alpha.7(@azure/identity@4.13.0)(db0@0.3.4(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)))(lru-cache@11.2.7)(ofetch@2.0.0-alpha.3)
+      unstorage: 2.0.0-alpha.7(@azure/identity@4.13.0)(db0@0.3.4(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)))(lru-cache@11.2.7)(ofetch@2.0.0-alpha.3)
     optionalDependencies:
       rolldown: 1.0.0-rc.12
       rollup: 4.60.0
@@ -14011,6 +13761,10 @@ snapshots:
     dependencies:
       react: 19.2.5
       scheduler: 0.27.0
+
+  react-icons@5.6.0(react@19.2.5):
+    dependencies:
+      react: 19.2.5
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.2.5):
     dependencies:
@@ -14703,10 +14457,10 @@ snapshots:
       picomatch: 4.0.4
       webpack-virtual-modules: 0.6.2
 
-  unstorage@2.0.0-alpha.7(@azure/identity@4.13.0)(db0@0.3.4(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)))(lru-cache@11.2.7)(ofetch@2.0.0-alpha.3):
+  unstorage@2.0.0-alpha.7(@azure/identity@4.13.0)(db0@0.3.4(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6)))(lru-cache@11.2.7)(ofetch@2.0.0-alpha.3):
     optionalDependencies:
       '@azure/identity': 4.13.0
-      db0: 0.3.4(drizzle-orm@1.0.0-beta.20(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))
+      db0: 0.3.4(drizzle-orm@1.0.0-beta.21(@opentelemetry/api@1.9.1)(@types/mssql@9.1.9(@azure/core-client@1.10.1))(mssql@11.0.1(@azure/core-client@1.10.1))(postgres@3.4.9)(zod@4.3.6))
       lru-cache: 11.2.7
       ofetch: 2.0.0-alpha.3
 
@@ -14821,6 +14575,21 @@ snapshots:
     optionalDependencies:
       '@types/node': 25.5.2
       esbuild: 0.27.4
+      fsevents: 2.3.3
+      jiti: 2.6.1
+      tsx: 4.21.0
+      yaml: 2.8.2
+
+  vite@8.0.0(@types/node@25.5.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2):
+    dependencies:
+      '@oxc-project/runtime': 0.115.0
+      lightningcss: 1.32.0
+      picomatch: 4.0.4
+      postcss: 8.5.8
+      rolldown: 1.0.0-rc.9
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      '@types/node': 25.5.2
       fsevents: 2.3.3
       jiti: 2.6.1
       tsx: 4.21.0

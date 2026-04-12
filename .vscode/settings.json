@@ -48,6 +48,7 @@
     "source.fixAll.oxc": "always"
   },
 
+  // Allow loading these json schemas
   "json.schemas": [
     {
       "fileMatch": ["components.json"],
@@ -56,6 +57,10 @@
     {
       "fileMatch": ["packages/i18n/messages/*.json"],
       "url": "https://inlang.com/schema/inlang-message-format"
+    },
+    {
+      "fileMatch": ["knip.json", "knip.jsonc"],
+      "url": "https://unpkg.com/knip@6/schema.json"
     }
   ]
 }

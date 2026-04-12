@@ -1,4 +1,4 @@
-import { IconBrandGithub } from "@tabler/icons-react";
+import { FaGithub } from "react-icons/fa";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
@@ -25,7 +25,7 @@ export function CallToAction() {
         <div className="flex items-center justify-center gap-2">
           <Button asChild variant="outline">
             <Link target="_blank" href="https://github.com/tsu-moe/tsu-stack">
-              <IconBrandGithub />
+              <FaGithub />
               {m.home_page__cta_github()}
             </Link>
           </Button>
