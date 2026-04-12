@@ -2,7 +2,7 @@ import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
-import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { type NavigateTo } from "@tsu-stack/i18n/tanstack-start/types";
 import { redirect } from "@tsu-stack/i18n/tanstack-start/utils/redirect";
 import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/utils/validate-navigate-to";
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
   component: Outlet,
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.ensureQueryData({
-      ...getAuthQueryOptions(),
+      ...getAuthUserQueryOptions(),
       revalidateIfStale: true,
     });
 

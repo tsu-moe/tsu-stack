@@ -5,7 +5,7 @@ import React, { Suspense } from "react";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
 import { Button } from "@tsu-stack/ui/components/button";
@@ -84,7 +84,7 @@ function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
     await authClient.signOut({
       fetchOptions: {
         onResponse: async () => {
-          await queryClient.invalidateQueries(getAuthQueryOptions());
+          await queryClient.invalidateQueries(getAuthUserQueryOptions());
           await router.invalidate();
           onNavigate();
         },

@@ -10,7 +10,7 @@ import { useRouter } from "@tanstack/react-router";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
@@ -37,7 +37,7 @@ export function UserDropdown() {
       fetchOptions: {
         onResponse: async () => {
           // Invalidate to sync across all tabs
-          await queryClient.invalidateQueries(getAuthQueryOptions());
+          await queryClient.invalidateQueries(getAuthUserQueryOptions());
           await router.invalidate();
         },
       },

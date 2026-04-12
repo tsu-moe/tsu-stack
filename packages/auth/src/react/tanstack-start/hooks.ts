@@ -1,13 +1,13 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
-import { getAuthQueryOptions } from "#@/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "#@/react/tanstack-start/queries";
 
 export function useAuth() {
-  const { data: user, isPending } = useQuery(getAuthQueryOptions());
+  const { data: user, isPending } = useQuery(getAuthUserQueryOptions());
   return { isPending, user };
 }
 
 export function useAuthSuspense() {
-  const { data: user } = useSuspenseQuery(getAuthQueryOptions());
+  const { data: user } = useSuspenseQuery(getAuthUserQueryOptions());
   return { user };
 }

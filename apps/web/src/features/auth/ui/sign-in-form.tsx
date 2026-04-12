@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
@@ -54,7 +54,7 @@ export function SignInForm({
     },
     onSuccess: async () => {
       // Invalidate auth cache to force refetch with new user data
-      await queryClient.invalidateQueries(getAuthQueryOptions());
+      await queryClient.invalidateQueries(getAuthUserQueryOptions());
       await navigate({
         to: redirectTo,
       });
