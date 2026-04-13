@@ -1,5 +1,34 @@
 import { defineConfig } from "vite-plus";
 
+const fsdEslintPluginOptions = {
+  rootPath: "/apps/web/src/",
+  alias: {
+    value: "@",
+    withSlash: true,
+  },
+  layers: {
+    app: {
+      pattern: "routes",
+    },
+    pages: {
+      pattern: "pages",
+    },
+    widgets: {
+      pattern: "widgets",
+    },
+    features: {
+      pattern: "features",
+    },
+    entities: {
+      pattern: "entities",
+    },
+    shared: {
+      pattern: "shared",
+    },
+  },
+  ignoreImportPatterns: ["\\.css$"],
+};
+
 /**
  * Defines top-level Vite+ configurations for the different tools in its ecosystem.
  * @see {@link https://viteplus.dev/config}
@@ -145,26 +174,20 @@ export default defineConfig({
        */
       "fsd/forbidden-imports": [
         "error",
-        {
-          alias: {
-            value: "@",
-            withSlash: false,
-          },
-          rootPath: "/apps/web/src/",
-        },
+        { ...fsdEslintPluginOptions, alias: { value: "@", withSlash: false } },
       ],
-      "fsd/no-relative-imports": ["error", { allowSameSlice: true }],
-      "fsd/no-public-api-sidestep": "error",
+      "fsd/no-relative-imports": ["error", { ...fsdEslintPluginOptions, allowSameSlice: true }],
+      "fsd/no-public-api-sidestep": ["error", fsdEslintPluginOptions],
       "fsd/no-cross-slice-dependency": [
         "error",
         {
+          ...fsdEslintPluginOptions,
           allowTypeImports: false,
           excludeLayers: ["shared"],
           featuresOnly: false,
-          rootPath: "/apps/web/src/",
         },
       ],
-      "fsd/no-ui-in-business-logic": "error",
+      "fsd/no-ui-in-business-logic": ["error", fsdEslintPluginOptions],
       "fsd/no-global-store-imports": "error",
 
       // Tanstack Router rules, ref: https://tanstack.com/router/latest/docs/eslint/eslint-plugin-router
