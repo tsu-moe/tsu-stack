@@ -12,12 +12,10 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { type orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
 import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { getLocale } from "@tsu-stack/i18n/runtime";
-import { type getLogger } from "@tsu-stack/logger/client";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
 
 import { DefaultErrorPage } from "@/pages/default-error";
@@ -30,9 +28,7 @@ import { appConfig } from "@/config/app.config";
 
 // Root route with shared context for the entire app, inject them in router.tsx
 type RouterAppContext = {
-  orpc: typeof orpc;
   queryClient: QueryClient;
-  logger: ReturnType<typeof getLogger>;
   user: AuthQueryResult;
 };
 
