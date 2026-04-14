@@ -31,7 +31,7 @@ export function HeroSection() {
                   `,
                 }}
                 colorBack="#00000000"
-                colorFront="var(--shader-color)"
+                colorFront="#EC4E02"
                 shape="warp"
                 type="4x4"
                 speed={0.2}
