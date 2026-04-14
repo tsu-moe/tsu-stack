@@ -17,7 +17,7 @@ export function HeroSection() {
       style={{ "--shader-color": "#EC4E02" } as React.CSSProperties}
     >
       <div className="relative w-full">
-        <div className="relative -top-[calc(var(--navbar-height)+1.5rem)] flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background pt-(--navbar-height)">
+        <div className="relative -top-[calc(var(--navbar-height)+1.75rem)] flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background pt-(--navbar-height)">
           <Suspense fallback={null}>
             <div className="pointer-events-none absolute inset-0 z-0 animate-in opacity-40 mix-blend-multiply fade-in dark:opacity-60 dark:mix-blend-screen">
               <Dithering
@@ -25,9 +25,10 @@ export function HeroSection() {
                   WebkitMaskComposite: "source-in",
                   maskComposite: "intersect",
                   maskImage: `
-                    linear-gradient(to top, transparent 3%, black 25%, black 100%),
-                    linear-gradient(to bottom, transparent 12.5%, black 25%, black 100%),
-                    linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%)
+                    linear-gradient(to top, transparent 4%, black 30%, black 100%),
+                    linear-gradient(to bottom, transparent 12%, black 30%, black 100%),
+                    linear-gradient(to right, transparent 0%, black 10%, black 75%, transparent 100%),
+                    linear-gradient(to left, transparent 0%, black 10%, black 75%, transparent 100%)
                   `,
                 }}
                 colorBack="#00000000"
@@ -56,7 +57,7 @@ export function HeroSection() {
               {m.home_page__hero_beta_badge()}
             </div>
 
-            <h2 className="font-display mb-8 text-7xl leading-[0.95] font-medium tracking-wide text-balance text-foreground sm:text-8xl lg:text-[112px]">
+            <h2 className="font-display mb-8 text-7xl leading-[0.95] font-medium -tracking-[0.005em] text-balance text-foreground sm:text-8xl 2xl:text-[108px]">
               {m.home_page__hero_title_line_1()} <br />
               <span className="text-foreground">{m.home_page__hero_title_line_2()}</span>
             </h2>
