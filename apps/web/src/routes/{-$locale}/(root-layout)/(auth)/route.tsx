@@ -10,6 +10,8 @@ import { redirect } from "@tsu-stack/i18n/tanstack-start/utils/redirect";
 import { stripLocalePrefix } from "@tsu-stack/i18n/tanstack-start/utils/strip-locale-prefix";
 import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/utils/validate-navigate-to";
 
+import { useLogger } from "@/shared/providers/logger-provider";
+
 import { routeTree } from "@/routeTree.gen";
 
 /**
@@ -58,7 +60,7 @@ function RequiresAuthLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: user } = useQuery(getAuthUserQueryOptions());
-  const { logger } = Route.useRouteContext();
+  const logger = useLogger();
 
   useEffect(() => {
     if (user === null) {
