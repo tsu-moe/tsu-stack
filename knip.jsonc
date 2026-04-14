@@ -33,8 +33,6 @@
     "apps/web": {
       "entry": ["src/server.ts", "src/start.ts", "src/router.tsx"],
       "ignoreDependencies": [
-        // Loaded via CSS `url()` in shared/styles/fonts.css, not via JS import
-        "@fontsource-variable/inter",
         // Peer/companion package required at runtime by @tanstack/devtools-vite
         "@tanstack/devtools-a11y",
         // Used inside the vite.config.ts `run.tasks.build.command` string; not an import

@@ -3,5 +3,12 @@
  * @see {@link https://github.com/fontsource/fontsource/issues/1038}
  */
 declare module "*.css";
-declare module "@fontsource/*" {}
-declare module "@fontsource-variable/*" {}
+
+declare module "@fontsource/*" {
+  const src: string;
+  export default src;
+}
+declare module "@fontsource-variable/*" {
+  const src: string;
+  export default src;
+}
