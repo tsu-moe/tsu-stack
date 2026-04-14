@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@bprogress/react": "catalog:",
-    "@fontsource-variable/inter": "catalog:",
+    "@fontsource-variable/geist": "catalog:",
+    "@fontsource-variable/geist-mono": "catalog:",
+    "@fontsource/instrument-serif": "catalog:",
     "@lonik/oh-image": "catalog:",
     "@paper-design/shaders-react": "catalog:",
     "@tanstack/react-form": "catalog:",
