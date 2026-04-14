@@ -37,20 +37,20 @@ catalog:
   "@tanstack/react-query": ^5.99.0
   "@tanstack/react-query-devtools": ^5.99.0
   "@tanstack/react-query-persist-client": ^5.99.0
-  "@tanstack/react-router": ^1.168.19
+  "@tanstack/react-router": ^1.168.21
   "@tanstack/react-router-devtools": ^1.166.13
   "@tanstack/react-router-ssr-query": ^1.166.11
-  "@tanstack/react-start": ^1.167.34
+  "@tanstack/react-start": ^1.167.39
   "@tanstack/zod-adapter": ^1.166.9
   "@types/babel__core": ^7.20.5
   "@types/mdx": ^2.0.13
   "@types/node": ^25.6.0
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260413.1
+  "@typescript/native-preview": 7.0.0-dev.20260414.1
   "@vitejs/plugin-react": ^6.0.1
   babel-plugin-react-compiler: ^1.0.0
-  better-auth: 1.6.2
+  better-auth: 1.6.3
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
   cross-env: ^10.1.0
@@ -64,7 +64,7 @@ catalog:
   lucide-react: ^1.8.0
   next-themes: ^0.4.6
   nitro: npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e
-  oxlint-tsgolint: ^0.20.0
+  oxlint-tsgolint: ^0.21.0
   postgres: ^3.4.9
   radix-ui: ^1.4.3
   react: ^19.2.5
