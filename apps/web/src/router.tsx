@@ -2,8 +2,7 @@ import { type ErrorRouteComponent } from "@tanstack/react-router";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
-import { orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
-import { LOGGER_CATEGORIES_CLIENT, configureLoggerSync, getLogger } from "@tsu-stack/logger/client";
+import { configureLoggerSync } from "@tsu-stack/logger/client";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 
 import { DefaultNotFoundPage } from "@/pages/default-not-found";
@@ -14,8 +13,6 @@ import { QueryClientProvider, getQueryClient } from "@/shared/providers/query-cl
 import { routeTree } from "@/routeTree.gen";
 
 configureLoggerSync();
-
-const logger = getLogger(LOGGER_CATEGORIES_CLIENT.WEB_CLIENT);
 
 export function getRouter() {
   const queryClient = getQueryClient();
@@ -42,7 +39,7 @@ export function getRouter() {
     // https://tanstack.com/router/latest/docs/guide/render-optimizations
     defaultStructuralSharing: true,
     // Global initial context defined in __root's RouterAppContext type goes here
-    context: { logger, orpc, queryClient, user: null },
+    context: { queryClient, user: null },
     routeTree,
     scrollRestoration: true,
     Wrap: ({ children }) => (

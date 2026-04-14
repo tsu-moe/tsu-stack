@@ -13,7 +13,6 @@ catalog:
   "@fontsource-variable/geist": ^5.2.8
   "@fontsource-variable/geist-mono": ^5.2.7
   "@fontsource/instrument-serif": ^5.2.8
-  "@fontsource/open-sauce-one": ^5.2.5
   "@hono/node-server": ^1.19.14
   "@inlang/cli": ^3.1.9
   "@inlang/paraglide-js": ^2.15.3

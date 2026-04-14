@@ -9,6 +9,7 @@ import { type To } from "@tsu-stack/i18n/tanstack-start/types";
 import { Button } from "@tsu-stack/ui/components/button";
 import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";
 
+import { useLogger } from "@/shared/providers/logger-provider";
 import { Container } from "@/shared/ui/container";
 import { Image } from "@/shared/ui/image";
 
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/playground/")({
 function PlaygroundPage() {
   const healthCheck = useQuery(orpc.health.live.queryOptions());
   const isClient = useIsClient();
+  const logger = useLogger();
 
   return (
     <Container>
@@ -68,14 +70,18 @@ function PlaygroundPage() {
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => {
+              logger.debug("Throwing test error from playground page...");
               throw new Error("Test error");
+              logger.debug("Error thrown!");
             }}
           >
             {m.playground_page__throw_error()}
           </Button>
           <Button
             variant="secondary"
-            onClick={() => toast.info(m.playground_page__test_toast_message)}
+            onClick={() => {
+              toast.info(m.playground_page__test_toast_message);
+            }}
           >
             {m.playground_page__test_toast()}
           </Button>
