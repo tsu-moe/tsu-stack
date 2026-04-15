@@ -13,7 +13,7 @@ FROM base AS installer
 # Use `npm view vite-plus version` to get the latest version of vite-plus for reproducible builds
 # FIXME: Use the documented manual method when it's available
 # @see {@link https://github.com/voidzero-dev/vite-plus/issues/896}
-ARG VITE_PLUS_VERSION=0.1.16
+ARG VITE_PLUS_VERSION=0.1.17
 RUN npm pack "@voidzero-dev/vite-plus-cli-linux-x64-gnu@${VITE_PLUS_VERSION}" \
         --pack-destination /tmp && \
     mkdir -p /root/.vite-plus/bin && \
@@ -24,7 +24,7 @@ ENV PATH="/root/.vite-plus/bin:$PATH"
 
 # This layer only invalidates when dependencies change, not on source changes.
 # --parents preserves directory structure, picking up all workspace packages automatically.
-COPY --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 RUN vp install --frozen-lockfile --ignore-scripts
 
