@@ -133,6 +133,7 @@ export default defineConfig({
       "build/",
       "worker-configuration.d.ts",
       "scripts/",
+      "*.md",
     ],
     jsPlugins: [
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
