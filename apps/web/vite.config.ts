@@ -8,7 +8,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
-import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
 
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
@@ -125,11 +124,7 @@ export default defineConfig({
           staticNodeEnv: true,
         },
       },
-      rsc: {
-        enabled: true,
-      },
     }),
-    rsc(),
     viteReact(),
     /** @see {@link https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler} */
     babel({

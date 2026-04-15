@@ -150,9 +150,6 @@ catalogs:
     '@vitejs/plugin-react':
       specifier: ^6.0.1
       version: 6.0.1
-    '@vitejs/plugin-rsc':
-      specifier: ^0.5.24
-      version: 0.5.24
     babel-plugin-react-compiler:
       specifier: ^1.0.0
       version: 1.0.0
@@ -497,9 +494,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 6.0.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@voidzero-dev/vite-plus-core@0.1.17(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2))(rolldown@1.0.0-rc.15))(@voidzero-dev/vite-plus-core@0.1.17(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2))(babel-plugin-react-compiler@1.0.0)
-      '@vitejs/plugin-rsc':
-        specifier: 'catalog:'
-        version: 0.5.24(@voidzero-dev/vite-plus-core@0.1.17(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       babel-plugin-react-compiler:
         specifier: 'catalog:'
         version: 1.0.0
@@ -9570,6 +9564,7 @@ snapshots:
       turbo-stream: 3.2.0
       vite: '@voidzero-dev/vite-plus-core@0.1.17(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)'
       vitefu: 1.1.3(@voidzero-dev/vite-plus-core@0.1.17(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2))
+    optional: true
 
   '@vitejs/plugin-rsc@0.5.24(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0))':
     dependencies:
@@ -10099,7 +10094,8 @@ snapshots:
 
   es-module-lexer@1.7.0: {}
 
-  es-module-lexer@2.0.0: {}
+  es-module-lexer@2.0.0:
+    optional: true
 
   esast-util-from-estree@2.0.0:
     dependencies:
@@ -10602,7 +10598,8 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-tokens@9.0.1: {}
+  js-tokens@9.0.1:
+    optional: true
 
   js-yaml@4.1.1:
     dependencies:
@@ -11697,6 +11694,7 @@ snapshots:
   strip-literal@3.1.0:
     dependencies:
       js-tokens: 9.0.1
+    optional: true
 
   style-to-js@1.1.21:
     dependencies:
@@ -11788,7 +11786,8 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  turbo-stream@3.2.0: {}
+  turbo-stream@3.2.0:
+    optional: true
 
   tw-animate-css@1.4.0: {}
 
