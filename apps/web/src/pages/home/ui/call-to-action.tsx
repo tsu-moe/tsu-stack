@@ -17,7 +17,9 @@ export function CallToAction() {
         <div className="pointer-events-none absolute -inset-y-6 -left-px w-px border-l" />
         <div className="pointer-events-none absolute -inset-y-6 -right-px w-px border-r" />
 
-        <h2 className="font-display text-center text-xl md:text-4xl">{m.home_page__cta_title()}</h2>
+        <h2 className="font-display text-center text-4xl sm:text-5xl">
+          {m.home_page__cta_title()}
+        </h2>
         <p className="text-center text-sm text-balance text-muted-foreground md:text-base">
           {m.home_page__cta_description()}
         </p>
