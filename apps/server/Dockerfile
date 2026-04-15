@@ -24,7 +24,7 @@ ENV PATH="/root/.vite-plus/bin:$PATH"
 
 # This layer only invalidates when dependencies change, not on source changes.
 # --parents preserves directory structure, picking up all workspace packages automatically.
-COPY --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN vp install --frozen-lockfile --ignore-scripts
 

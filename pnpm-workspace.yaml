@@ -51,7 +51,6 @@ catalog:
   "@types/react-dom": ^19.2.3
   "@typescript/native-preview": 7.0.0-dev.20260414.1
   "@vitejs/plugin-react": ^6.0.1
-  "@vitejs/plugin-rsc": ^0.5.24
   babel-plugin-react-compiler: ^1.0.0
   better-auth: 1.6.3
   class-variance-authority: ^0.7.1
