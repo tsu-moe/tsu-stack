@@ -19,7 +19,7 @@ export function HeroSection() {
       <div className="relative w-full">
         <div className="relative -top-[calc(var(--navbar-height)+1.75rem)] flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background pt-(--navbar-height)">
           <Suspense fallback={null}>
-            <div className="pointer-events-none absolute inset-0 z-0 animate-in opacity-40 mix-blend-multiply fade-in dark:opacity-60 dark:mix-blend-screen">
+            <div className="pointer-events-none absolute inset-0 z-0 animate-in opacity-40 mix-blend-multiply duration-700 ease-out will-change-[opacity] fade-in dark:opacity-60 dark:mix-blend-screen">
               <Dithering
                 style={{
                   WebkitMaskComposite: "source-in",

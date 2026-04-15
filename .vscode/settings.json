@@ -15,8 +15,8 @@
   // Use tsgo for faster TypeScript and JavaScript language features
   "js/ts.experimental.useTsgo": true,
 
-  // Use relative imports as much as possible, except when the relative import path would leave the package or project directory
-  "js/ts.preferences.importModuleSpecifier": "project-relative",
+  // Use non-relative (absolute) imports by default
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
 
   // When auto-importing, prefer to include the file extension for JavaScript and TypeScript files
   "js/ts.preferences.importModuleSpecifierEnding": "minimal",
@@ -55,7 +55,7 @@
   "explorer.fileNesting.patterns": {
     "tsconfig.json": "tsconfig.*.json, env.d.ts",
     "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
-    "package.json": "LICENSE, package-lock.json, renovate.*, knip.*, .node-version, pnpm*, components.json, commitlint*, .nvmrc, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, .gitignore, bun.lock",
+    "package.json": "LICENSE, package-lock.json, renovate.*, .npmrc, knip.*, .node-version, pnpm*, components.json, commitlint*, .nvmrc, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, .gitignore, bun.lock",
     "router.tsx": "routeTree.gen.ts",
     "docker-compose.yaml": ".dockerignore, Dockerfile*, docker-compose.*.yaml, .env.docker*"
   },

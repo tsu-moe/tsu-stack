@@ -7,13 +7,20 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { type To } from "@tsu-stack/i18n/tanstack-start/types";
 import { Button } from "@tsu-stack/ui/components/button";
+import { Skeleton } from "@tsu-stack/ui/components/skeleton";
 import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";
 
 import { useLogger } from "@/shared/providers/logger-provider";
 import { Container } from "@/shared/ui/container";
 import { Image } from "@/shared/ui/image";
 
+import { getServerTimeCardQueryOptions } from "./-components/server-time-card";
+
 export const Route = createFileRoute("/{-$locale}/(root-layout)/playground/")({
+  // TIP: We can await this if we want to not have an initial loading state, but it will block the entire page from rendering until the server component is ready.
+  beforeLoad: async ({ context }) => {
+    await context.queryClient.prefetchQuery(getServerTimeCardQueryOptions());
+  },
   component: PlaygroundPage,
 });
 
@@ -22,8 +29,26 @@ function PlaygroundPage() {
   const isClient = useIsClient();
   const logger = useLogger();
 
+  const {
+    data: ServerTimeCard,
+    isPending: isPendingServerTimeCard,
+    refetch,
+  } = useQuery(getServerTimeCardQueryOptions());
+
   return (
     <Container>
+      <section className="mb-8">
+        <h2 className="font-display mb-2 text-4xl">
+          {m.playground_page__react_server_components()}
+        </h2>
+        <p className="mb-8 text-muted-foreground">
+          {m.playground_page__react_server_components_description()}
+        </p>
+        {isPendingServerTimeCard ? <Skeleton className="h-22.5" /> : ServerTimeCard}
+        <Button className="mt-8" onClick={() => refetch()}>
+          {m.playground_page__refetch()}
+        </Button>
+      </section>
       <section className="mb-8">
         <h2 className="font-display mb-8 text-4xl">{m.playground_page__image_optimization()}</h2>
         <div className="mb-4 h-64 overflow-hidden rounded-lg">

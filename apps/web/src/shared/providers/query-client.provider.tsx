@@ -68,7 +68,28 @@ function QueryClientProvider({ children, client }: { children: ReactNode; client
   // Only use persistence on the client, not on the server
   if (clientPersister) {
     return (
-      <PersistQueryClientProvider client={client} persistOptions={{ persister: clientPersister }}>
+      <PersistQueryClientProvider
+        client={client}
+        persistOptions={{
+          persister: clientPersister,
+          /**
+           * We need to add this or else we will get `Uncaught (in promise) DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.`
+           * when the query client tries to persist data that can't be structured cloned, such as a RSC payload object.
+           * By default, react-query-persist-client will attempt to persist all queries,
+           * but with this option we can filter out queries that contain unserializable data.
+           */
+          dehydrateOptions: {
+            shouldDehydrateQuery: (query) => {
+              try {
+                structuredClone(query.state.data);
+                return true;
+              } catch {
+                return false;
+              }
+            },
+          },
+        }}
+      >
         <QueryClientProviderRaw client={client}>{children}</QueryClientProviderRaw>
       </PersistQueryClientProvider>
     );
