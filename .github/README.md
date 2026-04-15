@@ -365,6 +365,9 @@ However, the benefit is singular deployments and lower memory usage for websites
   - This is similar to the issue described in [nitrojs/nitro#4113](https://github.com/nitrojs/nitro/issues/4113)
 - [Better Auth experimental Drizzle adapter](https://github.com/better-auth/better-auth/pull/6913) - We're using a separate branch of Better Auth's Drizzle adapter that supports Drizzle relations v2.
 - [Vite+ issues](https://github.com/voidzero-dev/vite-plus/issues) - Vite+ is in alpha.
+- [TanStack Start Server Components (RSC)](https://tanstack.com/start/latest/docs/framework/react/guide/server-components) - Still experimental and may have some hydration or serialization issues, especially when paired with the stack's custom IndexedDB <PersistQueryClientProvider />.
+  - One issue I encountered is when using transitive dependencies that is imported from `apps/web` like `radix-ui`, you can get an error like `Error: [vite+]: Rolldown failed to resolve import "@radix-ui/react-avatar" from "virtual:vite-rsc/client-references/group/facade:src/router.tsx".`
+    - You will need to add the dependency to `.npmrc` to hoist it to the root of the monorepo as a temporary workaround, for example: `public-hoist-pattern[]=@radix-ui/*`.
 
 ### Pitfalls
 
