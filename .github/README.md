@@ -365,15 +365,10 @@ However, the benefit is singular deployments and lower memory usage for websites
   - This is similar to the issue described in [nitrojs/nitro#4113](https://github.com/nitrojs/nitro/issues/4113)
 - [Better Auth experimental Drizzle adapter](https://github.com/better-auth/better-auth/pull/6913) - We're using a separate branch of Better Auth's Drizzle adapter that supports Drizzle relations v2.
 - [Vite+ issues](https://github.com/voidzero-dev/vite-plus/issues) - Vite+ is in alpha.
-- [TanStack Start Server Components (RSC)](https://tanstack.com/start/latest/docs/framework/react/guide/server-components) - Still experimental and may have some hydration or serialization issues, especially when paired with the stack's custom IndexedDB <PersistQueryClientProvider />.
-  - One issue I encountered is when using transitive dependencies that is imported from `apps/web` like `radix-ui`, you can get an error like `Error: [vite+]: Rolldown failed to resolve import "@radix-ui/react-avatar" from "virtual:vite-rsc/client-references/group/facade:src/router.tsx".`
-    - You will need to add the dependency to `.npmrc` to hoist it to the root of the monorepo as a temporary workaround, for example: `public-hoist-pattern[]=@radix-ui/*`.
-  - It currently doesn't work in the `variant/merged-cloudflare` branch due to build issues with bundling dependencies like `[Error: No such module "dist/server/rsc/assets/zod" imported from "dist/server/rsc/assets/src-B-Pr-8gq.js"]`
 
 ### Pitfalls
 
 - The server and web app **must** be deployed on the same host using path-based routing (e.g., `app.example.com/app` + `app.example.com/server`). This uses `SameSite=Strict` cookies in order to avoid Safari ITP issues. See [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups) for context.
-
 - This implementation does not include security headers by default. You should add the following headers in production for improved security:
   - `Content-Security-Policy`
   - `Strict-Transport-Security`
@@ -381,15 +376,11 @@ However, the benefit is singular deployments and lower memory usage for websites
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy`
   - `Permissions-Policy`
-
 - Builds are slower and more bloated in general because Vite Plus does not have a [`turbo prune`](https://turborepo.dev/docs/reference/prune) alternative
   - See this related issue: https://github.com/voidzero-dev/vite-plus/issues/839
-
 - On a similar note, there isn't an elegant way to install `vp` in Dockerfile images, so you need to manually bump the desired `vp` version in the `/apps/*/Dockerfile`'s `VITE_PLUS_VERSION` variable.
-
 - There is a hydration error when navigating to an i18n subpath like `/de`, but it subsides in subsequent navigations.
   - Need to investigate further, but otherwise, I haven't encountered any app-breaking bugs with it.
-
 - `robots.txt` [needs to be at the root of the domain](https://developers.google.com/search/docs/crawling-indexing/robots/intro) to be detected by search engines (ie. `example.com/robots.txt`), but since the web app is served on a subpath (ie. `example.com/web`), you need to set up a redirect from `example.com/robots.txt` to `example.com/web/robots.txt` in order for it to be detected.
   - Other than that, you may need to set up a root sitemap index that links to as many sitemaps for every app you deploy in multiple subpaths.
     - At the moment, the `__root.tsx` points to the subpath-specific sitemap, so you may want to consider pointing it to the root if you decide to opt into that architecture.
