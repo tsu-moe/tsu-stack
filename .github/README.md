@@ -368,6 +368,7 @@ However, the benefit is singular deployments and lower memory usage for websites
 - [TanStack Start Server Components (RSC)](https://tanstack.com/start/latest/docs/framework/react/guide/server-components) - Still experimental and may have some hydration or serialization issues, especially when paired with the stack's custom IndexedDB <PersistQueryClientProvider />.
   - One issue I encountered is when using transitive dependencies that is imported from `apps/web` like `radix-ui`, you can get an error like `Error: [vite+]: Rolldown failed to resolve import "@radix-ui/react-avatar" from "virtual:vite-rsc/client-references/group/facade:src/router.tsx".`
     - You will need to add the dependency to `.npmrc` to hoist it to the root of the monorepo as a temporary workaround, for example: `public-hoist-pattern[]=@radix-ui/*`.
+  - It currently doesn't work in the `variant/merged-cloudflare` branch due to build issues with bundling dependencies like `[Error: No such module "dist/server/rsc/assets/zod" imported from "dist/server/rsc/assets/src-B-Pr-8gq.js"]`
 
 ### Pitfalls
 
