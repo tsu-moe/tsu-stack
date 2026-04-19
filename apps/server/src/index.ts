@@ -2,7 +2,6 @@ import { hostname } from "node:os";
 import { join } from "node:path/posix";
 
 import { serve } from "@hono/node-server";
-import { getConnInfo } from "@hono/node-server/conninfo";
 import { SmartCoercionPlugin } from "@orpc/json-schema";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -12,6 +11,7 @@ import { experimental_RethrowHandlerPlugin as RethrowHandlerPlugin } from "@orpc
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { getConnInfo } from "hono/vercel";
 
 import { createContext } from "@tsu-stack/api/lib/context/hono/create-context";
 import { appRouter } from "@tsu-stack/api/routers/index";
