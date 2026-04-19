@@ -13,6 +13,7 @@
     "deps:major": "vpx taze@latest major -Ilwr",
     "knip": "pnpm dotenvx run -f ./packages/env/.env -- vpx knip@latest",
     "knip:fix": "pnpm dotenvx run -f ./packages/env/.env -- vpx knip@latest --fix",
+    "tanstack": "vpx @tanstack/cli@latest",
     "db": "vp run --filter @tsu-stack/db db",
     "db:dev:start": "vp run --filter @tsu-stack/db db:dev:start",
     "db:dev:stop": "vp run --filter @tsu-stack/db db:dev:stop",
