@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/utils/get-route-tree-paths-localized";
+import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/lib/get-route-tree-paths-localized";
 
 import { appConfig } from "@/config/app.config";
 import { routeTree } from "@/routeTree.gen";

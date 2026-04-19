@@ -5,7 +5,7 @@ import { z } from "zod";
 import { checkIsDbReady } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 
-import { publicProcedure } from "#@/index";
+import { publicProcedure } from "#@/lib/procedures/factory";
 
 // #region Config
 

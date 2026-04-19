@@ -7,7 +7,7 @@ import { redirect as rawRedirect } from "@tanstack/react-router";
 
 import { baseLocale, getLocale } from "#@/paraglide/runtime";
 import { type LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
-import { stripLocalePrefix } from "#@/tanstack-start/utils/strip-locale-prefix";
+import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
 
 /**
  * Typed alias for a localized redirect call. Mirrors the shape of
