@@ -5,8 +5,8 @@ import React from "react";
 
 import { baseLocale, getLocale } from "#@/paraglide/runtime";
 import { LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
+import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
 import { type LinkProps } from "#@/tanstack-start/types/index";
-import { stripLocalePrefix } from "#@/tanstack-start/utils/strip-locale-prefix";
 
 export type { LinkProps };
 
