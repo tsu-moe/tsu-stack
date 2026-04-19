@@ -1,6 +1,6 @@
 import { ORPCError, os } from "@orpc/server";
 
-import { type OrpcContext } from "#@/utils/context/types";
+import { type OrpcContext } from "#@/lib/context/types";
 
 const o = os.$context<OrpcContext>();
 

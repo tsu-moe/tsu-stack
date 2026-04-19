@@ -6,7 +6,7 @@ import {
   useParentMatches as rawUseParentMatches,
 } from "@tanstack/react-router";
 
-import { stripLocalePrefix } from "#@/tanstack-start/utils/strip-locale-prefix";
+import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
 
 type Match = MakeRouteMatchUnion<RegisteredRouter>;
 

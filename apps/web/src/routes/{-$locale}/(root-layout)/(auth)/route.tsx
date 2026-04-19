@@ -5,10 +5,10 @@ import { useEffect } from "react";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { useLocation } from "@tsu-stack/i18n/tanstack-start/hooks/use-location";
 import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
-import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/utils/get-route-tree-paths-localized";
-import { redirect } from "@tsu-stack/i18n/tanstack-start/utils/redirect";
-import { stripLocalePrefix } from "@tsu-stack/i18n/tanstack-start/utils/strip-locale-prefix";
-import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/utils/validate-navigate-to";
+import { getRouteTreePathsLocalized } from "@tsu-stack/i18n/tanstack-start/lib/get-route-tree-paths-localized";
+import { redirect } from "@tsu-stack/i18n/tanstack-start/lib/redirect";
+import { stripLocalePrefix } from "@tsu-stack/i18n/tanstack-start/lib/strip-locale-prefix";
+import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/lib/validate-navigate-to";
 
 import { useLogger } from "@/shared/providers/logger-provider";
 

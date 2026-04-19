@@ -1,14 +1,13 @@
 import React from "react";
 import { createPortal } from "react-dom";
 
+import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
 function Portal({ className, ...props }: React.ComponentProps<"div">) {
-  const [mounted, setMounted] = React.useState(false);
+  const isClient = useIsClient();
 
   React.useEffect(() => {
-    setMounted(true);
-
     const originalStyle = window.getComputedStyle(document.body).overflow;
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     const originalPaddingRight = document.body.style.paddingRight;
@@ -24,7 +23,7 @@ function Portal({ className, ...props }: React.ComponentProps<"div">) {
     };
   }, []);
 
-  if (!mounted) {
+  if (!isClient) {
     return null;
   }
 

@@ -3,9 +3,9 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { redirect } from "@tsu-stack/i18n/tanstack-start/lib/redirect";
+import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/lib/validate-navigate-to";
 import { type NavigateTo } from "@tsu-stack/i18n/tanstack-start/types";
-import { redirect } from "@tsu-stack/i18n/tanstack-start/utils/redirect";
-import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/utils/validate-navigate-to";
 
 import { routeTree } from "@/routeTree.gen";
 

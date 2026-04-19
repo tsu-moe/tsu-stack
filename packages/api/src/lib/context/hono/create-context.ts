@@ -3,7 +3,7 @@ import { type Context as HonoContext } from "hono";
 import { auth } from "@tsu-stack/auth/index";
 import { type getLogger } from "@tsu-stack/logger/server";
 
-import { type OrpcContext } from "#@/utils/context/types";
+import { type OrpcContext } from "#@/lib/context/types";
 
 export type CreateContextOptions = {
   context: HonoContext;
