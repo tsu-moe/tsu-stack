@@ -17,6 +17,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 - [TanStack patterns](.agents/tanstack-patterns.md)
 - [Auth patterns](.agents/auth.md)
 - [TypeScript conventions](.agents/typescript.md)
+- [Testing policy](.agents/testing.md)
 - [Workflow](.agents/workflow.md)
 - [Vite+ toolchain](.agents/vite-plus.md)
 - [Environment variables](.agents/environment-variables.md)
