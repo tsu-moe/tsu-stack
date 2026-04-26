@@ -5,7 +5,6 @@ import { z } from "zod";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { redirect } from "@tsu-stack/i18n/tanstack-start/lib/redirect";
 import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/lib/validate-navigate-to";
-import { type NavigateTo } from "@tsu-stack/i18n/tanstack-start/types";
 
 import { routeTree } from "@/routeTree.gen";
 
@@ -14,14 +13,13 @@ const guestSearchSchema = z.object({
     .string()
     .optional()
     .catch(undefined)
-    .transform(
-      (val): NavigateTo =>
-        validateNavigateTo({
-          fallbackTo: "/",
-          routeTree,
-          shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-          to: val,
-        }),
+    .transform((val) =>
+      validateNavigateTo({
+        fallbackTo: "/",
+        routeTree,
+        shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
+        to: val,
+      }),
     ),
 });
 

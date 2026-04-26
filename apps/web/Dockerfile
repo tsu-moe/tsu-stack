@@ -42,6 +42,9 @@ ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
     DATABASE_URL=${DATABASE_URL} \
     BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
 
+# TODO: Uncomment this when you have `test` scripts defined in your apps/*/package.json or packages/*/package.json files.
+# RUN vp run test
+
 RUN vp run -v --filter web build
 
 # =========================================================================== #

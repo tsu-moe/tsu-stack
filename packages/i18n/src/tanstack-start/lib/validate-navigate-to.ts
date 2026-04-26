@@ -4,6 +4,8 @@ import { type LocalizedRouteInfo } from "#@/tanstack-start/lib/get-route-tree-pa
 import { getRouteTreePathsLocalized } from "#@/tanstack-start/lib/get-route-tree-paths-localized";
 import { type NavigateTo } from "#@/tanstack-start/types/index";
 
+type AbsoluteNavigateTo = Extract<NavigateTo, `/${string}`>;
+
 /**
  * Filter function that determines if a route should be included (like Array.filter)
  * Receives the full route information including ID, locale, and paths
@@ -21,7 +23,7 @@ export type RouteFilter = (route: LocalizedRouteInfo) => boolean;
  * @param options.to - The URL to validate (typically from query params or storage)
  * @param options.fallbackTo - The default route to return if validation fails (default: '/')
  * @param options.shouldIncludeRoute - Filter function (return true to keep route, false to exclude)
- * @returns A validated NavigateTo path, or the fallback if validation fails
+ * @returns A validated absolute app path, or the fallback if validation fails
  *
  * @example
  * // Exclude guest routes (keep non-guest routes)
@@ -51,9 +53,9 @@ export function validateNavigateTo({
 }: {
   routeTree: AnyRoute;
   to: string | undefined;
-  fallbackTo?: NavigateTo;
+  fallbackTo?: AbsoluteNavigateTo;
   shouldIncludeRoute: RouteFilter;
-}): NavigateTo {
+}): AbsoluteNavigateTo {
   // Handle empty or undefined redirect URLs
   if (!to) {
     return fallbackTo;
@@ -73,5 +75,5 @@ export function validateNavigateTo({
   }
 
   // Type assertion is safe here because we've confirmed the route exists
-  return to as NavigateTo;
+  return to as AbsoluteNavigateTo;
 }
