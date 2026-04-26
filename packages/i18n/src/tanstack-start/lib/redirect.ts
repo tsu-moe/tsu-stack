@@ -1,6 +1,6 @@
 import {
   type AnyRedirect,
-  type NavigateOptions,
+  type RedirectOptions,
   type RegisteredRouter,
 } from "@tanstack/react-router";
 import { redirect as rawRedirect } from "@tanstack/react-router";
@@ -10,21 +10,23 @@ import { type LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
 import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
 
 /**
- * Typed alias for a localized redirect call. Mirrors the shape of
- * `LocalizedNavigate` but returns `AnyRedirect` instead of `Promise<void>` so
- * it can be used with `throw redirect(...)` in loaders and `beforeLoad`.
+ * Typed alias for a localized redirect call. `to` accepts locale-stripped app
+ * routes and the locale prefix is injected automatically.
  *
- * `to` accepts locale-stripped paths (e.g. `/sign-in`). The `/{-$locale}` prefix
- * and the `locale` param are injected automatically.
+ * This helper is intentionally typed around absolute destination routes rather
+ * than route-bound redirects. That keeps destination `search` typing intact
+ * without forcing unrelated route-context requirements onto simple redirects.
  */
-export type LocalizedRedirect = <TTo extends string>(
+export type LocalizedRedirect = <const TTo extends `/${string}`>(
   opts: Omit<
-    NavigateOptions<RegisteredRouter, string, `/${typeof LOCALE_ROUTE_PREFIX}${TTo}`>,
+    RedirectOptions<
+      RegisteredRouter,
+      `/${typeof LOCALE_ROUTE_PREFIX}/`,
+      `/${typeof LOCALE_ROUTE_PREFIX}${TTo}`
+    >,
     "to" | "from"
   > & {
     to: TTo;
-    code?: number;
-    headers?: Record<string, string>;
   },
 ) => AnyRedirect;
 

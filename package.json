@@ -5,7 +5,8 @@
   "scripts": {
     "check": "vp check",
     "fix": "vp check --fix",
-    "test": "vp run -r test",
+    "test:unit:run": "pnpm dotenvx run -f ./packages/env/.env -- vp run -r test:unit",
+    "test:e2e:run": "pnpm dotenvx run -f ./packages/env/.env -- vp run -r test:e2e",
     "dev": "pnpm -r --parallel dev",
     "build": "vp run -r build",
     "deploy": "vp run -r deploy",
@@ -48,5 +49,5 @@
       "@commitlint/config-conventional"
     ]
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.2"
 }

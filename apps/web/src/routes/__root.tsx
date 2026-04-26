@@ -41,8 +41,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     // Don't prefetch during preload to prevent spamming the server with getSession requests
     if (!preload) {
       // Prefetch (don't await) the user data on app load to have it ready for any route that needs it, and to set the auth state early
-      // oxlint-disable-next-line typescript-eslint(no-floating-promises)
-      context.queryClient.prefetchQuery(getAuthUserQueryOptions());
+      void context.queryClient.prefetchQuery(getAuthUserQueryOptions());
     }
   },
   head: () => {
