@@ -12,8 +12,8 @@ import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { LogoWordmark } from "@/shared/ui/logo";
 import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
-import { MobileNav } from "./mobile-nav";
-import { UserDropdown } from "./user-dropdown";
+import { MobileNav } from "@/features/navbar/ui/mobile-nav";
+import { UserDropdown } from "@/features/navbar/ui/user-dropdown";
 
 type NavbarLink =
   | { label: string; href: LinkProps["href"]; to?: never }
