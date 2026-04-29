@@ -15,7 +15,7 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
-import { navLinks } from "./navbar";
+import { navLinks } from "@/features/navbar/ui/navbar";
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
