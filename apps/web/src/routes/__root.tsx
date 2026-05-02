@@ -18,11 +18,11 @@ import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { getLocale } from "@tsu-stack/i18n/runtime";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
 
-import { DefaultErrorPage } from "@/pages/default-error";
-
 import { ProgressProvider } from "@/shared/providers/progress.provider";
 import appCss from "@/shared/styles/app.css?url";
 import { ThemeProvider } from "@/shared/ui/theme-switcher";
+
+import { DefaultErrorPage } from "@/pages/default-error";
 
 import { appConfig } from "@/config/app.config";
 
