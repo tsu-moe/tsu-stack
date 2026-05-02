@@ -4,7 +4,9 @@ import { ENV_SERVER } from "@tsu-stack/env/server/env";
 
 export default {
   breakpoints: true,
-  casing: "snake_case",
+  introspect: {
+    casing: "preserve",
+  },
   dbCredentials: {
     url: ENV_SERVER.DATABASE_URL,
   },
