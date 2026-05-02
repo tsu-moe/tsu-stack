@@ -5,10 +5,10 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { configureLoggerSync } from "@tsu-stack/logger/client";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 
-import { DefaultNotFoundPage } from "@/pages/default-not-found";
-
 import { LoggerProvider } from "@/shared/providers/logger-provider";
 import { QueryClientProvider, getQueryClient } from "@/shared/providers/query-client.provider";
+
+import { DefaultNotFoundPage } from "@/pages/default-not-found";
 
 import { routeTree } from "@/routeTree.gen";
 
