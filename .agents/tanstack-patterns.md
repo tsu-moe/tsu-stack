@@ -44,7 +44,7 @@ segment-name/
 1. Create page component in `pages/<name>/ui/<name>-page.tsx`, export via `pages/<name>/index.ts`
 2. Create route in `routes/{-$locale}/(layout-group)/<name>/route.tsx`
 3. Route file imports page component + wires `beforeLoad`/`loader` with query prefetching
-4. Add i18n strings to `packages/i18n/messages/en.json` using `{page_name}__key` convention
+4. Add route copy by following [i18n guidelines](i18n.md).
 
 ## Data Fetching (TanStack Query)
 
@@ -89,13 +89,7 @@ All navigation **must** use wrappers from `@tsu-stack/i18n`:
 
 ## i18n Keys
 
-Convention: `{FEATURE_OR_PAGE}__{...MORE_SPECIFIC_IDENTIFIERS}`
-
-Write English strings in `packages/i18n/messages/en.json` first. Examples:
-
-- `home_page__hero_title`
-- `auth__sign_in_title`
-- `navbar__dashboard`
+Use [i18n guidelines](i18n.md) for key naming, English-only default changes, Paraglide codegen, and translation boundaries.
 
 ## oRPC Client
 
