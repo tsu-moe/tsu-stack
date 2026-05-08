@@ -5,18 +5,18 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 ## Critical Rules
 
 - **Package manager**: Use `vp` (not pnpm/npm/yarn) and `vpx` (not npx/pnpx). See [Vite+ guide](.agents/vite-plus.md).
-- **After any change**: Run `vp run -w fix` to format + lint + typecheck.
-- **Icons**: Use `lucide-react`. Only use `react-icons` for brand icons or when lucide lacks the icon.
-- **Shared UI**: Install to `packages/ui` with `vp run -w ui add <x>` for cross-app atoms. Use `vp run -w ui:web add <x>` for app-scoped components.
-- **Images**: Use the `<Image>` component from `apps/web/src/shared/ui/image.tsx` for automatic optimization. Do not use `<img>` directly.
-- **Navigation**: Always use `<Link>`, `useNavigate`, `redirect` from `@tsu-stack/i18n` — never from `@tanstack/react-router` directly.
-- **FSD imports**: Imports only go downward: routes → pages → widgets → features → entities → shared. Start specialized in `pages/`, generalize only when reused.
+- **Validation**: Follow [Workflow](.agents/workflow.md) for validation timing.
+- **UI**: Follow [UI guidelines](.agents/ui.md) for components, icons, images, shadcn installs, and visual coherence.
+- **i18n**: Follow [i18n guidelines](.agents/i18n.md) for copy keys, Paraglide codegen, and translation boundaries.
+- **Routing/FSD**: Follow [TanStack patterns](.agents/tanstack-patterns.md) for routes, navigation wrappers, loaders, and import direction.
 
 ## Topic-Specific Guidelines
 
 - [TanStack patterns](.agents/tanstack-patterns.md)
 - [Auth patterns](.agents/auth.md)
 - [TypeScript conventions](.agents/typescript.md)
+- [UI guidelines](.agents/ui.md)
+- [i18n guidelines](.agents/i18n.md)
 - [Testing policy](.agents/testing.md)
 - [Workflow](.agents/workflow.md)
 - [Vite+ toolchain](.agents/vite-plus.md)

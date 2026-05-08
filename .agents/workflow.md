@@ -2,16 +2,17 @@
 
 ## Essential Commands
 
-| Command         | Purpose                                                  |
-| --------------- | -------------------------------------------------------- |
-| `vp run dev`    | Start all dev servers                                    |
-| `vp run -w fix` | **Always run after changes** — format + lint + typecheck |
-| `vp run test`   | Run all tests                                            |
-| `vp run build`  | Build all packages                                       |
+| Command         | Purpose                                                      |
+| --------------- | ------------------------------------------------------------ |
+| `vp run dev`    | Start all dev servers                                        |
+| `vp run -w fix` | Format + lint + typecheck after substantial code/config work |
+| `vp run build`  | Build all packages                                           |
 
-## After Every Change
+## Validation Timing
 
-Run `vp run -w fix`. This is the single validation gate — it formats (Oxfmt), lints (Oxlint), and type-checks in one pass. Staged files are also auto-checked on `git commit` via Vite Plus hooks.
+Run `vp run -w fix` after substantial code or config changes, before handing off completed implementation work, or when a task explicitly asks for full validation. It formats (Oxfmt), lints (Oxlint), and type-checks in one pass.
+
+Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior unless the user explicitly asks. Staged files are also auto-checked on `git commit` via Vite Plus hooks.
 
 ## Database Schema Changes
 
@@ -30,16 +31,13 @@ Run `vp run -w fix`. This is the single validation gate — it formats (Oxfmt), 
 | `vp run db:migrate`   | Apply migrations                |
 | `vp run db:studio`    | Open Drizzle Studio             |
 
-## Installing shadcn Components
+## UI Components And shadcn
 
-- **Shared** (reusable across apps): `vp run -w ui add <component>` → `packages/ui`
-- **App-scoped** (web only): `vp run -w ui:web add <component>` → `apps/web`
-
-Decide based on whether the component is a reusable atom across many apps, or specific to one app.
+For UI component selection, shadcn install decisions, and visual coherence rules, use [UI guidelines](ui.md). Keep the detailed UI policy there rather than duplicating it in workflow docs.
 
 ## Testing
 
-Vitest or Playwright hasn't been set up yet. As long as `vp run -w fix` passes, no need to worry about tests unless requested.
+Follow [Testing policy](testing.md). Do not add or run tests unless requested, except when an existing task explicitly calls for them.
 
 ## Commits
 

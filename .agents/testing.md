@@ -17,8 +17,8 @@ This document is the authoritative testing policy for contributors and AI agents
 
 Canonical commands:
 
-- `npm run test:unit:run`
-- `npm run test:e2e:run`
+- `vp run test:unit:run`
+- `vp run test:e2e:run`
 
 ## Test Locations
 
