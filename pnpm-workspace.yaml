@@ -6,11 +6,11 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: true
-  workerd: set this to true or false
+  workerd: true
 
 catalog:
   "@babel/core": ^7.29.0
-  "@better-auth/drizzle-adapter": https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@6913
+  "@better-auth/drizzle-adapter": https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@9489
   "@bprogress/react": ^1.2.7
   "@cloudflare/vite-plugin": ^1.35.0
   "@commitlint/cli": ^20.5.3
