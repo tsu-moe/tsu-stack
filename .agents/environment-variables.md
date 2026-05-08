@@ -18,13 +18,14 @@ Only vars prefixed with `VITE_` are available on the client (`import.meta.env`).
 
 ## When Adding/Updating Env Vars
 
-Update in **five places**:
+Update every place that supplies, validates, documents, or forwards the variable:
 
 1. `packages/env/src/` — add Zod validation to the appropriate scoped object
 2. `docker-compose.yaml` — add to both `build.args` and `environment` for affected services
 3. `Dockerfile` — add matching `ARG` + `ENV` declarations in the relevant Dockerfile(s)
-4. `.env.example` — add with placeholder value for local development
-5. `.github/README.md` — update this file with the new var, its scope, and usage notes
+4. The relevant app/package `vite.config.ts` — add the variable to Vite task `env` forwarding when that package has any Vite task that consumes it
+5. `.env.example` — add with placeholder value for local development
+6. `.github/README.md` — update this file with the new var, its scope, and usage notes
 
 Missing any of these causes build or runtime failures with no obvious error message.
 
