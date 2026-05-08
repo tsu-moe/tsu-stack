@@ -3,53 +3,57 @@ packages:
   - packages/*
   - tools/*
 
+allowBuilds:
+  esbuild: true
+  sharp: true
+
 catalog:
   "@babel/core": ^7.29.0
   "@better-auth/drizzle-adapter": https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@6913
   "@bprogress/react": ^1.2.7
   "@commitlint/cli": ^20.5.3
   "@commitlint/config-conventional": ^20.5.3
-  "@dotenvx/dotenvx": 1.64.0
+  "@dotenvx/dotenvx": 1.65.0
   "@fontsource-variable/geist": ^5.2.8
   "@fontsource-variable/geist-mono": ^5.2.7
   "@fontsource/instrument-serif": ^5.2.8
-  "@hono/node-server": ^2.0.1
+  "@hono/node-server": ^2.0.2
   "@inlang/cli": ^3.1.11
   "@inlang/paraglide-js": ^2.18.0
-  "@logtape/logtape": ^2.0.6
+  "@logtape/logtape": ^2.0.7
   "@lonik/oh-image": ^3.3.0
   "@mdx-js/rollup": ^3.1.1
-  "@orpc/client": ^1.14.0
-  "@orpc/json-schema": ^1.14.0
-  "@orpc/openapi": ^1.14.0
-  "@orpc/server": ^1.14.0
-  "@orpc/tanstack-query": ^1.14.0
-  "@orpc/zod": ^1.14.0
+  "@orpc/client": ^1.14.2
+  "@orpc/json-schema": ^1.14.2
+  "@orpc/openapi": ^1.14.2
+  "@orpc/server": ^1.14.2
+  "@orpc/tanstack-query": ^1.14.2
+  "@orpc/zod": ^1.14.2
   "@paper-design/shaders-react": ^0.0.76
   "@rolldown/plugin-babel": ^0.2.3
   "@t3-oss/env-core": ^0.13.11
   "@tailwindcss/vite": ^4.2.4
   "@tanstack/devtools-a11y": ^0.1.2
   "@tanstack/devtools-vite": ^0.6.0
-  "@tanstack/eslint-plugin-query": ^5.100.8
+  "@tanstack/eslint-plugin-query": ^5.100.9
   "@tanstack/eslint-plugin-router": ^1.161.6
   "@tanstack/react-devtools": ^0.10.2
   "@tanstack/react-form": ^1.29.1
   "@tanstack/react-form-devtools": ^0.2.22
-  "@tanstack/react-query": ^5.100.8
-  "@tanstack/react-query-devtools": ^5.100.8
-  "@tanstack/react-query-persist-client": ^5.100.8
-  "@tanstack/react-router": ^1.169.1
+  "@tanstack/react-query": ^5.100.9
+  "@tanstack/react-query-devtools": ^5.100.9
+  "@tanstack/react-query-persist-client": ^5.100.9
+  "@tanstack/react-router": ^1.169.2
   "@tanstack/react-router-devtools": ^1.166.13
   "@tanstack/react-router-ssr-query": ^1.166.12
-  "@tanstack/react-start": ^1.167.59
+  "@tanstack/react-start": ^1.167.65
   "@tanstack/zod-adapter": ^1.166.9
   "@types/babel__core": ^7.20.5
   "@types/mdx": ^2.0.13
-  "@types/node": ^25.6.0
+  "@types/node": ^25.6.2
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260502.1
+  "@typescript/native-preview": 7.0.0-dev.20260508.1
   "@vitejs/plugin-react": ^6.0.1
   babel-plugin-react-compiler: ^1.0.0
   better-auth: 1.6.9
@@ -57,11 +61,11 @@ catalog:
   clsx: ^2.1.1
   cross-env: ^10.1.0
   defu: ^6.1.7
-  drizzle-kit: 1.0.0-rc.2-203eab8
+  drizzle-kit: 1.0.0-rc.2-e38a2ba
   drizzle-orm: 1.0.0-beta.22
   eslint-plugin-fsd-lint: ^1.2.1
   eslint-plugin-react-hooks: ^7.1.1
-  hono: ^4.12.16
+  hono: ^4.12.18
   is-even: ^1.0.0
   localforage: ^1.10.0
   lucide-react: ^1.14.0
@@ -70,8 +74,8 @@ catalog:
   oxlint-tsgolint: ^0.22.1
   postgres: ^3.4.9
   radix-ui: ^1.4.3
-  react: ^19.2.5
-  react-dom: ^19.2.5
+  react: ^19.2.6
+  react-dom: ^19.2.6
   react-icons: ^5.6.0
   sharp: ^0.34.5
   sonner: ^2.0.7
@@ -84,7 +88,7 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plus: 0.1.20
   vitest: npm:@voidzero-dev/vite-plus-test@latest
-  zod: ^4.4.2
+  zod: ^4.4.3
 
 catalogMode: prefer
 
