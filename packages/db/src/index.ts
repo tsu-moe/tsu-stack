@@ -7,9 +7,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
-import { LOGGER_CATEGORIES_SERVER, getLogger } from "@tsu-stack/logger/server";
-
-const logger = getLogger(LOGGER_CATEGORIES_SERVER.SERVER_DB);
+import { createLogger } from "@tsu-stack/logger/server";
 
 import * as schemas from "#@/schema/index";
 import { relations } from "#@/schema/relations";
@@ -46,36 +44,44 @@ let migrationFnCalled = false;
  * in the __drizzle_migrations table and skips anything already applied.
  */
 export async function migrateDatabase(): Promise<void> {
-  const childLogger = logger.with({ fn: "migrateDatabase" });
+  const log = createLogger({ operation: "server__database_migration" });
 
   if (migrationFnCalled) {
-    childLogger.debug("[{fn}] Skipping database migration (already called)");
+    log.emit({ event: "database_migration_skipped", reason: "already_called" });
     return;
   }
 
   migrationFnCalled = true;
 
   if (ENV_SERVER.IS_BUILD) {
-    childLogger.info("[{fn}] Skipping database migration during build process: ({env})", {
-      env: ENV_SERVER.NODE_ENV,
+    log.emit({
+      environment: ENV_SERVER.NODE_ENV,
+      event: "database_migration_skipped",
+
+      reason: "build_process",
     });
     return;
   }
 
   if (ENV_SERVER.NODE_ENV !== "production") {
-    childLogger.info("[{fn}] Skipping database migration in non-production environment: ({env})", {
-      env: ENV_SERVER.NODE_ENV,
+    log.emit({
+      environment: ENV_SERVER.NODE_ENV,
+      event: "database_migration_skipped",
+
+      reason: "non_production",
     });
     return;
   }
 
-  childLogger.info("⏳ Migrating database...");
   try {
     await migrate(db, {
       migrationsFolder: join(import.meta.dirname, "migrations"),
     });
-    childLogger.info("[{fn}] ✅ Database migration completed");
+    log.emit({ event: "database_migration_completed" });
   } catch (error) {
-    childLogger.error("[{fn}] ❌ Database migration failed {error}", { error });
+    log.error(error instanceof Error ? error : String(error), {
+      event: "database_migration_failed",
+    });
+    log.emit({ _forceKeep: true });
   }
 }

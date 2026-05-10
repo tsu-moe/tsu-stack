@@ -9,13 +9,12 @@
     "./client": "./src/client/index.ts",
     "./server": "./src/server/index.ts",
     "./server/tanstack-start/middleware": "./src/server/tanstack-start/middleware.ts",
-    "./server/hono/middleware": "./src/server/hono/middleware.ts",
-    "./types": "./src/types/index.ts"
+    "./server/hono/middleware": "./src/server/hono/middleware.ts"
   },
   "dependencies": {
-    "@logtape/logtape": "catalog:",
     "@tanstack/react-start": "catalog:",
     "defu": "catalog:",
+    "evlog": "catalog:",
     "hono": "catalog:"
   },
   "devDependencies": {

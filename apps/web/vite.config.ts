@@ -94,7 +94,9 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [
-    devtools(),
+    devtools({
+      consolePiping: { enabled: false },
+    }),
     mdx(),
     tanstackStart({
       pages: PAGES_PRERENDER_CONFIG,

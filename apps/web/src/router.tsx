@@ -2,7 +2,8 @@ import { type ErrorRouteComponent } from "@tanstack/react-router";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
-import { configureLoggerSync } from "@tsu-stack/logger/client";
+import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
+import { LOG_SERVICES, initLog } from "@tsu-stack/logger/client";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 
 import { LoggerProvider } from "@/shared/providers/logger-provider";
@@ -12,7 +13,27 @@ import { DefaultNotFoundPage } from "@/pages/default-not-found";
 
 import { routeTree } from "@/routeTree.gen";
 
-configureLoggerSync();
+const browserLogEndpoint = `${ENV_WEB_ISOMORPHIC.VITE_SERVER_URL.replace(/\/$/, "")}/_logs/ingest`;
+
+initLog({
+  batchedTransport: {
+    drain: {
+      credentials: "include",
+      endpoint: browserLogEndpoint,
+    },
+    pipeline: {
+      batch: {
+        intervalMs: 2000,
+        size: 25,
+      },
+      retry: {
+        maxAttempts: 3,
+      },
+    },
+  },
+  console: false,
+  service: LOG_SERVICES.WEB_CLIENT,
+});
 
 export function getRouter() {
   const queryClient = getQueryClient();

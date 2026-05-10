@@ -9,6 +9,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 - **UI**: Follow [UI guidelines](.agents/ui.md) for components, icons, images, shadcn installs, and visual coherence.
 - **i18n**: Follow [i18n guidelines](.agents/i18n.md) for copy keys, Paraglide codegen, and translation boundaries.
 - **Routing/FSD**: Follow [TanStack patterns](.agents/tanstack-patterns.md) for routes, navigation wrappers, loaders, and import direction.
+- **Logging**: Follow [Logging guidelines](.agents/logging.md). Do not add durable application logs unless the user asks, or unless logging is necessary and approved for audit/security/sensitive operations.
 
 ## Topic-Specific Guidelines
 
@@ -21,6 +22,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 - [Workflow](.agents/workflow.md)
 - [Vite+ toolchain](.agents/vite-plus.md)
 - [Environment variables](.agents/environment-variables.md)
+- [Logging guidelines](.agents/logging.md)
 
 <!-- intent-skills:start -->
 
