@@ -44,7 +44,7 @@ ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
     VITE_WEB_URL=${VITE_WEB_URL}
 
 # TODO: Uncomment this when you have `test:unit` or `test:e2e` scripts defined in your apps/*/package.json or packages/*/package.json files.
-# RUN vp run test:unit:run
+RUN vp run test:unit:run
 # RUN vp run test:e2e:run
 
 RUN vp run -v --filter server build

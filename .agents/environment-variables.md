@@ -6,11 +6,11 @@ All env vars live in `packages/env/.env` (copy from `.env.example`). Validated b
 
 ## Three Scoped Objects
 
-| Object               | Scope                        | Access                                                       |
-| -------------------- | ---------------------------- | ------------------------------------------------------------ |
-| `ENV_SERVER`         | Server-only (`apps/server`)  | `DATABASE_URL`, `BETTER_AUTH_SECRET`, `NODE_ENV`, etc.       |
-| `ENV_WEB_ISOMORPHIC` | Client + server (`apps/web`) | `VITE_SERVER_URL`, `VITE_WEB_URL`, `VITE_IMGPROXY_URL`, etc. |
-| `ENV_WEB_SERVER`     | Web server-only              | `NODE_ENV`, `SOURCE_COMMIT`, `IS_BUILD`, etc.                |
+| Object               | Scope                        |
+| -------------------- | ---------------------------- |
+| `ENV_SERVER`         | Server-only (`apps/server`)  |
+| `ENV_WEB_ISOMORPHIC` | Client + server (`apps/web`) |
+| `ENV_WEB_SERVER`     | Web server-only              |
 
 ## Client Exposure Rule
 
@@ -18,14 +18,14 @@ Only vars prefixed with `VITE_` are available on the client (`import.meta.env`).
 
 ## When Adding/Updating Env Vars
 
-Update every place that supplies, validates, documents, or forwards the variable:
+Update in **six places**:
 
 1. `packages/env/src/` — add Zod validation to the appropriate scoped object
 2. `docker-compose.yaml` — add to both `build.args` and `environment` for affected services
 3. `Dockerfile` — add matching `ARG` + `ENV` declarations in the relevant Dockerfile(s)
-4. The relevant app/package `vite.config.ts` — add the variable to Vite task `env` forwarding when that package has any Vite task that consumes it
-5. `.env.example` — add with placeholder value for local development
-6. `.github/README.md` — update this file with the new var, its scope, and usage notes
+4. `.env.example` — add with placeholder value for local development
+5. `.github/README.md` — update this file with the new var, its scope, and usage notes
+6. (optional) `apps/web/vite.config.ts` — if the var is used in the web app or if the environment is used in the server & is mounted on the web app, add to `define` for build-time injection
 
 Missing any of these causes build or runtime failures with no obvious error message.
 

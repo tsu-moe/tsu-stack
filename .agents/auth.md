@@ -39,8 +39,20 @@ Two auth middlewares exist for different sensitivity levels:
 
 Both set 401 status and throw on unauthorized.
 
+## Schema Extension
+
+When extending the Better Auth `user` or `session` schema, update all three layers together:
+
+- **Server auth config**: add the field under `additionalFields` in `packages/auth/src/index.ts`
+- **Drizzle schema**: add the matching column in `packages/db/src/schema/auth.schema.ts`
+- **Client inference**: keep `packages/auth/src/react/auth-client.ts` using `inferAdditionalFields<typeof auth>()` so custom fields stay typed on the client
+
+For DB-backed auth fields, also generate and apply a Drizzle migration after the schema change.
+
 ## Gotchas
 
 - Auth cookies require same-host deployment — cross-origin setups **silently break** auth
 - `sameSite` is `"none"` in dev (Safari ITP workaround), `"strict"` in production
 - The auth query uses `refetchOnWindowFocus: "always"` for cross-tab session sync
+- Better Auth custom fields are not complete if you only add the DB column; the auth config and client inference must be updated too
+- In this repo, keep Drizzle relations centralized in `packages/db/src/schema/relations.ts`. Splitting them across files and merging relation objects later caused runtime relational query failures like `targetTable` or `referencedTable` being undefined.
