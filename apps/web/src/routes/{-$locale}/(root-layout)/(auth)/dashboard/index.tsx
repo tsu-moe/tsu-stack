@@ -6,9 +6,25 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";
 
+import { generateAppSeo } from "@/shared/lib/seo";
 import { Container } from "@/shared/ui/container";
 
+import { appConfig } from "@/config/app.config";
+
 export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)/dashboard/")({
+  head: ({ params }) =>
+    generateAppSeo({
+      alternates: {
+        canonicalPath: "/dashboard",
+        locale: params.locale,
+      },
+      description: `View your account dashboard and protected application data in ${appConfig.site.shortName}.`,
+      robots: {
+        follow: false,
+        index: false,
+      },
+      title: "Dashboard",
+    }),
   component: RouteComponent,
 });
 

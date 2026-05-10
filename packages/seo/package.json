@@ -1,0 +1,20 @@
+{
+  "name": "@tsu-stack/seo",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#@/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test:unit": "vp test"
+  },
+  "devDependencies": {
+    "@tsu-stack/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}
