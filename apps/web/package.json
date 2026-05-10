@@ -30,6 +30,7 @@
     "@tsu-stack/env": "workspace:*",
     "@tsu-stack/i18n": "workspace:*",
     "@tsu-stack/logger": "workspace:*",
+    "@tsu-stack/seo": "workspace:*",
     "@tsu-stack/server": "workspace:*",
     "@tsu-stack/ui": "workspace:*",
     "localforage": "catalog:",

@@ -24,27 +24,6 @@ Both schema (`ThingSchema`) and type (`Thing`) are named exports.
 | `lib/`    | Business logic, library integrations, API clients |
 | `utils/`  | Pure stateless helper functions                   |
 
-## oRPC Procedures
-
-- `publicProcedure` — base, typed context `{ session, logger }`
-- `protectedProcedure` — adds auth middleware + OpenAPI `security` metadata
-- Routers are plain objects composed into `appRouter`
-- OpenAPI metadata via `.route({ method, description })` and `.spec()` callbacks
-
-## Logging
-
-Logger uses hierarchical categories: `["tsu-stack", "server"]`, `["tsu-stack", "web", "client"]`, etc.
-
-### Function debugging pattern
-
-```ts
-const childLogger = logger.with({ fn: "migrateDatabase" });
-childLogger.info("[{fn}] Starting migration");
-childLogger.info("[{fn}] Skipping: ({env})", { env: ENV_SERVER.NODE_ENV });
-```
-
-Use `{*}` to log all variables passed to the logger instance.
-
 ## Linting (Oxlint)
 
 Inline disable syntax:
