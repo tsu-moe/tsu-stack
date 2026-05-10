@@ -70,9 +70,9 @@ function PlaygroundPage() {
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => {
-              logger.debug("Throwing test error from playground page...");
+              logger.debug("playground", "Throwing test error from playground page...");
               throw new Error("Test error");
-              logger.debug("Error thrown!");
+              logger.debug("playground", "Error thrown!");
             }}
           >
             {m.playground_page__throw_error()}

@@ -1,8 +1,9 @@
 import { Home, RefreshCw } from "lucide-react";
+import { useEffect } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
-import { LOGGER_CATEGORIES_CLIENT, getLogger } from "@tsu-stack/logger/client";
+import { log } from "@tsu-stack/logger/client";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
   Empty,
@@ -14,11 +15,27 @@ import {
 
 import { CenteredLayout } from "@/widgets/layouts";
 
-const logger = getLogger(LOGGER_CATEGORIES_CLIENT.WEB_CLIENT);
+const loggedErrorKeys = new Set<string>();
 
 export function DefaultErrorPage({ error, reset }: { error: Error; reset: () => void }) {
-  // Log client errors
-  logger.error("An error was caught by the global error boundary", { error });
+  useEffect(() => {
+    const errorKey = `${error.name}:${error.message}:${error.stack ?? ""}`;
+
+    if (loggedErrorKeys.has(errorKey)) {
+      return;
+    }
+
+    loggedErrorKeys.add(errorKey);
+
+    log.error({
+      action: "global_error_boundary",
+      error: {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+      },
+    });
+  }, [error]);
 
   const handleRefresh = () => {
     reset();

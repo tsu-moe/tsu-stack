@@ -1,17 +1,39 @@
 import handler from "@tanstack/react-start/server-entry";
 
+import { ENV_WEB_SERVER } from "@tsu-stack/env/web/env.server";
 import { paraglideMiddleware } from "@tsu-stack/i18n/server";
-import { LOGGER_CATEGORIES_CLIENT, getLogger } from "@tsu-stack/logger/client";
+import { LOG_SERVICES, createRequestLogger, initLogger } from "@tsu-stack/logger/server";
 
-const logger = getLogger(LOGGER_CATEGORIES_CLIENT.WEB_SERVER);
+initLogger({
+  env: {
+    environment: ENV_WEB_SERVER.NODE_ENV,
+    service: LOG_SERVICES.WEB_SERVER,
+    version: ENV_WEB_SERVER.SOURCE_COMMIT,
+  },
+  sampling: {
+    keep: [{ status: 400 }, { duration: 1000 }],
+    rates: {
+      info: 0,
+    },
+  },
+});
 
 export default {
   async fetch(req: Request): Promise<Response> {
-    const startTime = Date.now();
-    logger.trace(`<-- ${req.method} ${req.url}`);
-    const response = await paraglideMiddleware(req, () => handler.fetch(req));
-    const duration = Date.now() - startTime;
-    logger.trace(`--> ${req.method} ${req.url} ${response.status} in ${duration}ms`);
-    return response;
+    const url = new URL(req.url);
+    const requestLog = createRequestLogger({
+      method: req.method,
+      path: url.pathname,
+    });
+
+    try {
+      const response = await paraglideMiddleware(req, () => handler.fetch(req));
+      requestLog.emit({ status: response.status });
+      return response;
+    } catch (error) {
+      requestLog.error(error instanceof Error ? error : new Error(String(error)));
+      requestLog.emit();
+      throw error;
+    }
   },
 };

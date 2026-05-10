@@ -1,6 +1,6 @@
 import { createStart } from "@tanstack/react-start";
 
-import { LOGGER_CATEGORIES_CLIENT, getLogger } from "@tsu-stack/logger/client";
+import { LOG_SERVICES, initLogger } from "@tsu-stack/logger/server";
 import {
   tanstackStartRequestLoggerMiddleware,
   tanstackStartServerFnLoggerMiddleware,
@@ -9,6 +9,20 @@ import {
 // We load it in vite.config.ts because they are originally from ENV_WEB_SERVER variables
 declare const __BUILD_SOURCE_COMMIT__: string;
 declare const __BUILD_NODE_ENV__: string;
+
+initLogger({
+  env: {
+    environment: __BUILD_NODE_ENV__,
+    service: LOG_SERVICES.WEB_SERVER,
+    version: __BUILD_SOURCE_COMMIT__,
+  },
+  sampling: {
+    keep: [{ status: 400 }, { duration: 1000 }],
+    rates: {
+      info: 0,
+    },
+  },
+});
 
 export const startInstance = createStart(() => {
   return {
@@ -19,7 +33,6 @@ export const startInstance = createStart(() => {
           environment: __BUILD_NODE_ENV__,
           version: __BUILD_SOURCE_COMMIT__,
         },
-        logger: getLogger(LOGGER_CATEGORIES_CLIENT.WEB_SERVER_FN),
       }),
     ],
     // for API routes
@@ -29,7 +42,7 @@ export const startInstance = createStart(() => {
           environment: __BUILD_NODE_ENV__,
           version: __BUILD_SOURCE_COMMIT__,
         },
-        logger: getLogger(LOGGER_CATEGORIES_CLIENT.WEB_SERVER_API),
+        excludePaths: ["**/_api/health/**"],
       }),
     ],
   };
