@@ -10,26 +10,32 @@ import { experimental_RethrowHandlerPlugin as RethrowHandlerPlugin } from "@orpc
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { getConnInfo } from "hono/vercel";
+import { type ContentfulStatusCode } from "hono/utils/http-status";
 
 import { createContext } from "@tsu-stack/api/lib/context/hono/create-context";
 import { appRouter } from "@tsu-stack/api/routers/index";
 import { createAuth } from "@tsu-stack/auth/index";
 import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
-import { LOGGER_CATEGORIES_SERVER, getLogger } from "@tsu-stack/logger/server";
-import { honoLoggerMiddlewareChain } from "@tsu-stack/logger/server/hono/middleware";
+import { log, parseError } from "@tsu-stack/logger/server";
+import {
+  honoLogIngestionMiddleware,
+  honoLoggerMiddleware,
+  type HonoLogVariables,
+} from "@tsu-stack/logger/server/hono/middleware";
 
 import "#@/shared/lib/logger";
 
-const logger = getLogger(LOGGER_CATEGORIES_SERVER.SERVER);
+const serverHostname = hostname();
 
-export const app = new Hono().basePath(new URL(ENV_SERVER.VITE_SERVER_URL).pathname);
+export const app = new Hono<HonoLogVariables>().basePath(
+  new URL(ENV_SERVER.VITE_SERVER_URL).pathname,
+);
 
 app.use(
   "/*",
   cors({
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
     origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin],
@@ -38,17 +44,37 @@ app.use(
 
 app.use(
   "/*",
-  ...honoLoggerMiddlewareChain({
-    logger,
-    getConnInfoFn: getConnInfo,
-    excludeIps: ["127.0.0.1"], // Exclude internal healthcheck request IP
-    context: {
-      environment: ENV_SERVER.NODE_ENV,
-      hostname: hostname(),
-      version: ENV_SERVER.SOURCE_COMMIT,
+  honoLoggerMiddleware({
+    exclude: ["**/health/**", "**/_logs/ingest"],
+    enrich: (ctx) => {
+      ctx.event.hostname = serverHostname;
     },
   }),
 );
+
+app.post("/_logs/ingest", honoLogIngestionMiddleware());
+
+app.onError((error, c) => {
+  const requestLog = c.get("log");
+  if (requestLog) {
+    requestLog.error(error);
+  } else {
+    log.error({ event: "hono_global_error", error });
+  }
+
+  const parsed = parseError(error);
+
+  return c.json(
+    {
+      message: parsed.message,
+      ...(parsed.code ? { code: parsed.code } : {}),
+      ...(parsed.why ? { why: parsed.why } : {}),
+      ...(parsed.fix ? { fix: parsed.fix } : {}),
+      ...(parsed.link ? { link: parsed.link } : {}),
+    },
+    parsed.status as ContentfulStatusCode,
+  );
+});
 
 /**
  * Disable /auth/reference calls as they are handled by the OpenAPI generator
@@ -69,8 +95,9 @@ app.on(["POST", "GET"], "/auth/*", (c) => createAuth().handler(c.req.raw));
 
 export const openApiHandler = new OpenAPIHandler(appRouter, {
   interceptors: [
-    onError((error) => {
-      logger.error("An error occured in openApiHandler: {error}", { error });
+    onError((error, { context }) => {
+      context.logger.set({ handler: "openapi" });
+      context.logger.error(error instanceof Error ? error : String(error));
     }),
   ],
   plugins: [
@@ -134,15 +161,16 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
 
 export const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
-    onError((error) => {
-      logger.error("An error occured in rpcHandler: {error}", { error });
+    onError((error, { context }) => {
+      context.logger.set({ handler: "rpc" });
+      context.logger.error(error instanceof Error ? error : String(error));
     }),
   ],
   plugins: [],
 });
 
 app.use("/*", async (c, next) => {
-  const context = await createContext({ context: c, logger });
+  const context = await createContext({ context: c, logger: c.get("log") });
 
   // oRPC at /rpc/*
   const rpcResult = await rpcHandler.handle(c.req.raw, {

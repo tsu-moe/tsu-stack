@@ -106,7 +106,9 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [
-    devtools(),
+    devtools({
+      consolePiping: { enabled: false },
+    }),
     mdx(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart({

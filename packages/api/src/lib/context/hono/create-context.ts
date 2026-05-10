@@ -1,13 +1,13 @@
 import { type Context as HonoContext } from "hono";
 
 import { createAuth } from "@tsu-stack/auth/index";
-import { type getLogger } from "@tsu-stack/logger/server";
+import { type RequestLogger } from "@tsu-stack/logger/server";
 
 import { type OrpcContext } from "#@/lib/context/types";
 
 export type CreateContextOptions = {
   context: HonoContext;
-  logger: ReturnType<typeof getLogger>;
+  logger: RequestLogger;
 };
 
 export async function createContext({
