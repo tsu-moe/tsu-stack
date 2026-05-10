@@ -1,136 +1,151 @@
-import { type Logger } from "@logtape/logtape";
+import { log, type DrainContext, type LogLevel } from "evlog";
+import {
+  evlog as createEvlogHonoMiddleware,
+  type EvlogHonoOptions,
+  type EvlogVariables,
+} from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
-import { type GetConnInfo } from "hono/conninfo";
 import { createMiddleware } from "hono/factory";
-import { requestId } from "hono/request-id";
-import { routePath } from "hono/route";
+import { HTTPException } from "hono/http-exception";
 
-import { getRealIpFromHeaders, normalizeIp } from "#@/utils/index";
+const VALID_LEVELS = new Set<LogLevel>(["info", "error", "warn", "debug"]);
 
-// #region Types
-
-// Dependency injection for Hono context to provide a logger with request-specific context (e.g. request ID, IP address, user agent)
-// We need to use the same `tsconfig.json` as the server to ensure the types are compatible
-// so we put make a nested tsconfig in `src/server/hono` that extends the same config as the server
-type HonoLoggerMiddlewareVariables = {
-  logger: Logger;
-};
-
-declare module "hono" {
-  // @ts-expect-error - module augmentation to add logger to Hono context variables
-  type ContextVariableMap = {} & HonoLoggerMiddlewareVariables;
-}
-
-// #region Implementation
 /**
- * Hono middleware that adds request logging and injects a logger instance into the context.
- *
- * The middleware:
- * - Adds a unique request ID to each request for correlation
- * - Logs incoming requests and outgoing responses with duration
- * - Injects a logger with request context (IP, user agent, method, path) into `c.var.logger`
- * - Automatically adds the request ID to the logger context
+ * Hono app variables added by `honoLoggerMiddleware()`.
  *
  * @example
- * ```typescript
- * import { honoLoggerMiddleware } from "@tsu-stack/logger/server/hono/middleware";
- * import { getConnInfo } from "@hono/node-server/conninfo";
+ * ```ts
+ * import { Hono } from "hono";
+ * import { type HonoLogVariables } from "@tsu-stack/logger/server/hono/middleware";
  *
- * app.use(honoLoggerMiddleware({
- *   getConnInfoFn: getConnInfo,
- *   excludePaths: ["/health", "/metrics"]
- * }));
- *
- * app.get("/api/users", (c) => {
- *   c.var.logger.info("Fetching users");
- *   return c.json({ users: [] });
- * });
+ * const app = new Hono<HonoLogVariables>();
  * ```
- *
- * @param options - Configuration options for the middleware
- * @param options.logger - An instance of a Logger to use for logging requests
- * @param options.getConnInfoFn - Function to extract connection info from the Hono context. Import the appropriate variant for your platform from Hono (e.g., `@hono/node-server/conninfo`). See https://hono.dev/docs/helpers/conninfo#conninfo-helper
- * @param options.excludePaths - Optional array of paths to skip logging for (e.g., `/health` or `/metrics` endpoints)
- * @param options.excludeIps - Optional array of IPs to skip logging for (e.g., internal services or health checks)
- * @param options.context - Optional additional context to include in the logger (e.g., application name or version)
- * @returns Hono middleware handler
  */
-export function honoLoggerMiddlewareChain(options: {
-  logger: Logger;
-  getConnInfoFn: GetConnInfo;
-  excludePaths?: string[];
-  excludeIps?: string[];
-  context?: Record<string, unknown>;
-}): MiddlewareHandler[] {
-  // Inject a unique request ID for each request to correlate logs across the request lifecycle
-  const requestIdMiddleware = requestId();
+export type HonoLogVariables = EvlogVariables;
 
-  // Pre-compute normalized IPs for O(1) lookup performance
-  const excludedIpsSet = new Set(options.excludeIps?.map((ip) => normalizeIp(ip)) ?? []);
+type HonoLoggerMiddlewareOptions = EvlogHonoOptions;
 
-  // Create a logger middleware that logs incoming requests and outgoing responses with duration, and injects a logger instance into the context
-  const loggerMiddleware = createMiddleware(async (c, next) => {
-    const start = Date.now();
-
-    // Get connection info (e.g. IP address) for logging context
-    const connInfo = options.getConnInfoFn(c);
-    const realIp = getRealIp(c, connInfo);
-
-    // Convert query params to plain object for logging
-    const query = c.req.query();
-
-    const { logger } = options;
-    const loggerWithContext = logger.with({
-      requestId: c.var.requestId,
-      ...options.context,
-      ip: realIp,
-      userAgent: c.req.header("user-agent"),
-      referer: c.req.header("referer"),
-      cookies: c.req.header("cookie"),
-      method: c.req.method,
-      path: c.req.path,
-      routePath: routePath(c), // the registered route pattern of the current handler (e.g. /api/users/:id) instead of the actual path (e.g. /api/users/123) for better log aggregation
-      query: Object.keys(query).length > 0 ? query : undefined,
-    });
-
-    c.set("logger", loggerWithContext);
-
-    if (options.excludePaths?.includes(c.req.path) || excludedIpsSet.has(normalizeIp(realIp))) {
-      // Exit early if the request path or IP is in the skip list
-      // so we that we don't log diagnostics unless manually called for via c.var.logger
-      return next();
-    }
-
-    c.var.logger.trace(`--> ${c.req.method} ${c.req.path}`);
-
-    await next();
-
-    const durationMs = Date.now() - start;
-    const { status } = c.res;
-
-    c.var.logger
-      .with({ status })
-      .trace(`<-- ${c.req.method} ${c.req.path} ${status} in ${durationMs}ms`);
-  });
-
-  return [requestIdMiddleware, loggerMiddleware];
-}
-
-// #region Helpers
+type HonoLogIngestionOptions = {
+  maxPayloadBytes?: number;
+};
 
 /**
- * Get real client IP from Hono context, checking proxy headers and falling back to direct connection.
- * Priority order: most specific/trustworthy first, then fallback to direct connection.
+ * Add evlog request logging to a Hono app and expose the request logger as `c.get("log")`.
+ *
+ * @example
+ * ```ts
+ * import { honoLoggerMiddleware } from "@tsu-stack/logger/server/hono/middleware";
+ *
+ * app.use("/*", honoLoggerMiddleware());
+ * app.get("/health", (c) => {
+ *   c.get("log").set({ health: { live: true } });
+ *   return c.json({ status: "healthy" });
+ * });
+ * ```
  */
-function getRealIp(
-  c: Parameters<Parameters<typeof createMiddleware>[0]>[0],
-  connInfo: ReturnType<GetConnInfo>,
-) {
-  // Convert Hono headers to standard Headers object for reusable utility
-  const headers = new Headers();
-  c.req.raw.headers.forEach((value, key) => {
-    headers.set(key, value);
-  });
+export function honoLoggerMiddleware(options?: HonoLoggerMiddlewareOptions): MiddlewareHandler {
+  return createEvlogHonoMiddleware(options);
+}
 
-  return getRealIpFromHeaders(headers) ?? connInfo.remote.address;
+/**
+ * Accept browser log events posted by `@tsu-stack/logger/client`.
+ *
+ * @example
+ * ```ts
+ * import { honoLogIngestionMiddleware } from "@tsu-stack/logger/server/hono/middleware";
+ *
+ * app.post("/_logs/ingest", honoLogIngestionMiddleware());
+ * ```
+ */
+export function honoLogIngestionMiddleware(
+  options: HonoLogIngestionOptions = {},
+): MiddlewareHandler {
+  const maxPayloadBytes = options.maxPayloadBytes ?? 64 * 1024;
+
+  return createMiddleware(async (c) => {
+    const contentLength = Number(c.req.header("content-length") ?? 0);
+    if (contentLength > maxPayloadBytes) {
+      throw new HTTPException(413, { message: "Log payload is too large" });
+    }
+
+    let body: unknown;
+    try {
+      body = await c.req.json();
+    } catch {
+      throw new HTTPException(400, { message: "Invalid JSON body" });
+    }
+
+    const batch = normalizeBatch(body);
+    for (const payload of batch) {
+      emitClientLog(payload);
+    }
+
+    return c.body(null, 204);
+  });
+}
+
+function normalizeBatch(body: unknown): DrainContext[] {
+  if (!Array.isArray(body)) {
+    return [];
+  }
+
+  return body.filter(isDrainContext);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function isDrainContext(value: unknown): value is DrainContext {
+  return isRecord(value) && isRecord(value.event);
+}
+
+function normalizeLevel(value: unknown): LogLevel {
+  if (typeof value !== "string" || !VALID_LEVELS.has(value as LogLevel)) {
+    return "info";
+  }
+
+  return value as LogLevel;
+}
+
+function emitClientLog(payload: DrainContext) {
+  const { level: _level, timestamp, ...event } = payload.event;
+  const normalizedEvent: Record<string, unknown> = {
+    ...(timestamp !== undefined && event.clientTimestamp === undefined
+      ? { clientTimestamp: timestamp }
+      : {}),
+    ...event,
+  };
+
+  if (payload.request?.method && normalizedEvent.method === undefined) {
+    normalizedEvent.method = payload.request.method;
+  }
+
+  if (payload.request?.path && normalizedEvent.path === undefined) {
+    normalizedEvent.path = payload.request.path;
+  }
+
+  if (payload.request?.requestId && normalizedEvent.requestId === undefined) {
+    normalizedEvent.requestId = payload.request.requestId;
+  }
+
+  const clientEvent = {
+    ...normalizedEvent,
+    source: "client",
+  };
+
+  switch (normalizeLevel(payload.event.level)) {
+    case "debug":
+      log.debug(clientEvent);
+      return;
+    case "error":
+      log.error(clientEvent);
+      return;
+    case "warn":
+      log.warn(clientEvent);
+      return;
+    case "info":
+      log.info(clientEvent);
+      return;
+  }
 }
