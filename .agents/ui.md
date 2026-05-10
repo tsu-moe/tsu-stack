@@ -1,34 +1,37 @@
 # UI Guidelines
 
-## Component Selection
+Use this when adding or refactoring app-facing UI in `apps/web`.
 
-Default to the existing design system. Before adding a visible interactive control or reusable UI block, check:
+This guide covers app-level UI decisions. For reusable component boundaries inside `packages/ui`, use [UI package patterns](./ui-package-patterns.md).
 
-1. `packages/ui/components`
-2. `apps/web/src/shared/ui`
-3. Existing nearby page, feature, or widget components with the same pattern
+## Default Sources
 
-Prefer the `packages/ui` component when one exists, even for small controls like buttons, inputs, labels, menus, dialogs, tabs, checkboxes, switches, selects, tooltips, sheets, toasts, and badges. Compose those primitives with local layout and state instead of hand-rolling a parallel design.
+- Prefer existing components from `@tsu-stack/ui/components/*` before creating new app-local primitives.
+- Prefer app wrappers from `apps/web/src/shared/ui` when the app already owns routing, image, or other app-specific integration details.
+- Use `lucide-react` for icons unless an existing asset or brand graphic is the better fit.
+- Use `@tsu-stack/ui/lib/utils` `cn(...)` for class composition.
 
-## Missing Components
+## shadcn Usage
 
-If the needed component or primitive is not available, pause and ask the user how they want to proceed. Offer the practical choices:
+- The repo uses shadcn with the `base-maia` style, `neutral` base color, CSS variables, and Lucide icons.
+- Add reusable shadcn-derived components to `packages/ui` when they can stay app-agnostic.
+- Keep a component in `apps/web` when it depends directly on app routing, auth, SEO, locale, or app config.
+- Keep app-level wrappers and glue code in `apps/web/src/shared/ui`.
 
-- Create an app-scoped component for this web app.
-- Create a package-scoped component in `packages/ui` for reuse.
-- Install a shadcn component app-scoped with `vp run -w ui:web add <component>`.
-- Install a shadcn component package-scoped with `vp run -w ui add <component>`.
-- Use a specific component or design reference the user points to.
+## Composition
 
-Do not invent bespoke visual primitives, copy random markup from examples, or fall back to raw browser controls for visible app UI unless the user explicitly asks or the element is purely semantic structure such as `main`, `section`, `form`, `ul`, or `label`.
+- Build page UI in `pages/`, composite sections in `widgets/` and `features/`, and app-level primitives in `shared/ui`.
+- Prefer composing `@tsu-stack/ui` primitives instead of duplicating styling across many leaf components.
+- Keep route files thin. Put UI composition in page, feature, widget, or shared components, not in route files.
+- Follow [TanStack patterns](./tanstack-patterns.md) for route/file placement.
 
-## Icons And Images
+## Images And Links
 
-- Use `lucide-react` for icons. Use `react-icons` only for brand icons or when lucide lacks the icon.
-- Use the `<Image>` component from `apps/web/src/shared/ui/image.tsx` for automatic optimization. Do not use `<img>` directly.
+- Prefer app-owned wrappers for images or routing-aware links when the app needs locale, router, or env-specific behavior.
+- Do not import app wrappers into `packages/ui`; use [UI package patterns](./ui-package-patterns.md) for dependency injection instead.
+- Keep CDN, proxy, locale, and base URL logic outside shared UI primitives.
 
-## Coherence
+## Extraction Rule
 
-- Match nearby spacing, typography, radius, borders, density, and interaction states.
-- Keep operational app screens quiet and scannable: avoid these unless explicitly instructed — marketing-style blocks, decorative panels, and one-off design motifs.
-- Keep page-level composition in `pages/`; promote components only after reuse is real.
+- Extract a component to `packages/ui` when it is reusable, app-agnostic, and the shared package can own its styling and accessibility.
+- Keep a component app-local when it depends on route params, current locale, auth state, app SEO, or other app-owned integrations.
