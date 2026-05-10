@@ -398,6 +398,9 @@ importers:
       '@tsu-stack/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@tsu-stack/seo':
+        specifier: workspace:*
+        version: link:../../packages/seo
       '@tsu-stack/ui':
         specifier: workspace:*
         version: link:../../packages/ui

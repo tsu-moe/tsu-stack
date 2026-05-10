@@ -18,13 +18,12 @@ import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { getLocale } from "@tsu-stack/i18n/runtime";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
 
+import { generateAppSeo } from "@/shared/lib/seo";
 import { ProgressProvider } from "@/shared/providers/progress.provider";
 import appCss from "@/shared/styles/app.css?url";
 import { ThemeProvider } from "@/shared/ui/theme-switcher";
 
 import { DefaultErrorPage } from "@/pages/default-error";
-
-import { appConfig } from "@/config/app.config";
 
 // Root route with shared context for the entire app, inject them in router.tsx
 type RouterAppContext = {
@@ -45,8 +44,13 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     }
   },
   head: () => {
+    const rootSeo = generateAppSeo({
+      includeDocumentMeta: true,
+    });
+
     return {
       links: [
+        ...(rootSeo.links ?? []),
         {
           href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/favicon.ico`,
           rel: "icon",
@@ -55,10 +59,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
           href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/sitemap.xml`,
           rel: "sitemap",
           type: "application/xml",
-        },
-        {
-          href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}`,
-          rel: "canonical",
         },
         {
           rel: "preload",
@@ -111,38 +111,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         },
         { href: appCss, rel: "stylesheet" },
       ],
-      meta: [
-        {
-          title: appConfig.site.longName,
-        },
-        {
-          charSet: "utf-8",
-        },
-        {
-          content: "width=device-width, initial-scale=1",
-          name: "viewport",
-        },
-        { content: appConfig.site.description, name: "description" },
-        // Open Graph
-        { content: appConfig.site.longName, property: "og:title" },
-        { content: appConfig.site.description, property: "og:description" },
-        {
-          content: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/og/index.png`,
-          property: "og:image",
-        },
-        { content: "website", property: "og:type" },
-        { content: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/logo512.png`, property: "og:logo" },
-        // Twitter Card
-        { content: "summary_large_image", name: "twitter:card" },
-        { content: appConfig.site.shortName, name: "twitter:title" },
-        { content: appConfig.site.description, name: "twitter:description" },
-        {
-          content: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/og/index.png`,
-          name: "twitter:image",
-        },
-        // Resource hints for performance
-        { content: "on", httpEquiv: "x-dns-prefetch-control" },
-      ],
+      meta: [...(rootSeo.meta ?? [])],
     };
   },
 });
