@@ -5,7 +5,6 @@ packages:
 
 allowBuilds:
   esbuild: true
-  fallow: true
   sharp: true
 
 catalog:
@@ -66,7 +65,6 @@ catalog:
   eslint-plugin-fsd-lint: ^1.2.1
   eslint-plugin-react-hooks: ^7.1.1
   evlog: ^2.16.0
-  fallow: ^2.69.0
   hono: ^4.12.18
   is-even: ^1.0.0
   localforage: ^1.10.0

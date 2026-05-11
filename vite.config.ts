@@ -36,7 +36,7 @@ const fsdEslintPluginOptions = {
 export default defineConfig({
   // Commit hooks - https://viteplus.dev/guide/commit-hooks
   staged: {
-    "*": "vp check --fix"
+    "*": "vp run fix"
   },
 
   // Vitest - https://vitest.dev/config

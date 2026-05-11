@@ -42,11 +42,6 @@
     "skipLocal": true,
     "ignoreImports": true
   },
-  "health": {
-    "maxCyclomatic": 20,
-    "maxCognitive": 15,
-    "ignore": ["**/*.generated.ts", "**/*.gen.*"]
-  },
   "audit": {
     "gate": "new-only"
   },

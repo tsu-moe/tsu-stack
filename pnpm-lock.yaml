@@ -6,15 +6,6 @@ settings:
 
 catalogs:
   default:
-    '@babel/core':
-      specifier: ^7.29.0
-      version: 7.29.0
-    '@better-auth/drizzle-adapter':
-      specifier: https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@9489
-      version: 1.7.0-beta.2
-    '@bprogress/react':
-      specifier: ^1.2.7
-      version: 1.2.7
     '@commitlint/cli':
       specifier: ^20.5.3
       version: 20.5.3
@@ -24,222 +15,27 @@ catalogs:
     '@dotenvx/dotenvx':
       specifier: 1.65.0
       version: 1.65.0
-    '@fontsource-variable/geist':
-      specifier: ^5.2.8
-      version: 5.2.8
-    '@fontsource-variable/geist-mono':
-      specifier: ^5.2.7
-      version: 5.2.7
-    '@fontsource/instrument-serif':
-      specifier: ^5.2.8
-      version: 5.2.8
-    '@hono/node-server':
-      specifier: ^2.0.2
-      version: 2.0.2
-    '@inlang/cli':
-      specifier: ^3.1.11
-      version: 3.1.11
-    '@inlang/paraglide-js':
-      specifier: ^2.18.0
-      version: 2.18.0
-    '@lonik/oh-image':
-      specifier: ^3.3.0
-      version: 3.3.0
-    '@mdx-js/rollup':
-      specifier: ^3.1.1
-      version: 3.1.1
-    '@orpc/client':
-      specifier: ^1.14.2
-      version: 1.14.2
-    '@orpc/json-schema':
-      specifier: ^1.14.2
-      version: 1.14.2
-    '@orpc/openapi':
-      specifier: ^1.14.2
-      version: 1.14.2
-    '@orpc/server':
-      specifier: ^1.14.2
-      version: 1.14.2
-    '@orpc/tanstack-query':
-      specifier: ^1.14.2
-      version: 1.14.2
-    '@orpc/zod':
-      specifier: ^1.14.2
-      version: 1.14.2
-    '@paper-design/shaders-react':
-      specifier: ^0.0.76
-      version: 0.0.76
-    '@rolldown/plugin-babel':
-      specifier: ^0.2.3
-      version: 0.2.3
-    '@t3-oss/env-core':
-      specifier: ^0.13.11
-      version: 0.13.11
-    '@tailwindcss/vite':
-      specifier: ^4.2.4
-      version: 4.2.4
-    '@tanstack/devtools-a11y':
-      specifier: ^0.1.2
-      version: 0.1.2
-    '@tanstack/devtools-vite':
-      specifier: ^0.6.0
-      version: 0.6.0
     '@tanstack/eslint-plugin-query':
       specifier: ^5.100.9
       version: 5.100.9
     '@tanstack/eslint-plugin-router':
       specifier: ^1.161.6
       version: 1.161.6
-    '@tanstack/react-devtools':
-      specifier: ^0.10.2
-      version: 0.10.2
-    '@tanstack/react-form':
-      specifier: ^1.29.1
-      version: 1.29.1
-    '@tanstack/react-form-devtools':
-      specifier: ^0.2.22
-      version: 0.2.22
-    '@tanstack/react-query':
-      specifier: ^5.100.9
-      version: 5.100.9
-    '@tanstack/react-query-devtools':
-      specifier: ^5.100.9
-      version: 5.100.9
-    '@tanstack/react-query-persist-client':
-      specifier: ^5.100.9
-      version: 5.100.9
-    '@tanstack/react-router':
-      specifier: ^1.169.2
-      version: 1.169.2
-    '@tanstack/react-router-devtools':
-      specifier: ^1.166.13
-      version: 1.166.13
-    '@tanstack/react-router-ssr-query':
-      specifier: ^1.166.12
-      version: 1.166.12
-    '@tanstack/react-start':
-      specifier: ^1.167.65
-      version: 1.167.65
-    '@tanstack/zod-adapter':
-      specifier: ^1.166.9
-      version: 1.166.9
-    '@types/babel__core':
-      specifier: ^7.20.5
-      version: 7.20.5
-    '@types/mdx':
-      specifier: ^2.0.13
-      version: 2.0.13
-    '@types/node':
-      specifier: ^25.6.2
-      version: 25.6.2
-    '@types/react':
-      specifier: ^19.2.14
-      version: 19.2.14
-    '@types/react-dom':
-      specifier: ^19.2.3
-      version: 19.2.3
     '@typescript/native-preview':
       specifier: 7.0.0-dev.20260508.1
       version: 7.0.0-dev.20260508.1
-    '@vitejs/plugin-react':
-      specifier: ^6.0.1
-      version: 6.0.1
-    babel-plugin-react-compiler:
-      specifier: ^1.0.0
-      version: 1.0.0
-    better-auth:
-      specifier: 1.6.9
-      version: 1.6.9
-    class-variance-authority:
-      specifier: ^0.7.1
-      version: 0.7.1
-    clsx:
-      specifier: ^2.1.1
-      version: 2.1.1
-    cross-env:
-      specifier: ^10.1.0
-      version: 10.1.0
-    defu:
-      specifier: ^6.1.7
-      version: 6.1.7
-    drizzle-kit:
-      specifier: 1.0.0-rc.2-e38a2ba
-      version: 1.0.0-rc.2-e38a2ba
     eslint-plugin-fsd-lint:
       specifier: ^1.2.1
       version: 1.2.1
     eslint-plugin-react-hooks:
       specifier: ^7.1.1
       version: 7.1.1
-    evlog:
-      specifier: ^2.16.0
-      version: 2.16.0
-    fallow:
-      specifier: ^2.69.0
-      version: 2.69.0
-    hono:
-      specifier: ^4.12.18
-      version: 4.12.18
-    localforage:
-      specifier: ^1.10.0
-      version: 1.10.0
-    lucide-react:
-      specifier: ^1.14.0
-      version: 1.14.0
-    next-themes:
-      specifier: ^0.4.6
-      version: 0.4.6
-    nitro:
-      specifier: npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e
-      version: 3.0.1-20260128-211656-ae83c97e
     oxlint-tsgolint:
       specifier: ^0.22.1
       version: 0.22.1
-    postgres:
-      specifier: ^3.4.9
-      version: 3.4.9
-    radix-ui:
-      specifier: ^1.4.3
-      version: 1.4.3
-    react:
-      specifier: ^19.2.6
-      version: 19.2.6
-    react-dom:
-      specifier: ^19.2.6
-      version: 19.2.6
-    react-icons:
-      specifier: ^5.6.0
-      version: 5.6.0
-    sharp:
-      specifier: ^0.34.5
-      version: 0.34.5
-    sonner:
-      specifier: ^2.0.7
-      version: 2.0.7
-    std-env:
-      specifier: ^4.1.0
-      version: 4.1.0
-    tailwind-merge:
-      specifier: ^3.5.0
-      version: 3.5.0
-    tailwindcss:
-      specifier: ^4.2.4
-      version: 4.2.4
-    tsx:
-      specifier: ^4.21.0
-      version: 4.21.0
-    tw-animate-css:
-      specifier: ^1.4.0
-      version: 1.4.0
-    typescript:
-      specifier: ^6.0.3
-      version: 6.0.3
     vite-plus:
       specifier: 0.1.20
       version: 0.1.20
-    zod:
-      specifier: ^4.4.3
-      version: 4.4.3
 
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@latest
@@ -261,31 +57,28 @@ importers:
         version: 1.65.0
       '@tanstack/eslint-plugin-query':
         specifier: 'catalog:'
-        version: 5.100.9(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)
+        version: 5.100.9(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
       '@tanstack/eslint-plugin-router':
         specifier: 'catalog:'
-        version: 1.161.6(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)
+        version: 1.161.6(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260508.1
       eslint-plugin-fsd-lint:
         specifier: 'catalog:'
-        version: 1.2.1(eslint@9.39.4(jiti@2.7.0))
+        version: 1.2.1(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-react-hooks:
         specifier: 'catalog:'
-        version: 7.1.1(eslint@9.39.4(jiti@2.7.0))
-      fallow:
-        specifier: 'catalog:'
-        version: 2.69.0
+        version: 7.1.1(eslint@9.39.4(jiti@2.6.1))
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 0.22.1
       vite-plus:
         specifier: 'catalog:'
-        version: 0.1.20(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0))
+        version: 0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(jiti@2.6.1))
       vitest:
         specifier: npm:@voidzero-dev/vite-plus-test@latest
-        version: '@voidzero-dev/vite-plus-test@0.1.20(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0))'
+        version: '@voidzero-dev/vite-plus-test@0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(jiti@2.6.1))'
 
   apps/server:
     dependencies:
@@ -1421,46 +1214,6 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@fallow-cli/darwin-arm64@2.69.0':
-    resolution: {integrity: sha512-8pp/AY4lNml/N9Bo0xbSzrmvyiiJg6lz5i8G9HCEptrH9W2YyFhQYm0XTbwoy3ATNnjw3aRDajiFTV5njahhSQ==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@fallow-cli/darwin-x64@2.69.0':
-    resolution: {integrity: sha512-nCZwXCJC+MQpwDb0CS4aGHPbaNAnH5//eceotjGc/sSrvXYg3oINAP2ztVDwBAUwwiYwiOGU0W1npVIoQrYgVQ==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@fallow-cli/linux-arm64-gnu@2.69.0':
-    resolution: {integrity: sha512-cfRKQHZMXd8/k8Arr2LlYr2eZDvqx/jZ6K30/8ji/iREXcGYkhfFB4Hk53t7CP8MxbtXGzJ05yyC7n+gf3MOaw==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@fallow-cli/linux-arm64-musl@2.69.0':
-    resolution: {integrity: sha512-SgOcAG0VMWJ1eOsMvOdIGYYjebUNsTzNHaOnUch2o8KFvaZkWuoLvfllLC7jI5UMbC4dET/+siOcruKprxPR5w==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@fallow-cli/linux-x64-gnu@2.69.0':
-    resolution: {integrity: sha512-mx9h6Fv7IpoFWJtilKlNFWtANbsxMSDDdHTatYN+VJh9WpsmgMgsoiyxI+K3lheLUe9albgMZjOa3EKlR8ry7w==}
-    cpu: [x64]
-    os: [linux]
-
-  '@fallow-cli/linux-x64-musl@2.69.0':
-    resolution: {integrity: sha512-H5oS1lge94bp6GoxCgJgi+wT36zD9nDW7rTxBfEG6gqXKpALYs3uIF4lbzzELNC8GZwGe4YQhMxxqGm5CXfCrg==}
-    cpu: [x64]
-    os: [linux]
-
-  '@fallow-cli/win32-arm64-msvc@2.69.0':
-    resolution: {integrity: sha512-NEl4EnKzXw/lwrboUiAxWHrVx4tBO+cpNuPmvJoRsLS8wG5UIOxbyjHjD9Ux2FbwXNaRzZZ+vjLJAvGdOEU0Xw==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@fallow-cli/win32-x64-msvc@2.69.0':
-    resolution: {integrity: sha512-EeL+Bbdg9XOgMl7tG0k6DCKhCaXLS0EPiy3HWccKUaMYDgR+haUWDzAGa9nJqIBlR4GYz/lz6amSCJtV+XsMzA==}
-    cpu: [x64]
-    os: [win32]
 
   '@floating-ui/core@1.7.5':
     resolution: {integrity: sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ==}
@@ -5047,11 +4800,6 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
-  fallow@2.69.0:
-    resolution: {integrity: sha512-N3vPCjKSJ6mM919xoOtbImoksCgtTllC/y2xOe3aQfffK5AVJNvP4STgZ69xnqcMTfSB6CYQBFbHPnKgfOgrVg==}
-    engines: {node: '>=16'}
-    hasBin: true
-
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -6943,9 +6691,9 @@ snapshots:
   '@esbuild/win32-x64@0.27.4':
     optional: true
 
-  '@eslint-community/eslint-utils@4.9.1(eslint@9.39.4(jiti@2.7.0))':
+  '@eslint-community/eslint-utils@4.9.1(eslint@9.39.4(jiti@2.6.1))':
     dependencies:
-      eslint: 9.39.4(jiti@2.7.0)
+      eslint: 9.39.4(jiti@2.6.1)
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.12.2': {}
@@ -6988,30 +6736,6 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
-
-  '@fallow-cli/darwin-arm64@2.69.0':
-    optional: true
-
-  '@fallow-cli/darwin-x64@2.69.0':
-    optional: true
-
-  '@fallow-cli/linux-arm64-gnu@2.69.0':
-    optional: true
-
-  '@fallow-cli/linux-arm64-musl@2.69.0':
-    optional: true
-
-  '@fallow-cli/linux-x64-gnu@2.69.0':
-    optional: true
-
-  '@fallow-cli/linux-x64-musl@2.69.0':
-    optional: true
-
-  '@fallow-cli/win32-arm64-msvc@2.69.0':
-    optional: true
-
-  '@fallow-cli/win32-x64-msvc@2.69.0':
-    optional: true
 
   '@floating-ui/core@1.7.5':
     dependencies:
@@ -8889,19 +8613,19 @@ snapshots:
       - csstype
       - utf-8-validate
 
-  '@tanstack/eslint-plugin-query@5.100.9(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)':
+  '@tanstack/eslint-plugin-query@5.100.9(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/utils': 8.58.1(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)
-      eslint: 9.39.4(jiti@2.7.0)
+      '@typescript-eslint/utils': 8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
+      eslint: 9.39.4(jiti@2.6.1)
     optionalDependencies:
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/eslint-plugin-router@1.161.6(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)':
+  '@tanstack/eslint-plugin-router@1.161.6(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/utils': 8.58.1(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)
-      eslint: 9.39.4(jiti@2.7.0)
+      '@typescript-eslint/utils': 8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
+      eslint: 9.39.4(jiti@2.6.1)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -9463,13 +9187,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.58.1(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)':
+  '@typescript-eslint/utils@8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.7.0))
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.6.1))
       '@typescript-eslint/scope-manager': 8.58.1
       '@typescript-eslint/types': 8.58.1
       '@typescript-eslint/typescript-estree': 8.58.1(typescript@6.0.3)
-      eslint: 9.39.4(jiti@2.7.0)
+      eslint: 9.39.4(jiti@2.6.1)
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
@@ -9534,6 +9258,18 @@ snapshots:
       tsx: 4.21.0
       typescript: 6.0.3
 
+  '@voidzero-dev/vite-plus-core@0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)':
+    dependencies:
+      '@oxc-project/runtime': 0.127.0
+      '@oxc-project/types': 0.127.0
+      lightningcss: 1.32.0
+      postcss: 8.5.8
+    optionalDependencies:
+      '@types/node': 25.6.2
+      fsevents: 2.3.3
+      jiti: 2.6.1
+      typescript: 6.0.3
+
   '@voidzero-dev/vite-plus-darwin-arm64@0.1.20':
     optional: true
 
@@ -9567,6 +9303,45 @@ snapshots:
       tinyexec: 1.0.4
       tinyglobby: 0.2.15
       vite: 8.0.0(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0)
+      ws: 8.19.0
+    optionalDependencies:
+      '@types/node': 25.6.2
+    transitivePeerDependencies:
+      - '@arethetypeswrong/core'
+      - '@tsdown/css'
+      - '@tsdown/exe'
+      - '@vitejs/devtools'
+      - bufferutil
+      - esbuild
+      - jiti
+      - less
+      - publint
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - typescript
+      - unplugin-unused
+      - utf-8-validate
+      - yaml
+
+  '@voidzero-dev/vite-plus-test@0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(jiti@2.6.1))':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@types/chai': 5.2.3
+      '@voidzero-dev/vite-plus-core': 0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)
+      es-module-lexer: 1.7.0
+      obug: 2.1.1
+      pixelmatch: 7.1.0
+      pngjs: 7.0.0
+      sirv: 3.0.2
+      std-env: 4.0.0
+      tinybench: 2.9.0
+      tinyexec: 1.0.4
+      tinyglobby: 0.2.15
+      vite: 8.0.0(@types/node@25.6.2)(jiti@2.6.1)
       ws: 8.19.0
     optionalDependencies:
       '@types/node': 25.6.2
@@ -10088,15 +9863,15 @@ snapshots:
 
   escape-string-regexp@5.0.0: {}
 
-  eslint-plugin-fsd-lint@1.2.1(eslint@9.39.4(jiti@2.7.0)):
+  eslint-plugin-fsd-lint@1.2.1(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
-      eslint: 9.39.4(jiti@2.7.0)
+      eslint: 9.39.4(jiti@2.6.1)
 
-  eslint-plugin-react-hooks@7.1.1(eslint@9.39.4(jiti@2.7.0)):
+  eslint-plugin-react-hooks@7.1.1(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
       '@babel/core': 7.29.0
       '@babel/parser': 7.29.0
-      eslint: 9.39.4(jiti@2.7.0)
+      eslint: 9.39.4(jiti@2.6.1)
       hermes-parser: 0.25.1
       zod: 4.3.6
       zod-validation-error: 4.0.2(zod@4.3.6)
@@ -10114,9 +9889,9 @@ snapshots:
 
   eslint-visitor-keys@5.0.1: {}
 
-  eslint@9.39.4(jiti@2.7.0):
+  eslint@9.39.4(jiti@2.6.1):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.7.0))
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4(jiti@2.6.1))
       '@eslint-community/regexpp': 4.12.2
       '@eslint/config-array': 0.21.2
       '@eslint/config-helpers': 0.4.2
@@ -10151,7 +9926,7 @@ snapshots:
       natural-compare: 1.4.0
       optionator: 0.9.4
     optionalDependencies:
-      jiti: 2.7.0
+      jiti: 2.6.1
     transitivePeerDependencies:
       - supports-color
 
@@ -10232,19 +10007,6 @@ snapshots:
   exsolve@1.0.8: {}
 
   extend@3.0.2: {}
-
-  fallow@2.69.0:
-    dependencies:
-      detect-libc: 2.1.2
-    optionalDependencies:
-      '@fallow-cli/darwin-arm64': 2.69.0
-      '@fallow-cli/darwin-x64': 2.69.0
-      '@fallow-cli/linux-arm64-gnu': 2.69.0
-      '@fallow-cli/linux-arm64-musl': 2.69.0
-      '@fallow-cli/linux-x64-gnu': 2.69.0
-      '@fallow-cli/linux-x64-musl': 2.69.0
-      '@fallow-cli/win32-arm64-msvc': 2.69.0
-      '@fallow-cli/win32-x64-msvc': 2.69.0
 
   fast-deep-equal@3.1.3: {}
 
@@ -11803,6 +11565,53 @@ snapshots:
       - vite
       - yaml
 
+  vite-plus@0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(jiti@2.6.1)):
+    dependencies:
+      '@oxc-project/types': 0.127.0
+      '@voidzero-dev/vite-plus-core': 0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)
+      '@voidzero-dev/vite-plus-test': 0.1.20(@types/node@25.6.2)(jiti@2.6.1)(typescript@6.0.3)(vite@8.0.0(@types/node@25.6.2)(jiti@2.6.1))
+      oxfmt: 0.46.0
+      oxlint: 1.61.0(oxlint-tsgolint@0.22.0)
+      oxlint-tsgolint: 0.22.0
+    optionalDependencies:
+      '@voidzero-dev/vite-plus-darwin-arm64': 0.1.20
+      '@voidzero-dev/vite-plus-darwin-x64': 0.1.20
+      '@voidzero-dev/vite-plus-linux-arm64-gnu': 0.1.20
+      '@voidzero-dev/vite-plus-linux-arm64-musl': 0.1.20
+      '@voidzero-dev/vite-plus-linux-x64-gnu': 0.1.20
+      '@voidzero-dev/vite-plus-linux-x64-musl': 0.1.20
+      '@voidzero-dev/vite-plus-win32-arm64-msvc': 0.1.20
+      '@voidzero-dev/vite-plus-win32-x64-msvc': 0.1.20
+    transitivePeerDependencies:
+      - '@arethetypeswrong/core'
+      - '@edge-runtime/vm'
+      - '@opentelemetry/api'
+      - '@tsdown/css'
+      - '@tsdown/exe'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - '@vitest/coverage-istanbul'
+      - '@vitest/coverage-v8'
+      - '@vitest/ui'
+      - bufferutil
+      - esbuild
+      - happy-dom
+      - jiti
+      - jsdom
+      - less
+      - publint
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - typescript
+      - unplugin-unused
+      - utf-8-validate
+      - vite
+      - yaml
+
   vite@8.0.0(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0):
     dependencies:
       '@oxc-project/runtime': 0.115.0
@@ -11817,6 +11626,19 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
       tsx: 4.21.0
+
+  vite@8.0.0(@types/node@25.6.2)(jiti@2.6.1):
+    dependencies:
+      '@oxc-project/runtime': 0.115.0
+      lightningcss: 1.32.0
+      picomatch: 4.0.4
+      postcss: 8.5.8
+      rolldown: 1.0.0-rc.9
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      '@types/node': 25.6.2
+      fsevents: 2.3.3
+      jiti: 2.6.1
 
   vitefu@1.1.3(@voidzero-dev/vite-plus-core@0.1.20(@types/node@25.6.2)(esbuild@0.27.4)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.3)):
     optionalDependencies:
