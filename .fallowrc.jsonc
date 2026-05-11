@@ -34,10 +34,13 @@
     "unresolved-imports": "error"
   },
   "duplicates": {
+    "ignore": ["**/__tests__/**", "**/__e2e/**", "**/*.test.*", "**/*.spec.*"],
     "mode": "mild",
-    "minTokens": 50,
+    "minTokens": 40,
     "minLines": 5,
-    "threshold": 10
+    "threshold": 20,
+    "skipLocal": true,
+    "ignoreImports": true
   },
   "health": {
     "maxCyclomatic": 20,
