@@ -7,5 +7,5 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)")({
     <RootLayout>
       <Outlet />
     </RootLayout>
-  ),
+  )
 });

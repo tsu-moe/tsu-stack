@@ -5,7 +5,7 @@ import { Navbar } from "@/features/navbar";
 
 export function RootLayout({
   children,
-  className,
+  className
 }: {
   children: React.ReactNode;
   className?: string;

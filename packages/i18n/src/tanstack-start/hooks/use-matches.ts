@@ -3,7 +3,7 @@ import {
   type RegisteredRouter,
   useChildMatches as rawUseChildMatches,
   useMatches as rawUseMatches,
-  useParentMatches as rawUseParentMatches,
+  useParentMatches as rawUseParentMatches
 } from "@tanstack/react-router";
 
 import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
@@ -15,7 +15,7 @@ function stripMatchesLocale(matches: readonly Match[]): Match[] {
     return {
       ...match,
       fullPath: stripLocalePrefix(match.fullPath),
-      pathname: stripLocalePrefix(match.pathname),
+      pathname: stripLocalePrefix(match.pathname)
     };
   });
 }
@@ -34,7 +34,7 @@ export function useMatches<TSelected = unknown>(opts?: {
     select: (matches) => {
       const stripped = stripMatchesLocale(matches);
       return (opts?.select ? opts.select(stripped) : stripped) as TSelected;
-    },
+    }
   }) as Match[] | TSelected;
 }
 
@@ -53,7 +53,7 @@ export function useParentMatches<TSelected = unknown>(opts?: {
     select: (matches) => {
       const stripped = stripMatchesLocale(matches);
       return (opts?.select ? opts.select(stripped) : stripped) as TSelected;
-    },
+    }
   }) as Match[] | TSelected;
 }
 
@@ -72,6 +72,6 @@ export function useChildMatches<TSelected = unknown>(opts?: {
     select: (matches) => {
       const stripped = stripMatchesLocale(matches);
       return (opts?.select ? opts.select(stripped) : stripped) as TSelected;
-    },
+    }
   }) as Match[] | TSelected;
 }

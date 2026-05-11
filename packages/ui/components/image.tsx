@@ -63,13 +63,13 @@ function ImgProxyImage(rawProps: ImageProps) {
       placeholder === "blur"
         ? {
             format: "webp",
-            quality: 10,
+            quality: 10
           }
         : undefined,
     transforms: {
       format: format ?? "webp",
-      quality,
-    },
+      quality
+    }
   });
 
   return <OhImage {...props} loader={loader} />;

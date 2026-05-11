@@ -21,7 +21,7 @@ import { log, parseError } from "@tsu-stack/logger/server";
 import {
   honoLogIngestionMiddleware,
   honoLoggerMiddleware,
-  type HonoLogVariables,
+  type HonoLogVariables
 } from "@tsu-stack/logger/server/hono/middleware";
 
 import "#@/shared/lib/logger";
@@ -29,7 +29,7 @@ import "#@/shared/lib/logger";
 const serverHostname = hostname();
 
 export const app = new Hono<HonoLogVariables>().basePath(
-  new URL(ENV_SERVER.VITE_SERVER_URL).pathname,
+  new URL(ENV_SERVER.VITE_SERVER_URL).pathname
 );
 
 app.use(
@@ -38,8 +38,8 @@ app.use(
     allowHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
-    origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin],
-  }),
+    origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin]
+  })
 );
 
 app.use(
@@ -48,8 +48,8 @@ app.use(
     exclude: ["**/health/**", "**/_logs/ingest"],
     enrich: (ctx) => {
       ctx.event.hostname = serverHostname;
-    },
-  }),
+    }
+  })
 );
 
 app.post("/_logs/ingest", honoLogIngestionMiddleware());
@@ -70,9 +70,9 @@ app.onError((error, c) => {
       ...(parsed.code ? { code: parsed.code } : {}),
       ...(parsed.why ? { why: parsed.why } : {}),
       ...(parsed.fix ? { fix: parsed.fix } : {}),
-      ...(parsed.link ? { link: parsed.link } : {}),
+      ...(parsed.link ? { link: parsed.link } : {})
     },
-    parsed.status as ContentfulStatusCode,
+    parsed.status as ContentfulStatusCode
   );
 });
 
@@ -81,7 +81,7 @@ app.onError((error, c) => {
  * @see https://better-auth.com/docs/plugins/open-api#configuration
  */
 app.on(["POST", "GET"], "/auth/reference", (c) =>
-  c.redirect(`${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference`, 301),
+  c.redirect(`${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference`, 301)
 );
 
 app.get("/auth/open-api/generate-schema", async (c) => {
@@ -98,11 +98,11 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
     onError((error, { context }) => {
       context.logger.set({ handler: "openapi" });
       context.logger.error(error instanceof Error ? error : String(error));
-    }),
+    })
   ],
   plugins: [
     new SmartCoercionPlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()],
+      schemaConverters: [new ZodToJsonSchemaConverter()]
     }),
     new OpenAPIReferencePlugin({
       docsConfig: () => {
@@ -111,19 +111,19 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
           content: undefined,
           metaData: {
             description: "Documentation for the @tsu-stack/server API.",
-            title: "@tsu-stack/server API Documentation",
+            title: "@tsu-stack/server API Documentation"
           },
           sources: [
             {
               title: "API Reference",
-              url: join(apiBasePath, "docs", "spec.json"),
+              url: join(apiBasePath, "docs", "spec.json")
             },
             {
               title: "Auth API Reference",
-              url: join(apiBasePath, "auth", "open-api", "generate-schema"),
-            },
+              url: join(apiBasePath, "auth", "open-api", "generate-schema")
+            }
           ],
-          theme: "deepSpace",
+          theme: "deepSpace"
         };
       },
       docsPath: "/docs",
@@ -135,28 +135,28 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
               description: `**(optional)** Session cookie from signing-in, required for protected endpoints [View Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
               in: "cookie",
               name: "better_auth.session_token",
-              type: "apiKey",
-            },
-          },
+              type: "apiKey"
+            }
+          }
         },
         info: {
           description: `This is the API for @tsu-stack/server.\n## Usage\nFor authentication, you can sign in via the \`/sign-in\` endpoint in [the Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference). Include the session cookie in subsequent requests to access protected endpoints.\n## Resources\n - [Official Website](${ENV_SERVER.VITE_WEB_URL})\n - [Auth API Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
           title: "@tsu-stack/server API",
-          version: ENV_SERVER.SOURCE_COMMIT,
+          version: ENV_SERVER.SOURCE_COMMIT
         },
         servers: [
           {
             description: "Primary API Server",
-            url: ENV_SERVER.VITE_SERVER_URL,
-          },
-        ],
+            url: ENV_SERVER.VITE_SERVER_URL
+          }
+        ]
       },
-      specPath: "/docs/spec.json",
+      specPath: "/docs/spec.json"
     }),
     new RethrowHandlerPlugin({
-      filter: (error) => !(error instanceof ORPCError),
-    }),
-  ],
+      filter: (error) => !(error instanceof ORPCError)
+    })
+  ]
 });
 
 export const rpcHandler = new RPCHandler(appRouter, {
@@ -164,9 +164,9 @@ export const rpcHandler = new RPCHandler(appRouter, {
     onError((error, { context }) => {
       context.logger.set({ handler: "rpc" });
       context.logger.error(error instanceof Error ? error : String(error));
-    }),
+    })
   ],
-  plugins: [],
+  plugins: []
 });
 
 app.use("/*", async (c, next) => {
@@ -175,7 +175,7 @@ app.use("/*", async (c, next) => {
   // oRPC at /rpc/*
   const rpcResult = await rpcHandler.handle(c.req.raw, {
     context,
-    prefix: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "rpc") as `/${string}`,
+    prefix: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "rpc") as `/${string}`
   });
 
   if (rpcResult.matched) {
@@ -186,7 +186,7 @@ app.use("/*", async (c, next) => {
   if (ENV_SERVER.ENABLE_OPEN_API_DOCS) {
     const docsResult = await openApiHandler.handle(c.req.raw, {
       context,
-      prefix: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "docs") as `/${string}`,
+      prefix: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "docs") as `/${string}`
     });
 
     if (docsResult.matched) {
@@ -197,7 +197,7 @@ app.use("/*", async (c, next) => {
   // OpenAPI REST API at /*
   const openApiResult = await openApiHandler.handle(c.req.raw, {
     context,
-    prefix: new URL(ENV_SERVER.VITE_SERVER_URL).pathname as `/${string}`,
+    prefix: new URL(ENV_SERVER.VITE_SERVER_URL).pathname as `/${string}`
   });
 
   if (openApiResult.matched) {

@@ -15,7 +15,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
           "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none",
         type === "file" &&
           "text-muted-foreground file:me-3 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
-        className,
+        className
       )}
       {...props}
     />

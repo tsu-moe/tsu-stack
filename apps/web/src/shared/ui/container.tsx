@@ -2,7 +2,7 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 
 export function Container({
   children,
-  className,
+  className
 }: {
   children: React.ReactNode;
   className?: string;

@@ -11,10 +11,10 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/privacy-policy/"
     generateAppSeo({
       alternates: {
         canonicalPath: "/privacy-policy",
-        locale: params.locale,
+        locale: params.locale
       },
       description: `Learn how ${appConfig.site.shortName} collects, uses, and protects your account and usage information.`,
-      title: "Privacy Policy",
+      title: "Privacy Policy"
     }),
-  component: PrivacyPolicyPage,
+  component: PrivacyPolicyPage
 });

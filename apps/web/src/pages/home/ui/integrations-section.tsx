@@ -21,7 +21,7 @@ const tiles: TileData[] = [
   // Row 0
   {
     col: 1,
-    row: 0,
+    row: 0
   },
   {
     col: 3,
@@ -59,9 +59,9 @@ const tiles: TileData[] = [
             d="M70.82,136.36v-29.1l.81-.81h9.72l.81,.81v29.1l-.81,.81h-9.72l-.81-.81Z"
           />
         </svg>
-      ),
+      )
     },
-    row: 0,
+    row: 0
   },
 
   // Row 1
@@ -86,9 +86,9 @@ const tiles: TileData[] = [
             fill="#24292F"
           />
         </svg>
-      ),
+      )
     },
-    row: 4,
+    row: 4
   },
   {
     col: 4,
@@ -100,9 +100,9 @@ const tiles: TileData[] = [
           <title>Vercel</title>
           <path d="m12 1.608 12 20.784H0Z" />
         </svg>
-      ),
+      )
     },
-    row: 1,
+    row: 1
   },
 
   // Row 2
@@ -173,9 +173,9 @@ const tiles: TileData[] = [
             </linearGradient>
           </defs>
         </svg>
-      ),
+      )
     },
-    row: 2,
+    row: 2
   },
   {
     col: 3,
@@ -206,9 +206,9 @@ const tiles: TileData[] = [
             fill="#FF9900"
           />
         </svg>
-      ),
+      )
     },
-    row: 2,
+    row: 2
   }, // Empty
 
   // Row 3
@@ -233,9 +233,9 @@ const tiles: TileData[] = [
             fill="#C74634"
           />
         </svg>
-      ),
+      )
     },
-    row: 3,
+    row: 3
   },
   {
     col: 4,
@@ -266,9 +266,9 @@ const tiles: TileData[] = [
             fill="#FBBC05"
           />
         </svg>
-      ),
+      )
     },
-    row: 3,
+    row: 3
   },
 
   // Row 4
@@ -292,9 +292,9 @@ const tiles: TileData[] = [
           <path d="M29.6169 81.4189H17.7397V69.5418H29.6165L29.6169 81.4189Z" fill="#0080FF" />
           <path d="M17.7386 69.5417H7.81073V59.6139H17.7386V69.5417Z" fill="#0080FF" />
         </svg>
-      ),
+      )
     },
-    row: 4,
+    row: 4
   },
   {
     col: 2,
@@ -318,10 +318,10 @@ const tiles: TileData[] = [
             </clipPath>
           </defs>
         </svg>
-      ),
+      )
     },
-    row: 1,
-  },
+    row: 1
+  }
 ];
 
 export function IntegrationsSection() {
@@ -352,18 +352,18 @@ function IntegrationCard({ row, col, logo }: TileData) {
     <div
       className={cn(
         "absolute flex size-18 items-center justify-center rounded-md border",
-        logo ? "bg-card shadow-xs dark:bg-card/60" : "bg-secondary/30 dark:bg-background", // Styling for empty tiles
+        logo ? "bg-card shadow-xs dark:bg-card/60" : "bg-secondary/30 dark:bg-background" // Styling for empty tiles
       )}
       style={{
         left: col * 72, // 72px cell
-        top: row * 72,
+        top: row * 72
       }}
     >
       {logo && (
         <div
           className={cn(
             "pointer-events-none size-8 select-none [&>svg]:size-full [&>svg]:object-contain",
-            logo.isInvertable && "dark:invert",
+            logo.isInvertable && "dark:invert"
           )}
           role="img"
           aria-label={logo.alt}

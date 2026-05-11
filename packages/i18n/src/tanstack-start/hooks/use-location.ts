@@ -1,7 +1,7 @@
 import {
   type RegisteredRouter,
   type RouterState,
-  useLocation as rawUseLocation,
+  useLocation as rawUseLocation
 } from "@tanstack/react-router";
 
 import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
@@ -24,9 +24,9 @@ export function useLocation<TSelected = unknown>(opts?: {
     select: (loc) => {
       const stripped = {
         ...loc,
-        pathname: stripLocalePrefix(loc.pathname),
+        pathname: stripLocalePrefix(loc.pathname)
       } as ParsedLocation;
       return (opts?.select ? opts.select(stripped) : stripped) as TSelected;
-    },
+    }
   }) as ParsedLocation | TSelected;
 }

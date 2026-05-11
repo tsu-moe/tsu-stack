@@ -1,6 +1,6 @@
 import {
   type TanStackStartSeoAlternates,
-  type TanStackStartSeoLinkTag,
+  type TanStackStartSeoLinkTag
 } from "#@/tanstack-start/types";
 import { getLocalizedCanonicalPath } from "#@/tanstack-start/utils/get-localized-canonical-path";
 import { resolveRelativePathToAbsoluteUrl } from "#@/tanstack-start/utils/resolve-relative-path-to-absolute-url";
@@ -10,7 +10,7 @@ export function generateTanStackStartAlternateLinks({
   baseUrl,
   canonicalPath,
   locale,
-  locales,
+  locales
 }: TanStackStartSeoAlternates & {
   baseUrl: string;
 }): TanStackStartSeoLinkTag[] {
@@ -18,10 +18,10 @@ export function generateTanStackStartAlternateLinks({
     {
       href: resolveRelativePathToAbsoluteUrl(
         getLocalizedCanonicalPath({ baseLocale, canonicalPath, locale }),
-        { baseUrl },
+        { baseUrl }
       ),
-      rel: "canonical",
-    },
+      rel: "canonical"
+    }
   ];
 
   if (!locales?.length) {
@@ -34,12 +34,12 @@ export function generateTanStackStartAlternateLinks({
         getLocalizedCanonicalPath({
           baseLocale,
           canonicalPath,
-          locale: currentLocale,
+          locale: currentLocale
         }),
-        { baseUrl },
+        { baseUrl }
       ),
       hrefLang: currentLocale,
-      rel: "alternate",
+      rel: "alternate"
     });
   }
 
@@ -49,12 +49,12 @@ export function generateTanStackStartAlternateLinks({
         getLocalizedCanonicalPath({
           baseLocale,
           canonicalPath,
-          locale: baseLocale,
+          locale: baseLocale
         }),
-        { baseUrl },
+        { baseUrl }
       ),
       hrefLang: "x-default",
-      rel: "alternate",
+      rel: "alternate"
     });
   }
 

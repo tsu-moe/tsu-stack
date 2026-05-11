@@ -7,7 +7,6 @@ import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Portal, PortalBackdrop } from "@tsu-stack/ui/components/portal";
 import { cn } from "@tsu-stack/ui/lib/utils";
@@ -15,8 +14,8 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
-import { navLinks } from "@/features/navbar/ui/navbar";
-
+import { navLinks } from "@/features/navbar/config/nav-links.config";
+import { NavbarAvatar } from "@/features/navbar/ui/navbar-avatar";
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
 
@@ -43,7 +42,7 @@ export function MobileNav() {
           <div
             className={cn(
               "ease-out data-[slot=open]:animate-in data-[slot=open]:zoom-in-97",
-              "size-full p-4",
+              "size-full p-4"
             )}
             data-slot={open ? "open" : "closed"}
           >
@@ -87,8 +86,8 @@ function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
           await queryClient.invalidateQueries(getAuthUserQueryOptions());
           await router.invalidate();
           onNavigate();
-        },
-      },
+        }
+      }
     });
   };
 
@@ -113,18 +112,7 @@ function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
     <div className="mt-10 flex flex-col gap-6">
       <div className="border-t" />
       <div className="flex items-center gap-3 px-2">
-        <Avatar>
-          <AvatarImage src={user.image ?? undefined} alt={user?.name ?? "User"} />
-          <AvatarFallback>{user?.name?.charAt(0).toUpperCase() ?? "?"}</AvatarFallback>
-        </Avatar>
-        <div className="flex min-w-0 flex-col">
-          <span className="truncate text-sm font-medium text-foreground">
-            {user?.name ?? "Guest"}
-          </span>
-          <span className="truncate text-xs font-normal text-muted-foreground">
-            {user?.email ?? "You are not authenticated"}
-          </span>
-        </div>
+        <NavbarAvatar avatarImgSrc={user.image} name={user.name} email={user.email} />
       </div>
       <Button className="w-full" variant="destructive" onClick={handleSignOut}>
         <LogOut aria-hidden="true" size={16} />

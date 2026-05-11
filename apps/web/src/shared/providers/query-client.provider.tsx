@@ -1,7 +1,7 @@
 import {
   QueryClient,
   QueryClientProvider as QueryClientProviderRaw,
-  environmentManager,
+  environmentManager
 } from "@tanstack/react-query";
 import { type PersistedClient, type Persister } from "@tanstack/react-query-persist-client";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
@@ -27,9 +27,9 @@ function createQueryClient() {
           }
           return failureCount < 2;
         },
-        staleTime: 1000 * 60 * 2,
-      },
-    },
+        staleTime: 1000 * 60 * 2
+      }
+    }
   });
 }
 
@@ -86,8 +86,8 @@ function QueryClientProvider({ children, client }: { children: ReactNode; client
               } catch {
                 return false;
               }
-            },
-          },
+            }
+          }
         }}
       >
         <QueryClientProviderRaw client={client}>{children}</QueryClientProviderRaw>
@@ -109,7 +109,7 @@ function createLocalForagePersister(idbValidKey = "cache") {
     description: "Cached site data",
     name: "React Query",
     storeName: "cache",
-    version: 1,
+    version: 1
   });
 
   return {
@@ -119,7 +119,7 @@ function createLocalForagePersister(idbValidKey = "cache") {
     removeClient: async () => {
       await reactQueryLocalForage.removeItem(idbValidKey);
     },
-    restoreClient: async () => await reactQueryLocalForage.getItem<PersistedClient>(idbValidKey),
+    restoreClient: async () => await reactQueryLocalForage.getItem<PersistedClient>(idbValidKey)
   } as Persister;
 }
 

@@ -7,7 +7,7 @@ import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 const Dithering = lazy(() =>
   import("@paper-design/shaders-react").then((mod) => {
     return { default: mod.Dithering };
-  }),
+  })
 );
 
 export function HeroSection() {
@@ -29,7 +29,7 @@ export function HeroSection() {
                     linear-gradient(to bottom, transparent 12%, black 30%, black 100%),
                     linear-gradient(to right, transparent 0%, black 10%, black 75%, transparent 100%),
                     linear-gradient(to left, transparent 0%, black 10%, black 75%, transparent 100%)
-                  `,
+                  `
                 }}
                 colorBack="#00000000"
                 colorFront="#EC4E02"

@@ -19,25 +19,25 @@ const navLinks: FooterLink[] = [
   { label: m.footer__playground(), to: "/playground" },
   { label: m.footer__dashboard(), to: "/dashboard" },
   { label: m.footer__privacy_policy(), to: "/privacy-policy" },
-  { label: m.footer__terms_of_service(), to: "/terms-of-service" },
+  { label: m.footer__terms_of_service(), to: "/terms-of-service" }
 ];
 
 const socialLinks: (FooterLink & { icon: React.ReactNode })[] = [
   {
     href: "https://github.com/tsu-moe",
     icon: <XIcon className="size-3" />,
-    label: m.footer__x(),
+    label: m.footer__x()
   },
   {
     href: "https://github.com/tsu-moe/tsu-stack",
     icon: <FaGithub className="size-4" />,
-    label: m.footer__github(),
-  },
+    label: m.footer__github()
+  }
 ];
 
 export function Footer({
   props,
-  className,
+  className
 }: {
   props?: React.ComponentProps<"footer">;
   className?: string;

@@ -5,7 +5,7 @@ import { privateRouter } from "#@/routers/private/index";
 
 export const appRouter = {
   health: healthRouter,
-  private: privateRouter,
+  private: privateRouter
 };
 
 export type AppRouter = typeof appRouter;

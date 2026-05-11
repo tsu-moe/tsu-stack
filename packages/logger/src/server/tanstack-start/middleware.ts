@@ -33,7 +33,7 @@ function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
   const {
     limitLength = 255,
     headerName = "X-Request-Id",
-    generator = () => crypto.randomUUID(),
+    generator = () => crypto.randomUUID()
   } = options;
 
   return createMiddleware().server(({ next, request }) => {
@@ -45,8 +45,8 @@ function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
 
     return next({
       context: {
-        requestId: reqId,
-      },
+        requestId: reqId
+      }
     });
   });
 }
@@ -63,9 +63,9 @@ const injectRequestMiddleware = createMiddleware().server(({ next, request }) =>
         ip: normalizeIp(realIp),
         method: request.method,
         path: url.pathname,
-        query: Object.keys(query).length > 0 ? query : undefined,
-      },
-    },
+        query: Object.keys(query).length > 0 ? query : undefined
+      }
+    }
   });
 });
 
@@ -87,7 +87,7 @@ function matchesPathPattern(path: string, pattern: string) {
     `^${pattern
       .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
       .replace(/\*\*/g, ".*")
-      .replace(/\*/g, "[^/]*")}$`,
+      .replace(/\*/g, "[^/]*")}$`
   );
 
   return regex.test(path);
@@ -103,12 +103,12 @@ async function withRequestLogging<T>(options: {
   const logger = createRequestLogger({
     method: context.request.method,
     path: context.request.path,
-    requestId: context.requestId,
+    requestId: context.requestId
   });
 
   logger.set({
     ...context.request,
-    ...loggerContext,
+    ...loggerContext
   });
 
   try {
@@ -152,12 +152,12 @@ export function tanstackStartServerFnLoggerMiddleware(options: LoggerMiddlewareO
         execute: async (logger) =>
           next({
             context: {
-              logger,
-            },
+              logger
+            }
           }),
         loggerContext: options.context,
-        shouldSkip: shouldSkip(context),
-      }),
+        shouldSkip: shouldSkip(context)
+      })
     );
 }
 
@@ -179,7 +179,7 @@ export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOp
   const requestIdMiddleware = injectRequestIdMiddleware(options.requestIdOptions);
   const shouldSkip = createSkipChecker({
     excludeIps: options.excludeIps,
-    excludePaths: options.excludePaths,
+    excludePaths: options.excludePaths
   });
 
   return createMiddleware({ type: "request" })
@@ -190,12 +190,12 @@ export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOp
         execute: async (logger) =>
           next({
             context: {
-              logger,
-            },
+              logger
+            }
           }),
         loggerContext: options.context,
-        shouldSkip: shouldSkip(context),
-      }),
+        shouldSkip: shouldSkip(context)
+      })
     );
 }
 

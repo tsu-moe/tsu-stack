@@ -19,20 +19,20 @@ initLog({
   batchedTransport: {
     drain: {
       credentials: "include",
-      endpoint: browserLogEndpoint,
+      endpoint: browserLogEndpoint
     },
     pipeline: {
       batch: {
         intervalMs: 2000,
-        size: 25,
+        size: 25
       },
       retry: {
-        maxAttempts: 3,
-      },
-    },
+        maxAttempts: 3
+      }
+    }
   },
   console: false,
-  service: LOG_SERVICES.WEB_CLIENT,
+  service: LOG_SERVICES.WEB_CLIENT
 });
 
 export function getRouter() {
@@ -67,7 +67,7 @@ export function getRouter() {
       <QueryClientProvider client={queryClient}>
         <LoggerProvider>{children}</LoggerProvider>
       </QueryClientProvider>
-    ),
+    )
   });
 
   // Required when setting up React Query with SSR, see: https://tanstack.com/router/v1/docs/integrations/query
@@ -76,7 +76,7 @@ export function getRouter() {
     queryClient,
     handleRedirects: true,
     // Since we have our own QueryClientProvider implementation, we need to disable the default one from the integration
-    wrapQueryClient: false,
+    wrapQueryClient: false
   });
 
   return router;

@@ -21,6 +21,15 @@ Run `vp run -w fix` after substantial code or config changes, before handing off
 
 Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior unless the user explicitly asks. Staged files are also auto-checked on `git commit` via Vite Plus hooks.
 
+## Auxiliary Static Analysis
+
+Fallow is an auxiliary cleanup signal, not part of the default validation path.
+
+- Prefer the usual workflow first: package-local `vp check` for scoped work and `vp run -w fix` for substantial code/config work.
+- Use `vp run fallow` only after big features or broad refactors have landed, when extra dead-code, duplication, or drift signals are useful.
+- Do not add Fallow to commit hooks, `fix`, or normal handoff validation unless the user explicitly asks.
+- Treat Fallow findings as review prompts. Verify framework entry points, dynamic usage, generated files, and package boundaries before deleting or suppressing code.
+
 ## Feature Workflows
 
 For end-to-end feature implementation order across `packages/db`, `packages/api`, and `apps/web`, use [End-to-end feature workflow](./end-to-end-features.md). Keep this file focused on validation timing, commands, and migration safety.

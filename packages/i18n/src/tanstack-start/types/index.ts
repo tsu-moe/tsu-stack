@@ -1,7 +1,7 @@
 import {
   type LinkComponentProps,
   type NavigateOptions,
-  type RegisteredRouter,
+  type RegisteredRouter
 } from "@tanstack/react-router";
 import type React from "react";
 
@@ -28,7 +28,7 @@ type LocalizedNavigateOptions = Omit<NavigateOptions, "to" | "from"> & {
 // Helpers
 type RemoveAll<
   TString extends string,
-  TSub extends string,
+  TSub extends string
 > = TString extends `${infer H}${TSub}${infer T}` ? RemoveAll<`${H}${T}`, TSub> : TString;
 
 type RemoveLocaleFromString<TString extends string> = CollapseDoubleSlashes<
@@ -63,7 +63,7 @@ export type { NavigateTo, To };
 export type LocalizedNavigate<TDefaultFrom extends string = string> = <
   TRouter extends RegisteredRouter = RegisteredRouter,
   TTo extends string | undefined = undefined,
-  TFrom extends string = TDefaultFrom,
+  TFrom extends string = TDefaultFrom
 >(
   opts: Omit<
     NavigateOptions<
@@ -75,5 +75,5 @@ export type LocalizedNavigate<TDefaultFrom extends string = string> = <
   > & {
     to: TTo;
     from?: TFrom;
-  },
+  }
 ) => Promise<void>;

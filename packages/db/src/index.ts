@@ -62,7 +62,7 @@ export async function migrateDatabase(): Promise<void> {
       environment: ENV_SERVER.NODE_ENV,
       event: "database_migration_skipped",
 
-      reason: "build_process",
+      reason: "build_process"
     });
     return;
   }
@@ -72,7 +72,7 @@ export async function migrateDatabase(): Promise<void> {
       environment: ENV_SERVER.NODE_ENV,
       event: "database_migration_skipped",
 
-      reason: "non_production",
+      reason: "non_production"
     });
     return;
   }
@@ -84,7 +84,7 @@ export async function migrateDatabase(): Promise<void> {
     log.emit({ event: "database_migration_completed" });
   } catch (error) {
     log.error(error instanceof Error ? error : String(error), {
-      event: "database_migration_failed",
+      event: "database_migration_failed"
     });
     log.emit({ _forceKeep: true });
   }

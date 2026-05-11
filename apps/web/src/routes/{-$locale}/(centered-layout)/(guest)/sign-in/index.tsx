@@ -11,16 +11,16 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/sign
     generateAppSeo({
       alternates: {
         canonicalPath: "/sign-in",
-        locale: params.locale,
+        locale: params.locale
       },
       description: `Sign in to access your ${appConfig.site.shortName} account and manage your saved application data.`,
       robots: {
         follow: false,
-        index: false,
+        index: false
       },
-      title: "Sign In",
+      title: "Sign In"
     }),
-  component: RouteComponent,
+  component: RouteComponent
 });
 
 function RouteComponent() {

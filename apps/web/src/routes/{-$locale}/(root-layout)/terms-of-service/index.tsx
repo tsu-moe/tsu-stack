@@ -11,10 +11,10 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/terms-of-service
     generateAppSeo({
       alternates: {
         canonicalPath: "/terms-of-service",
-        locale: params.locale,
+        locale: params.locale
       },
       description: `Review the rules, responsibilities, and terms for using ${appConfig.site.shortName}.`,
-      title: "Terms of Service",
+      title: "Terms of Service"
     }),
-  component: TermsOfServicePage,
+  component: TermsOfServicePage
 });
