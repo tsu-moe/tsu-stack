@@ -4,12 +4,12 @@ export const privateRouter = {
   data: protectedProcedure
     .route({
       description: "Test retrieving private data for authenticated users",
-      method: "GET",
+      method: "GET"
     })
     .handler(({ context }) => {
       return {
         message: "This is private",
-        user: context.session.user,
+        user: context.session.user
       };
-    }),
+    })
 };

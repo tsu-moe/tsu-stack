@@ -7,7 +7,7 @@ export function formatTanStackStartRobotsContent({
   maxImagePreview,
   noarchive = false,
   noimageindex = false,
-  nosnippet = false,
+  nosnippet = false
 }: TanStackStartSeoRobots): string {
   return [
     index ? "index" : "noindex",
@@ -15,7 +15,7 @@ export function formatTanStackStartRobotsContent({
     noarchive ? "noarchive" : undefined,
     noimageindex ? "noimageindex" : undefined,
     nosnippet ? "nosnippet" : undefined,
-    maxImagePreview ? `max-image-preview:${maxImagePreview}` : undefined,
+    maxImagePreview ? `max-image-preview:${maxImagePreview}` : undefined
   ]
     .filter(isDefined)
     .join(", ");

@@ -11,7 +11,7 @@ import {
   generateTanStackStartSeo,
   type GenerateTanStackStartSeoParams,
   type TanStackStartSeoAlternates,
-  type TanStackStartSeoSite,
+  type TanStackStartSeoSite
 } from "@tsu-stack/seo";
 ```
 
@@ -46,12 +46,12 @@ const site = {
       height: 630,
       type: "image/png",
       url: "https://example.com/og/index.png",
-      width: 1200,
-    },
+      width: 1200
+    }
   ],
   defaultTitle: "Example App",
   siteName: "Example App",
-  titleTemplate: "%s | Example App",
+  titleTemplate: "%s | Example App"
 } satisfies TanStackStartSeoSite;
 ```
 
@@ -61,7 +61,7 @@ Then wrap the package in app-specific helpers if you want to inject locale defau
 import {
   type GenerateTanStackStartSeoParams,
   generateTanStackStartSeo,
-  type TanStackStartSeoAlternates,
+  type TanStackStartSeoAlternates
 } from "@tsu-stack/seo";
 
 type AppSeoOptions = Omit<GenerateTanStackStartSeoParams, "alternates" | "site"> & {
@@ -75,10 +75,10 @@ export function generateAppSeo({ alternates, ...options }: AppSeoOptions) {
       ? {
           ...alternates,
           baseLocale: appConfig.i18n.baseLocale,
-          locales: appConfig.i18n.locales,
+          locales: appConfig.i18n.locales
         }
       : undefined,
-    site,
+    site
   });
 }
 ```
@@ -92,7 +92,7 @@ Use `includeDocumentMeta: true` only on the root route:
 ```ts
 head: () =>
   generateAppSeo({
-    includeDocumentMeta: true,
+    includeDocumentMeta: true
   });
 ```
 
@@ -105,10 +105,10 @@ head: ({ params }) =>
   generateAppSeo({
     alternates: {
       canonicalPath: "/privacy-policy",
-      locale: params.locale,
+      locale: params.locale
     },
     description: "Read the privacy policy for Example App.",
-    title: "Privacy Policy",
+    title: "Privacy Policy"
   });
 ```
 
@@ -119,19 +119,19 @@ head: ({ loaderData, params }) =>
   generateAppSeo({
     alternates: {
       canonicalPath: `/articles/${params.slug}`,
-      locale: params.locale,
+      locale: params.locale
     },
     description: loaderData.article.summary ?? `Read ${loaderData.article.title} on Example App.`,
     images: loaderData.article.coverImage
       ? [
           {
             alt: loaderData.article.title,
-            url: loaderData.article.coverImage,
-          },
+            url: loaderData.article.coverImage
+          }
         ]
       : undefined,
     openGraphType: "article",
-    title: loaderData.article.title,
+    title: loaderData.article.title
   });
 ```
 
@@ -144,13 +144,13 @@ head: ({ params }) =>
   generateAppSeo({
     alternates: {
       canonicalPath: "/account",
-      locale: params.locale,
+      locale: params.locale
     },
     robots: {
       follow: false,
-      index: false,
+      index: false
     },
-    title: "Account",
+    title: "Account"
   });
 ```
 
@@ -167,10 +167,10 @@ head: () =>
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Example App",
-        }),
-      },
-    ],
+          name: "Example App"
+        })
+      }
+    ]
   });
 ```
 

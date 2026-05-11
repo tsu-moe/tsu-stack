@@ -31,10 +31,10 @@ export function paraglideVitePlugin(options) {
     .filter((locale) => locale !== baseLocale)
     .map((locale) => [
       locale,
-      normalizedBasePath ? `${normalizedBasePath}/${locale}/:path(.*)?` : `/${locale}/:path(.*)?`,
+      normalizedBasePath ? `${normalizedBasePath}/${locale}/:path(.*)?` : `/${locale}/:path(.*)?`
     ])
     .concat([
-      [baseLocale, normalizedBasePath ? `${normalizedBasePath}/:path(.*)?` : "/:path(.*)?"],
+      [baseLocale, normalizedBasePath ? `${normalizedBasePath}/:path(.*)?` : "/:path(.*)?"]
     ]);
 
   /** @type {PluginOptions} */
@@ -46,9 +46,9 @@ export function paraglideVitePlugin(options) {
     urlPatterns: [
       {
         localized,
-        pattern: normalizedBasePath ? `${normalizedBasePath}/:path(.*)?` : "/:path(.*)?",
-      },
-    ],
+        pattern: normalizedBasePath ? `${normalizedBasePath}/:path(.*)?` : "/:path(.*)?"
+      }
+    ]
   };
 
   return rawParaglideVitePlugin({ ...DEFAULT_OPTIONS, ...pluginOptions });

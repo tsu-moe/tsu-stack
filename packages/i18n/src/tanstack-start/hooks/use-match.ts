@@ -2,7 +2,7 @@ import {
   type MakeRouteMatch,
   type MakeRouteMatchUnion,
   type RegisteredRouter,
-  useMatch as rawUseMatch,
+  useMatch as rawUseMatch
 } from "@tanstack/react-router";
 
 import { LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
@@ -13,7 +13,7 @@ type LocalizedFrom<TFrom extends string> = `/${typeof LOCALE_ROUTE_PREFIX}${TFro
 type LocalizedMatchResult<
   TFrom extends string | undefined,
   TStrict extends boolean,
-  TSelected,
+  TSelected
 > = unknown extends TSelected
   ? TStrict extends true
     ? TFrom extends string
@@ -33,7 +33,7 @@ type LocalizedMatchResult<
 export function useMatch<
   const TFrom extends string | undefined = undefined,
   TStrict extends boolean = true,
-  TSelected = unknown,
+  TSelected = unknown
 >(opts: {
   from?: TFrom;
   strict?: TStrict;
@@ -41,7 +41,7 @@ export function useMatch<
   select?: (
     match: TFrom extends string
       ? MakeRouteMatch<RegisteredRouter["routeTree"], LocalizedFrom<TFrom>, TStrict>
-      : MakeRouteMatchUnion<RegisteredRouter>,
+      : MakeRouteMatchUnion<RegisteredRouter>
   ) => TSelected;
 }): LocalizedMatchResult<TFrom, TStrict, TSelected> {
   const { from, select, ...rest } = opts;
@@ -53,14 +53,14 @@ export function useMatch<
     select: (
       match: TFrom extends string
         ? MakeRouteMatch<RegisteredRouter["routeTree"], LocalizedFrom<TFrom>, TStrict>
-        : MakeRouteMatchUnion<RegisteredRouter>,
+        : MakeRouteMatchUnion<RegisteredRouter>
     ) => {
       const stripped = {
         ...match,
         fullPath: stripLocalePrefix(match.fullPath),
-        pathname: stripLocalePrefix(match.pathname),
+        pathname: stripLocalePrefix(match.pathname)
       } as typeof match;
       return select ? select(stripped as Parameters<NonNullable<typeof select>>[0]) : stripped;
-    },
+    }
   }) as LocalizedMatchResult<TFrom, TStrict, TSelected>;
 }

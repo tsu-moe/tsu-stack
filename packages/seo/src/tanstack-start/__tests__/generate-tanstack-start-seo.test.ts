@@ -4,7 +4,7 @@ import { generateTanStackStartSeo } from "#@/tanstack-start/generate-tanstack-st
 import {
   type GenerateTanStackStartSeoParams,
   type TanStackStartSeoMetaTag,
-  type TanStackStartSeoSite,
+  type TanStackStartSeoSite
 } from "#@/tanstack-start/types";
 
 const baseSite = {
@@ -17,21 +17,21 @@ const baseSite = {
       height: 630,
       type: "image/png",
       url: "/og/default.png",
-      width: 1200,
-    },
+      width: 1200
+    }
   ],
   defaultTitle: "Example App",
   defaultTwitterCard: "summary_large_image",
   siteName: "Example App",
   titleTemplate: "%s | Example App",
   twitterCreator: "@example_creator",
-  twitterSite: "@exampleapp",
+  twitterSite: "@exampleapp"
 } satisfies TanStackStartSeoSite;
 
 function createSubject(overrides: Partial<GenerateTanStackStartSeoParams> = {}) {
   return generateTanStackStartSeo({
     site: baseSite,
-    ...overrides,
+    ...overrides
   });
 }
 
@@ -46,13 +46,13 @@ function getMetaByProperty(meta: TanStackStartSeoMetaTag[] | undefined, property
 function getAllMetaByProperty(meta: TanStackStartSeoMetaTag[] | undefined, property: string) {
   return meta?.filter(
     (tag): tag is Extract<TanStackStartSeoMetaTag, { property: string }> =>
-      "property" in tag && tag.property === property,
+      "property" in tag && tag.property === property
   );
 }
 
 function getTitle(meta: TanStackStartSeoMetaTag[] | undefined) {
   return meta?.find(
-    (tag): tag is Extract<TanStackStartSeoMetaTag, { title: string }> => "title" in tag,
+    (tag): tag is Extract<TanStackStartSeoMetaTag, { title: string }> => "title" in tag
   );
 }
 
@@ -64,7 +64,7 @@ describe("generateTanStackStartSeo", () => {
           baseLocale: "en",
           canonicalPath: "/articles/legendary-builds/",
           locale: "ja",
-          locales: ["en", "ja"] as const,
+          locales: ["en", "ja"] as const
         },
         description: "Legendary routes, builds, and pull planning.",
         images: [
@@ -73,90 +73,90 @@ describe("generateTanStackStartSeo", () => {
             height: 720,
             type: "image/webp",
             url: "/og/articles/legendary-builds.webp",
-            width: 1280,
-          },
+            width: 1280
+          }
         ],
         openGraphType: "article",
         robots: {
           follow: false,
           index: false,
           maxImagePreview: "large",
-          noarchive: true,
+          noarchive: true
         },
-        title: "Legendary Builds",
+        title: "Legendary Builds"
       });
 
       expect(getTitle(result.meta)).toEqual({
-        title: "Legendary Builds | Example App",
+        title: "Legendary Builds | Example App"
       });
       expect(getMetaByName(result.meta, "description")).toEqual({
         content: "Legendary routes, builds, and pull planning.",
-        name: "description",
+        name: "description"
       });
       expect(getMetaByProperty(result.meta, "og:title")).toEqual({
         content: "Legendary Builds | Example App",
-        property: "og:title",
+        property: "og:title"
       });
       expect(getMetaByProperty(result.meta, "og:description")).toEqual({
         content: "Legendary routes, builds, and pull planning.",
-        property: "og:description",
+        property: "og:description"
       });
       expect(getMetaByProperty(result.meta, "og:type")).toEqual({
         content: "article",
-        property: "og:type",
+        property: "og:type"
       });
       expect(getMetaByProperty(result.meta, "og:url")).toEqual({
         content: "https://example-app.example/ja/articles/legendary-builds",
-        property: "og:url",
+        property: "og:url"
       });
       expect(getMetaByProperty(result.meta, "og:locale")).toEqual({
         content: "ja",
-        property: "og:locale",
+        property: "og:locale"
       });
       expect(getMetaByProperty(result.meta, "og:site_name")).toEqual({
         content: "Example App",
-        property: "og:site_name",
+        property: "og:site_name"
       });
       expect(getMetaByProperty(result.meta, "og:image")).toEqual({
         content: "https://example-app.example/og/articles/legendary-builds.webp",
-        property: "og:image",
+        property: "og:image"
       });
       expect(getMetaByName(result.meta, "twitter:title")).toEqual({
         content: "Legendary Builds | Example App",
-        name: "twitter:title",
+        name: "twitter:title"
       });
       expect(getMetaByName(result.meta, "twitter:image")).toEqual({
         content: "https://example-app.example/og/articles/legendary-builds.webp",
-        name: "twitter:image",
+        name: "twitter:image"
       });
       expect(getMetaByName(result.meta, "robots")).toEqual({
         content: "noindex, nofollow, noarchive, max-image-preview:large",
-        name: "robots",
+        name: "robots"
       });
       expect(getMetaByName(result.meta, "googlebot")).toEqual({
         content: "noindex, nofollow, noarchive, max-image-preview:large",
-        name: "googlebot",
+        name: "googlebot"
       });
       expect(result.links).toEqual([
         {
           href: "https://example-app.example/ja/articles/legendary-builds",
-          rel: "canonical",
+          rel: "canonical"
         },
         {
           href: "https://example-app.example/articles/legendary-builds",
           hrefLang: "en",
-          rel: "alternate",
+          rel: "alternate"
         },
         {
           href: "https://example-app.example/ja/articles/legendary-builds",
           hrefLang: "ja",
-          rel: "alternate",
+          rel: "alternate"
         },
         {
           href: "https://example-app.example/articles/legendary-builds",
           hrefLang: "x-default",
-          rel: "alternate",
-        },
+          rel: "alternate"
+        }
       ]);
     });
   });
@@ -168,39 +168,39 @@ describe("generateTanStackStartSeo", () => {
         expectedOgUrl: "https://example-app.example/",
         locale: "en",
         name: "base locale on root path omits the locale prefix",
-        path: "/",
+        path: "/"
       },
       {
         expectedCanonical: "https://example-app.example/ja",
         expectedOgUrl: "https://example-app.example/ja",
         locale: "ja",
         name: "non-base locale on root path does not add a trailing slash",
-        path: "/",
+        path: "/"
       },
       {
         expectedCanonical: "https://example-app.example/guides",
         expectedOgUrl: "https://example-app.example/guides",
         locale: "en",
         name: "canonical paths are normalized to remove trailing slashes",
-        path: "/guides/",
-      },
+        path: "/guides/"
+      }
     ])("$name", ({ expectedCanonical, expectedOgUrl, locale, path }) => {
       const result = createSubject({
         alternates: {
           baseLocale: "en",
           canonicalPath: path as `/${string}`,
           locale,
-          locales: ["en", "ja"] as const,
-        },
+          locales: ["en", "ja"] as const
+        }
       });
 
       expect(result.links?.[0]).toEqual({
         href: expectedCanonical,
-        rel: "canonical",
+        rel: "canonical"
       });
       expect(getMetaByProperty(result.meta, "og:url")).toEqual({
         content: expectedOgUrl,
-        property: "og:url",
+        property: "og:url"
       });
     });
 
@@ -208,35 +208,35 @@ describe("generateTanStackStartSeo", () => {
       const result = createSubject();
 
       expect(getTitle(result.meta)).toEqual({
-        title: "Example App | Example App",
+        title: "Example App | Example App"
       });
       expect(getMetaByName(result.meta, "description")).toEqual({
         content: "Explore guides, builds, and featured articles.",
-        name: "description",
+        name: "description"
       });
       expect(getMetaByProperty(result.meta, "og:image")).toEqual({
         content: "https://example-app.example/og/default.png",
-        property: "og:image",
+        property: "og:image"
       });
       expect(getMetaByName(result.meta, "twitter:image")).toEqual({
         content: "https://example-app.example/og/default.png",
-        name: "twitter:image",
+        name: "twitter:image"
       });
     });
 
     it("treats an empty images array as a request to use default images rather than disabling images", () => {
       const result = createSubject({
         images: [],
-        title: "Articles",
+        title: "Articles"
       });
 
       expect(getMetaByProperty(result.meta, "og:image")).toEqual({
         content: "https://example-app.example/og/default.png",
-        property: "og:image",
+        property: "og:image"
       });
       expect(getMetaByName(result.meta, "twitter:image")).toEqual({
         content: "https://example-app.example/og/default.png",
-        name: "twitter:image",
+        name: "twitter:image"
       });
     });
 
@@ -244,9 +244,9 @@ describe("generateTanStackStartSeo", () => {
       const result = generateTanStackStartSeo({
         site: {
           baseUrl: "https://example-app.example",
-          defaultTitle: "Example App",
+          defaultTitle: "Example App"
         },
-        title: "Minimal",
+        title: "Minimal"
       });
 
       expect(getMetaByName(result.meta, "description")).toBeUndefined();
@@ -263,35 +263,35 @@ describe("generateTanStackStartSeo", () => {
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "Example App",
+            name: "Example App"
           }),
-          type: "application/ld+json" as const,
+          type: "application/ld+json" as const
         },
         undefined,
         {
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Example Studio",
+            name: "Example Studio"
           }),
-          type: "application/ld+json" as const,
-        },
+          type: "application/ld+json" as const
+        }
       ] as unknown as NonNullable<GenerateTanStackStartSeoParams["scripts"]>;
 
       const result = createSubject({
-        scripts: sparseScripts,
+        scripts: sparseScripts
       });
 
       expect(result.scripts).toEqual([
         {
           children: '{"@context":"https://schema.org","@type":"WebSite","name":"Example App"}',
-          type: "application/ld+json",
+          type: "application/ld+json"
         },
         {
           children:
             '{"@context":"https://schema.org","@type":"Organization","name":"Example Studio"}',
-          type: "application/ld+json",
-        },
+          type: "application/ld+json"
+        }
       ]);
     });
 
@@ -300,21 +300,21 @@ describe("generateTanStackStartSeo", () => {
         site: {
           baseUrl: "https://example-app.example",
           defaultTitle: "Example App",
-          titleTemplate: "| Example App",
+          titleTemplate: "| Example App"
         },
-        title: "Profile",
+        title: "Profile"
       });
 
       expect(getTitle(result.meta)).toEqual({
-        title: "Profile | Example App",
+        title: "Profile | Example App"
       });
       expect(getMetaByProperty(result.meta, "og:title")).toEqual({
         content: "Profile | Example App",
-        property: "og:title",
+        property: "og:title"
       });
       expect(getMetaByName(result.meta, "twitter:title")).toEqual({
         content: "Profile | Example App",
-        name: "twitter:title",
+        name: "twitter:title"
       });
     });
 
@@ -323,35 +323,35 @@ describe("generateTanStackStartSeo", () => {
         images: [
           {
             alt: "Primary social image",
-            url: "https://cdn.example.com/social/primary.png",
+            url: "https://cdn.example.com/social/primary.png"
           },
           {
             alt: "Secondary social image",
             height: 900,
             type: "image/jpeg",
             url: "/social/secondary.jpg",
-            width: 1600,
-          },
-        ],
+            width: 1600
+          }
+        ]
       });
 
       expect(getMetaByName(result.meta, "twitter:image")).toEqual({
         content: "https://cdn.example.com/social/primary.png",
-        name: "twitter:image",
+        name: "twitter:image"
       });
       expect(getMetaByName(result.meta, "twitter:image:alt")).toEqual({
         content: "Primary social image",
-        name: "twitter:image:alt",
+        name: "twitter:image:alt"
       });
       expect(getAllMetaByProperty(result.meta, "og:image")).toEqual([
         {
           content: "https://cdn.example.com/social/primary.png",
-          property: "og:image",
+          property: "og:image"
         },
         {
           content: "https://example-app.example/social/secondary.jpg",
-          property: "og:image",
-        },
+          property: "og:image"
+        }
       ]);
     });
   });
@@ -359,10 +359,10 @@ describe("generateTanStackStartSeo", () => {
   describe("regression-prone SEO cases", () => {
     it("adds document meta only when explicitly requested at the root", () => {
       const withDocumentMeta = createSubject({
-        includeDocumentMeta: true,
+        includeDocumentMeta: true
       });
       const withoutDocumentMeta = createSubject({
-        includeDocumentMeta: false,
+        includeDocumentMeta: false
       });
 
       expect(withDocumentMeta.meta).toEqual(
@@ -370,26 +370,26 @@ describe("generateTanStackStartSeo", () => {
           { charSet: "utf-8" },
           {
             content: "width=device-width, initial-scale=1",
-            name: "viewport",
+            name: "viewport"
           },
           {
             content: "Example App",
-            name: "application-name",
+            name: "application-name"
           },
           {
             content: "on",
-            httpEquiv: "x-dns-prefetch-control",
-          },
-        ]),
+            httpEquiv: "x-dns-prefetch-control"
+          }
+        ])
       );
       expect(withoutDocumentMeta.meta).not.toEqual(
         expect.arrayContaining([
           { charSet: "utf-8" },
           {
             content: "width=device-width, initial-scale=1",
-            name: "viewport",
-          },
-        ]),
+            name: "viewport"
+          }
+        ])
       );
     });
 
@@ -397,19 +397,19 @@ describe("generateTanStackStartSeo", () => {
       const result = createSubject({
         alternates: {
           canonicalPath: "/profile/search",
-          locale: "ja",
-        },
+          locale: "ja"
+        }
       });
 
       expect(result.links).toEqual([
         {
           href: "https://example-app.example/ja/profile/search",
-          rel: "canonical",
-        },
+          rel: "canonical"
+        }
       ]);
       expect(getMetaByProperty(result.meta, "og:locale")).toEqual({
         content: "ja",
-        property: "og:locale",
+        property: "og:locale"
       });
     });
 
@@ -419,17 +419,17 @@ describe("generateTanStackStartSeo", () => {
           maxImagePreview: "standard",
           noarchive: true,
           noimageindex: true,
-          nosnippet: true,
-        },
+          nosnippet: true
+        }
       });
 
       expect(getMetaByName(result.meta, "robots")).toEqual({
         content: "index, follow, noarchive, noimageindex, nosnippet, max-image-preview:standard",
-        name: "robots",
+        name: "robots"
       });
       expect(getMetaByName(result.meta, "googlebot")).toEqual({
         content: "index, follow, noarchive, noimageindex, nosnippet, max-image-preview:standard",
-        name: "googlebot",
+        name: "googlebot"
       });
     });
   });
@@ -438,7 +438,7 @@ describe("generateTanStackStartSeo", () => {
     it("never returns undefined entries in meta, links, or scripts arrays", () => {
       const sparseScripts = [
         undefined,
-        { children: "{}", type: "application/ld+json" as const },
+        { children: "{}", type: "application/ld+json" as const }
       ] as unknown as NonNullable<GenerateTanStackStartSeoParams["scripts"]>;
 
       const result = createSubject({
@@ -446,14 +446,14 @@ describe("generateTanStackStartSeo", () => {
           baseLocale: "en",
           canonicalPath: "/profile/search/",
           locale: "ja",
-          locales: ["en", "ja"] as const,
+          locales: ["en", "ja"] as const
         },
         includeDocumentMeta: true,
         robots: {
           follow: false,
-          index: false,
+          index: false
         },
-        scripts: sparseScripts,
+        scripts: sparseScripts
       });
 
       expect(result.meta?.every(Boolean)).toBe(true);
@@ -466,28 +466,28 @@ describe("generateTanStackStartSeo", () => {
         {
           expected: "Example App | Example App",
           name: "default title with template",
-          title: undefined,
+          title: undefined
         },
         {
           expected: "Profile Search | Example App",
           name: "custom title with template",
-          title: "Profile Search",
-        },
+          title: "Profile Search"
+        }
       ];
 
       for (const testCase of cases) {
         const result = createSubject({
-          title: testCase.title,
+          title: testCase.title
         });
 
         expect(getTitle(result.meta)?.title).toBe(testCase.expected);
         expect(getMetaByProperty(result.meta, "og:title")).toEqual({
           content: testCase.expected,
-          property: "og:title",
+          property: "og:title"
         });
         expect(getMetaByName(result.meta, "twitter:title")).toEqual({
           content: testCase.expected,
-          name: "twitter:title",
+          name: "twitter:title"
         });
       }
     });

@@ -64,7 +64,7 @@ function getRouteTreePaths(routeTree: AnyRoute): Array<BaseRouteInfo> {
     routes.push({
       // Type assertion safe: we checked route.id exists at function start
       id: route.id as AnyRoute["id"],
-      path: fullPath,
+      path: fullPath
     });
 
     processChildren(route, fullPath);
@@ -149,7 +149,7 @@ export function getRouteTreePathsLocalized(routeTree: AnyRoute): Array<Localized
         fullPath,
         id: route.id,
         locale,
-        path: path as StripLocalePrefix<AnyRoute["to"]>,
+        path: path as StripLocalePrefix<AnyRoute["to"]>
       });
     }
   }

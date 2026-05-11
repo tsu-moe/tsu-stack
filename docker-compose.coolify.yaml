@@ -23,7 +23,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "wget -qO- http://127.0.0.1:5000$(echo $SERVICE_URL_SERVER | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/health/live || exit 1",
+          "wget -qO- http://127.0.0.1:5000$(echo $SERVICE_URL_SERVER | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/health/live || exit 1"
         ]
       interval: 10s
       timeout: 3s
@@ -55,7 +55,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "wget -qO- http://127.0.0.1:3000$(echo $SERVICE_URL_WEB | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/_api/health/live || exit 1",
+          "wget -qO- http://127.0.0.1:3000$(echo $SERVICE_URL_WEB | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/_api/health/live || exit 1"
         ]
       interval: 10s
       timeout: 3s

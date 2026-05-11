@@ -10,7 +10,7 @@ export const appConfig = Object.freeze({
   i18n: {
     baseLocale,
     cookieName: "LOCALE",
-    locales,
+    locales
   },
   site: {
     author: "tsu!moe",
@@ -24,6 +24,6 @@ export const appConfig = Object.freeze({
     serverLocation: "Japan",
     shortName: "tsu!stack",
     url: ENV_WEB_ISOMORPHIC.VITE_WEB_URL,
-    version: __BUILD_SOURCE_COMMIT__,
-  },
+    version: __BUILD_SOURCE_COMMIT__
+  }
 });

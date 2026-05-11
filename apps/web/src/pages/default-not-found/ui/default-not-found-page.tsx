@@ -8,7 +8,7 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
-  EmptyTitle,
+  EmptyTitle
 } from "@tsu-stack/ui/components/empty";
 
 import { CenteredLayout } from "@/widgets/layouts";

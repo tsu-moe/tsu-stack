@@ -46,18 +46,18 @@ ${Array.from(
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>`,
+  </url>`
 ).join("\n")}
 </urlset>`;
 
         return new Response(sitemap, {
           headers: {
-            "Content-Type": "application/xml; charset=utf-8",
-          },
+            "Content-Type": "application/xml; charset=utf-8"
+          }
         });
-      },
-    },
-  },
+      }
+    }
+  }
 });
 
 const AMPERSAND_REGEX = /&/g;

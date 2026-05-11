@@ -8,14 +8,14 @@ initLogger({
   env: {
     environment: ENV_WEB_SERVER.NODE_ENV,
     service: LOG_SERVICES.WEB_SERVER,
-    version: ENV_WEB_SERVER.SOURCE_COMMIT,
+    version: ENV_WEB_SERVER.SOURCE_COMMIT
   },
   sampling: {
     keep: [{ status: 400 }, { duration: 1000 }],
     rates: {
-      info: 0,
-    },
-  },
+      info: 0
+    }
+  }
 });
 
 export default {
@@ -23,7 +23,7 @@ export default {
     const url = new URL(req.url);
     const requestLog = createRequestLogger({
       method: req.method,
-      path: url.pathname,
+      path: url.pathname
     });
 
     try {
@@ -35,5 +35,5 @@ export default {
       requestLog.emit();
       throw error;
     }
-  },
+  }
 };

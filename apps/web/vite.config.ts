@@ -29,7 +29,7 @@ const ROUTES_TO_PRERENDER: FileRouteTypes["fullPaths"][] = [
   "/{-$locale}/sign-in/",
   "/{-$locale}/create-an-account/",
   "/sitemap.xml",
-  "/robots.txt",
+  "/robots.txt"
 ];
 
 const PAGES_PRERENDER_CONFIG = [
@@ -37,7 +37,7 @@ const PAGES_PRERENDER_CONFIG = [
   ...ROUTES_TO_PRERENDER.map((path) => {
     return {
       path: path.replace("{-$locale}/", ""),
-      prerender: { enabled: true },
+      prerender: { enabled: true }
     };
   }),
   // Prerender all locales with their locale prefix (including base locale since the prefix is removed on the client via router)
@@ -45,10 +45,10 @@ const PAGES_PRERENDER_CONFIG = [
     ROUTES_TO_PRERENDER.map((path) => {
       return {
         path: path.replace("{-$locale}", loc),
-        prerender: { enabled: true },
+        prerender: { enabled: true }
       };
-    }),
-  ),
+    })
+  )
 ];
 
 export default defineConfig({
@@ -67,10 +67,10 @@ export default defineConfig({
           "VITE_IMGPROXY_URL",
           "SOURCE_COMMIT",
           "BETTER_AUTH_SECRET",
-          "DATABASE_URL",
-        ],
-      },
-    },
+          "DATABASE_URL"
+        ]
+      }
+    }
   },
 
   /**
@@ -78,24 +78,24 @@ export default defineConfig({
    * @see {@link https://github.com/TanStack/router/issues/6275}
    */
   preview: {
-    host: "127.0.0.1",
+    host: "127.0.0.1"
   },
   base: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname,
   // Restart the dev server when env files in this directory change
   envDir: resolve(import.meta.dirname, "../../packages/env"),
   resolve: {
-    tsconfigPaths: true,
+    tsconfigPaths: true
   },
   define: {
     __BUILD_NODE_ENV__: JSON.stringify(ENV_WEB_SERVER.NODE_ENV),
-    __BUILD_SOURCE_COMMIT__: JSON.stringify(ENV_WEB_SERVER.SOURCE_COMMIT),
+    __BUILD_SOURCE_COMMIT__: JSON.stringify(ENV_WEB_SERVER.SOURCE_COMMIT)
   },
   server: {
-    port: 3000,
+    port: 3000
   },
   plugins: [
     devtools({
-      consolePiping: { enabled: false },
+      consolePiping: { enabled: false }
     }),
     mdx(),
     tanstackStart({
@@ -105,22 +105,22 @@ export default defineConfig({
         // Only prerender paths defined in the PAGES_PRERENDER_CONFIG object
         autoStaticPathsDiscovery: false,
         // Disable crawling to avoid missing i18n routes, we are explicitly defining them in PAGES_PRERENDER_CONFIG
-        crawlLinks: false,
+        crawlLinks: false
       },
       server: {
         build: {
           // Don't allow changing of process.env.NODE_ENV at runtime
-          staticNodeEnv: true,
-        },
-      },
+          staticNodeEnv: true
+        }
+      }
     }),
     viteReact(),
     /** @see {@link https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler} */
     babel({
-      presets: [reactCompilerPreset()],
+      presets: [reactCompilerPreset()]
     }),
     paraglideVitePlugin({
-      basePath: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname,
+      basePath: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname
     }),
     /** @see {@link https://tanstack.com/start/latest/docs/framework/react/guide/hosting} */
     nitro({
@@ -132,15 +132,15 @@ export default defineConfig({
        * Recent Discord discussion on the matter
        * @see {@link https://discord.com/channels/719702312431386674/1490005967067414608}
        */
-      traceDeps: ["react", "react-dom"],
+      traceDeps: ["react", "react-dom"]
     }),
     tailwindcss(),
     ohImage({
       pl_show: true,
       transforms: {
         format: "webp",
-        quality: 80,
-      },
-    }),
-  ],
+        quality: 80
+      }
+    })
+  ]
 });

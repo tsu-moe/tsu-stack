@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "apps/web/src/start.ts",
+    "scripts/*.ts",
+    "packages/i18n/**/*.ts",
+    "packages/auth/**/middleware.ts"
+  ],
+  "ignorePatterns": ["**/*.generated.ts", "**/*.d.ts", "**/*.gen.*"],
+  "ignoreDependencies": [
+    // Type definitions and other packages that are not directly imported, but used
+    "@types/node",
+    "@dotenvx/dotenvx",
+    // Required for React Compiler, https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler
+    "babel-plugin-react-compiler",
+    // Linting packages that are not directly imported, but used
+    "@tanstack/eslint-plugin-query",
+    "@tanstack/eslint-plugin-router",
+    "eslint-plugin-fsd-lint",
+    "eslint-plugin-react-hooks",
+    // Custom pnpm-workspace.yaml package specifiers
+    "@voidzero-dev/vite-plus-test",
+    "nitro-nightly"
+  ],
+  "ignoreExports": [{ "file": "**/*.mdx", "exports": ["*"] }],
+  "ignoreExportsUsedInFile": true,
+  "dynamicallyLoaded": ["src/plugins/**/*.ts"],
+  "rules": {
+    "unused-files": "error",
+    "unused-exports": "warn",
+    "unused-types": "off",
+    // Opt-in API hygiene check; default is "off"
+    "private-type-leaks": "off",
+    "unresolved-imports": "error"
+  },
+  "duplicates": {
+    "mode": "mild",
+    "minTokens": 50,
+    "minLines": 5,
+    "threshold": 10
+  },
+  "health": {
+    "maxCyclomatic": 20,
+    "maxCognitive": 15,
+    "ignore": ["**/*.generated.ts", "**/*.gen.*"]
+  },
+  "audit": {
+    "gate": "new-only"
+  },
+  "production": false
+}

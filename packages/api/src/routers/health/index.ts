@@ -17,7 +17,7 @@ const CheckResultSchema = z
   .object({
     error: z.string().optional(),
     latencyMs: z.number(),
-    status: z.enum(["healthy", "unhealthy"]),
+    status: z.enum(["healthy", "unhealthy"])
   })
   .loose();
 
@@ -52,7 +52,7 @@ async function runCheck(check: () => Promise<object>): Promise<CheckResult> {
     return {
       error: getErrorMessage(error),
       latencyMs: Math.round(performance.now() - startedAt),
-      status: "unhealthy",
+      status: "unhealthy"
     };
   }
 }
@@ -63,7 +63,7 @@ function buildBaseHealth() {
     environment: ENV_SERVER.NODE_ENV,
     timestamp: new Date().toISOString(),
     uptimeMs: Math.floor(process.uptime() * 1000),
-    url: ENV_SERVER.VITE_SERVER_URL,
+    url: ENV_SERVER.VITE_SERVER_URL
   };
 }
 
@@ -75,7 +75,7 @@ async function checkDatabase() {
 
 // TODO: Add future checks here with their corresponding functions, ex: { redis: checkRedis, ... }
 const serviceChecks = {
-  database: checkDatabase,
+  database: checkDatabase
 } satisfies Record<string, () => Promise<object>>;
 
 // #region Router
@@ -87,7 +87,7 @@ export const healthRouter = {
       method: "GET",
       spec: (spec) => {
         return { ...spec, security: [] };
-      },
+      }
     })
     .errors({})
     .handler(() => {
@@ -100,20 +100,20 @@ export const healthRouter = {
       method: "GET",
       spec: (spec) => {
         return { ...spec, security: [] };
-      },
+      }
     })
     .errors({
       SERVICE_UNAVAILABLE: {
         data: z.object({
-          checks: z.record(z.string(), CheckResultSchema),
+          checks: z.record(z.string(), CheckResultSchema)
         }),
         description: "One or more services are unhealthy",
-        status: 503,
-      },
+        status: 503
+      }
     })
     .handler(async ({ errors }) => {
       const entries = await Promise.all(
-        Object.entries(serviceChecks).map(async ([name, check]) => [name, await runCheck(check)]),
+        Object.entries(serviceChecks).map(async ([name, check]) => [name, await runCheck(check)])
       );
       const checks = Object.fromEntries(entries) as Record<string, CheckResult>;
       const allHealthy = Object.values(checks).every((r) => r.status === "healthy");
@@ -125,7 +125,7 @@ export const healthRouter = {
       return {
         status: "healthy" as const,
         ...buildBaseHealth(),
-        checks,
+        checks
       };
-    }),
+    })
 };

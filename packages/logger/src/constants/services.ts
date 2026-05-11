@@ -17,7 +17,7 @@ export const LOG_SERVICES = Object.freeze({
   DEFAULT: "default",
   SERVER: "server",
   WEB_CLIENT: "web__client",
-  WEB_SERVER: "web__server",
+  WEB_SERVER: "web__server"
 });
 
 export type LogService = (typeof LOG_SERVICES)[keyof typeof LOG_SERVICES];

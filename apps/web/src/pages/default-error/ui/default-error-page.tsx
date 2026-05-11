@@ -10,7 +10,7 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
-  EmptyTitle,
+  EmptyTitle
 } from "@tsu-stack/ui/components/empty";
 
 import { CenteredLayout } from "@/widgets/layouts";
@@ -32,8 +32,8 @@ export function DefaultErrorPage({ error, reset }: { error: Error; reset: () => 
       error: {
         message: error.message,
         name: error.name,
-        stack: error.stack,
-      },
+        stack: error.stack
+      }
     });
   }, [error]);
 
