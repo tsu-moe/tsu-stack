@@ -15,8 +15,8 @@ export const Route = createFileRoute("/_api/health/live")({
           status: "healthy",
           timestamp: new Date().toISOString(),
           uptimeMs: Math.floor(process.uptime() * 1000),
-          url: ENV_WEB_ISOMORPHIC.VITE_WEB_URL,
-        }),
-    },
-  },
+          url: ENV_WEB_ISOMORPHIC.VITE_WEB_URL
+        })
+    }
+  }
 });

@@ -15,7 +15,7 @@ type ClientLoggerConfig = {
 type LogMethod = typeof evlogLog.info;
 
 const DEFAULT_CLIENT_LOGGER_CONFIG = {
-  service: LOG_SERVICES.DEFAULT,
+  service: LOG_SERVICES.DEFAULT
 } satisfies ClientLoggerConfig;
 
 let isInitialized = false;
@@ -65,11 +65,11 @@ export function initLog(config: ClientLoggerConfig = {}) {
     drain: config.batchedTransport ? createHttpLogDrain(config.batchedTransport) : undefined,
     enabled: config.enabled,
     env: {
-      service: config.service ?? DEFAULT_CLIENT_LOGGER_CONFIG.service,
+      service: config.service ?? DEFAULT_CLIENT_LOGGER_CONFIG.service
     },
     minLevel: config.minLevel,
     pretty: config.pretty,
-    silent: config.console === false,
+    silent: config.console === false
   });
   isInitialized = true;
 }
@@ -101,7 +101,7 @@ export const log = {
   debug: withIdentity(debugLogMethod),
   error: withIdentity(errorLogMethod),
   info: withIdentity(infoLogMethod),
-  warn: withIdentity(warnLogMethod),
+  warn: withIdentity(warnLogMethod)
 } satisfies typeof evlogLog;
 
 /**
@@ -149,7 +149,7 @@ function withIdentity(method: LogMethod): LogMethod {
     if (isRecord(tagOrEvent) && message === undefined) {
       method({
         ...identityContext,
-        ...tagOrEvent,
+        ...tagOrEvent
       });
       return;
     }

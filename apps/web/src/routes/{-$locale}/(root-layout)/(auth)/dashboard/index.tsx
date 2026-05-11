@@ -16,16 +16,16 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)/dashboard
     generateAppSeo({
       alternates: {
         canonicalPath: "/dashboard",
-        locale: params.locale,
+        locale: params.locale
       },
       description: `View your account dashboard and protected application data in ${appConfig.site.shortName}.`,
       robots: {
         follow: false,
-        index: false,
+        index: false
       },
-      title: "Dashboard",
+      title: "Dashboard"
     }),
-  component: RouteComponent,
+  component: RouteComponent
 });
 
 function RouteComponent() {

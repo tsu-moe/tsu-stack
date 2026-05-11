@@ -16,7 +16,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
+  FieldSeparator
 } from "@tsu-stack/ui/components/field";
 import { Input } from "@tsu-stack/ui/components/input";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
@@ -41,7 +41,7 @@ export function CreateAnAccountForm({
       const result = await authClient.signUp.email({
         email: values.email,
         name: values.name,
-        password: values.password,
+        password: values.password
       });
 
       if (!result.data) {
@@ -57,10 +57,10 @@ export function CreateAnAccountForm({
       // Invalidate auth cache to force refetch with new user data
       await queryClient.invalidateQueries(getAuthUserQueryOptions());
       await navigate({
-        to: redirectTo,
+        to: redirectTo
       });
       toast.success(m.auth__sign_up_successful());
-    },
+    }
   });
 
   const form = useForm({
@@ -68,7 +68,7 @@ export function CreateAnAccountForm({
       confirmPassword: "",
       email: "",
       name: "",
-      password: "",
+      password: ""
     },
     onSubmit: async ({ value }) => {
       const { email, name, password } = value;
@@ -80,13 +80,13 @@ export function CreateAnAccountForm({
           confirmPassword: z.string(),
           email: z.email(m.auth__invalid_email()),
           name: z.string().min(2, m.auth__name_min_length()),
-          password: z.string().min(8, m.auth__password_min_length()),
+          password: z.string().min(8, m.auth__password_min_length())
         })
         .refine((data) => data.password === data.confirmPassword, {
           message: m.auth__passwords_no_match(),
-          path: ["confirmPassword"],
-        }),
-    },
+          path: ["confirmPassword"]
+        })
+    }
   });
 
   if (isPending) {

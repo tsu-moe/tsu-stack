@@ -18,9 +18,9 @@ const guestSearchSchema = z.object({
         fallbackTo: "/",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: val,
-      }),
-    ),
+        to: val
+      })
+    )
 });
 
 export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.ensureQueryData({
       ...getAuthUserQueryOptions(),
-      revalidateIfStale: true,
+      revalidateIfStale: true
     });
 
     // `redirect` is always NavigateTo (never undefined) thanks to schema transform & i18n path validation util
@@ -37,13 +37,13 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
 
     if (user) {
       throw redirect({
-        to: redirectTo,
+        to: redirectTo
       });
     }
 
     return {
       // We pass this as context so that it can be used in the sign-in/sign-up pages to redirect after successful authentication
-      redirectTo,
+      redirectTo
     };
-  },
+  }
 });

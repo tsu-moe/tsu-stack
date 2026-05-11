@@ -1,8 +1,5 @@
 import { Suspense } from "react";
 
-import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
-import { m } from "@tsu-stack/i18n/messages";
-import { type LinkProps } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { useScroll } from "@tsu-stack/ui/hooks/use-scroll.hook";
@@ -12,27 +9,9 @@ import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { LogoWordmark } from "@/shared/ui/logo";
 import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
+import { navLinks } from "@/features/navbar/config/nav-links.config";
 import { MobileNav } from "@/features/navbar/ui/mobile-nav";
 import { UserDropdown } from "@/features/navbar/ui/user-dropdown";
-
-type NavbarLink =
-  | { label: string; href: LinkProps["href"]; to?: never }
-  | { label: string; href?: never; to: LinkProps["to"] };
-
-export const navLinks: NavbarLink[] = [
-  {
-    label: m.navbar__playground(),
-    to: "/playground",
-  },
-  {
-    label: m.navbar__dashboard(),
-    to: "/dashboard",
-  },
-  {
-    href: `${ENV_WEB_ISOMORPHIC.VITE_SERVER_URL}/docs`,
-    label: m.navbar__api_docs(),
-  },
-];
 
 export function Navbar() {
   const scrolled = useScroll(10);
@@ -42,8 +21,8 @@ export function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full border-b border-transparent bg-background transition-colors not-dark:shadow not-dark:shadow-transparent",
         {
-          "not-dark:shadow-black/10 dark:border-border": scrolled,
-        },
+          "not-dark:shadow-black/10 dark:border-border": scrolled
+        }
       )}
     >
       <nav className="container mx-auto flex h-(--navbar-height) w-full items-center justify-between px-4">

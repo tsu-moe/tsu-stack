@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
@@ -21,7 +21,7 @@ type LocaleSwitcherProps = {
 export function LocaleSwitcher({
   size = "icon",
   variant = "ghost",
-  className,
+  className
 }: LocaleSwitcherProps) {
   const currentLocale = getLocale();
 

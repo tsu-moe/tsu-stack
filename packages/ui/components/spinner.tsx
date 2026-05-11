@@ -9,16 +9,16 @@ const DARK_CLASS_REGEX = /(?:dark:bg-|bg-)[a-zA-Z0-9-]+/g;
 
 const spinnerVariants = cva("relative block opacity-[0.65]", {
   defaultVariants: {
-    size: "sm",
+    size: "sm"
   },
   variants: {
     size: {
       lg: "size-8",
       md: "size-6",
       sm: "size-4",
-      xs: "size-3",
-    },
-  },
+      xs: "size-3"
+    }
+  }
 });
 
 export type SpinnerProps = {
@@ -47,7 +47,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
       <Comp
         className={cn(
           "relative -left-0.25",
-          spinnerVariants({ className: filteredClassName, size }),
+          spinnerVariants({ className: filteredClassName, size })
         )}
         ref={ref}
         {...props}
@@ -58,7 +58,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
             key={i}
             style={{
               animationDelay: `${-(7 - i) * 100}ms`,
-              transform: `rotate(${i * 45}deg)`,
+              transform: `rotate(${i * 45}deg)`
             }}
           >
             <span className={cn("block h-[30%] w-full rounded-full", bgColorClass)}></span>
@@ -72,7 +72,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
     }
 
     return spinner;
-  },
+  }
 );
 
 Spinner.displayName = "Spinner";

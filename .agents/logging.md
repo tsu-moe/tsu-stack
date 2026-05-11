@@ -66,7 +66,7 @@ try {
   logger.emit({ event: "database_migration_completed" });
 } catch (error) {
   logger.error(error instanceof Error ? error : String(error), {
-    event: "database_migration_failed",
+    event: "database_migration_failed"
   });
   logger.emit({ _forceKeep: true });
 }
@@ -98,9 +98,9 @@ app.onError((error, c) => {
       ...(parsed.code ? { code: parsed.code } : {}),
       ...(parsed.why ? { why: parsed.why } : {}),
       ...(parsed.fix ? { fix: parsed.fix } : {}),
-      ...(parsed.link ? { link: parsed.link } : {}),
+      ...(parsed.link ? { link: parsed.link } : {})
     },
-    parsed.status as ContentfulStatusCode,
+    parsed.status as ContentfulStatusCode
   );
 });
 ```
@@ -114,7 +114,7 @@ throw createError({
   message: "Payment failed",
   status: 402,
   why: "Card declined by issuer",
-  fix: "Try a different payment method",
+  fix: "Try a different payment method"
 });
 ```
 

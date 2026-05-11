@@ -9,7 +9,7 @@ import {
   parseError as parseEvlogError,
   type LoggerConfig as EvlogLoggerConfig,
   type ParsedError as EvlogParsedError,
-  type RequestLogger as EvlogRequestLogger,
+  type RequestLogger as EvlogRequestLogger
 } from "evlog";
 
 import { LOG_SERVICES } from "#@/constants/services";
@@ -27,16 +27,16 @@ const DEFAULT_REDACT_PATHS = [
   "set-cookie",
   "token",
   "accessToken",
-  "refreshToken",
+  "refreshToken"
 ];
 
 const DEFAULT_SERVER_LOGGER_CONFIG = {
   env: {
-    service: LOG_SERVICES.DEFAULT,
+    service: LOG_SERVICES.DEFAULT
   },
   redact: {
-    paths: DEFAULT_REDACT_PATHS,
-  },
+    paths: DEFAULT_REDACT_PATHS
+  }
 } satisfies ServerLoggerConfig;
 
 let isInitialized = false;

@@ -12,8 +12,8 @@ const requireAuth = o.middleware(async ({ context, next }) => {
   }
   return next({
     context: {
-      session: context.session,
-    },
+      session: context.session
+    }
   });
 });
 
@@ -21,7 +21,7 @@ export const protectedProcedure = publicProcedure.use(requireAuth).route({
   spec: (spec) => {
     return {
       ...spec,
-      security: [{ authCookie: [] }],
+      security: [{ authCookie: [] }]
     };
-  },
+  }
 });

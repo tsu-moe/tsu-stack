@@ -15,11 +15,11 @@ export const Route = createFileRoute("/{-$locale}")({
 
     if (params.locale === appConfig.i18n.baseLocale) {
       throw redirect({
-        to: location.href.replace(`/${params.locale}`, "/"),
+        to: location.href.replace(`/${params.locale}`, "/")
       });
     }
   },
-  component: RouteComponent,
+  component: RouteComponent
 });
 
 function RouteComponent() {

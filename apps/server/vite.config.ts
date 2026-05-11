@@ -5,7 +5,7 @@ export default defineConfig({
     clean: true,
     deps: {
       alwaysBundle: [/./],
-      onlyBundle: false,
+      onlyBundle: false
     },
     dts: true,
     entry: "./src/index.ts",
@@ -13,6 +13,6 @@ export default defineConfig({
     format: "esm",
     minify: true,
     outDir: "./.output",
-    sourcemap: true,
-  },
+    sourcemap: true
+  }
 });

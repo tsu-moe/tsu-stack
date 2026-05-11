@@ -4,29 +4,29 @@ const fsdEslintPluginOptions = {
   rootPath: "/apps/web/src/",
   alias: {
     value: "@",
-    withSlash: true,
+    withSlash: true
   },
   layers: {
     app: {
-      pattern: "routes",
+      pattern: "routes"
     },
     pages: {
-      pattern: "pages",
+      pattern: "pages"
     },
     widgets: {
-      pattern: "widgets",
+      pattern: "widgets"
     },
     features: {
-      pattern: "features",
+      pattern: "features"
     },
     entities: {
-      pattern: "entities",
+      pattern: "entities"
     },
     shared: {
-      pattern: "shared",
-    },
+      pattern: "shared"
+    }
   },
-  ignoreImportPatterns: ["\\.css$"],
+  ignoreImportPatterns: ["\\.css$"]
 };
 
 /**
@@ -36,12 +36,12 @@ const fsdEslintPluginOptions = {
 export default defineConfig({
   // Commit hooks - https://viteplus.dev/guide/commit-hooks
   staged: {
-    "*": "vp check --fix",
+    "*": "vp check --fix"
   },
 
   // Vitest - https://vitest.dev/config
   test: {
-    include: ["**/*.test.ts"],
+    include: ["**/*.test.ts"]
   },
 
   // Oxfmt - https://oxc.rs/docs/guide/usage/formatter/config.html
@@ -63,34 +63,34 @@ export default defineConfig({
       ".output",
       ".wrangler",
       ".netlify",
-      "dist",
+      "dist"
     ],
     sortImports: {
       customGroups: [
         {
           elementNamePattern: ["@tsu-stack/**"],
-          groupName: "@tsu-stack",
+          groupName: "@tsu-stack"
         },
         {
           elementNamePattern: ["@/pages/**"],
-          groupName: "pages",
+          groupName: "pages"
         },
         {
           elementNamePattern: ["@/widgets/**"],
-          groupName: "widgets",
+          groupName: "widgets"
         },
         {
           elementNamePattern: ["@/features/**"],
-          groupName: "features",
+          groupName: "features"
         },
         {
           elementNamePattern: ["@/entities/**"],
-          groupName: "entities",
+          groupName: "entities"
         },
         {
           elementNamePattern: ["@/shared/**"],
-          groupName: "shared",
-        },
+          groupName: "shared"
+        }
       ],
       groups: [
         "builtin",
@@ -104,17 +104,18 @@ export default defineConfig({
         ["internal", "subpath"],
         ["parent", "sibling", "index"],
         "style",
-        "unknown",
+        "unknown"
       ],
       internalPattern: ["@/", "#@/", "~/", "~~/", "#"],
-      sortSideEffects: true,
+      sortSideEffects: true
     },
     sortPackageJson: true,
     sortTailwindcss: {
       attributes: ["class", "className"],
       functions: ["clsx", "cn", "cva", "tw"],
-      stylesheet: "./packages/ui/styles/globals.css",
+      stylesheet: "./packages/ui/styles/globals.css"
     },
+    trailingComma: "none"
   },
 
   // Oxlint - https://oxc.rs/docs/guide/usage/linter/config
@@ -122,7 +123,7 @@ export default defineConfig({
     env: {
       browser: true,
       builtin: true,
-      node: true,
+      node: true
     },
     ignorePatterns: [
       "dist",
@@ -133,7 +134,7 @@ export default defineConfig({
       "build/",
       "worker-configuration.d.ts",
       "scripts/",
-      "*.md",
+      "*.md"
     ],
     jsPlugins: [
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
@@ -143,13 +144,13 @@ export default defineConfig({
        */
       {
         name: "eslint-tanstack-router",
-        specifier: "@tanstack/eslint-plugin-router",
+        specifier: "@tanstack/eslint-plugin-router"
       },
       {
         name: "eslint-tanstack-query",
-        specifier: "@tanstack/eslint-plugin-query",
+        specifier: "@tanstack/eslint-plugin-query"
       },
-      { name: "fsd", specifier: "eslint-plugin-fsd-lint" },
+      { name: "fsd", specifier: "eslint-plugin-fsd-lint" }
     ],
     options: { typeAware: true, typeCheck: true },
     plugins: [
@@ -161,7 +162,7 @@ export default defineConfig({
       "import",
       "promise",
       "jest",
-      "unicorn",
+      "unicorn"
     ],
 
     rules: {
@@ -175,7 +176,7 @@ export default defineConfig({
        */
       "fsd/forbidden-imports": [
         "error",
-        { ...fsdEslintPluginOptions, alias: { value: "@", withSlash: false } },
+        { ...fsdEslintPluginOptions, alias: { value: "@", withSlash: false } }
       ],
       "fsd/no-relative-imports": ["error", { ...fsdEslintPluginOptions, allowSameSlice: true }],
       "fsd/no-public-api-sidestep": ["error", fsdEslintPluginOptions],
@@ -185,8 +186,8 @@ export default defineConfig({
           ...fsdEslintPluginOptions,
           allowTypeImports: false,
           excludeLayers: ["shared"],
-          featuresOnly: false,
-        },
+          featuresOnly: false
+        }
       ],
       "fsd/no-ui-in-business-logic": ["error", fsdEslintPluginOptions],
       "fsd/no-global-store-imports": "error",
@@ -243,7 +244,7 @@ export default defineConfig({
       "typescript/consistent-type-definitions": ["error", "type"],
       "typescript/consistent-type-imports": [
         "error",
-        { fixStyle: "inline-type-imports", prefer: "type-imports" },
+        { fixStyle: "inline-type-imports", prefer: "type-imports" }
       ],
       "import/consistent-type-specifier-style": ["error", "prefer-inline"],
       "eslint/curly": ["error", "multi-line"],
@@ -270,7 +271,7 @@ export default defineConfig({
       "typescript/switch-exhaustiveness-check": "error",
       "unicorn/throw-new-error": "error",
       "jest/valid-title": "error",
-      "eslint/yoda": "warn",
-    },
-  },
+      "eslint/yoda": "warn"
+    }
+  }
 });

@@ -16,7 +16,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
+  FieldSeparator
 } from "@tsu-stack/ui/components/field";
 import { Input } from "@tsu-stack/ui/components/input";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
@@ -40,7 +40,7 @@ export function SignInForm({
     mutationFn: async (values: { email: string; password: string }) => {
       const result = await authClient.signIn.email({
         email: values.email,
-        password: values.password,
+        password: values.password
       });
 
       if (!result.data) {
@@ -56,16 +56,16 @@ export function SignInForm({
       // Invalidate auth cache to force refetch with new user data
       await queryClient.invalidateQueries(getAuthUserQueryOptions());
       await navigate({
-        to: redirectTo,
+        to: redirectTo
       });
       toast.success(m.auth__sign_in_successful());
-    },
+    }
   });
 
   const form = useForm({
     defaultValues: {
       email: "",
-      password: "",
+      password: ""
     },
     onSubmit: async ({ value }) => {
       signInMutation.mutate(value);
@@ -73,9 +73,9 @@ export function SignInForm({
     validators: {
       onSubmit: z.object({
         email: z.email(m.auth__invalid_email()),
-        password: z.string().min(8, m.auth__password_min_length()),
-      }),
-    },
+        password: z.string().min(8, m.auth__password_min_length())
+      })
+    }
   });
 
   if (isPending) {

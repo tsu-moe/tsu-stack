@@ -2,7 +2,7 @@ import { type TanStackStartSeoSite } from "#@/tanstack-start/types";
 
 export function formatTanStackStartTitle({
   site,
-  title,
+  title
 }: {
   site: TanStackStartSeoSite;
   title: string;

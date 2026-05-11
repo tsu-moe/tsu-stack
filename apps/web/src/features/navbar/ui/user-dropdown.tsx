@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
 
 import { NavbarUnauthenticatedButtons } from "@/features/navbar/ui/navbar-unauthenticated-buttons";
@@ -33,8 +33,8 @@ export function UserDropdown() {
           // Invalidate to sync across all tabs
           await queryClient.invalidateQueries(getAuthUserQueryOptions());
           await router.invalidate();
-        },
-      },
+        }
+      }
     });
   };
 

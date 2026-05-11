@@ -11,9 +11,9 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/")({
     generateAppSeo({
       alternates: {
         canonicalPath: "/",
-        locale: params.locale,
+        locale: params.locale
       },
-      description: appConfig.site.description,
+      description: appConfig.site.description
     }),
-  component: HomePage,
+  component: HomePage
 });

@@ -12,9 +12,9 @@ export function useNavigate<TDefaultFrom extends string = string>(_defaultOpts?:
   const navigate = rawUseNavigate(
     _defaultOpts?.from
       ? {
-          from: `/${LOCALE_ROUTE_PREFIX}${_defaultOpts.from}` as NavigateOptions["from"],
+          from: `/${LOCALE_ROUTE_PREFIX}${_defaultOpts.from}` as NavigateOptions["from"]
         }
-      : undefined,
+      : undefined
   );
 
   const locale = getLocale();
@@ -29,10 +29,10 @@ export function useNavigate<TDefaultFrom extends string = string>(_defaultOpts?:
     return navigate({
       params: {
         locale: locale === baseLocale ? undefined : locale,
-        ...(typeof params === "object" ? params : {}),
+        ...(typeof params === "object" ? params : {})
       },
       to: localizedTo,
-      ...rest,
+      ...rest
     });
   }) as unknown as LocalizedNavigate<TDefaultFrom>;
 }

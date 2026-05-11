@@ -29,7 +29,7 @@ export const _getUser = createServerOnlyFn(async (query?: GetUserServerQuery) =>
   const session = await auth.api.getSession({
     headers: getRequest().headers,
     query,
-    returnHeaders: true,
+    returnHeaders: true
   });
 
   // Forward any Set-Cookie headers to the client, e.g. for session/cache refresh

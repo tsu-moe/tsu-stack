@@ -17,31 +17,31 @@ export const auth = betterAuth({
   secret: ENV_SERVER.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, {
     provider: "pg",
-    schema,
+    schema
   }),
 
   // https://www.better-auth.com/docs/concepts/session-management#session-caching
   session: {
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60, // 5 minutes
-    },
+      maxAge: 5 * 60 // 5 minutes
+    }
   },
 
   // https://www.better-auth.com/docs/authentication/email-password
   emailAndPassword: {
-    enabled: true,
+    enabled: true
   },
 
   experimental: {
     // https://www.better-auth.com/docs/adapters/drizzle#joins-experimental
-    joins: true,
+    joins: true
   },
 
   plugins: [
     openAPI({
-      theme: "deepSpace",
-    }),
+      theme: "deepSpace"
+    })
   ],
 
   advanced: {
@@ -57,13 +57,13 @@ export const auth = betterAuth({
     defaultCookieAttributes: {
       httpOnly: true,
       sameSite: isProduction ? "strict" : "none",
-      secure: true,
+      secure: true
     },
 
     telemetry: {
-      enabled: false,
-    },
-  },
+      enabled: false
+    }
+  }
 });
 
 export type AuthSession = typeof auth.$Infer.Session;

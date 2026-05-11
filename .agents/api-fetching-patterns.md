@@ -53,12 +53,12 @@ import { type client, orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
 export const profileQueryKeys = {
   byId(id: string) {
     return orpc.profile.byId.key({ input: { id } });
-  },
+  }
 };
 
 export function getProfileQueryOptions(id: string) {
   return orpc.profile.byId.queryOptions({
-    input: { id },
+    input: { id }
   });
 }
 
@@ -95,10 +95,10 @@ export function useCreateProfileMutation() {
     orpc.profile.create.mutationOptions({
       onSuccess: async (profile) => {
         await queryClient.invalidateQueries({
-          queryKey: profileQueryKeys.byId(profile.id),
+          queryKey: profileQueryKeys.byId(profile.id)
         });
-      },
-    }),
+      }
+    })
   );
 }
 
@@ -114,7 +114,7 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/profile/$id/")({
   beforeLoad: ({ context, params }) => {
     void context.queryClient.ensureQueryData(getProfileQueryOptions(params.id));
   },
-  component: ProfileIdPage,
+  component: ProfileIdPage
 });
 ```
 
@@ -130,7 +130,7 @@ Use React Query for caching. Do not rely on the router loader cache.
 const profileQuery = useGetProfileQuery(profileId);
 
 await queryClient.invalidateQueries({
-  queryKey: profileQueryKeys.byId(profileId),
+  queryKey: profileQueryKeys.byId(profileId)
 });
 ```
 

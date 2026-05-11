@@ -37,7 +37,7 @@ export const freshAuthMiddleware = createMiddleware().server(async ({ next }) =>
   const user = await _getUser({
     // Ensure session is fresh
     // https://better-auth.com/docs/concepts/session-management#cookie-cache
-    disableCookieCache: true,
+    disableCookieCache: true
   });
 
   if (!user) {

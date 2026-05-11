@@ -49,7 +49,7 @@ export function validateNavigateTo({
   routeTree,
   to,
   fallbackTo = "/",
-  shouldIncludeRoute,
+  shouldIncludeRoute
 }: {
   routeTree: AnyRoute;
   to: string | undefined;

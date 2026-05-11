@@ -3,7 +3,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { $getUser } from "#@/react/tanstack-start/functions";
 
 export const authQueryKeys = {
-  user: ["user"],
+  user: ["user"]
 };
 
 export function getAuthUserQueryOptions() {
@@ -16,7 +16,7 @@ export function getAuthUserQueryOptions() {
     queryKey: authQueryKeys.user,
     queryFn: ({ signal }) => $getUser({ signal }),
     retry: 3, // Retry logic for transient failures under high load
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000)
   });
 }
 
