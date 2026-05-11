@@ -7,7 +7,6 @@ import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
   DropdownMenu,
@@ -19,6 +18,7 @@ import {
   DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
 
+import { NavbarAvatar } from "@/features/navbar/ui/navbar-avatar";
 import { NavbarUnauthenticatedButtons } from "@/features/navbar/ui/navbar-unauthenticated-buttons";
 
 export function UserDropdown() {
@@ -51,18 +51,7 @@ export function UserDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="max-w-sm min-w-fit">
         <DropdownMenuLabel className="flex items-start gap-3">
-          <Avatar>
-            <AvatarImage src={user.image ?? undefined} alt={user?.name ?? "User"} />
-            <AvatarFallback>{user?.name?.charAt(0).toUpperCase() ?? "?"}</AvatarFallback>
-          </Avatar>
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate text-sm font-medium text-foreground">
-              {user?.name ?? "Guest"}
-            </span>
-            <span className="truncate text-xs font-normal text-muted-foreground">
-              {user?.email ?? "You are not authenticated"}
-            </span>
-          </div>
+          <NavbarAvatar avatarImgSrc={user.image} name={user.name} email={user.email} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

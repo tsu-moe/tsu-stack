@@ -174,6 +174,9 @@ catalogs:
     evlog:
       specifier: ^2.16.0
       version: 2.16.0
+    fallow:
+      specifier: ^2.69.0
+      version: 2.69.0
     hono:
       specifier: ^4.12.18
       version: 4.12.18
@@ -271,6 +274,9 @@ importers:
       eslint-plugin-react-hooks:
         specifier: 'catalog:'
         version: 7.1.1(eslint@9.39.4(jiti@2.7.0))
+      fallow:
+        specifier: 'catalog:'
+        version: 2.69.0
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 0.22.1
@@ -1415,6 +1421,46 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fallow-cli/darwin-arm64@2.69.0':
+    resolution: {integrity: sha512-8pp/AY4lNml/N9Bo0xbSzrmvyiiJg6lz5i8G9HCEptrH9W2YyFhQYm0XTbwoy3ATNnjw3aRDajiFTV5njahhSQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@fallow-cli/darwin-x64@2.69.0':
+    resolution: {integrity: sha512-nCZwXCJC+MQpwDb0CS4aGHPbaNAnH5//eceotjGc/sSrvXYg3oINAP2ztVDwBAUwwiYwiOGU0W1npVIoQrYgVQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@fallow-cli/linux-arm64-gnu@2.69.0':
+    resolution: {integrity: sha512-cfRKQHZMXd8/k8Arr2LlYr2eZDvqx/jZ6K30/8ji/iREXcGYkhfFB4Hk53t7CP8MxbtXGzJ05yyC7n+gf3MOaw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@fallow-cli/linux-arm64-musl@2.69.0':
+    resolution: {integrity: sha512-SgOcAG0VMWJ1eOsMvOdIGYYjebUNsTzNHaOnUch2o8KFvaZkWuoLvfllLC7jI5UMbC4dET/+siOcruKprxPR5w==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@fallow-cli/linux-x64-gnu@2.69.0':
+    resolution: {integrity: sha512-mx9h6Fv7IpoFWJtilKlNFWtANbsxMSDDdHTatYN+VJh9WpsmgMgsoiyxI+K3lheLUe9albgMZjOa3EKlR8ry7w==}
+    cpu: [x64]
+    os: [linux]
+
+  '@fallow-cli/linux-x64-musl@2.69.0':
+    resolution: {integrity: sha512-H5oS1lge94bp6GoxCgJgi+wT36zD9nDW7rTxBfEG6gqXKpALYs3uIF4lbzzELNC8GZwGe4YQhMxxqGm5CXfCrg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@fallow-cli/win32-arm64-msvc@2.69.0':
+    resolution: {integrity: sha512-NEl4EnKzXw/lwrboUiAxWHrVx4tBO+cpNuPmvJoRsLS8wG5UIOxbyjHjD9Ux2FbwXNaRzZZ+vjLJAvGdOEU0Xw==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@fallow-cli/win32-x64-msvc@2.69.0':
+    resolution: {integrity: sha512-EeL+Bbdg9XOgMl7tG0k6DCKhCaXLS0EPiy3HWccKUaMYDgR+haUWDzAGa9nJqIBlR4GYz/lz6amSCJtV+XsMzA==}
+    cpu: [x64]
+    os: [win32]
 
   '@floating-ui/core@1.7.5':
     resolution: {integrity: sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ==}
@@ -5001,6 +5047,11 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
+  fallow@2.69.0:
+    resolution: {integrity: sha512-N3vPCjKSJ6mM919xoOtbImoksCgtTllC/y2xOe3aQfffK5AVJNvP4STgZ69xnqcMTfSB6CYQBFbHPnKgfOgrVg==}
+    engines: {node: '>=16'}
+    hasBin: true
+
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -6937,6 +6988,30 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
+
+  '@fallow-cli/darwin-arm64@2.69.0':
+    optional: true
+
+  '@fallow-cli/darwin-x64@2.69.0':
+    optional: true
+
+  '@fallow-cli/linux-arm64-gnu@2.69.0':
+    optional: true
+
+  '@fallow-cli/linux-arm64-musl@2.69.0':
+    optional: true
+
+  '@fallow-cli/linux-x64-gnu@2.69.0':
+    optional: true
+
+  '@fallow-cli/linux-x64-musl@2.69.0':
+    optional: true
+
+  '@fallow-cli/win32-arm64-msvc@2.69.0':
+    optional: true
+
+  '@fallow-cli/win32-x64-msvc@2.69.0':
+    optional: true
 
   '@floating-ui/core@1.7.5':
     dependencies:
@@ -10157,6 +10232,19 @@ snapshots:
   exsolve@1.0.8: {}
 
   extend@3.0.2: {}
+
+  fallow@2.69.0:
+    dependencies:
+      detect-libc: 2.1.2
+    optionalDependencies:
+      '@fallow-cli/darwin-arm64': 2.69.0
+      '@fallow-cli/darwin-x64': 2.69.0
+      '@fallow-cli/linux-arm64-gnu': 2.69.0
+      '@fallow-cli/linux-arm64-musl': 2.69.0
+      '@fallow-cli/linux-x64-gnu': 2.69.0
+      '@fallow-cli/linux-x64-musl': 2.69.0
+      '@fallow-cli/win32-arm64-msvc': 2.69.0
+      '@fallow-cli/win32-x64-msvc': 2.69.0
 
   fast-deep-equal@3.1.3: {}
 
