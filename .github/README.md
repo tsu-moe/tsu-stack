@@ -295,9 +295,9 @@ export const Route = createFileRoute("/server/$")({
 
       POST: ({ request }) => {
         return app.fetch(request);
-      },
-    },
-  },
+      }
+    }
+  }
 });
 ```
 

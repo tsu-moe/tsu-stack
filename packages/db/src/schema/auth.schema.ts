@@ -11,7 +11,7 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
+    .notNull()
 });
 
 export const session = pgTable(
@@ -28,9 +28,9 @@ export const session = pgTable(
     userAgent: text("user_agent"),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" })
   },
-  (table) => [index("session_userId_idx").on(table.userId)],
+  (table) => [index("session_userId_idx").on(table.userId)]
 );
 
 export const account = pgTable(
@@ -52,9 +52,9 @@ export const account = pgTable(
       .notNull(),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" })
   },
-  (table) => [index("account_userId_idx").on(table.userId)],
+  (table) => [index("account_userId_idx").on(table.userId)]
 );
 
 export const verification = pgTable(
@@ -68,9 +68,9 @@ export const verification = pgTable(
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
-    value: text("value").notNull(),
+    value: text("value").notNull()
   },
-  (table) => [index("verification_identifier_idx").on(table.identifier)],
+  (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
 export const relations = defineRelations({ account, session, user, verification }, (r) => {
@@ -78,24 +78,24 @@ export const relations = defineRelations({ account, session, user, verification 
     account: {
       user: r.one.user({
         from: r.account.userId,
-        to: r.user.id,
-      }),
+        to: r.user.id
+      })
     },
     session: {
       user: r.one.user({
         from: r.session.userId,
-        to: r.user.id,
-      }),
+        to: r.user.id
+      })
     },
     user: {
       accounts: r.many.account({
         from: r.user.id,
-        to: r.account.userId,
+        to: r.account.userId
       }),
       sessions: r.many.session({
         from: r.user.id,
-        to: r.session.userId,
-      }),
-    },
+        to: r.session.userId
+      })
+    }
   };
 });

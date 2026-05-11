@@ -29,25 +29,25 @@ Typical shape:
 
 ```ts
 const exampleInputSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().min(1)
 });
 
 const exampleOutputSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string()
 });
 
 export const exampleRouter = {
   byId: publicProcedure
     .route({
       description: "Get an example by ID",
-      method: "GET",
+      method: "GET"
     })
     .input(exampleInputSchema)
     .output(exampleOutputSchema.nullable())
     .handler(async ({ input, context, errors }) => {
       // ...
-    }),
+    })
 };
 ```
 
@@ -68,18 +68,18 @@ Example:
 const protectedExampleProcedure = protectedProcedure.errors({
   RATE_LIMITED: {
     data: z.object({
-      retryAfter: z.number().int().min(1),
+      retryAfter: z.number().int().min(1)
     }),
-    status: 429,
+    status: 429
   },
   DATABASE_ERROR: {
     description: "Failed to update example",
-    status: 500,
+    status: 500
   },
   EXAMPLE_NOT_FOUND: {
     message: "Example not found",
-    status: 404,
-  },
+    status: 404
+  }
 });
 ```
 
@@ -169,7 +169,7 @@ export function getEditProfileMutationOptions() {
       }
 
       toast.error(error instanceof Error ? error.message : "Failed to update profile.");
-    },
+    }
   });
 }
 

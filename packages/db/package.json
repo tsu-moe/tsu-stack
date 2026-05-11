@@ -13,7 +13,7 @@
     "db": "pnpm dotenvx run -f ../env/.env -- drizzle-kit",
     "db:dev:start": "docker compose -f docker-compose.dev.yaml up -d",
     "db:dev:stop": "docker compose -f docker-compose.dev.yaml stop",
-    "auth:generate": "vpx https://pkg.pr.new/better-auth/better-auth/@better-auth/cli@6913 generate --config ../auth/src/index.ts --y --output ./src/schema/auth.schema.ts"
+    "auth:generate": "vp run -w auth:generate"
   },
   "dependencies": {
     "@tsu-stack/logger": "workspace:*",

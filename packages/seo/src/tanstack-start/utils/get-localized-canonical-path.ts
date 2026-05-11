@@ -3,7 +3,7 @@ import { normalizeCanonicalPath } from "#@/tanstack-start/utils/normalize-canoni
 export function getLocalizedCanonicalPath({
   baseLocale,
   canonicalPath,
-  locale,
+  locale
 }: {
   baseLocale?: string;
   canonicalPath: `/${string}`;

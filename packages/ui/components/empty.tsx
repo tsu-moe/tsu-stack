@@ -9,7 +9,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="empty"
       className={cn(
         "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-lg border-dashed p-12 text-center text-balance",
-        className,
+        className
       )}
       {...props}
     />
@@ -30,15 +30,15 @@ const emptyMediaVariants = cva(
   "mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     defaultVariants: {
-      variant: "default",
+      variant: "default"
     },
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: "flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-6",
-      },
-    },
-  },
+        icon: "flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-6"
+      }
+    }
+  }
 );
 
 function EmptyMedia({
@@ -72,7 +72,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="empty-description"
       className={cn(
         "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
-        className,
+        className
       )}
       {...props}
     />
@@ -85,7 +85,7 @@ function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="empty-content"
       className={cn(
         "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-        className,
+        className
       )}
       {...props}
     />

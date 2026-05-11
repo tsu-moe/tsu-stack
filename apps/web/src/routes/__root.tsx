@@ -5,6 +5,7 @@ import geistVariableCyrillic from "@fontsource-variable/geist/files/geist-cyrill
 import geistVariableLatinExt from "@fontsource-variable/geist/files/geist-latin-ext-wght-normal.woff2?url";
 import geistVariableLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 import instrumentSerifLatin400 from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
+import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
 import { type QueryClient } from "@tanstack/react-query";
@@ -45,7 +46,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   },
   head: () => {
     const rootSeo = generateAppSeo({
-      includeDocumentMeta: true,
+      includeDocumentMeta: true
     });
 
     return {
@@ -53,67 +54,67 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         ...(rootSeo.links ?? []),
         {
           href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/favicon.ico`,
-          rel: "icon",
+          rel: "icon"
         },
         {
           href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/sitemap.xml`,
           rel: "sitemap",
-          type: "application/xml",
+          type: "application/xml"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: instrumentSerifLatin400,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: geistVariableLatin,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: geistVariableLatinExt,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: geistVariableCyrillic,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: geistMonoLatin,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: geistMonoLatinExt,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
         {
           rel: "preload",
           as: "font",
           type: "font/woff2",
           href: geistMonoCyrillic,
-          crossOrigin: "anonymous",
+          crossOrigin: "anonymous"
         },
-        { href: appCss, rel: "stylesheet" },
+        { href: appCss, rel: "stylesheet" }
       ],
-      meta: [...(rootSeo.meta ?? [])],
+      meta: [...(rootSeo.meta ?? [])]
     };
-  },
+  }
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -132,13 +133,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               plugins={[
                 {
                   name: "TanStack Query",
-                  render: <ReactQueryDevtoolsPanel />,
+                  render: <ReactQueryDevtoolsPanel />
                 },
                 {
                   name: "TanStack Router",
-                  render: <TanStackRouterDevtoolsPanel />,
+                  render: <TanStackRouterDevtoolsPanel />
                 },
                 formDevtoolsPlugin(),
+                a11yDevtoolsPlugin()
               ]}
             />
             <Scripts />

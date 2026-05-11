@@ -15,20 +15,20 @@ function Toaster({ ...props }: ToasterProps) {
         info: <Info className="size-4" />,
         loading: <Loader className="size-4 animate-spin" />,
         success: <CheckCircle className="size-4" />,
-        warning: <AlertTriangle className="size-4" />,
+        warning: <AlertTriangle className="size-4" />
       }}
       style={
         {
           "--border-radius": "var(--radius)",
           "--normal-bg": "var(--popover)",
           "--normal-border": "var(--border)",
-          "--normal-text": "var(--popover-foreground)",
+          "--normal-text": "var(--popover-foreground)"
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
-        },
+          toast: "cn-toast"
+        }
       }}
       {...props}
     />

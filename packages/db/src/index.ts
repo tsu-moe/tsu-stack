@@ -24,7 +24,7 @@ export const db = drizzle({
   // IMPORTANT: authRelations must come first, since it's using defineRelations as the main relation
   // https://orm.drizzle.team/docs/relations-v2#relations-parts
   relations: { ...authRelations, ...relations },
-  casing: "snake_case",
+  casing: "snake_case"
 });
 
 export async function checkIsDbReady(): Promise<boolean> {
@@ -58,7 +58,7 @@ export async function migrateDatabase(): Promise<void> {
       environment: ENV_SERVER.NODE_ENV,
       event: "database_migration_skipped",
 
-      reason: "build_process",
+      reason: "build_process"
     });
     return;
   }
@@ -68,19 +68,19 @@ export async function migrateDatabase(): Promise<void> {
       environment: ENV_SERVER.NODE_ENV,
       event: "database_migration_skipped",
 
-      reason: "non_production",
+      reason: "non_production"
     });
     return;
   }
 
   try {
     await migrate(db, {
-      migrationsFolder: join(import.meta.dirname, "migrations"),
+      migrationsFolder: join(import.meta.dirname, "migrations")
     });
     log.emit({ event: "database_migration_completed" });
   } catch (error) {
     log.error(error instanceof Error ? error : String(error), {
-      event: "database_migration_failed",
+      event: "database_migration_failed"
     });
     log.emit({ _forceKeep: true });
   }

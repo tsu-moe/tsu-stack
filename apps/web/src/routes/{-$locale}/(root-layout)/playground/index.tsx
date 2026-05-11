@@ -21,16 +21,16 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/playground/")({
     generateAppSeo({
       alternates: {
         canonicalPath: "/playground",
-        locale: params.locale,
+        locale: params.locale
       },
       description: `Explore internal demos for images, RPC health checks, toasts, and error handling in ${appConfig.site.shortName}.`,
       robots: {
         follow: false,
-        index: false,
+        index: false
       },
-      title: "Playground",
+      title: "Playground"
     }),
-  component: PlaygroundPage,
+  component: PlaygroundPage
 });
 
 function PlaygroundPage() {

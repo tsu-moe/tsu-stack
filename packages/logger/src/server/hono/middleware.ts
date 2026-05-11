@@ -2,7 +2,7 @@ import { log, type DrainContext, type LogLevel } from "evlog";
 import {
   evlog as createEvlogHonoMiddleware,
   type EvlogHonoOptions,
-  type EvlogVariables,
+  type EvlogVariables
 } from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
@@ -58,7 +58,7 @@ export function honoLoggerMiddleware(options?: HonoLoggerMiddlewareOptions): Mid
  * ```
  */
 export function honoLogIngestionMiddleware(
-  options: HonoLogIngestionOptions = {},
+  options: HonoLogIngestionOptions = {}
 ): MiddlewareHandler {
   const maxPayloadBytes = options.maxPayloadBytes ?? 64 * 1024;
 
@@ -114,7 +114,7 @@ function emitClientLog(payload: DrainContext) {
     ...(timestamp !== undefined && event.clientTimestamp === undefined
       ? { clientTimestamp: timestamp }
       : {}),
-    ...event,
+    ...event
   };
 
   if (payload.request?.method && normalizedEvent.method === undefined) {
@@ -131,7 +131,7 @@ function emitClientLog(payload: DrainContext) {
 
   const clientEvent = {
     ...normalizedEvent,
-    source: "client",
+    source: "client"
   };
 
   switch (normalizeLevel(payload.event.level)) {

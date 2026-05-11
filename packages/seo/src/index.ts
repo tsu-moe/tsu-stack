@@ -2,5 +2,5 @@ export { generateTanStackStartSeo } from "#@/tanstack-start/generate-tanstack-st
 export type {
   GenerateTanStackStartSeoParams,
   TanStackStartSeoAlternates,
-  TanStackStartSeoSite,
+  TanStackStartSeoSite
 } from "#@/tanstack-start/types";

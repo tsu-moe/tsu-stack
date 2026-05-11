@@ -1,7 +1,7 @@
 import {
   type AnyRedirect,
   type RedirectOptions,
-  type RegisteredRouter,
+  type RegisteredRouter
 } from "@tanstack/react-router";
 import { redirect as rawRedirect } from "@tanstack/react-router";
 
@@ -27,7 +27,7 @@ export type LocalizedRedirect = <const TTo extends `/${string}`>(
     "to" | "from"
   > & {
     to: TTo;
-  },
+  }
 ) => AnyRedirect;
 
 export const redirect: LocalizedRedirect = ((opts: {
@@ -43,8 +43,8 @@ export const redirect: LocalizedRedirect = ((opts: {
     ...opts,
     params: {
       locale: locale === baseLocale ? undefined : locale,
-      ...(typeof opts.params === "object" ? opts.params : {}),
+      ...(typeof opts.params === "object" ? opts.params : {})
     },
-    to: localizedTo,
+    to: localizedTo
   } as unknown as Parameters<typeof rawRedirect>[0]);
 }) as unknown as LocalizedRedirect;

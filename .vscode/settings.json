@@ -55,7 +55,7 @@
   "explorer.fileNesting.patterns": {
     "tsconfig.json": "tsconfig.*.json, env.d.ts",
     "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
-    "package.json": "LICENSE, package-lock.json, renovate.*, .npmrc, knip.*, .node-version, pnpm*, components.json, commitlint*, .nvmrc, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, .gitignore, bun.lock",
+    "package.json": "LICENSE, package-lock.json, renovate.*, .npmrc, .fallowrc.jsonc, .node-version, pnpm*, components.json, commitlint*, .nvmrc, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, .gitignore, bun.lock",
     "router.tsx": "routeTree.gen.ts",
     "docker-compose.yaml": ".dockerignore, Dockerfile*, docker-compose.*.yaml, .env.docker*"
   },
@@ -71,8 +71,8 @@
       "url": "https://inlang.com/schema/inlang-message-format"
     },
     {
-      "fileMatch": ["knip.json", "knip.jsonc"],
-      "url": "https://unpkg.com/knip@6/schema.json"
+      "fileMatch": [".fallowrc.jsonc", ".fallowrc.json"],
+      "url": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json"
     }
   ]
 }

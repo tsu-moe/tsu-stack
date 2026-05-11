@@ -29,7 +29,7 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
   beforeLoad: async ({ context, location }) => {
     const user = await context.queryClient.ensureQueryData({
       ...getAuthUserQueryOptions(),
-      revalidateIfStale: true,
+      revalidateIfStale: true
     });
 
     if (!user) {
@@ -39,21 +39,21 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
         fallbackTo: "/",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: cleanPathname,
+        to: cleanPathname
       });
 
       throw redirect({
         search: {
-          redirect: redirectTo,
+          redirect: redirectTo
         },
-        to: "/sign-in",
+        to: "/sign-in"
       });
     }
 
     // Retype the Route context to include a non-null user prop
     return { user };
   },
-  component: RequiresAuthLayout,
+  component: RequiresAuthLayout
 });
 
 function RequiresAuthLayout() {
@@ -72,14 +72,14 @@ function RequiresAuthLayout() {
         fallbackTo: "/",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: location.pathname,
+        to: location.pathname
       });
 
       void navigate({
         search: {
-          redirect: redirectTo,
+          redirect: redirectTo
         },
-        to: "/sign-in",
+        to: "/sign-in"
       });
     }
   }, [user, navigate, location.pathname, logger]);

@@ -11,16 +11,16 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/crea
     generateAppSeo({
       alternates: {
         canonicalPath: "/create-an-account",
-        locale: params.locale,
+        locale: params.locale
       },
       description: `Create a ${appConfig.site.shortName} account to save your progress and access personalized features.`,
       robots: {
         follow: false,
-        index: false,
+        index: false
       },
-      title: "Create an Account",
+      title: "Create an Account"
     }),
-  component: RouteComponent,
+  component: RouteComponent
 });
 
 function RouteComponent() {

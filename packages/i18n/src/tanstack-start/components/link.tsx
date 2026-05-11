@@ -42,7 +42,7 @@ export const Link: FC<LinkProps> = (props) => {
       {...props}
       params={{
         locale: locale === baseLocale ? undefined : locale,
-        ...(typeof props.params === "object" ? props.params : {}),
+        ...(typeof props.params === "object" ? props.params : {})
       }}
       to={`/${LOCALE_ROUTE_PREFIX}${cleanTo}` as LinkComponentProps["to"]}
     />

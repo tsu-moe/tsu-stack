@@ -4,7 +4,7 @@ import { resolveRelativePathToAbsoluteUrl } from "#@/tanstack-start/utils/resolv
 
 export function buildOpenGraphImageMeta({
   baseUrl,
-  images,
+  images
 }: {
   baseUrl: string;
   images?: TanStackStartSeoImage[];
@@ -19,32 +19,32 @@ export function buildOpenGraphImageMeta({
     return [
       {
         content: absoluteUrl,
-        property: "og:image",
+        property: "og:image"
       },
       image.alt
         ? {
             content: image.alt,
-            property: "og:image:alt",
+            property: "og:image:alt"
           }
         : undefined,
       image.width
         ? {
             content: `${image.width}`,
-            property: "og:image:width",
+            property: "og:image:width"
           }
         : undefined,
       image.height
         ? {
             content: `${image.height}`,
-            property: "og:image:height",
+            property: "og:image:height"
           }
         : undefined,
       image.type
         ? {
             content: image.type,
-            property: "og:image:type",
+            property: "og:image:type"
           }
-        : undefined,
+        : undefined
     ].filter(isDefined);
   });
 }

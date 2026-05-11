@@ -11,14 +11,14 @@ const buttonVariants = cva(
     `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:focus-visible:ring-offset-secondary-foreground`,
     `disabled:scale-100 disabled:cursor-not-allowed disabled:bg-secondary disabled:opacity-60`,
     `[transition-timing-function:cubic-bezier(.6,.04,.98,.335)] will-change-transform [transition:scale_0.1s,box-shadow_0.2s,background_0.20s,width_0.2s]`,
-    `active:scale-98 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4`,
+    `active:scale-98 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4`
   ],
   {
     defaultVariants: {
       light: "none",
       radius: "default",
       size: "default",
-      variant: "default",
+      variant: "default"
     },
     variants: {
       light: {
@@ -27,8 +27,8 @@ const buttonVariants = cva(
           // Tune the opacity according to your theme
           // The first shadow is the main sharp highlight, second shadow is the subtle depth
           `shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_2px_2px_rgba(255,255,255,0.08)]`,
-          `dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_1px_3px_rgba(255,255,255,0.1)]`,
-        ],
+          `dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_1px_3px_rgba(255,255,255,0.1)]`
+        ]
       },
       radius: {
         default: "rounded-md",
@@ -36,7 +36,7 @@ const buttonVariants = cva(
         lg: "rounded-lg",
         none: "rounded-none",
         sm: "rounded-sm",
-        xl: "rounded-xl",
+        xl: "rounded-xl"
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -47,7 +47,7 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
         xl: "h-12 px-[calc(--spacing(4)-1px)] py-[calc(--spacing(2)-1px)] text-base [&_svg:not([class*='size-'])]:size-4.5",
-        xs: "h-6 gap-1 rounded-md px-[calc(--spacing(2)-1px)] py-[calc(--spacing(1)-1px)] text-xs [&_svg:not([class*='size-'])]:size-3",
+        xs: "h-6 gap-1 rounded-md px-[calc(--spacing(2)-1px)] py-[calc(--spacing(1)-1px)] text-xs [&_svg:not([class*='size-'])]:size-3"
       },
       variant: {
         default: `bg-linear-to-b from-primary/80 to-primary text-primary-foreground hover:from-primary/75 dark:from-primary dark:hover:from-primary/95`,
@@ -57,10 +57,10 @@ const buttonVariants = cva(
         link: `text-primary hover:underline hover:decoration-1 hover:underline-offset-4 focus-visible:underline focus-visible:decoration-1 focus-visible:underline-offset-4`,
         outline: `border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50`,
         secondary:
-          "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 data-pressed:bg-secondary/90",
-      },
-    },
-  },
+          "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 data-pressed:bg-secondary/90"
+      }
+    }
+  }
 );
 
 export type ButtonProps = React.ComponentPropsWithoutRef<"button"> &
