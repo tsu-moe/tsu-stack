@@ -4,8 +4,7 @@ import { Image as OhImage } from "@lonik/oh-image/react";
 import { isDevelopment } from "std-env";
 
 // #region Helper Types
-// oxlint-disable-next-line typescript-eslint(no-explicit-any)
-type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
 // #region Component
 type ImageFormat =

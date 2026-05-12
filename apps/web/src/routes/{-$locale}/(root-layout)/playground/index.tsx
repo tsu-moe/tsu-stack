@@ -88,6 +88,7 @@ function PlaygroundPage() {
             onClick={() => {
               logger.debug("playground", "Throwing test error from playground page...");
               throw new Error("Test error");
+              // oxlint-disable-next-line no-unreachable
               logger.debug("playground", "Error thrown!");
             }}
           >
