@@ -20,7 +20,8 @@
     "eslint-plugin-react-hooks",
     // Custom pnpm-workspace.yaml package specifiers
     "@voidzero-dev/vite-plus-test",
-    "nitro-nightly"
+    "nitro-nightly",
+    "vite-plus"
   ],
   "ignoreExports": [{ "file": "**/*.mdx", "exports": ["*"] }],
   "ignoreExportsUsedInFile": true,
