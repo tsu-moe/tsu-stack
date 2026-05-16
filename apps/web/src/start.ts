@@ -1,4 +1,4 @@
-import { createStart } from "@tanstack/react-start";
+import { createCsrfMiddleware, createStart } from "@tanstack/react-start";
 
 import { LOG_SERVICES, initLogger } from "@tsu-stack/logger/server";
 import {
@@ -37,6 +37,9 @@ export const startInstance = createStart(() => {
     ],
     // for API routes
     requestMiddleware: [
+      createCsrfMiddleware({
+        filter: (ctx) => ctx.handlerType === "serverFn"
+      }),
       tanstackStartRequestLoggerMiddleware({
         context: {
           environment: __BUILD_NODE_ENV__,
