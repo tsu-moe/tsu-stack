@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - tsu-stack-db-dev-postgres-dev:/var/lib/postgresql/data
+      - tsu-stack-db-dev-postgres-dev:/var/lib/postgresql
 
 volumes:
   tsu-stack-db-dev-postgres-dev:
