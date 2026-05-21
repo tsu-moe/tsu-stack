@@ -12,6 +12,13 @@
     "unknown": "off"
   },
 
+  // Add back TypeScript IntelliSense autocomplete, see why this is necessary: https://github.com/microsoft/vscode/issues/315373#issuecomment-4499000535
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": "off"
+  },
+
   // Use tsgo for faster TypeScript and JavaScript language features
   "js/ts.experimental.useTsgo": true,
 
