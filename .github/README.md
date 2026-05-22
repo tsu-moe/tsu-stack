@@ -363,7 +363,7 @@ However, the benefit is singular deployments and lower memory usage for websites
 - [Nitro v3](https://nitro.build/blog/v3-beta) - This template is configured with Nitro Nightly (3.0.1-20260128-211656-ae83c97e) by default.
   - Currently, when using newer versions of Nitro, you may encounter CJS to ESM interop crashes on build with the error: `TypeError: Cannot destructure property '__extends' of '__toESM$1(...).default' as it is undefined.`
   - This is similar to the issue described in [nitrojs/nitro#4113](https://github.com/nitrojs/nitro/issues/4113)
-- [Better Auth experimental Drizzle adapter](https://github.com/better-auth/better-auth/pull/6913) - We're using a separate branch of Better Auth's Drizzle adapter that supports Drizzle relations v2.
+- [Better Auth experimental Drizzle adapter](https://github.com/better-auth/better-auth/pull/9489) - We're using a separate branch of Better Auth's Drizzle adapter that supports Drizzle relations v2.
 - [Vite+ issues](https://github.com/voidzero-dev/vite-plus/issues) - Vite+ is in alpha.
 
 ### Pitfalls

@@ -12,7 +12,7 @@ catalog:
   "@babel/core": ^7.29.0
   "@better-auth/drizzle-adapter": https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@9489
   "@bprogress/react": ^1.2.7
-  "@cloudflare/vite-plugin": ^1.35.0
+  "@cloudflare/vite-plugin": ^1.37.2
   "@commitlint/cli": ^21.0.1
   "@commitlint/config-conventional": ^21.0.1
   "@dotenvx/dotenvx": 1.66.0
@@ -20,7 +20,7 @@ catalog:
   "@fontsource-variable/geist-mono": ^5.2.8
   "@fontsource/instrument-serif": ^5.2.8
   "@inlang/cli": ^3.1.11
-  "@inlang/paraglide-js": ^2.18.0
+  "@inlang/paraglide-js": ^2.18.1
   "@lonik/oh-image": ^3.3.0
   "@mdx-js/rollup": ^3.1.1
   "@orpc/client": ^1.14.3
@@ -43,17 +43,17 @@ catalog:
   "@tanstack/react-query": ^5.100.11
   "@tanstack/react-query-devtools": ^5.100.11
   "@tanstack/react-query-persist-client": ^5.100.11
-  "@tanstack/react-router": ^1.170.4
+  "@tanstack/react-router": ^1.170.6
   "@tanstack/react-router-devtools": ^1.167.0
   "@tanstack/react-router-ssr-query": ^1.167.0
-  "@tanstack/react-start": ^1.168.6
+  "@tanstack/react-start": ^1.168.9
   "@tanstack/zod-adapter": ^1.167.0
   "@types/babel__core": ^7.20.5
   "@types/mdx": ^2.0.13
-  "@types/node": ^25.9.0
-  "@types/react": ^19.2.14
+  "@types/node": ^25.9.1
+  "@types/react": ^19.2.15
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260519.1
+  "@typescript/native-preview": 7.0.0-dev.20260521.1
   "@vitejs/plugin-react": ^6.0.2
   babel-plugin-react-compiler: ^1.0.0
   better-auth: 1.6.11
@@ -61,7 +61,7 @@ catalog:
   clsx: ^2.1.1
   cross-env: ^10.1.0
   defu: ^6.1.7
-  drizzle-kit: 1.0.0-rc.3
+  drizzle-kit: 1.0.0-rc.4-5d5b77c
   drizzle-orm: 1.0.0-rc.3
   eslint-plugin-fsd-lint: ^1.2.1
   eslint-plugin-react-hooks: ^7.1.1
@@ -86,9 +86,9 @@ catalog:
   tw-animate-css: ^1.4.0
   typescript: ^6.0.3
   vite: npm:@voidzero-dev/vite-plus-core@latest
-  vite-plus: 0.1.21
+  vite-plus: 0.1.22
   vitest: npm:@voidzero-dev/vite-plus-test@latest
-  wrangler: ^4.87.0
+  wrangler: ^4.93.0
   zod: ^4.4.3
 
 catalogMode: prefer
