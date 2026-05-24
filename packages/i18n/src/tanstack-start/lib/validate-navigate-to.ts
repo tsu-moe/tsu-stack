@@ -61,11 +61,14 @@ export function validateNavigateTo({
     return fallbackTo;
   }
 
+  const normalizedTo = normalizeNavigateTo(to);
+  const pathname = normalizeRoutePath(getNavigateToPathname(normalizedTo));
+
   // Retrieve all valid application routes with their localized paths
   const validRoutes = getRouteTreePathsLocalized(routeTree);
 
   // Attempt to find a route matching the provided URL
-  const matchingRoute = validRoutes.find((route) => route.path === to);
+  const matchingRoute = validRoutes.find((route) => normalizeRoutePath(route.path) === pathname);
 
   // Return fallback if:
   // 1. No matching route exists in the route tree
@@ -75,5 +78,29 @@ export function validateNavigateTo({
   }
 
   // Type assertion is safe here because we've confirmed the route exists
-  return to as AbsoluteNavigateTo;
+  return normalizedTo as AbsoluteNavigateTo;
+}
+
+function normalizeNavigateTo(to: string): string {
+  try {
+    const normalizedUrl = new URL(to, "http://tsu-stack.local");
+    return `${normalizedUrl.pathname}${normalizedUrl.search}${normalizedUrl.hash}`;
+  } catch {
+    return to;
+  }
+}
+
+function getNavigateToPathname(to: string): string {
+  const indexes = [to.indexOf("?"), to.indexOf("#")].filter((index) => index >= 0);
+  const endIndex = indexes.length > 0 ? Math.min(...indexes) : undefined;
+
+  return endIndex === undefined ? to : to.slice(0, endIndex);
+}
+
+function normalizeRoutePath(path: string): string {
+  if (path === "/") {
+    return path;
+  }
+
+  return path.endsWith("/") ? path.slice(0, -1) : path;
 }
