@@ -1,7 +1,6 @@
 import { hostname } from "node:os";
 import { join } from "node:path/posix";
 
-import { serve } from "@hono/node-server";
 import { SmartCoercionPlugin } from "@orpc/json-schema";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -210,17 +209,4 @@ app.use("/*", async (c, next) => {
 
 void (async () => {
   await migrateDatabase();
-
-  serve(
-    {
-      fetch: app.fetch,
-      port: 5000
-    },
-    (info) => {
-      log.info(
-        "server",
-        `Server is running on http://localhost:${info.port}${new URL(ENV_SERVER.VITE_SERVER_URL).pathname}`
-      );
-    }
-  );
 })();

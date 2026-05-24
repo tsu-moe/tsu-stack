@@ -17,7 +17,6 @@ catalog:
   "@fontsource-variable/geist": ^5.2.9
   "@fontsource-variable/geist-mono": ^5.2.8
   "@fontsource/instrument-serif": ^5.2.8
-  "@hono/node-server": ^2.0.3
   "@inlang/cli": ^3.1.11
   "@inlang/paraglide-js": ^2.18.1
   "@lonik/oh-image": ^3.3.0
