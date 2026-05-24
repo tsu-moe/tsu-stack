@@ -33,13 +33,12 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
     });
 
     if (!user) {
-      // Strip locale prefix from pathname to avoid duplication
-      const cleanPathname = stripLocalePrefix(location.pathname);
+      const currentHref = stripLocalePrefix(location.href);
       const redirectTo = validateNavigateTo({
         fallbackTo: "/",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: cleanPathname
+        to: currentHref
       });
 
       throw redirect({
@@ -72,7 +71,7 @@ function RequiresAuthLayout() {
         fallbackTo: "/",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: location.pathname
+        to: stripLocalePrefix(location.href)
       });
 
       void navigate({
@@ -82,7 +81,7 @@ function RequiresAuthLayout() {
         to: "/sign-in"
       });
     }
-  }, [user, navigate, location.pathname, logger]);
+  }, [user, navigate, location.href, location.pathname, logger]);
 
   return <Outlet />;
 }
