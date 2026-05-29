@@ -36,6 +36,8 @@ pages/profile/
 
 Do not centralize app queries in a global `queries.ts` or `mutations.ts` file when the behavior belongs to one page or feature slice.
 
+When a filter, category, sort, or other domain type is shared across packages, import it from `packages/core`. Do not redefine the same literal union locally. Follow [Core package patterns](./core.md) when introducing that shared contract.
+
 ## Query Module Shape
 
 Each query file should usually export:
