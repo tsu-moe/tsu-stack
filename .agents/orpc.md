@@ -129,8 +129,34 @@ Recommended pattern when a handler genuinely needs a durable outcome log:
 - Group related procedures in a slice router, for example `profileRouter`.
 - Prefer straightforward names like `byId`, `search`, `edit`, `create`, `remove`.
 - Keep DB access close to the handler unless reuse clearly justifies extraction.
+- If extraction is justified but the logic is still slice-local, colocate it beside the router in sibling files such as `queries.ts` or `utils.ts`. Do not push one-off router helpers into `packages/api/src/lib/` by default.
 - Convert server-only values to transport-safe output values at the edge, for example `Date` → ISO string.
 - Keep handler logic linear and shallow. If the flow grows, extract helpers.
+
+## Router Folder Shape
+
+The default slice-local router shape is:
+
+```text
+packages/api/src/routers/<slice>/
+  index.ts
+  queries.ts
+```
+
+Use sibling files for helpers that are only used by that router.
+
+- `index.ts` owns the public router definition.
+- `queries.ts` owns slice-local DB readers, aggregations, transport shaping helpers, and similar reusable helpers for that router.
+- `utils.ts` or `constants.ts` are fine when the helper is still router-local and not shared elsewhere.
+- Promote code into `packages/api/src/lib/` only when it is reused across multiple routers or is truly infrastructure-level.
+
+## Shared Contracts
+
+When an oRPC input or output schema represents a shared domain contract, source it from `packages/core` instead of redefining it locally.
+
+- Follow [Core package patterns](./core.md) for shared enums, filters, categories, transport-safe shapes, and defaults consumed outside one router.
+- Keep router-local helper queries and transport-only shapes next to the router.
+- Keep cross-router or infrastructure helpers in `lib/` only when that reuse is real.
 
 ## Client Error Handling
 
@@ -138,6 +164,7 @@ Follow [API fetching patterns](./api-fetching-patterns.md) for query and mutatio
 
 - Prefer type-safe client error handling for oRPC-backed mutations and user-visible failure states.
 - Import `isDefinedError` from `@orpc/client` when narrowing mutation or action errors.
+- Prefer oRPC's built-in client helpers over custom error-guard utilities when the library already provides the needed narrowing.
 - Switch on `error.code` instead of string-matching `message` text.
 - Read `error.data` only for errors that define typed data in `.errors(...)`.
 - If AI generates generic `instanceof Error` handling for defined server errors, steer it back to the typed `isDefinedError(error)` branch.
