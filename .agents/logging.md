@@ -79,6 +79,18 @@ For framework request handlers, use the request-scoped logger provided by middle
 
 Do not create a new standalone logger inside a request if a request logger is already available.
 
+## Post-Emit Warnings
+
+Once `logger.emit()` has been called on an evlog wide-event or request logger, treat that logger instance as sealed. Any later `set()`, `emit()`, or `error()` call on that same instance is a bug and can trigger `[evlog] log.X() called after the wide event was emitted`.
+
+Common causes:
+
+- Wrapping a framework handler with a second request logger when request middleware already creates and emits one. In TanStack Start, rely on `tanstackStartRequestLoggerMiddleware` instead of adding another outer request logger around the same request.
+- Emitting inside a route or handler and then letting middleware emit again on that same logger.
+- Calling `emit()` in both a success path and a catch or finalizer for the same logger instance.
+
+`logger.error(...)` does not auto-emit. Add the error context you need, then make sure `emit()` still happens exactly once for that logger lifetime.
+
 ## Error Handling
 
 Prefer global error handling over per-catch logging in request code. In Hono, register one `app.onError` handler, log the thrown value with the request-scoped logger, parse it, then return a structured response.

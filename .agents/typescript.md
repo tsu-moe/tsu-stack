@@ -1,8 +1,16 @@
 # TypeScript Conventions
 
-## Zod Schema Pattern
+Use this for repo-wide TypeScript structure, import boundaries, and schema placement.
 
-Place schemas in `types/thing.type.ts`:
+For shared cross-package domain contracts in `packages/core`, follow [Core package patterns](./core.md).
+
+## Schema Placement
+
+- Keep schemas close to the owning slice or package.
+- For app-local or package-local schemas, the default pattern is `types/thing.type.ts`.
+- When the same schema, enum, or default is consumed across packages, move it into `packages/core` instead of recreating literal unions in `apps/web` or `packages/api`.
+
+Example package-local schema:
 
 ```ts
 export const ThingSchema = z.object({ ... });
@@ -10,6 +18,10 @@ export type Thing = z.infer<typeof ThingSchema>;
 ```
 
 Both schema (`ThingSchema`) and type (`Thing`) are named exports.
+
+When a schema is shared across package boundaries, export the schema and inferred type from the owning shared module and import that same schema everywhere else.
+
+If the frontend needs labels, options, or defaults for a shared enum, derive them from the shared schema or shared helpers instead of creating a second local union.
 
 ## Module Resolution
 
@@ -23,6 +35,8 @@ Both schema (`ThingSchema`) and type (`Thing`) are named exports.
 | --------- | ------------------------------------------------- |
 | `lib/`    | Business logic, library integrations, API clients |
 | `utils/`  | Pure stateless helper functions                   |
+
+In `packages/core`, keep shared schemas in domain `types.ts` files and pure domain helpers in `utils.ts`. Do not move router, DB, or React logic there.
 
 ## Linting (Oxlint)
 
