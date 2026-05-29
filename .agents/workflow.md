@@ -21,6 +21,11 @@ Run `vp run -w fix` after substantial code or config changes, before handing off
 
 Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior unless the user explicitly asks. Staged files are also auto-checked on `git commit` via Vite Plus hooks.
 
+## Completion Claims
+
+- Do not report implementation, migration, validation, or cleanup work as complete until the relevant edits or commands have run and you have checked the resulting files or command output.
+- If a workflow depends on generated artifacts or CLI state, verify that state directly instead of inferring completion from intent alone.
+
 ## Auxiliary Static Analysis
 
 Fallow is an auxiliary cleanup signal, not part of the default validation path.
@@ -32,7 +37,7 @@ Fallow is an auxiliary cleanup signal, not part of the default validation path.
 
 ## Feature Workflows
 
-For end-to-end feature implementation order across `packages/db`, `packages/api`, and `apps/web`, use [End-to-end feature workflow](./end-to-end-features.md). Keep this file focused on validation timing, commands, and migration safety.
+For end-to-end feature implementation order across `packages/db`, `packages/core`, `packages/api`, and `apps/web`, use [End-to-end feature workflow](./end-to-end-features.md). Keep this file focused on validation timing, commands, and migration safety.
 
 ## Database Schema Changes
 

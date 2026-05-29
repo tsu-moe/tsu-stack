@@ -1,16 +1,19 @@
 # End-to-End Feature Workflow
 
-Use this when implementing a feature that spans data model, API, and web UI.
+Use this when implementing a feature that spans data model, shared domain contracts, API, and web UI.
 
 This file defines implementation order. For package-specific rules, follow the linked docs instead of repeating them here.
+
+When a feature introduces shared contracts that should drive both API and frontend behavior, this workflow also includes `packages/core`.
 
 ## Default Order
 
 1. If the feature needs new data or persisted fields, update `packages/db` first.
-2. Define or extend the oRPC contract in `packages/api`.
-3. Add slice-local TanStack Query wrappers in `apps/web`.
-4. Wire route preloading, guards, and UI composition in `apps/web`.
-5. Validate the touched packages before broad workspace validation.
+2. If the feature introduces shared enums, schemas, formatters, or defaults consumed across packages, update `packages/core` next.
+3. Define or extend the oRPC contract in `packages/api`.
+4. Add slice-local TanStack Query wrappers in `apps/web`.
+5. Wire route preloading, guards, and UI composition in `apps/web`.
+6. Validate the touched packages before broad workspace validation.
 
 ## Step 1: Database
 
@@ -18,19 +21,25 @@ This file defines implementation order. For package-specific rules, follow the l
 - Follow [Workflow](./workflow.md) for migration generation, localhost `DATABASE_URL` safety, and migration application.
 - Keep schema and migration work complete before defining API output shapes that depend on it.
 
-## Step 2: API Contract
+## Step 2: Shared Domain Contract
+
+- Add or extend `packages/core` when the change should propagate into more than one package.
+- Follow [Core package patterns](./core.md).
+- Keep shared contract logic in core so API and frontend import the same source of truth instead of maintaining parallel literals.
+
+## Step 3: API Contract
 
 - Add or extend the router in `packages/api`.
 - Follow [oRPC patterns](./orpc.md) for procedure factories, explicit `input` and `output` schemas, and typed errors.
 - Prefer type-safe errors with `.errors(...)` and `errors.MY_ERROR(...)` for expected failure cases the client needs to handle.
 
-## Step 3: Web Data Layer
+## Step 4: Web Data Layer
 
 - Use oRPC's TanStack Query integration from `@tsu-stack/api/client/tanstack-start/orpc`.
 - Follow [API fetching patterns](./api-fetching-patterns.md) for `*.query.ts`, `*.mutation.ts`, query keys, query options, and hook wrappers.
 - Keep `orpc` and TanStack Query wiring inside slice-local `api/` files, not inline in page components.
 
-## Step 4: Client Error Handling
+## Step 5: Client Error Handling
 
 - Use the type-safe oRPC client pattern for user-visible failure states.
 - Narrow errors with `isDefinedError(error)` from `@orpc/client`.
@@ -38,7 +47,7 @@ This file defines implementation order. For package-specific rules, follow the l
 - Do not fall back to string-matching server messages for defined errors.
 - If an AI-generated mutation handler ignores typed errors, explicitly steer it to use the type-safe pattern from [oRPC patterns](./orpc.md).
 
-## Step 5: Routes And UI
+## Step 6: Routes And UI
 
 - Follow [TanStack patterns](./tanstack-patterns.md) for route placement, thin `beforeLoad`, and page composition.
 - Follow [UI guidelines](./ui.md) for app-level component composition.

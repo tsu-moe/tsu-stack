@@ -61,6 +61,7 @@ segment-name/
 - Put page UI in `pages/`
 - Put business logic in slice modules
 - Put query and mutation wiring in slice-local `api/` files
+- When route params or search state depend on shared enums or defaults, import the schema and defaults from `packages/core` instead of recreating `z.enum([...])` arrays in the route file
 - Avoid business logic directly in route files
 
 Typical route responsibilities:

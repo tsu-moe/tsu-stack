@@ -29,6 +29,8 @@ Update in **six places**:
 
 Missing any of these causes build or runtime failures with no obvious error message.
 
+Env docs and templates must mirror the validated schema in `packages/env/src/`. Do not invent, retain, or document env vars that are not actually read there. If a setting is code-owned, document it as code-owned instead of adding a new env knob.
+
 ## Gotchas
 
 - `z.stringbool()` is used for boolean env vars (parses "true"/"false" strings)
