@@ -4,7 +4,6 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import "@tanstack/react-start/server-only";
 import { betterAuth } from "better-auth";
 import { openAPI } from "better-auth/plugins";
-import { isProduction } from "std-env";
 
 import { db } from "@tsu-stack/db";
 import * as schema from "@tsu-stack/db/schema";
@@ -44,25 +43,8 @@ export const auth = betterAuth({
     })
   ],
 
-  advanced: {
-    // The API and web app MUST be on the same host (path-based routing).
-    // e.g. app.example.com/app + app.example.com/server
-    //
-    // This avoids Safari ITP issues entirely and allows the strongest cookie settings:
-    //   - SameSite=Strict in production: cookies are never sent on cross-site requests
-    //   - SameSite=None in development: Safari doesn't accept Secure without a certificate on localhost
-    //
-    // secure: true in production - cookie only sent over HTTPS, prevents interception
-    // httpOnly: true - cookie inaccessible to JS, prevents XSS-based token theft
-    defaultCookieAttributes: {
-      httpOnly: true,
-      sameSite: isProduction ? "strict" : "none",
-      secure: true
-    },
-
-    telemetry: {
-      enabled: false
-    }
+  telemetry: {
+    enabled: false
   }
 });
 

@@ -5,7 +5,7 @@
 - **Server**: Better Auth handles `/auth/*` on the Hono server (`apps/server`)
 - **Client**: `authClient` from `@tsu-stack/auth` (nanostore-based, client-side only)
 - **SSR**: `$getUser` server function resolves session from request headers, forwards `Set-Cookie` for refresh
-- **Cookies**: `sameSite: "strict"` in production — API and web **must** share the same host (path-based routing)
+- **Cookies**: Prefer Better Auth defaults for reusable projects — `SameSite=Lax` supports OAuth and other redirect-based flows without custom per-project overrides
 
 ## Query Pattern
 
@@ -51,8 +51,8 @@ For DB-backed auth fields, also generate and apply a Drizzle migration after the
 
 ## Gotchas
 
-- Auth cookies require same-host deployment — cross-origin setups **silently break** auth
-- `sameSite` is `"none"` in dev (Safari ITP workaround), `"strict"` in production
+- Cross-domain auth setups still require deliberate cookie/domain/CORS configuration even with Better Auth defaults
+- `SameSite=Strict` is usually too brittle for OAuth, email links, and other redirect-based auth flows
 - The auth query uses `refetchOnWindowFocus: "always"` for cross-tab session sync
 - Better Auth custom fields are not complete if you only add the DB column; the auth config and client inference must be updated too
 - In this repo, keep Drizzle relations centralized in `packages/db/src/schema/relations.ts`. Splitting them across files and merging relation objects later caused runtime relational query failures like `targetTable` or `referencedTable` being undefined.
