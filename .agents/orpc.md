@@ -89,16 +89,13 @@ Equivalent `ORPCError` throws are fine when the code, status, and data match a d
 
 oRPC handlers receive the request-scoped logger as `context.logger`.
 
-- Follow [Logging patterns](./logging.md).
+- Follow [Logging patterns](./logging.md) for event shape, emit lifecycle, redaction, and global error handling.
 - Do not add durable procedure logs unless logging was explicitly requested or the flow is audit, security, or otherwise high-risk.
 - Reuse `context.logger`; do not create a standalone logger inside a procedure.
-- Log after the operation reaches an outcome, not before it starts.
-- Prefer one wide event for the terminal outcome. Add context with `logger.set(...)`, then emit with `logger.emit(...)`.
-- Throw typed oRPC errors for expected failures.
 - If extra context is needed for an unexpected failure, attach it with `logger.set(...)` and let shared error handling record the failure once.
-- Do not log routine reads, health-style noise, or duplicates of request middleware and global error handling.
+- Do not log routine reads or duplicate middleware and global error logging.
 
-Recommended pattern when a handler genuinely needs a durable outcome log:
+When a handler genuinely needs a durable outcome log, use one wide terminal event:
 
 ```ts
 .handler(async ({ context, input, errors }) => {

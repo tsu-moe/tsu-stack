@@ -12,8 +12,9 @@ When a feature introduces shared contracts that should drive both API and fronte
 2. If the feature introduces shared enums, schemas, formatters, or defaults consumed across packages, update `packages/core` next.
 3. Define or extend the oRPC contract in `packages/api`.
 4. Add slice-local TanStack Query wrappers in `apps/web`.
-5. Wire route preloading, guards, and UI composition in `apps/web`.
-6. Validate the touched packages before broad workspace validation.
+5. Handle user-visible client errors using the typed oRPC client pattern.
+6. Wire route preloading, guards, and UI composition in `apps/web`.
+7. Validate the touched packages before broad workspace validation.
 
 ## Step 1: Database
 
@@ -41,11 +42,8 @@ When a feature introduces shared contracts that should drive both API and fronte
 
 ## Step 5: Client Error Handling
 
-- Use the type-safe oRPC client pattern for user-visible failure states.
-- Narrow errors with `isDefinedError(error)` from `@orpc/client`.
-- Branch on `error.code` and use `error.data` only when that error defines typed data.
-- Do not fall back to string-matching server messages for defined errors.
-- If an AI-generated mutation handler ignores typed errors, explicitly steer it to use the type-safe pattern from [oRPC patterns](./orpc.md).
+- For user-visible failure states, follow the type-safe client error pattern in [oRPC patterns](./orpc.md).
+- Do not duplicate string-matched or ad hoc client error handling in web slices when the server already defines typed oRPC errors.
 
 ## Step 6: Routes And UI
 
@@ -55,6 +53,4 @@ When a feature introduces shared contracts that should drive both API and fronte
 
 ## Validation
 
-- Prefer narrow package-local `vp check` in the touched app or package first.
-- Use [Workflow](./workflow.md) for broader validation timing.
-- Follow [Testing](./testing.md) only when tests are explicitly requested or the task is test-specific.
+- Follow [Workflow](./workflow.md) for validation timing and [Testing](./testing.md) only when tests are explicitly requested or the task is test-specific.
