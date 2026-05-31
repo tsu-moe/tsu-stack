@@ -49,6 +49,13 @@ When a shared component needs an app-specific primitive, inject it instead of im
 - When router links may need either router `to` or plain `href`, support both and let the injected link decide what to use.
 - For configurable media, keep related props grouped in a nested object instead of scattering env-specific props across the component API.
 
+## Decision Rule
+
+- Use prop injection when only data or one-off config changes per usage.
+- Use component injection when behavior or implementation changes per app.
+- Prefer component injection when the same app-specific dependency would otherwise be repeated across many call sites.
+- For shared UI state that coordinates sibling components inside `packages/ui`, prefer a small colocated Zustand store over prop drilling or React context only to shuttle simple open/close state.
+
 Reference pattern:
 
 ```tsx
@@ -84,4 +91,5 @@ type CardProps = {
 - Do keep styling and accessibility inside the shared component.
 - Do extract app-specific wrappers into `apps/web/src/shared/ui`.
 - Don't hardcode router, locale, analytics, or env behavior into `packages/ui`.
+- Don't introduce React context or excessive prop drilling for simple shared UI state when a colocated store is enough.
 - Don't expose app-specific implementation details unless reuse requires them.

@@ -4,6 +4,20 @@ Use this for repo-wide TypeScript structure, import boundaries, and schema place
 
 For shared cross-package domain contracts in `packages/core`, follow [Core package patterns](./core.md).
 
+## Shared Schema Pattern
+
+For shared package domains, prefer a small domain module over ad hoc type dumping grounds.
+
+```text
+src/<domain>/
+	constants.ts
+	types.ts
+	utils.ts
+	index.ts
+```
+
+For app-local or slice-local code, keep schemas next to the owning route, feature, or package instead of creating a global type folder.
+
 ## Schema Placement
 
 - Keep schemas close to the owning slice or package.

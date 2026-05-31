@@ -2,17 +2,14 @@
 
 Use `evlog` through `@tsu-stack/logger` only. Do not install or import `evlog` directly from `apps/*` or feature packages; the logger package is the facade and adapter boundary.
 
-## Agent Policy
+If logging is not part of the task, stop here and do not add new durable logs.
 
-Do not add or retain application logs during normal implementation work unless the user explicitly asks for logging.
+## Default Rule
 
-Allowed exceptions:
+Do not add or retain application logs during normal implementation work unless the user explicitly asks for logging or the flow is clearly audit, security, or otherwise high-risk.
 
-- Temporary local debugging while investigating difficult code. Remove those logs before handing off.
-- Audit logging, security-sensitive operations, destructive mutations, money movement, data export/import, migrations, or other high-risk operations. Ask the user before adding durable logs unless they already requested them.
-- Existing logging infrastructure, middleware, ingestion, sampling, redaction, or documentation work requested by the user.
-
-If logging seems useful but was not requested, explain why and ask first.
+- Temporary local debugging logs are allowed during investigation, but remove them before handoff.
+- Existing logging infrastructure, middleware, ingestion, sampling, redaction, or documentation work requested by the user is in scope.
 
 ## When To Log
 

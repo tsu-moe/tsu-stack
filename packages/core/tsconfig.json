@@ -1,0 +1,5 @@
+{
+  "extends": "@tsu-stack/tsconfig/tsconfig.base.json",
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}

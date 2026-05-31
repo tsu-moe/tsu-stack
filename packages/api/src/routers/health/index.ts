@@ -2,6 +2,13 @@ import process from "node:process";
 
 import { z } from "zod";
 
+import {
+  HealthChecksSchema,
+  HealthLiveOutputSchema,
+  HealthReadyOutputSchema,
+  type HealthCheckResult,
+  type HealthStatus
+} from "@tsu-stack/core/health";
 import { checkIsDbReady } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 
@@ -12,16 +19,6 @@ import { publicProcedure } from "#@/lib/procedures/factory";
 const HEALTHCHECK_TIMEOUT_MS = 1_500;
 
 // #region Utils
-
-const CheckResultSchema = z
-  .object({
-    error: z.string().optional(),
-    latencyMs: z.number(),
-    status: z.enum(["healthy", "unhealthy"])
-  })
-  .loose();
-
-type CheckResult = z.infer<typeof CheckResultSchema>;
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -40,12 +37,12 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
   }
 }
 
-async function runCheck(check: () => Promise<object>): Promise<CheckResult> {
+async function runCheck(check: () => Promise<object>): Promise<HealthCheckResult> {
   const startedAt = performance.now();
   try {
     const data = await withTimeout(check(), HEALTHCHECK_TIMEOUT_MS);
     const latencyMs = Math.round(performance.now() - startedAt);
-    const result = data as { status?: string };
+    const result = data as { status?: HealthStatus };
     if (result.status === "unhealthy") return { ...data, latencyMs, status: "unhealthy" };
     return { ...data, latencyMs, status: "healthy" };
   } catch (error) {
@@ -90,6 +87,7 @@ export const healthRouter = {
       }
     })
     .errors({})
+    .output(HealthLiveOutputSchema)
     .handler(() => {
       return { status: "healthy", ...buildBaseHealth() };
     }),
@@ -105,17 +103,18 @@ export const healthRouter = {
     .errors({
       SERVICE_UNAVAILABLE: {
         data: z.object({
-          checks: z.record(z.string(), CheckResultSchema)
+          checks: HealthChecksSchema
         }),
         description: "One or more services are unhealthy",
         status: 503
       }
     })
+    .output(HealthReadyOutputSchema)
     .handler(async ({ errors }) => {
       const entries = await Promise.all(
         Object.entries(serviceChecks).map(async ([name, check]) => [name, await runCheck(check)])
       );
-      const checks = Object.fromEntries(entries) as Record<string, CheckResult>;
+      const checks = Object.fromEntries(entries) as Record<string, HealthCheckResult>;
       const allHealthy = Object.values(checks).every((r) => r.status === "healthy");
 
       if (!allHealthy) {
