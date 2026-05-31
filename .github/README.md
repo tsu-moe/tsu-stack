@@ -368,7 +368,7 @@ However, the benefit is singular deployments and lower memory usage for websites
 
 ### Pitfalls
 
-- The server and web app **must** be deployed on the same host using path-based routing (e.g., `app.example.com/app` + `app.example.com/server`). This uses `SameSite=Strict` cookies in order to avoid Safari ITP issues. See [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups) for context.
+- Better Auth uses its default cookie settings (`SameSite=Lax`) here to better support OAuth and other redirect-based flows. Cross-domain deployments still require deliberate cookie, domain, and CORS configuration. See [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups) for context.
 - This implementation does not include security headers by default. You should add the following headers in production for improved security:
   - `Content-Security-Policy`
   - `Strict-Transport-Security`
