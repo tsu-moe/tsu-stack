@@ -2,20 +2,22 @@
 
 Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizzle + Better Auth + Paraglide.js (i18n), powered by Vite Plus.
 
-## How To Use These Docs
+## Start Here
 
 - Start with the most specific `.agents/*.md` file for the task.
-- If a task spans multiple topics, follow the most specific doc and use linked docs for adjacent context.
-- Keep guidance isolated to its owning file. Link to other docs instead of repeating their rules.
+- Follow links from that file for adjacent context instead of reading several docs up front.
+- Keep guidance in its owning file. Link instead of repeating rules across docs.
 
-## Always Apply
+## Cross-Cutting Docs
 
 - [Vite+ toolchain](.agents/vite-plus.md) for package management, workspace scripts, and CLI syntax.
-- [Workflow](.agents/workflow.md) for validation timing, focused checks, and migration workflow.
-- [Logging](.agents/logging.md) before adding, changing, or retaining durable logs.
-- [Testing](.agents/testing.md) before creating, modifying, or running tests.
+- [Workflow](.agents/workflow.md) for validation timing, build checks, and migration safety.
+- [Logging](.agents/logging.md) only when adding, changing, or keeping durable logs.
+- [Testing](.agents/testing.md) only when tests are explicitly requested or the task is test-specific.
 
 ## Topic Index
+
+Pick the most specific file for the task. Use links within that file instead of reading the whole docs tree linearly.
 
 ### Delivery Flows
 
@@ -33,20 +35,16 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 ### Shared Packages And Platform
 
 - [Core package patterns](.agents/core.md) for shared domain contracts in `packages/core`, file roles, and propagation into API and web code.
-- [UI guidelines](.agents/ui.md) for app-level UI composition, shadcn usage, icons, images, and extraction decisions.
-- [UI package patterns](.agents/ui-package-patterns.md) for keeping `packages/ui` reusable and app-agnostic.
+- [Media storage and uploads](.agents/media-storage.md) for preemptive S3 object conventions, first-implementation workflow, delete policy, and storage env configuration.
+- [UI guidelines](.agents/ui.md) for app UI composition, extraction decisions, and `packages/ui` boundaries.
 - [TypeScript conventions](.agents/typescript.md) for schema placement, import boundaries, and `lib/` vs `utils/`.
 - [Environment variables](.agents/environment-variables.md) for env scoping, validation, and Docker propagation.
-- [Logging](.agents/logging.md) for evlog structure, redaction, identity, and request/client logging.
-- [Vite+ toolchain](.agents/vite-plus.md) for `vp`/`vpx` behavior and repo command equivalents.
-- [Workflow](.agents/workflow.md) for validation timing and database schema workflows.
-- [Testing](.agents/testing.md) for the repo's no-tests-unless-requested policy and test layout.
 
 ## Task Entry Points
 
-- UI fix: Start with [UI guidelines](.agents/ui.md). Add [TanStack patterns](.agents/tanstack-patterns.md) when the fix touches routes, loaders, or page composition.
+- UI work: Start with [UI guidelines](.agents/ui.md). Add [TanStack patterns](.agents/tanstack-patterns.md) when the task touches route/file placement, loaders, or page composition.
 - Bugfix: Start with the owning domain doc from the index above, then use [Workflow](.agents/workflow.md) for narrow validation. Add [Core package patterns](.agents/core.md) when the fix touches shared enums, schemas, formatters, defaults, or other cross-package contracts. Add [Logging](.agents/logging.md) or [Testing](.agents/testing.md) only when the task explicitly calls for them or their policies require them.
-- Test work: Start with [Testing](.agents/testing.md), then load the owning domain doc so the tests match the real feature boundaries.
+- Uploads or object storage: Start with [Media storage and uploads](.agents/media-storage.md). Use it even for the first storage feature in this repo, then update it in the same change once the real provider, env surface, and asset purposes are known. Add [Core package patterns](.agents/core.md) when changing shared upload contracts, [oRPC patterns](.agents/orpc.md) when wiring route handlers, and [Environment variables](.agents/environment-variables.md) when storage config changes.
 - End-to-end feature: Start with [End-to-end feature workflow](.agents/end-to-end-features.md), then load the relevant domain docs such as [Core package patterns](.agents/core.md), [oRPC patterns](.agents/orpc.md), [API fetching patterns](.agents/api-fetching-patterns.md), [TanStack patterns](.agents/tanstack-patterns.md), [Auth patterns](.agents/auth.md), or [UI guidelines](.agents/ui.md).
 
 <!-- intent-skills:start -->
@@ -78,7 +76,3 @@ pnpm tanstack doc query framework/react/overview --docs-version v5 --json
 pnpm tanstack search-docs "server functions" --library start --json
 pnpm tanstack search-docs "loaders" --library router --framework react --json
 ```
-
-## Maintenance Rule
-
-If a rule already belongs to another `.agents/*.md` file, link to that file instead of restating it here or copying it into another topic doc.

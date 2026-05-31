@@ -10,8 +10,7 @@
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:",
-    "better-auth": "catalog:",
-    "std-env": "catalog:"
+    "better-auth": "catalog:"
   },
   "devDependencies": {
     "@tsu-stack/env": "workspace:*",
