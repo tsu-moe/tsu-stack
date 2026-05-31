@@ -25,6 +25,7 @@
     "@tanstack/zod-adapter": "catalog:",
     "@tsu-stack/api": "workspace:*",
     "@tsu-stack/auth": "workspace:*",
+    "@tsu-stack/core": "workspace:*",
     "@tsu-stack/db": "workspace:*",
     "@tsu-stack/env": "workspace:*",
     "@tsu-stack/i18n": "workspace:*",
