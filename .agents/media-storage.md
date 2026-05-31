@@ -169,8 +169,6 @@ Example read-side URL resolution:
 const imageUrl = await files.url(asset.key);
 ```
 
-Default rule: store `key`, derive delivery URLs.
-
 ## Upload Contracts
 
 Keep request and result shapes in shared core code so API and web code import the same contract.
@@ -270,15 +268,13 @@ export async function createMediaAssetUpload(input: {
 
 ## Delete Lifecycle
 
-Default new work to synchronized hard delete. It is the simplest option that does not require a queue, sweeper, or retry worker.
-
-If the task does not explicitly ask for queueing, retention, or retry semantics, implement synchronized hard delete.
+Default to synchronized hard delete unless the task explicitly asks for queueing, retention, or retry semantics.
 
 Choose the lifecycle deliberately:
 
 ### Synchronized Hard Delete
 
-Use this by default when the feature is straightforward and storage deletes are cheap enough to stay on the request path.
+Use this when the feature is straightforward and storage deletes are cheap enough to stay on the request path.
 
 - Flow: delete the storage object in the request path, then remove the `media_asset` row and owning row state.
 - Benefits: smallest operational surface, no background worker, no periodic reconciliation.

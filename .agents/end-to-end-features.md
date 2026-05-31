@@ -24,9 +24,10 @@ When a feature introduces shared contracts that should drive both API and fronte
 
 ## Step 2: Shared Domain Contract
 
-- Add or extend `packages/core` when the change should propagate into more than one package.
+- Use `packages/core` for shared Zod schemas, enums, normalizers, formatters, option builders, and defaults consumed by more than one package.
 - Follow [Core package patterns](./core.md).
-- Keep shared contract logic in core so API and frontend import the same source of truth instead of maintaining parallel literals.
+- Unless explicitly told not to, if a change should propagate automatically into both API and frontend behavior, centralize it in `packages/core` instead of duplicating literals in app code.
+- Route validators, frontend filters, and shared API input or output schemas should import core contracts when they represent the same domain surface.
 
 ## Step 3: API Contract
 
