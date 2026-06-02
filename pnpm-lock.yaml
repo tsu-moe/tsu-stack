@@ -7,240 +7,240 @@ settings:
 catalogs:
   default:
     '@babel/core':
-      specifier: ^7.29.7
+      specifier: 7.29.7
       version: 7.29.7
     '@better-auth/drizzle-adapter':
       specifier: https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@9489
-      version: 1.7.0-beta.2
+      version: 1.7.0-beta.3
     '@bprogress/react':
-      specifier: ^1.2.7
+      specifier: 1.2.7
       version: 1.2.7
     '@commitlint/cli':
-      specifier: ^21.0.2
+      specifier: 21.0.2
       version: 21.0.2
     '@commitlint/config-conventional':
-      specifier: ^21.0.2
+      specifier: 21.0.2
       version: 21.0.2
     '@dotenvx/dotenvx':
       specifier: 1.69.2
       version: 1.69.2
     '@fontsource-variable/geist':
-      specifier: ^5.2.9
+      specifier: 5.2.9
       version: 5.2.9
     '@fontsource-variable/geist-mono':
-      specifier: ^5.2.8
+      specifier: 5.2.8
       version: 5.2.8
     '@fontsource/instrument-serif':
-      specifier: ^5.2.8
+      specifier: 5.2.8
       version: 5.2.8
     '@hono/node-server':
-      specifier: ^2.0.4
+      specifier: 2.0.4
       version: 2.0.4
     '@inlang/cli':
-      specifier: ^3.1.11
+      specifier: 3.1.11
       version: 3.1.11
     '@inlang/paraglide-js':
-      specifier: ^2.18.1
+      specifier: 2.18.1
       version: 2.18.1
     '@lonik/oh-image':
-      specifier: ^3.3.0
+      specifier: 3.3.0
       version: 3.3.0
     '@mdx-js/rollup':
-      specifier: ^3.1.1
+      specifier: 3.1.1
       version: 3.1.1
     '@orpc/client':
-      specifier: ^1.14.4
+      specifier: 1.14.4
       version: 1.14.4
     '@orpc/json-schema':
-      specifier: ^1.14.4
+      specifier: 1.14.4
       version: 1.14.4
     '@orpc/openapi':
-      specifier: ^1.14.4
+      specifier: 1.14.4
       version: 1.14.4
     '@orpc/server':
-      specifier: ^1.14.4
+      specifier: 1.14.4
       version: 1.14.4
     '@orpc/tanstack-query':
-      specifier: ^1.14.4
+      specifier: 1.14.4
       version: 1.14.4
     '@orpc/zod':
-      specifier: ^1.14.4
+      specifier: 1.14.4
       version: 1.14.4
     '@paper-design/shaders-react':
-      specifier: ^0.0.76
+      specifier: 0.0.76
       version: 0.0.76
     '@rolldown/plugin-babel':
-      specifier: ^0.2.3
+      specifier: 0.2.3
       version: 0.2.3
     '@t3-oss/env-core':
-      specifier: ^0.13.11
+      specifier: 0.13.11
       version: 0.13.11
     '@tailwindcss/vite':
-      specifier: ^4.3.0
+      specifier: 4.3.0
       version: 4.3.0
     '@tanstack/devtools-a11y':
-      specifier: ^0.1.3
+      specifier: 0.1.3
       version: 0.1.3
     '@tanstack/devtools-vite':
-      specifier: ^0.7.0
+      specifier: 0.7.0
       version: 0.7.0
     '@tanstack/eslint-plugin-query':
-      specifier: ^5.100.14
+      specifier: 5.100.14
       version: 5.100.14
     '@tanstack/eslint-plugin-router':
-      specifier: ^1.162.0
+      specifier: 1.162.0
       version: 1.162.0
     '@tanstack/react-devtools':
-      specifier: ^0.10.5
+      specifier: 0.10.5
       version: 0.10.5
     '@tanstack/react-form':
-      specifier: ^1.33.0
+      specifier: 1.33.0
       version: 1.33.0
     '@tanstack/react-form-devtools':
-      specifier: ^0.2.29
+      specifier: 0.2.29
       version: 0.2.29
     '@tanstack/react-query':
-      specifier: ^5.100.14
+      specifier: 5.100.14
       version: 5.100.14
     '@tanstack/react-query-devtools':
-      specifier: ^5.100.14
+      specifier: 5.100.14
       version: 5.100.14
     '@tanstack/react-query-persist-client':
-      specifier: ^5.100.14
+      specifier: 5.100.14
       version: 5.100.14
     '@tanstack/react-router':
-      specifier: ^1.170.10
+      specifier: 1.170.10
       version: 1.170.10
     '@tanstack/react-router-devtools':
-      specifier: ^1.167.0
+      specifier: 1.167.0
       version: 1.167.0
     '@tanstack/react-router-ssr-query':
-      specifier: ^1.167.1
+      specifier: 1.167.1
       version: 1.167.1
     '@tanstack/react-start':
-      specifier: ^1.168.17
+      specifier: 1.168.17
       version: 1.168.17
     '@tanstack/zod-adapter':
-      specifier: ^1.167.0
+      specifier: 1.167.0
       version: 1.167.0
     '@types/babel__core':
-      specifier: ^7.20.5
+      specifier: 7.20.5
       version: 7.20.5
     '@types/mdx':
-      specifier: ^2.0.13
+      specifier: 2.0.13
       version: 2.0.13
     '@types/node':
-      specifier: ^25.9.1
+      specifier: 25.9.1
       version: 25.9.1
     '@types/react':
-      specifier: ^19.2.15
+      specifier: 19.2.15
       version: 19.2.15
     '@types/react-dom':
-      specifier: ^19.2.3
+      specifier: 19.2.3
       version: 19.2.3
     '@typescript/native-preview':
       specifier: 7.0.0-dev.20260527.2
       version: 7.0.0-dev.20260527.2
     '@vitejs/plugin-react':
-      specifier: ^6.0.2
+      specifier: 6.0.2
       version: 6.0.2
     babel-plugin-react-compiler:
-      specifier: ^1.0.0
+      specifier: 1.0.0
       version: 1.0.0
     better-auth:
       specifier: 1.6.12
       version: 1.6.12
     class-variance-authority:
-      specifier: ^0.7.1
+      specifier: 0.7.1
       version: 0.7.1
     clsx:
-      specifier: ^2.1.1
+      specifier: 2.1.1
       version: 2.1.1
     cross-env:
-      specifier: ^10.1.0
+      specifier: 10.1.0
       version: 10.1.0
     defu:
-      specifier: ^6.1.7
+      specifier: 6.1.7
       version: 6.1.7
     drizzle-kit:
       specifier: 1.0.0-rc.4-ca0f029
       version: 1.0.0-rc.4-ca0f029
     eslint-plugin-fsd-lint:
-      specifier: ^1.2.1
+      specifier: 1.2.1
       version: 1.2.1
     eslint-plugin-react-hooks:
-      specifier: ^7.1.1
+      specifier: 7.1.1
       version: 7.1.1
     evlog:
-      specifier: ^2.18.1
+      specifier: 2.18.1
       version: 2.18.1
     hono:
-      specifier: ^4.12.23
+      specifier: 4.12.23
       version: 4.12.23
     localforage:
-      specifier: ^1.10.0
+      specifier: 1.10.0
       version: 1.10.0
     lucide-react:
-      specifier: ^1.17.0
+      specifier: 1.17.0
       version: 1.17.0
     next-themes:
-      specifier: ^0.4.6
+      specifier: 0.4.6
       version: 0.4.6
     nitro:
       specifier: npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e
       version: 3.0.1-20260128-211656-ae83c97e
     oxlint-tsgolint:
-      specifier: ^0.23.0
+      specifier: 0.23.0
       version: 0.23.0
     postgres:
-      specifier: ^3.4.9
+      specifier: 3.4.9
       version: 3.4.9
     radix-ui:
-      specifier: ^1.4.3
+      specifier: 1.4.3
       version: 1.4.3
     react:
-      specifier: ^19.2.6
+      specifier: 19.2.6
       version: 19.2.6
     react-dom:
-      specifier: ^19.2.6
+      specifier: 19.2.6
       version: 19.2.6
     react-icons:
-      specifier: ^5.6.0
+      specifier: 5.6.0
       version: 5.6.0
     sharp:
-      specifier: ^0.34.5
+      specifier: 0.34.5
       version: 0.34.5
     sonner:
-      specifier: ^2.0.7
+      specifier: 2.0.7
       version: 2.0.7
     std-env:
-      specifier: ^4.1.0
+      specifier: 4.1.0
       version: 4.1.0
     tailwind-merge:
-      specifier: ^3.6.0
+      specifier: 3.6.0
       version: 3.6.0
     tailwindcss:
-      specifier: ^4.3.0
+      specifier: 4.3.0
       version: 4.3.0
     tsx:
-      specifier: ^4.22.3
+      specifier: 4.22.3
       version: 4.22.3
     tw-animate-css:
-      specifier: ^1.4.0
+      specifier: 1.4.0
       version: 1.4.0
     typescript:
-      specifier: ^6.0.3
+      specifier: 6.0.3
       version: 6.0.3
     vite-plus:
       specifier: 0.1.23
       version: 0.1.23
     zod:
-      specifier: ^4.4.3
+      specifier: 4.4.3
       version: 4.4.3
 
 overrides:
-  vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
+  vite: npm:@voidzero-dev/vite-plus-core@0.1.23
+  vitest: npm:@voidzero-dev/vite-plus-test@0.1.23
   drizzle-orm: 1.0.0-rc.4-5d5b77c
 
 importers:
@@ -278,7 +278,7 @@ importers:
         specifier: 'catalog:'
         version: 0.1.23(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(vite@8.0.14(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3))
       vitest:
-        specifier: npm:@voidzero-dev/vite-plus-test@latest
+        specifier: npm:@voidzero-dev/vite-plus-test@0.1.23
         version: '@voidzero-dev/vite-plus-test@0.1.23(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)(vite@8.0.14(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3))'
 
   apps/server:
@@ -505,7 +505,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       vite:
-        specifier: npm:@voidzero-dev/vite-plus-core@latest
+        specifier: npm:@voidzero-dev/vite-plus-core@0.1.23
         version: '@voidzero-dev/vite-plus-core@0.1.23(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)'
 
   packages/api:
@@ -657,7 +657,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
       vite:
-        specifier: npm:@voidzero-dev/vite-plus-core@latest
+        specifier: npm:@voidzero-dev/vite-plus-core@0.1.23
         version: '@voidzero-dev/vite-plus-core@0.1.23(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)(typescript@6.0.3)'
 
   packages/i18n:
@@ -909,9 +909,9 @@ packages:
 
   '@better-auth/drizzle-adapter@https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@9489':
     resolution: {tarball: https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@9489}
-    version: 1.7.0-beta.2
+    version: 1.7.0-beta.3
     peerDependencies:
-      '@better-auth/core': ^1.7.0-beta.2
+      '@better-auth/core': ^1.7.0-beta.3
       '@better-auth/utils': 0.4.0
       drizzle-orm: 1.0.0-rc.4-5d5b77c
     peerDependenciesMeta:
