@@ -1,6 +1,24 @@
 name: tsu-stack
 
 services:
+  migrate:
+    container_name: tsu-stack-migrate
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: migrator
+    environment:
+      - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:3000/server}"
+      - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
+      - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
+      - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
+    networks:
+      - tsu-stack-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   web:
     container_name: tsu-stack-web
     build:
@@ -34,8 +52,8 @@ services:
     networks:
       - tsu-stack-network
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   postgres:
     image: postgres:18-alpine

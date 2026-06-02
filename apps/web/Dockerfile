@@ -31,9 +31,20 @@ RUN vp install --frozen-lockfile --ignore-scripts
 
 # =========================================================================== #
 
+FROM installer AS migrator
+
+COPY . .
+
+CMD ["vp", "run", "db:migrate"]
+
+# =========================================================================== #
+
 FROM installer AS builder
 
 COPY . .
+
+# Ensure the migrations directory exists so that the build doesn't fail when trying to copy it in the production stage.
+RUN mkdir -p packages/db/migrations
 
 ARG SOURCE_COMMIT VITE_SERVER_URL VITE_WEB_URL VITE_IMGPROXY_URL DATABASE_URL BETTER_AUTH_SECRET
 ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
@@ -47,10 +58,6 @@ ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
 RUN vp run test:unit:run
 # RUN vp run test:e2e:run
 
-# Prerender queries the database during the production build, so apply pending
-# migrations before the web build spins up its preview server.
-RUN vp run db:migrate
-
 RUN vp run -v --filter web build
 
 # =========================================================================== #
@@ -62,9 +69,7 @@ RUN addgroup --gid 1001 nodejs \
 
 COPY --from=builder --chown=web:nodejs /app/apps/web/.output /app/.output
 
-# Ensure the migrations directory exists so that the build doesn't fail when trying to copy it in the production stage.
-RUN mkdir -p packages/db/migrations
-COPY --from=builder --chown=server:nodejs /app/packages/db/migrations /app/.output/server/_ssr/migrations
+COPY --from=builder --chown=web:nodejs /app/packages/db/migrations /app/.output/server/_ssr/migrations
 
 USER web
 
