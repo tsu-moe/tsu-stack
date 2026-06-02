@@ -105,6 +105,7 @@ minimumReleaseAgeExclude:
   - vite-plus@0.1.24
 
 overrides:
+  kysely: 0.28.17
   vite: "catalog:"
   vitest: "catalog:"
   drizzle-orm: "catalog:"
