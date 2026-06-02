@@ -33,6 +33,8 @@ export async function checkIsDbReady(): Promise<boolean> {
 }
 
 let migrationFnCalled = false;
+const MIGRATION_MAX_ATTEMPTS = 3;
+const MIGRATION_RETRY_DELAY_MS = 3_000;
 
 /**
  * Runs pending database migrations on startup.
@@ -69,15 +71,34 @@ export async function migrateDatabase(): Promise<void> {
     return;
   }
 
-  try {
-    await migrate(db, {
-      migrationsFolder: join(import.meta.dirname, "migrations")
-    });
-    log.emit({ event: "database_migration_completed" });
-  } catch (error) {
-    log.error(error instanceof Error ? error : String(error), {
-      event: "database_migration_failed"
-    });
-    log.emit({ _forceKeep: true });
+  for (let attempt = 1; attempt <= MIGRATION_MAX_ATTEMPTS; attempt++) {
+    try {
+      await migrate(db, {
+        migrationsFolder: join(import.meta.dirname, "migrations")
+      });
+      log.emit({ attempt, event: "database_migration_completed" });
+      return;
+    } catch (error) {
+      log.error(error instanceof Error ? error : String(error), {
+        attempt,
+        event: "database_migration_failed",
+        maxAttempts: MIGRATION_MAX_ATTEMPTS
+      });
+
+      if (attempt === MIGRATION_MAX_ATTEMPTS) {
+        log.emit({ _forceKeep: true });
+        throw error;
+      }
+
+      log.emit({
+        attempt,
+        event: "database_migration_retrying",
+        maxAttempts: MIGRATION_MAX_ATTEMPTS,
+        retryDelayMs: MIGRATION_RETRY_DELAY_MS
+      });
+      await new Promise((resolve) => {
+        setTimeout(resolve, MIGRATION_RETRY_DELAY_MS);
+      });
+    }
   }
 }

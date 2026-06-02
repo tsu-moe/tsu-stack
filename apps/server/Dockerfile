@@ -31,6 +31,14 @@ RUN vp install --frozen-lockfile --ignore-scripts
 
 # =========================================================================== #
 
+FROM installer AS migrator
+
+COPY . .
+
+CMD ["vp", "run", "db:migrate"]
+
+# =========================================================================== #
+
 FROM installer AS builder
 
 COPY . .

@@ -47,10 +47,6 @@ ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
 RUN vp run test:unit:run
 # RUN vp run test:e2e:run
 
-# Prerender queries the database during the production build, so apply pending
-# migrations before the web build spins up its preview server.
-RUN vp run db:migrate
-
 RUN vp run -v --filter web build
 
 # =========================================================================== #
