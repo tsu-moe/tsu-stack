@@ -55,4 +55,4 @@ For DB-backed auth fields, also generate and apply a Drizzle migration after the
 - `SameSite=Strict` is usually too brittle for OAuth, email links, and other redirect-based auth flows
 - The auth query uses `refetchOnWindowFocus: "always"` for cross-tab session sync
 - Better Auth custom fields are not complete if you only add the DB column; the auth config and client inference must be updated too
-- In this repo, keep Drizzle relations centralized in `packages/db/src/schema/relations.ts`. Splitting them across files and merging relation objects later caused runtime relational query failures like `targetTable` or `referencedTable` being undefined.
+- In this repo, keep the main Drizzle relation graph in `packages/db/src/schema/relations.ts` with `defineRelations()`. Auth tables may add their own `defineRelationsPart()` in `packages/db/src/schema/auth.schema.ts`, and that part must be merged after the main relations in `packages/db/src/index.ts`.
