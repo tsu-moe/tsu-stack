@@ -22,6 +22,7 @@ Vite Plus is the all-in-one CLI that replaces pnpm/npm/yarn **and** bundles Oxli
 - `vp check` — lint + typecheck
 - `vp check --fix` — lint + typecheck + format (auto-runs on staged files via hooks)
 - `vp config` — sets up Vite Plus hooks (runs on `prepare`)
+- `vp env doctor` — checks the environment for potential issues, use when environment config seems wrong.
 
 ## Root `vite.config.ts`
 
