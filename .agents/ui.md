@@ -2,7 +2,7 @@
 
 Use this when adding or refactoring UI in `apps/web` or reusable components in `packages/ui`.
 
-This file is the source of truth for app UI composition, extraction decisions, and shared component boundaries. For route/file placement, follow [TanStack patterns](./tanstack-patterns.md).
+This file is the source of truth for app UI composition, extraction decisions, and shared component boundaries. For route/file placement, follow [TanStack patterns](./tanstack-patterns.md). For complex client-owned state shared across components, follow [Zustand state management](./zustand.md).
 
 ## Goals
 
@@ -54,7 +54,7 @@ When a shared component needs an app-specific primitive, inject it instead of im
 - Use prop injection when only data or one-off config changes per usage.
 - Use component injection when behavior or implementation changes per app.
 - Prefer component injection when the same app-specific dependency would otherwise be repeated across many call sites.
-- For shared UI state that coordinates sibling components inside `packages/ui`, prefer a small colocated Zustand store over prop drilling or React context only to shuttle simple open/close state.
+- For shared UI state that coordinates sibling components inside `packages/ui`, prefer a small colocated Zustand store over prop drilling or React context only to shuttle simple open/close state. Follow [Zustand state management](./zustand.md) for store shape and selectors.
 
 Reference pattern:
 
@@ -91,5 +91,5 @@ type CardProps = {
 - Do keep styling and accessibility inside the shared component.
 - Do extract app-specific wrappers into `apps/web/src/shared/ui`.
 - Don't hardcode router, locale, analytics, or env behavior into `packages/ui`.
-- Don't introduce React context or excessive prop drilling for simple shared UI state when a colocated store is enough.
+- Don't introduce React context or excessive prop drilling for shared UI state when a colocated store is enough.
 - Don't expose app-specific implementation details unless reuse requires them.
