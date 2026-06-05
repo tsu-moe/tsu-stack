@@ -11,13 +11,13 @@
       "enabled": true,
       "head_sampling_rate": 1,
       "persist": true,
-      "invocation_logs": true,
+      "invocation_logs": true
     },
     "traces": {
       "enabled": true,
       "persist": true,
-      "head_sampling_rate": 1,
-    },
+      "head_sampling_rate": 1
+    }
   },
   "secrets": {
     // IMPORTANT: You should add secrets that are required during app runtime here
@@ -25,11 +25,11 @@
     // preventing you from accidentally deploying without setting these secrets in the Cloudflare dashboard
     // It can be set in `Workers & Pages > your project > Settings > Variables & Secrets`
     // See: https://developers.cloudflare.com/workers/configuration/environment-variables/
-    "required": ["VITE_SERVER_URL", "VITE_WEB_URL", "BETTER_AUTH_SECRET", "DATABASE_URL"],
+    "required": ["VITE_SERVER_URL", "VITE_WEB_URL", "BETTER_AUTH_SECRET", "DATABASE_URL"]
     // PITFALL: These are DIFFERENT from *BUILD Variables and secrets*,
     // which are variables required in the build process rather than deployed runtime
     // Those will be parsed in the Cloudflare build process and error out if not set
     // It can be set in `Workers & Pages > your project > Settings > Build > Variables and secrets`
     // See: https://developers.cloudflare.com/workers/ci-cd/builds/configuration/
-  },
+  }
 }
