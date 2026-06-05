@@ -29,12 +29,14 @@ services:
         - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:3000/server}"
         - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
         - "VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL:-}"
+        - "VITE_IMGPROXY_SIGNATURE=${VITE_IMGPROXY_SIGNATURE:-_}"
         - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
         - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
     environment:
       - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:3000/server}"
       - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
       - "VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL:-}"
+      - "VITE_IMGPROXY_SIGNATURE=${VITE_IMGPROXY_SIGNATURE:-_}"
       - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
       - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
       - "ENABLE_OPEN_API_DOCS=${ENABLE_OPEN_API_DOCS:-false}"
@@ -44,7 +46,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "wget -qO- http://127.0.0.1:3000$(echo $VITE_WEB_URL | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/_api/health/live || exit 1",
+          "wget -qO- http://127.0.0.1:3000$(echo $VITE_WEB_URL | sed 's|^http[s]*://[^/]*||' | sed 's|/$||')/_api/health/live || exit 1"
         ]
       interval: 10s
       timeout: 3s

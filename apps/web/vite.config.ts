@@ -65,6 +65,7 @@ export default defineConfig({
           "VITE_SERVER_URL",
           "VITE_WEB_URL",
           "VITE_IMGPROXY_URL",
+          "VITE_IMGPROXY_SIGNATURE",
           "SOURCE_COMMIT",
           "BETTER_AUTH_SECRET",
           "DATABASE_URL"
