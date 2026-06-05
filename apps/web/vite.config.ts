@@ -65,6 +65,7 @@ export default defineConfig({
           "VITE_SERVER_URL",
           "VITE_WEB_URL",
           "VITE_IMGPROXY_URL",
+          "VITE_IMGPROXY_SIGNATURE",
           "SOURCE_COMMIT",
           "BETTER_AUTH_SECRET",
           "DATABASE_URL"
@@ -94,9 +95,9 @@ export default defineConfig({
          * Track this GitHub issue for updates:
          * @see {@link https://github.com/TanStack/router/issues/7119}
          */
-        include: ["react-dom/server"],
-      },
-    },
+        include: ["react-dom/server"]
+      }
+    }
   },
   define: {
     __BUILD_NODE_ENV__: JSON.stringify(ENV_WEB_SERVER.NODE_ENV),
