@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
+import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { type To } from "@tsu-stack/i18n/tanstack-start/types";
@@ -37,6 +38,7 @@ function PlaygroundPage() {
   const healthCheck = useQuery(orpc.health.live.queryOptions());
   const isClient = useIsClient();
   const logger = useLogger();
+  const backgroundImageSrc = resolvePublicAssetUrl(import.meta.env.BASE_URL, "/img/bg.jpg");
 
   return (
     <Container>
@@ -49,7 +51,7 @@ function PlaygroundPage() {
             quality={20}
             priority
             className="size-full object-cover"
-            src="/img/bg.jpg"
+            src={backgroundImageSrc}
             alt={m.playground_page__background()}
             placeholder="blur"
           />
