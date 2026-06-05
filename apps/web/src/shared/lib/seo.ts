@@ -1,3 +1,4 @@
+import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import {
   generateTanStackStartSeo,
   type GenerateTanStackStartSeoParams,
@@ -16,7 +17,7 @@ const site = {
       alt: appConfig.site.longName,
       height: 630,
       type: "image/png",
-      url: `${appConfig.site.baseUrl}/og/index.png`,
+      url: resolvePublicAssetUrl(appConfig.site.url, "/og/index.png"),
       width: 1200
     }
   ],

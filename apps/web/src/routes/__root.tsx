@@ -15,6 +15,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { getLocale } from "@tsu-stack/i18n/runtime";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
@@ -48,16 +49,18 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     const rootSeo = generateAppSeo({
       includeDocumentMeta: true
     });
+    const faviconHref = resolvePublicAssetUrl(ENV_WEB_ISOMORPHIC.VITE_WEB_URL, "/favicon.ico");
+    const sitemapHref = resolvePublicAssetUrl(ENV_WEB_ISOMORPHIC.VITE_WEB_URL, "/sitemap.xml");
 
     return {
       links: [
         ...(rootSeo.links ?? []),
         {
-          href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/favicon.ico`,
+          href: faviconHref,
           rel: "icon"
         },
         {
-          href: `${ENV_WEB_ISOMORPHIC.VITE_WEB_URL}/sitemap.xml`,
+          href: sitemapHref,
           rel: "sitemap",
           type: "application/xml"
         },

@@ -7,8 +7,12 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./assets": "./src/assets/index.ts",
     "./health": "./src/health/index.ts",
     "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "test:unit": "vp test"
   },
   "dependencies": {
     "zod": "catalog:"
@@ -16,6 +20,7 @@
   "devDependencies": {
     "@tsu-stack/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   }
 }
