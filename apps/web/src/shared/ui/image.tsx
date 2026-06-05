@@ -8,6 +8,7 @@ export function Image(props: WrapperImageProps) {
       {...props}
       siteBaseUrl={ENV_WEB_ISOMORPHIC.VITE_WEB_URL}
       imgProxyBaseUrl={ENV_WEB_ISOMORPHIC.VITE_IMGPROXY_URL}
+      imgProxySignature={ENV_WEB_ISOMORPHIC.VITE_IMGPROXY_SIGNATURE}
     />
   );
 }
