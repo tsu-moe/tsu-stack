@@ -10,6 +10,7 @@ This document is the authoritative testing policy for contributors and AI agents
 - Use Vite+ setup for new test environments.
 - Do not generate, modify, suggest, or proactively add tests unless the developer explicitly asks.
 - Implementation requests should return implementation only unless tests are explicitly requested.
+- When asking whether to run tests, use [Choice flows](./choice-flows.md) and prefer native approval or structured input before any plain text fallback.
 - Inspect nearby tests before generating new ones.
 - Use Vite+ testing conventions, not standalone Vitest defaults.
 

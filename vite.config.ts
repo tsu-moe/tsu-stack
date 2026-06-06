@@ -1,20 +1,6 @@
 import { defineConfig } from "vite-plus";
 
-// For apps/web-specific FSD ESLint rule overrides
-const WEB_SHARED_FSD_OPTIONS = {
-  rootPath: "/apps/web/src/",
-  tsconfigPath: "./apps/web/tsconfig.json",
-  alias: { value: "@", withSlash: true },
-  layers: {
-    app: { pattern: "routes" },
-    pages: { pattern: "pages" },
-    widgets: { pattern: "widgets" },
-    features: { pattern: "features" },
-    entities: { pattern: "entities" },
-    shared: { pattern: "shared" }
-  },
-  ignoreImportPatterns: ["\\.css$"]
-};
+import { tanstackStartFsdLint } from "./tools/vite-plus/tanstack-start-fsd.lint";
 
 /**
  * Defines top-level Vite+ configurations for the different tools in its ecosystem.
@@ -157,32 +143,7 @@ export default defineConfig({
     overrides: [
       {
         files: ["apps/web/src/**/*.ts", "apps/web/src/**/*.tsx"],
-        jsPlugins: [{ name: "fsd", specifier: "eslint-plugin-fsd-lint" }],
-        rules: {
-          "fsd/forbidden-imports": [
-            "error",
-            { ...WEB_SHARED_FSD_OPTIONS, alias: { value: "@", withSlash: false } }
-          ],
-          "fsd/no-relative-imports": [
-            "error",
-            {
-              ...WEB_SHARED_FSD_OPTIONS,
-              allowSameSlice: true
-            }
-          ],
-          "fsd/no-public-api-sidestep": ["error", WEB_SHARED_FSD_OPTIONS],
-          "fsd/no-cross-slice-dependency": [
-            "error",
-            {
-              ...WEB_SHARED_FSD_OPTIONS,
-              allowTypeImports: false,
-              excludeLayers: ["shared"],
-              featuresOnly: false
-            }
-          ],
-          "fsd/no-ui-in-business-logic": ["error", WEB_SHARED_FSD_OPTIONS],
-          "fsd/no-global-store-imports": "error"
-        }
+        ...tanstackStartFsdLint
       }
     ],
     // #endregion
