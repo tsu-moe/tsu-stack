@@ -12,6 +12,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 
 - [Vite+ toolchain](.agents/vite-plus.md) for package management, workspace scripts, and CLI syntax.
 - [Workflow](.agents/workflow.md) for user-directed validation timing, build checks, and migration safety.
+- [Choice flows](.agents/choice-flows.md) for native approvals, structured input, validation prompts, and human decision points.
 - [Logging](.agents/logging.md) only when adding, changing, or keeping durable logs.
 - [Testing](.agents/testing.md) only when tests are explicitly requested or the task is test-specific.
 

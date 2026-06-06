@@ -14,7 +14,7 @@ When a feature introduces shared contracts that should drive both API and fronte
 4. Add slice-local TanStack Query wrappers in `apps/web`.
 5. Handle user-visible client errors using the typed oRPC client pattern.
 6. Wire route preloading, guards, and UI composition in `apps/web`.
-7. Ask for or run validation only according to the user-approved cadence in [Workflow](./workflow.md).
+7. Ask for or run validation only according to the user-approved cadence in [Workflow](./workflow.md), using [Choice flows](./choice-flows.md) when a human decision is needed.
 
 ## Step 1: Database
 
@@ -54,4 +54,4 @@ When a feature introduces shared contracts that should drive both API and fronte
 
 ## Validation
 
-- Follow [Workflow](./workflow.md) for user-directed validation timing. For larger planned work, such as implementing a `plan.md`, validate at the end of the plan or at substantial milestones/phases only when that cadence was requested or approved. Follow [Testing](./testing.md) only when tests are explicitly requested or the task is test-specific.
+- Follow [Workflow](./workflow.md) for user-directed validation timing and [Choice flows](./choice-flows.md) for human validation decisions. For larger planned work, such as implementing a `plan.md`, validate at the end of the plan or at substantial milestones/phases only when that cadence was requested or approved. Follow [Testing](./testing.md) only when tests are explicitly requested or the task is test-specific.
