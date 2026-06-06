@@ -11,15 +11,17 @@
 
 ## Validation Timing
 
-Prefer narrow validation first.
+Default to user-directed validation. Do not run `vp check`, `vp check --fix`, `vp run -w fix`, `vpr check`, `vpr fix`, root `check`/`fix` scripts, project-wide TypeScript checks, workspace builds, or equivalent broad validation unless the user explicitly asks for checks or approves them after being asked.
 
-- Use package-local `vp check` in the app or package you changed when the work is scoped.
-- Use `vp run -w fix` after substantial multi-package work, before handoff for code/config changes, or when a task explicitly asks for broad validation.
-- Do not reach for root filtered check commands when a package-local `vp check` covers the touched surface.
+- For one-off changes, finish the requested edit, summarize what changed, and ask whether the user wants checks run before executing any check or fix command. If they do not ask for checks, wait for their next instruction.
+- For larger planned work, such as implementing a `plan.md`, do not check every intermediate step unless explicitly told to. Run checks only at the end of the whole plan, or at substantial milestones/phases, and only when the user asked for that validation cadence.
+- When the user does ask for validation, prefer the narrowest command that covers the touched surface. Use package-local `vp check` in the app or package changed when the work is scoped.
+- Use `vp run -w fix`, `vp check --fix`, root `fix`, workspace TypeScript checks, or workspace builds only when the user explicitly asks for broad validation, fixing, or final plan validation.
+- Do not reach for root filtered check commands when a package-local `vp check` covers the approved validation surface.
 
-Run `vp run -w fix` after substantial code or config changes, before handing off completed implementation work, or when a task explicitly asks for full validation. It formats (Oxfmt), lints (Oxlint), and type-checks in one pass.
+`vp run -w fix` formats (Oxfmt), lints (Oxlint), and type-checks in one pass. Treat it as an explicit user-requested action, not a default handoff step.
 
-Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior unless the user explicitly asks. Staged files are also auto-checked on `git commit` via Vite Plus hooks.
+Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior unless the user explicitly asks. Staged files may be auto-checked on `git commit` via Vite Plus hooks; if the user asked for a commit but did not ask for checks, avoid triggering check hooks unless they explicitly approve them.
 
 ## Completion Claims
 
@@ -30,8 +32,7 @@ Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, 
 
 Fallow is an auxiliary cleanup signal, not part of the default validation path.
 
-- Prefer the usual workflow first: package-local `vp check` for scoped work and `vp run -w fix` for substantial code/config work.
-- Use `vp run fallow` only after big features or broad refactors have landed, when extra dead-code, duplication, or drift signals are useful.
+- Use `vp run fallow` only when the user explicitly asks for auxiliary cleanup signals after big features or broad refactors have landed.
 - Do not add Fallow to commit hooks, `fix`, or normal handoff validation unless the user explicitly asks.
 - Treat Fallow findings as review prompts. Verify framework entry points, dynamic usage, generated files, and package boundaries before deleting or suppressing code.
 
@@ -66,4 +67,4 @@ Follow [Testing policy](./testing.md). Do not add or run tests unless requested,
 
 ## Commits
 
-Conventional commit format automatically enforced by commitlint. Staging hooks auto-run `vp check --fix` on staged files.
+Use Conventional Commit format. Staging hooks may auto-run `vp check --fix` on staged files; do not rely on those hooks as hidden validation when the user has not approved checks.
