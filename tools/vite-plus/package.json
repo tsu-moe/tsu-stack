@@ -1,0 +1,8 @@
+{
+  "name": "@tsu-stack/vite-plus",
+  "private": true,
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  }
+}

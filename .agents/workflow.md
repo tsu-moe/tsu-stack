@@ -2,26 +2,27 @@
 
 ## Essential Commands
 
-| Command         | Purpose                                                               |
-| --------------- | --------------------------------------------------------------------- |
-| `vp run dev`    | Start all dev servers                                                 |
-| `vp check`      | Run package-local format, lint, and typecheck for the current package |
-| `vp run -w fix` | Format + lint + typecheck after substantial code/config work          |
-| `vp run build`  | Build all packages                                                    |
+| Command          | Purpose                                                               |
+| ---------------- | --------------------------------------------------------------------- |
+| `vp run dev`     | Start all dev servers                                                 |
+| `vp check`       | Run package-local format, lint, and typecheck for the current package |
+| `vp check --fix` | Run package-local format, lint fixes, and typecheck                   |
+| `vp run -w fix`  | Format + lint + typecheck after substantial code/config work          |
+| `vp run build`   | Build all packages                                                    |
 
 ## Validation Timing
 
 Default to user-directed validation. Do not run `vp check`, `vp check --fix`, `vp run -w fix`, `vpr check`, `vpr fix`, root `check`/`fix` scripts, project-wide TypeScript checks, workspace builds, or equivalent broad validation unless the user explicitly asks for checks or approves them after being asked.
 
-- For one-off changes, finish the requested edit, summarize what changed, and ask whether the user wants checks run before executing any check or fix command. If they do not ask for checks, wait for their next instruction.
+- For one-off changes, finish the requested edit, summarize what changed, and directly prompt the user before ending the turn. Use the native UI or structured input priority in [Choice flows](./choice-flows.md); do not merely say that checks were not run. Run the selected command only after the user chooses it.
 - For larger planned work, such as implementing a `plan.md`, do not check every intermediate step unless explicitly told to. Run checks only at the end of the whole plan, or at substantial milestones/phases, and only when the user asked for that validation cadence.
 - When the user does ask for validation, prefer the narrowest command that covers the touched surface. Use package-local `vp check` in the app or package changed when the work is scoped.
-- Use `vp run -w fix`, `vp check --fix`, root `fix`, workspace TypeScript checks, or workspace builds only when the user explicitly asks for broad validation, fixing, or final plan validation.
+- Use `vp check --fix`, `vp run fix`, `vp run -w fix`, root `fix`, workspace TypeScript checks, or workspace builds only when the user explicitly chooses fixing/broad validation or asks for final plan validation.
 - Do not reach for root filtered check commands when a package-local `vp check` covers the approved validation surface.
 
-`vp run -w fix` formats (Oxfmt), lints (Oxlint), and type-checks in one pass. Treat it as an explicit user-requested action, not a default handoff step.
+`vp check --fix` and `vp run -w fix` format (Oxfmt), lint (Oxlint), and type-check in one pass. Treat fix commands as explicit user-requested actions, not default handoff steps.
 
-Do not run `vp run -w fix` for markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior unless the user explicitly asks. Staged files may be auto-checked on `git commit` via Vite Plus hooks; if the user asked for a commit but did not ask for checks, avoid triggering check hooks unless they explicitly approve them.
+For markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior, still prompt the user through [Choice flows](./choice-flows.md) instead of silently skipping validation. Make "skip validation" the recommended choice, and do not run `vp check --fix`, `vp run fix`, or `vp run -w fix` unless the user chooses a fix/check option. Staged files may be auto-checked on `git commit` via Vite Plus hooks; if the user asked for a commit but did not ask for checks, avoid triggering check hooks unless they explicitly approve them.
 
 ## Completion Claims
 
