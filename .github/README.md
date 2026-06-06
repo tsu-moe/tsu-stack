@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  Vite Plus (Vite+) TanStack Start monorepo with Paraglide.js (i18n), Hono, oRPC, drizzle-orm, better-auth, Feature-Sliced Design (FSD), and more. Dockerized and opinionated.
+  Vite Plus (Vite+) TanStack Start monorepo with shadcn/ui, Paraglide.js (i18n), Hono, oRPC, drizzle-orm, better-auth, Feature-Sliced Design (FSD), and more. 🐋 Dockerized and opinionated. Compatible with the ⛅ Cloudflare Workers workerd runtime with a few tweaks.
 </p>
 
 <p align="center">

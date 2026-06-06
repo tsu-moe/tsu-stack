@@ -24,6 +24,8 @@ Vite Plus is the all-in-one CLI that replaces pnpm/npm/yarn **and** bundles Oxli
 - `vp config` — sets up Vite Plus hooks (runs on `prepare`)
 - `vp env doctor` — checks the environment for potential issues, use when environment config seems wrong.
 
+Use these check/fix commands only when the user explicitly asks for validation or approves it after being asked. For the validation cadence, including one-off edits and larger `plan.md` work, follow [Workflow](./workflow.md).
+
 ## Root `vite.config.ts`
 
 Contains the unified config for:
