@@ -1,30 +1,17 @@
 import { defineConfig } from "vite-plus";
 
-const fsdEslintPluginOptions = {
+// For apps/web-specific FSD ESLint rule overrides
+const WEB_SHARED_FSD_OPTIONS = {
   rootPath: "/apps/web/src/",
-  alias: {
-    value: "@",
-    withSlash: true
-  },
+  tsconfigPath: "./apps/web/tsconfig.json",
+  alias: { value: "@", withSlash: true },
   layers: {
-    app: {
-      pattern: "routes"
-    },
-    pages: {
-      pattern: "pages"
-    },
-    widgets: {
-      pattern: "widgets"
-    },
-    features: {
-      pattern: "features"
-    },
-    entities: {
-      pattern: "entities"
-    },
-    shared: {
-      pattern: "shared"
-    }
+    app: { pattern: "routes" },
+    pages: { pattern: "pages" },
+    widgets: { pattern: "widgets" },
+    features: { pattern: "features" },
+    entities: { pattern: "entities" },
+    shared: { pattern: "shared" }
   },
   ignoreImportPatterns: ["\\.css$"]
 };
@@ -120,6 +107,7 @@ export default defineConfig({
 
   // Oxlint - https://oxc.rs/docs/guide/usage/linter/config
   lint: {
+    // #region Shared lint config
     env: {
       browser: true,
       builtin: true,
@@ -149,8 +137,7 @@ export default defineConfig({
       {
         name: "eslint-tanstack-query",
         specifier: "@tanstack/eslint-plugin-query"
-      },
-      { name: "fsd", specifier: "eslint-plugin-fsd-lint" }
+      }
     ],
     options: { typeAware: true, typeCheck: true },
     plugins: [
@@ -164,34 +151,44 @@ export default defineConfig({
       "jest",
       "unicorn"
     ],
+    // #endregion
 
-    rules: {
-      /**
-       * Recommended rules for enforcing Feature Sliced Design (FSD) architecture.
-       *
-       * FIXME: Oxlint does not support nested monorepo package/app config merging or variations. Running `vp check` will *always* use the monorepo root config.
-       * This means that we can only enable FSD for a single app only via `rootPath`.
-       * There is currently an [open issue](https://github.com/voidzero-dev/vite-plus/pull/1115) regarding this in the Vite+ repository.
-       * @see {@link https://github.com/effozen/eslint-plugin-fsd-lint?tab=readme-ov-file#manual-configuration}
-       */
-      "fsd/forbidden-imports": [
-        "error",
-        { ...fsdEslintPluginOptions, alias: { value: "@", withSlash: false } }
-      ],
-      "fsd/no-relative-imports": ["error", { ...fsdEslintPluginOptions, allowSameSlice: true }],
-      "fsd/no-public-api-sidestep": ["error", fsdEslintPluginOptions],
-      "fsd/no-cross-slice-dependency": [
-        "error",
-        {
-          ...fsdEslintPluginOptions,
-          allowTypeImports: false,
-          excludeLayers: ["shared"],
-          featuresOnly: false
+    // #region App-specific lint overrides
+    overrides: [
+      {
+        files: ["apps/web/src/**/*.ts", "apps/web/src/**/*.tsx"],
+        jsPlugins: [{ name: "fsd", specifier: "eslint-plugin-fsd-lint" }],
+        rules: {
+          "fsd/forbidden-imports": [
+            "error",
+            { ...WEB_SHARED_FSD_OPTIONS, alias: { value: "@", withSlash: false } }
+          ],
+          "fsd/no-relative-imports": [
+            "error",
+            {
+              ...WEB_SHARED_FSD_OPTIONS,
+              allowSameSlice: true
+            }
+          ],
+          "fsd/no-public-api-sidestep": ["error", WEB_SHARED_FSD_OPTIONS],
+          "fsd/no-cross-slice-dependency": [
+            "error",
+            {
+              ...WEB_SHARED_FSD_OPTIONS,
+              allowTypeImports: false,
+              excludeLayers: ["shared"],
+              featuresOnly: false
+            }
+          ],
+          "fsd/no-ui-in-business-logic": ["error", WEB_SHARED_FSD_OPTIONS],
+          "fsd/no-global-store-imports": "error"
         }
-      ],
-      "fsd/no-ui-in-business-logic": ["error", fsdEslintPluginOptions],
-      "fsd/no-global-store-imports": "error",
+      }
+    ],
+    // #endregion
 
+    // #region Shared lint rules
+    rules: {
       // Tanstack Router rules, ref: https://tanstack.com/router/latest/docs/eslint/eslint-plugin-router
       "eslint-tanstack-router/create-route-property-order": "error",
       // Tanstack Query rules, ref: https://tanstack.com/query/latest/docs/eslint/eslint-plugin-query
@@ -273,5 +270,6 @@ export default defineConfig({
       "jest/valid-title": "error",
       "eslint/yoda": "warn"
     }
+    // #endregion
   }
 });
