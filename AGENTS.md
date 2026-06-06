@@ -11,7 +11,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 ## Cross-Cutting Docs
 
 - [Vite+ toolchain](.agents/vite-plus.md) for package management, workspace scripts, and CLI syntax.
-- [Workflow](.agents/workflow.md) for validation timing, build checks, and migration safety.
+- [Workflow](.agents/workflow.md) for user-directed validation timing, build checks, and migration safety.
 - [Logging](.agents/logging.md) only when adding, changing, or keeping durable logs.
 - [Testing](.agents/testing.md) only when tests are explicitly requested or the task is test-specific.
 
@@ -45,7 +45,7 @@ Pick the most specific file for the task. Use links within that file instead of 
 
 - UI work: Start with [UI guidelines](.agents/ui.md). Add [TanStack patterns](.agents/tanstack-patterns.md) when the task touches route/file placement, loaders, or page composition. Add [Zustand state management](.agents/zustand.md) when client state must be accessed from different components.
 - Shared client state: Start with [Zustand state management](.agents/zustand.md). Do not use React Context unless the user explicitly asks for it.
-- Bugfix: Start with the owning domain doc from the index above, then use [Workflow](.agents/workflow.md) for narrow validation. Add [Core package patterns](.agents/core.md) when the fix touches shared enums, schemas, formatters, defaults, or other cross-package contracts. Add [Logging](.agents/logging.md) or [Testing](.agents/testing.md) only when the task explicitly calls for them or their policies require them.
+- Bugfix: Start with the owning domain doc from the index above, then use [Workflow](.agents/workflow.md) for user-directed validation timing. Add [Core package patterns](.agents/core.md) when the fix touches shared enums, schemas, formatters, defaults, or other cross-package contracts. Add [Logging](.agents/logging.md) or [Testing](.agents/testing.md) only when the task explicitly calls for them or their policies require them.
 - Uploads or object storage: Start with [Media storage and uploads](.agents/media-storage.md). Use it even for the first storage feature in this repo, then update it in the same change once the real provider, env surface, and asset purposes are known. Add [Core package patterns](.agents/core.md) when changing shared upload contracts, [oRPC patterns](.agents/orpc.md) when wiring route handlers, and [Environment variables](.agents/environment-variables.md) when storage config changes.
 - End-to-end feature: Start with [End-to-end feature workflow](.agents/end-to-end-features.md), then load the relevant domain docs such as [Core package patterns](.agents/core.md), [oRPC patterns](.agents/orpc.md), [API fetching patterns](.agents/api-fetching-patterns.md), [TanStack patterns](.agents/tanstack-patterns.md), [Zustand state management](.agents/zustand.md), [Auth patterns](.agents/auth.md), or [UI guidelines](.agents/ui.md).
 
