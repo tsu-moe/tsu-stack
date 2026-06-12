@@ -1,6 +1,6 @@
 import { defineConfig } from "vite-plus";
 
-import { tanstackStartFsdLint } from "./tools/vite-plus/tanstack-start-fsd.lint";
+import { tanstackStartFsdLint } from "./tools/vite-plus/tanstack-start-fsd.lint.ts";
 
 /**
  * Defines top-level Vite+ configurations for the different tools in its ecosystem.
