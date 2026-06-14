@@ -164,15 +164,17 @@ Coolify can be used to deploy the server and web applications. Choose a strategy
 
 ##### Server Deployment
 
-1. **Base Directory**: Set to `/apps/server`.
-2. **Domain**: Assign a domain, e.g., `https://example.com/server`.
-3. **Port**: Expose port `5000`.
+1. **Base Directory**: `/`.
+2. **Dockerfile Location**: `/apps/server/Dockerfile`.
+3. **Domain**: Assign a domain, e.g., `https://example.com/server`.
+4. **Port**: Expose port `5000`.
 
 ##### Web Deployment
 
-1. **Base Directory**: Set to `/apps/web`.
-2. **Domain**: Assign a domain, e.g., `https://example.com/web`.
-3. **Port**: Expose port `3000`.
+1. **Base Directory**: `/`.
+2. **Dockerfile Location**: `/apps/web/Dockerfile`.
+3. **Domain**: Assign a domain, e.g., `https://example.com/web`.
+4. **Port**: Expose port `3000`.
 
 > [!CAUTION]
 > Ensure that the `Strip Prefixes` option is unchecked in the `Advanced` settings to avoid issues with custom base paths.
