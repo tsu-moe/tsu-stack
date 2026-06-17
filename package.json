@@ -38,9 +38,7 @@
     "@typescript/native-preview": "catalog:",
     "eslint-plugin-fsd-lint": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
-    "oxlint-tsgolint": "catalog:",
-    "vite-plus": "catalog:",
-    "vitest": "catalog:"
+    "vite-plus": "catalog:"
   },
   "commitlint": {
     "extends": [

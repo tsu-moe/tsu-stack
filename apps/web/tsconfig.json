@@ -7,7 +7,7 @@
       // for shadcn CLI to resolve @tsu-stack/ui paths to the /packages/ui directory
       "@tsu-stack/ui/*": ["../../packages/ui/*"]
     },
-    "types": ["node", "vite/client", "mdx"],
+    "types": ["node", "vite-plus/client", "mdx"],
 
     /* Because paraglide.js breaks types during rebuilds on dev */
     "allowJs": true
