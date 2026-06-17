@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { generateTanStackStartSeo } from "#@/tanstack-start/generate-tanstack-start-seo";
 import {
