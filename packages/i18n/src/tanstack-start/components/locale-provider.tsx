@@ -32,17 +32,12 @@ function setClientLocale(locale: Locale) {
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = useLocation({ select: (location) => location.pathname });
-  const [locale, setLocaleState] = React.useState<Locale>(() => getLocaleFromPathname(pathname));
+  const locale = React.useMemo(() => getLocaleFromPathname(pathname), [pathname]);
 
   React.useEffect(() => {
-    const currentLocale = getLocaleFromPathname(pathname);
-
-    if (currentLocale !== locale) {
-      setClientLocale(currentLocale);
-      setLocaleState(currentLocale);
-      document.documentElement.lang = currentLocale;
-    }
-  }, [locale, pathname]);
+    setClientLocale(locale);
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const switchLocale = React.useCallback(
     (nextLocale: Locale) => {
@@ -55,7 +50,6 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       });
 
       setClientLocale(nextLocale);
-      setLocaleState(nextLocale);
       document.documentElement.lang = nextLocale;
       router.history.push(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
     },
