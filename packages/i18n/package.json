@@ -11,6 +11,7 @@
     "./server": "./src/paraglide/server.js",
     "./vite/plugin": "./src/vite/plugin.js",
     "./tanstack-start/*": "./src/tanstack-start/*.ts",
+    "./tanstack-start/components/locale-provider": "./src/tanstack-start/components/locale-provider.tsx",
     "./tanstack-start/components/link": "./src/tanstack-start/components/link.tsx",
     "./tanstack-start/types": "./src/tanstack-start/types/index.ts"
   },
