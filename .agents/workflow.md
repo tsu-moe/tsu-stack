@@ -12,17 +12,17 @@
 
 ## Validation Timing
 
-Default to user-directed validation. Do not run `vp check`, `vp check --fix`, `vp run -w fix`, `vpr check`, `vpr fix`, root `check`/`fix` scripts, project-wide TypeScript checks, workspace builds, or equivalent broad validation unless the user explicitly asks for checks or approves them after being asked.
+Default to running fixes after making code or configuration changes. Run the narrowest fix command that covers the touched surface before handing work back to the user.
 
-- For one-off changes, finish the requested edit, summarize what changed, and directly prompt the user before ending the turn. Use the native UI or structured input priority in [Choice flows](./choice-flows.md); do not merely say that checks were not run. Run the selected command only after the user chooses it.
-- For larger planned work, such as implementing a `plan.md`, do not check every intermediate step unless explicitly told to. Run checks only at the end of the whole plan, or at substantial milestones/phases, and only when the user asked for that validation cadence.
-- When the user does ask for validation, prefer the narrowest command that covers the touched surface. Use package-local `vp check` in the app or package changed when the work is scoped.
-- Use `vp check --fix`, `vp run fix`, `vp run -w fix`, root `fix`, workspace TypeScript checks, or workspace builds only when the user explicitly chooses fixing/broad validation or asks for final plan validation.
-- Do not reach for root filtered check commands when a package-local `vp check` covers the approved validation surface.
+- For scoped app or package changes, run package-local `vp check --fix` from the changed app or package.
+- For cross-package, root config, generated artifact, or workspace-wide changes, run `vp run -w fix`.
+- For larger planned work, such as implementing a `plan.md`, run fixes often enough to catch drift: after substantial milestones/phases and once more before final handoff. Do not run a broad workspace fix after every tiny intermediate edit when a focused package fix or milestone fix covers the work.
+- If a fix command fails, inspect the output, fix what is in scope, and rerun the same command until it passes or a real blocker remains.
+- Do not reach for root filtered check commands when a package-local `vp check --fix` covers the changed surface.
 
-`vp check --fix` and `vp run -w fix` format (Oxfmt), lint (Oxlint), and type-check in one pass. Treat fix commands as explicit user-requested actions, not default handoff steps.
+`vp check --fix` and `vp run -w fix` format (Oxfmt), lint (Oxlint), and type-check in one pass. Treat fix commands as the normal cleanup and validation path after edits.
 
-For markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior, still prompt the user through [Choice flows](./choice-flows.md) instead of silently skipping validation. Make "skip validation" the recommended choice, and do not run `vp check --fix`, `vp run fix`, or `vp run -w fix` unless the user chooses a fix/check option. Staged files may be auto-checked on `git commit` via Vite Plus hooks; if the user asked for a commit but did not ask for checks, avoid triggering check hooks unless they explicitly approve them.
+For markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior, run an available narrow formatter/fix only when it applies cleanly to the touched surface. Otherwise, state that no code/config fix command was applicable. Staged files may be auto-checked on `git commit` via Vite Plus hooks; do not rely on those hooks as the first fix pass when edits have already been made.
 
 ## Completion Claims
 
@@ -64,8 +64,8 @@ For UI component selection, shadcn install decisions, and visual coherence rules
 
 ## Testing
 
-Follow [Testing policy](./testing.md). Do not add or run tests unless requested, except when an existing task explicitly calls for them.
+Follow [Testing policy](./testing.md). Run the narrowest relevant tests when code changes affect behavior, contracts, bug fixes, or surfaces with nearby test coverage. Use e2e tests for browser workflows and integration paths that unit tests cannot cover.
 
 ## Commits
 
-Use Conventional Commit format. Staging hooks may auto-run `vp check --fix` on staged files; do not rely on those hooks as hidden validation when the user has not approved checks.
+Use Conventional Commit format. Run the appropriate fix command before staging or committing code/config edits; do not rely on staging hooks as the first cleanup pass.
