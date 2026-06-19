@@ -13,12 +13,12 @@ catalog:
   "@bprogress/react": 1.2.7
   "@commitlint/cli": 21.0.2
   "@commitlint/config-conventional": 21.0.2
-  "@dotenvx/dotenvx": 1.71.3
+  "@dotenvx/dotenvx": 1.72.0
   "@fontsource-variable/geist": 5.2.9
   "@fontsource-variable/geist-mono": 5.2.8
   "@fontsource/instrument-serif": 5.2.8
-  "@hono/node-server": 2.0.4
-  "@inlang/cli": 3.1.12
+  "@hono/node-server": 2.0.5
+  "@inlang/cli": 3.1.14
   "@inlang/paraglide-js": 2.19.0
   "@lonik/oh-image": 3.3.0
   "@mdx-js/rollup": 3.1.1
@@ -52,10 +52,10 @@ catalog:
   "@types/node": 25.9.3
   "@types/react": 19.2.17
   "@types/react-dom": 19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260614.1
+  "@typescript/native-preview": 7.0.0-dev.20260615.1
   "@vitejs/plugin-react": 6.0.2
   babel-plugin-react-compiler: 1.0.0
-  better-auth: 1.6.18
+  better-auth: 1.6.19
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   cross-env: 10.1.0
@@ -71,7 +71,7 @@ catalog:
   next-themes: 0.4.6
   nitro: npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e
   postgres: 3.4.9
-  radix-ui: 1.5.0
+  radix-ui: 1.6.0
   react: 19.2.7
   react-dom: 19.2.7
   react-icons: 5.6.0
@@ -104,13 +104,13 @@ minimumReleaseAgeExclude:
 
 overrides:
   kysely: 0.29.2
-  vite: 'catalog:'
+  vite: "catalog:"
   drizzle-orm: "catalog:"
-  vitest: 'catalog:'
+  vitest: "catalog:"
 peerDependencyRules:
   allowAny:
     - vite
     - vitest
   allowedVersions:
-    vite: '*'
-    vitest: '*'
+    vite: "*"
+    vitest: "*"
