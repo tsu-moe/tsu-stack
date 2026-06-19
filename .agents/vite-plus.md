@@ -24,7 +24,7 @@ Vite Plus is the all-in-one CLI that replaces pnpm/npm/yarn **and** bundles Oxli
 - `vp config` — sets up Vite Plus hooks (runs on `prepare`)
 - `vp env doctor` — checks the environment for potential issues, use when environment config seems wrong.
 
-Use these check/fix commands only when the user explicitly asks for validation or approves it after being asked. For one-off edits, follow the native UI or structured input priority in [Choice flows](./choice-flows.md) to ask whether the user wants to skip validation, run `vp check`, or run a fix command so the agent can clean up auto-fixable errors. Do not end by merely saying validation was skipped. For the full validation cadence, including larger `plan.md` work, follow [Workflow](./workflow.md).
+Use `vp check --fix` as the normal cleanup and validation command after code or configuration edits. Prefer the package-local command for scoped work, and use the workspace command from [Workflow](./workflow.md) when changes span packages, generated artifacts, or root configuration. Use [Choice flows](./choice-flows.md) only when a human decision is needed, such as selecting a validation scope for broad work or approving a permission-sensitive command.
 
 ## Root `vite.config.ts`
 
