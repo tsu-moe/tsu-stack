@@ -35,8 +35,12 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/playground/")({
 });
 
 function PlaygroundPage() {
-  const healthCheck = useQuery(orpc.health.live.queryOptions());
   const isClient = useIsClient();
+  const healthCheck = useQuery({
+    ...orpc.health.live.queryOptions(),
+    enabled: isClient,
+    retry: false
+  });
   const logger = useLogger();
   const backgroundImageSrc = resolvePublicAssetUrl(import.meta.env.BASE_URL, "/img/bg.jpg");
 
