@@ -111,6 +111,7 @@ export default defineConfig({
       "*.md"
     ],
     jsPlugins: [
+      { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
       /**
        * FIXME: Plugins with "/" in name have to be aliased for now
@@ -150,6 +151,8 @@ export default defineConfig({
 
     // #region Shared lint rules
     rules: {
+      // Rules from the original `vp create` default ruleset
+      "vite-plus/prefer-vite-plus-imports": "error",
       // Tanstack Router rules, ref: https://tanstack.com/router/latest/docs/eslint/eslint-plugin-router
       "eslint-tanstack-router/create-route-property-order": "error",
       // Tanstack Query rules, ref: https://tanstack.com/query/latest/docs/eslint/eslint-plugin-query
