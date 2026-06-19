@@ -47,19 +47,23 @@ export function MobileNav() {
             data-slot={open ? "open" : "closed"}
           >
             <div className="grid gap-y-2">
-              {navLinks.map((link) => (
-                <Button
-                  onClick={onNavigate}
-                  asChild
-                  className="w-full justify-start"
-                  key={link.label}
-                  variant="ghost"
-                >
-                  <Link {...(link.href ? { href: link.href } : { to: link.to })}>
-                    <span className="max-sm:-ms-2">{link.label}</span>
-                  </Link>
-                </Button>
-              ))}
+              {navLinks.map((link) => {
+                const label = link.label();
+
+                return (
+                  <Button
+                    onClick={onNavigate}
+                    asChild
+                    className="w-full justify-start"
+                    key={link.href ?? link.to}
+                    variant="ghost"
+                  >
+                    <Link {...(link.href ? { href: link.href } : { to: link.to })}>
+                      <span className="max-sm:-ms-2">{label}</span>
+                    </Link>
+                  </Button>
+                );
+              })}
             </div>
             <Suspense fallback={null}>
               <MobileNavAuth onNavigate={onNavigate} />
