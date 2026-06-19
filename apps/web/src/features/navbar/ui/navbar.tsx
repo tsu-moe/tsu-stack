@@ -30,19 +30,23 @@ export function Navbar() {
           <LogoWordmark className="h-6 w-fit" />
         </Link>
         <div className="hidden items-center gap-2 md:flex">
-          {navLinks.map((link) => (
-            <Button asChild key={link.label} size="sm" variant="ghost">
-              {link.href ? (
-                <a className="hover:text-foreground" target="_blank" href={link.href}>
-                  {link.label}
-                </a>
-              ) : (
-                <Link className="hover:text-foreground" to={link.to}>
-                  {link.label}
-                </Link>
-              )}
-            </Button>
-          ))}
+          {navLinks.map((link) => {
+            const label = link.label();
+
+            return (
+              <Button asChild key={link.href ?? link.to} size="sm" variant="ghost">
+                {link.href ? (
+                  <a className="hover:text-foreground" target="_blank" href={link.href}>
+                    {label}
+                  </a>
+                ) : (
+                  <Link className="hover:text-foreground" to={link.to}>
+                    {label}
+                  </Link>
+                )}
+              </Button>
+            );
+          })}
           <LocaleSwitcher />
           <ThemeSwitcher size="icon-sm" />
           <Suspense fallback={null}>

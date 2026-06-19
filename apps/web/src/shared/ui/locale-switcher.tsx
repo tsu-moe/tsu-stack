@@ -1,7 +1,8 @@
 import { Check, Languages } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
-import { getLocale, locales, setLocale } from "@tsu-stack/i18n/runtime";
+import { locales } from "@tsu-stack/i18n/runtime";
+import { useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
 import { type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
@@ -23,7 +24,7 @@ export function LocaleSwitcher({
   variant = "ghost",
   className
 }: LocaleSwitcherProps) {
-  const currentLocale = getLocale();
+  const { locale: currentLocale, switchLocale } = useLocale();
 
   return (
     <DropdownMenu>
@@ -39,7 +40,7 @@ export function LocaleSwitcher({
             <DropdownMenuItem
               key={locale}
               className={cn("cursor-pointer gap-2", isActive && "bg-accent")}
-              onClick={() => setLocale(locale)}
+              onClick={() => switchLocale(locale)}
             >
               <span className="flex-1">{m.language_name(undefined, { locale })}</span>
               {isActive && <Check aria-hidden="true" className="opacity-60" />}

@@ -42,7 +42,7 @@ export function paraglideVitePlugin(options) {
     outdir: resolve(I18N_ROOT, "src/paraglide"),
     outputStructure: "message-modules",
     project: resolve(I18N_ROOT, "project.inlang"),
-    strategy: ["url", "preferredLanguage", "baseLocale"],
+    strategy: ["url", "baseLocale"],
     urlPatterns: [
       {
         localized,
