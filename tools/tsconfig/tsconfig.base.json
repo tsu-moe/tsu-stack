@@ -16,6 +16,12 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "strictNullChecks": true,
-    "types": ["node"]
+    "types": ["node"],
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
   }
 }
