@@ -239,7 +239,6 @@ overrides:
   kysely: 0.29.2
   vite: npm:@voidzero-dev/vite-plus-core@latest
   drizzle-orm: 1.0.0-rc.4-5d5b77c
-  vitest: 4.1.9
 
 importers:
 
