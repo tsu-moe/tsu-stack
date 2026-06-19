@@ -12,12 +12,16 @@ import { type QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Fragment } from "react";
 
 import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
-import { getLocale } from "@tsu-stack/i18n/runtime";
+import {
+  LocaleProvider,
+  useLocale
+} from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
 
 import { generateAppSeo } from "@/shared/lib/seo";
@@ -122,7 +126,17 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning lang={getLocale()}>
+    <LocaleProvider>
+      <RootDocumentInner>{children}</RootDocumentInner>
+    </LocaleProvider>
+  );
+}
+
+function RootDocumentInner({ children }: { children: React.ReactNode }) {
+  const { locale } = useLocale();
+
+  return (
+    <html suppressHydrationWarning lang={locale}>
       <head>
         <HeadContent />
       </head>
@@ -130,7 +144,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {/* We place the progress provider here otherwise we will get "Cannot render a <style> outside the main document" error */}
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>
-            {children}
+            <Fragment key={locale}>{children}</Fragment>
             <Toaster richColors />
             <TanStackDevtools
               plugins={[

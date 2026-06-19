@@ -12,26 +12,26 @@ import { LogoWordmark } from "@/shared/ui/logo";
 import { appConfig } from "@/config/app.config";
 
 type FooterLink =
-  | { label: string; href: LinkProps["href"]; to?: never }
-  | { label: string; href?: never; to: LinkProps["to"] };
+  | { label: () => string; href: LinkProps["href"]; to?: never }
+  | { label: () => string; href?: never; to: LinkProps["to"] };
 
 const navLinks: FooterLink[] = [
-  { label: m.footer__playground(), to: "/playground" },
-  { label: m.footer__dashboard(), to: "/dashboard" },
-  { label: m.footer__privacy_policy(), to: "/privacy-policy" },
-  { label: m.footer__terms_of_service(), to: "/terms-of-service" }
+  { label: () => m.footer__playground(), to: "/playground" },
+  { label: () => m.footer__dashboard(), to: "/dashboard" },
+  { label: () => m.footer__privacy_policy(), to: "/privacy-policy" },
+  { label: () => m.footer__terms_of_service(), to: "/terms-of-service" }
 ];
 
 const socialLinks: (FooterLink & { icon: React.ReactNode })[] = [
   {
     href: "https://github.com/tsu-moe",
     icon: <XIcon className="size-3" />,
-    label: m.footer__x()
+    label: () => m.footer__x()
   },
   {
     href: "https://github.com/tsu-moe/tsu-stack",
     icon: <FaGithub className="size-4" />,
-    label: m.footer__github()
+    label: () => m.footer__github()
   }
 ];
 
@@ -50,31 +50,39 @@ export function Footer({
             <LogoWordmark className="h-4.5 w-fit" />
           </div>
           <div className="flex items-center gap-1">
-            {socialLinks.map(({ href, label, icon }) => (
-              <Button asChild key={label} size="icon-sm" variant="ghost">
-                <Link aria-label={label} href={href}>
-                  {icon}
-                </Link>
-              </Button>
-            ))}
+            {socialLinks.map(({ href, label, icon }) => {
+              const labelText = label();
+
+              return (
+                <Button asChild key={href} size="icon-sm" variant="ghost">
+                  <Link aria-label={labelText} href={href}>
+                    {icon}
+                  </Link>
+                </Button>
+              );
+            })}
           </div>
         </div>
 
         <nav>
           <ul className="flex flex-wrap gap-4 text-sm font-medium text-muted-foreground md:gap-6">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                {link.href ? (
-                  <a className="hover:text-foreground" target="_blank" href={link.href}>
-                    {link.label}
-                  </a>
-                ) : (
-                  <Link className="hover:text-foreground" to={link.to}>
-                    {link.label}
-                  </Link>
-                )}
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const label = link.label();
+
+              return (
+                <li key={link.href ?? link.to}>
+                  {link.href ? (
+                    <a className="hover:text-foreground" target="_blank" href={link.href}>
+                      {label}
+                    </a>
+                  ) : (
+                    <Link className="hover:text-foreground" to={link.to}>
+                      {label}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </div>

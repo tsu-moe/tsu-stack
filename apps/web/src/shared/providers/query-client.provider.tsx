@@ -80,6 +80,10 @@ function QueryClientProvider({ children, client }: { children: ReactNode; client
            */
           dehydrateOptions: {
             shouldDehydrateQuery: (query) => {
+              if (query.state.status !== "success") {
+                return false;
+              }
+
               try {
                 structuredClone(query.state.data);
                 return true;

@@ -3,6 +3,7 @@
   "entry": [
     "apps/web/src/start.ts",
     "scripts/*.ts",
+    "tools/vite-plus/tanstack-start-fsd.lint.ts",
     "packages/i18n/**/*.ts",
     "packages/auth/**/middleware.ts"
   ],
