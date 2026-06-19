@@ -8,6 +8,18 @@ This guide is intentionally focused on TanStack Router and TanStack Start. For o
 - [oRPC patterns](./orpc.md)
 - [i18n patterns](./i18n.md)
 
+## Docs Lookup
+
+Use `vp run tanstack ... --json` for TanStack documentation lookup.
+
+```sh
+vp run tanstack libraries --json
+vp run tanstack doc router framework/react/guide/data-loading --json
+vp run tanstack doc query framework/react/overview --docs-version v5 --json
+vp run tanstack search-docs "server functions" --library start --json
+vp run tanstack search-docs "loaders" --library router --framework react --json
+```
+
 ## Routing
 
 The web app uses TanStack Start file-based routing. In this codebase, `routes/` acts as the FSD app layer.
