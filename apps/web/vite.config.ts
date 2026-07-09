@@ -85,6 +85,9 @@ export default defineConfig({
   // Restart the dev server when env files in this directory change
   envDir: resolve(import.meta.dirname, "../../packages/env"),
   resolve: {
+    alias: {
+      "@": resolve(import.meta.dirname, "./src")
+    },
     tsconfigPaths: true
   },
   define: {
