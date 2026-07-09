@@ -14,7 +14,7 @@ catalog:
   "@bprogress/react": 1.2.7
   "@commitlint/cli": 21.2.0
   "@commitlint/config-conventional": 21.2.0
-  "@cloudflare/vite-plugin": 1.40.2
+  "@cloudflare/vite-plugin": 1.43.0
   "@dotenvx/dotenvx": 2.1.4
   "@fontsource-variable/geist": 5.2.9
   "@fontsource-variable/geist-mono": 5.2.8
@@ -88,7 +88,7 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@0.2.4
   vite-plus: 0.2.4
   zod: 4.4.3
-  wrangler: 4.100.0
+  wrangler: 4.107.0
 
 catalogMode: prefer
 
