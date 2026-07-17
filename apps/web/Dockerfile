@@ -1,39 +1,14 @@
-FROM node:25-bookworm-slim AS base
-
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends wget git ca-certificates \
-  && update-ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+FROM ghcr.io/voidzero-dev/vite-plus:0.2.5 AS installer
 
 WORKDIR /app
 
-# =========================================================================== #
-
-FROM base AS installer
-
-# Use `npm view vite-plus version` to get the latest version of vite-plus for reproducible builds
-# FIXME: Use the documented manual method when it's available
-# @see {@link https://github.com/voidzero-dev/vite-plus/issues/896}
-ARG VITE_PLUS_VERSION=0.2.5
-RUN npm pack "@voidzero-dev/vite-plus-cli-linux-x64-gnu@${VITE_PLUS_VERSION}" \
-        --pack-destination /tmp && \
-    mkdir -p /root/.vite-plus/bin && \
-    tar xzf /tmp/voidzero-dev-vite-plus-cli-linux-x64-gnu-*.tgz -C /root/.vite-plus/bin \
-        --strip-components=1 package/vp && \
-    chmod +x /root/.vite-plus/bin/vp
-ENV PATH="/root/.vite-plus/bin:$PATH"
-
-# This layer only invalidates when dependencies change, not on source changes.
-# --parents preserves directory structure, picking up all workspace packages automatically.
-COPY --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --chown=vp:vp --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml .node-version ./
 
 RUN vp install --frozen-lockfile --ignore-scripts
 
-# =========================================================================== #
-
 FROM installer AS builder
 
-COPY . .
+COPY --chown=vp:vp . .
 
 ARG SOURCE_COMMIT VITE_SERVER_URL VITE_WEB_URL VITE_IMGPROXY_URL VITE_IMGPROXY_SIGNATURE DATABASE_URL BETTER_AUTH_SECRET
 ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
@@ -49,14 +24,21 @@ RUN vp run test:unit:run
 # RUN vp run test:e2e:run
 
 RUN vp run -v --filter web build
+RUN cp "$(vp env which node | head -1)" /tmp/node
 
-# =========================================================================== #
+FROM debian:bookworm-slim AS production
 
-FROM base AS production
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends wget ca-certificates libatomic1 \
+  && update-ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
 
 RUN addgroup --gid 1001 nodejs \
     && adduser --uid 1001 --ingroup nodejs --disabled-password --gecos "" web
 
+COPY --from=builder /tmp/node /usr/local/bin/node
 COPY --from=builder --chown=web:nodejs /app/apps/web/.output /app/.output
 
 USER web
