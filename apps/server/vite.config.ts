@@ -7,7 +7,7 @@ export default defineConfig({
       alwaysBundle: [/./],
       onlyBundle: false
     },
-    dts: true,
+    dts: false,
     entry: "./src/index.ts",
     exe: process.env.BUILD_EXE === "true",
     format: "esm",
