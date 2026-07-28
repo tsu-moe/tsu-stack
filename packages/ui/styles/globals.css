@@ -38,6 +38,8 @@
   }
 
   html {
+    @apply bg-background;
+
     /* Enable advanced OpenType font features for cleaner glyph shapes */
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 
