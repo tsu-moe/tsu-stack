@@ -14,7 +14,6 @@ import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Fragment } from "react";
 
-import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
@@ -27,14 +26,13 @@ import { Toaster } from "@tsu-stack/ui/components/sonner";
 import { generateAppSeo } from "@/shared/lib/seo";
 import { ProgressProvider } from "@/shared/providers/progress.provider";
 import appCss from "@/shared/styles/app.css?url";
-import { ThemeProvider } from "@/shared/ui/theme-switcher";
+import { ThemeInitializer, ThemeProvider } from "@/shared/ui/theme-switcher";
 
 import { DefaultErrorPage } from "@/pages/default-error";
 
 // Root route with shared context for the entire app, inject them in router.tsx
 type RouterAppContext = {
   queryClient: QueryClient;
-  user: AuthQueryResult;
 };
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
@@ -138,9 +136,10 @@ function RootDocumentInner({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning lang={locale}>
       <head>
+        <ThemeInitializer />
         <HeadContent />
       </head>
-      <body>
+      <body className="min-h-dvh bg-background text-foreground">
         {/* We place the progress provider here otherwise we will get "Cannot render a <style> outside the main document" error */}
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>

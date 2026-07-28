@@ -9,32 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as ServerSplatRouteImport } from './routes/server/$'
-import { Route as Char123LocaleChar125rootLayoutRouteRouteImport } from './routes/{-$locale}/(root-layout)/route'
 import { Route as Char123LocaleChar125centeredLayoutRouteRouteImport } from './routes/{-$locale}/(centered-layout)/route'
-import { Route as Char123LocaleChar125rootLayoutIndexRouteImport } from './routes/{-$locale}/(root-layout)/index'
+import { Route as Char123LocaleChar125rootLayoutRouteRouteImport } from './routes/{-$locale}/(root-layout)/route'
 import { Route as ApiHealthLiveRouteImport } from './routes/[_]api/health/live'
-import { Route as Char123LocaleChar125rootLayoutauthRouteRouteImport } from './routes/{-$locale}/(root-layout)/(auth)/route'
 import { Route as Char123LocaleChar125centeredLayoutguestRouteRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/route'
-import { Route as Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport } from './routes/{-$locale}/(root-layout)/terms-of-service/index'
-import { Route as Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport } from './routes/{-$locale}/(root-layout)/privacy-policy/index'
-import { Route as Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport } from './routes/{-$locale}/(root-layout)/playground/index'
+import { Route as Char123LocaleChar125rootLayoutIndexRouteImport } from './routes/{-$locale}/(root-layout)/index'
+import { Route as Char123LocaleChar125rootLayoutauthRouteRouteImport } from './routes/{-$locale}/(root-layout)/(auth)/route'
 import { Route as Char123LocaleChar125rootLayoutErrorIndexRouteImport } from './routes/{-$locale}/(root-layout)/error/index'
-import { Route as Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport } from './routes/{-$locale}/(root-layout)/(auth)/dashboard/index'
-import { Route as Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/sign-in/index'
+import { Route as Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport } from './routes/{-$locale}/(root-layout)/playground/index'
+import { Route as Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport } from './routes/{-$locale}/(root-layout)/privacy-policy/index'
+import { Route as Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport } from './routes/{-$locale}/(root-layout)/terms-of-service/index'
 import { Route as Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/create-an-account/index'
+import { Route as Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/sign-in/index'
+import { Route as Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport } from './routes/{-$locale}/(root-layout)/(auth)/dashboard/index'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125RouteRoute =
@@ -48,15 +48,25 @@ const ServerSplatRoute = ServerSplatRouteImport.update({
   path: '/server/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char123LocaleChar125centeredLayoutRouteRoute =
+  Char123LocaleChar125centeredLayoutRouteRouteImport.update({
+    id: '/(centered-layout)',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125rootLayoutRouteRoute =
   Char123LocaleChar125rootLayoutRouteRouteImport.update({
     id: '/(root-layout)',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const Char123LocaleChar125centeredLayoutRouteRoute =
-  Char123LocaleChar125centeredLayoutRouteRouteImport.update({
-    id: '/(centered-layout)',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
+const ApiHealthLiveRoute = ApiHealthLiveRouteImport.update({
+  id: '/_api/health/live',
+  path: '/_api/health/live',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char123LocaleChar125centeredLayoutguestRouteRoute =
+  Char123LocaleChar125centeredLayoutguestRouteRouteImport.update({
+    id: '/(guest)',
+    getParentRoute: () => Char123LocaleChar125centeredLayoutRouteRoute,
   } as any)
 const Char123LocaleChar125rootLayoutIndexRoute =
   Char123LocaleChar125rootLayoutIndexRouteImport.update({
@@ -64,37 +74,9 @@ const Char123LocaleChar125rootLayoutIndexRoute =
     path: '/',
     getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
-const ApiHealthLiveRoute = ApiHealthLiveRouteImport.update({
-  id: '/_api/health/live',
-  path: '/_api/health/live',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const Char123LocaleChar125rootLayoutauthRouteRoute =
   Char123LocaleChar125rootLayoutauthRouteRouteImport.update({
     id: '/(auth)',
-    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125centeredLayoutguestRouteRoute =
-  Char123LocaleChar125centeredLayoutguestRouteRouteImport.update({
-    id: '/(guest)',
-    getParentRoute: () => Char123LocaleChar125centeredLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute =
-  Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport.update({
-    id: '/terms-of-service/',
-    path: '/terms-of-service/',
-    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute =
-  Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport.update({
-    id: '/privacy-policy/',
-    path: '/privacy-policy/',
-    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125rootLayoutPlaygroundIndexRoute =
-  Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport.update({
-    id: '/playground/',
-    path: '/playground/',
     getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
 const Char123LocaleChar125rootLayoutErrorIndexRoute =
@@ -103,17 +85,23 @@ const Char123LocaleChar125rootLayoutErrorIndexRoute =
     path: '/error/',
     getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
-const Char123LocaleChar125rootLayoutauthDashboardIndexRoute =
-  Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport.update({
-    id: '/dashboard/',
-    path: '/dashboard/',
-    getParentRoute: () => Char123LocaleChar125rootLayoutauthRouteRoute,
+const Char123LocaleChar125rootLayoutPlaygroundIndexRoute =
+  Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport.update({
+    id: '/playground/',
+    path: '/playground/',
+    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
-const Char123LocaleChar125centeredLayoutguestSignInIndexRoute =
-  Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport.update({
-    id: '/sign-in/',
-    path: '/sign-in/',
-    getParentRoute: () => Char123LocaleChar125centeredLayoutguestRouteRoute,
+const Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute =
+  Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport.update({
+    id: '/privacy-policy/',
+    path: '/privacy-policy/',
+    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
+  } as any)
+const Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute =
+  Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport.update({
+    id: '/terms-of-service/',
+    path: '/terms-of-service/',
+    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
 const Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute =
   Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRouteImport.update(
@@ -123,6 +111,18 @@ const Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute =
       getParentRoute: () => Char123LocaleChar125centeredLayoutguestRouteRoute,
     } as any,
   )
+const Char123LocaleChar125centeredLayoutguestSignInIndexRoute =
+  Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport.update({
+    id: '/sign-in/',
+    path: '/sign-in/',
+    getParentRoute: () => Char123LocaleChar125centeredLayoutguestRouteRoute,
+  } as any)
+const Char123LocaleChar125rootLayoutauthDashboardIndexRoute =
+  Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => Char123LocaleChar125rootLayoutauthRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125rootLayoutauthRouteRouteWithChildren
@@ -234,18 +234,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/robots.txt': {
       id: '/robots.txt'
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}': {
@@ -262,13 +262,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServerSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/{-$locale}/(root-layout)': {
-      id: '/{-$locale}/(root-layout)'
-      path: ''
-      fullPath: '/{-$locale}'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutRouteRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
     '/{-$locale}/(centered-layout)': {
       id: '/{-$locale}/(centered-layout)'
       path: ''
@@ -276,12 +269,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125centeredLayoutRouteRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
-    '/{-$locale}/(root-layout)/': {
-      id: '/{-$locale}/(root-layout)/'
-      path: '/'
-      fullPath: '/{-$locale}/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
+    '/{-$locale}/(root-layout)': {
+      id: '/{-$locale}/(root-layout)'
+      path: ''
+      fullPath: '/{-$locale}'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutRouteRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/_api/health/live': {
       id: '/_api/health/live'
@@ -290,13 +283,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthLiveRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/{-$locale}/(root-layout)/(auth)': {
-      id: '/{-$locale}/(root-layout)/(auth)'
-      path: ''
-      fullPath: '/{-$locale}'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutauthRouteRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
-    }
     '/{-$locale}/(centered-layout)/(guest)': {
       id: '/{-$locale}/(centered-layout)/(guest)'
       path: ''
@@ -304,25 +290,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125centeredLayoutguestRouteRouteImport
       parentRoute: typeof Char123LocaleChar125centeredLayoutRouteRoute
     }
-    '/{-$locale}/(root-layout)/terms-of-service/': {
-      id: '/{-$locale}/(root-layout)/terms-of-service/'
-      path: '/terms-of-service'
-      fullPath: '/{-$locale}/terms-of-service/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport
+    '/{-$locale}/(root-layout)/': {
+      id: '/{-$locale}/(root-layout)/'
+      path: '/'
+      fullPath: '/{-$locale}/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutIndexRouteImport
       parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
     }
-    '/{-$locale}/(root-layout)/privacy-policy/': {
-      id: '/{-$locale}/(root-layout)/privacy-policy/'
-      path: '/privacy-policy'
-      fullPath: '/{-$locale}/privacy-policy/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
-    }
-    '/{-$locale}/(root-layout)/playground/': {
-      id: '/{-$locale}/(root-layout)/playground/'
-      path: '/playground'
-      fullPath: '/{-$locale}/playground/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport
+    '/{-$locale}/(root-layout)/(auth)': {
+      id: '/{-$locale}/(root-layout)/(auth)'
+      path: ''
+      fullPath: '/{-$locale}'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutauthRouteRouteImport
       parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
     }
     '/{-$locale}/(root-layout)/error/': {
@@ -332,12 +311,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125rootLayoutErrorIndexRouteImport
       parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
     }
-    '/{-$locale}/(root-layout)/(auth)/dashboard/': {
-      id: '/{-$locale}/(root-layout)/(auth)/dashboard/'
-      path: '/dashboard'
-      fullPath: '/{-$locale}/dashboard/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutauthRouteRoute
+    '/{-$locale}/(root-layout)/playground/': {
+      id: '/{-$locale}/(root-layout)/playground/'
+      path: '/playground'
+      fullPath: '/{-$locale}/playground/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
+    }
+    '/{-$locale}/(root-layout)/privacy-policy/': {
+      id: '/{-$locale}/(root-layout)/privacy-policy/'
+      path: '/privacy-policy'
+      fullPath: '/{-$locale}/privacy-policy/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
+    }
+    '/{-$locale}/(root-layout)/terms-of-service/': {
+      id: '/{-$locale}/(root-layout)/terms-of-service/'
+      path: '/terms-of-service'
+      fullPath: '/{-$locale}/terms-of-service/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
+    }
+    '/{-$locale}/(centered-layout)/(guest)/create-an-account/': {
+      id: '/{-$locale}/(centered-layout)/(guest)/create-an-account/'
+      path: '/create-an-account'
+      fullPath: '/{-$locale}/create-an-account/'
+      preLoaderRoute: typeof Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125centeredLayoutguestRouteRoute
     }
     '/{-$locale}/(centered-layout)/(guest)/sign-in/': {
       id: '/{-$locale}/(centered-layout)/(guest)/sign-in/'
@@ -346,12 +346,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport
       parentRoute: typeof Char123LocaleChar125centeredLayoutguestRouteRoute
     }
-    '/{-$locale}/(centered-layout)/(guest)/create-an-account/': {
-      id: '/{-$locale}/(centered-layout)/(guest)/create-an-account/'
-      path: '/create-an-account'
-      fullPath: '/{-$locale}/create-an-account/'
-      preLoaderRoute: typeof Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125centeredLayoutguestRouteRoute
+    '/{-$locale}/(root-layout)/(auth)/dashboard/': {
+      id: '/{-$locale}/(root-layout)/(auth)/dashboard/'
+      path: '/dashboard'
+      fullPath: '/{-$locale}/dashboard/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125rootLayoutauthRouteRoute
     }
   }
 }

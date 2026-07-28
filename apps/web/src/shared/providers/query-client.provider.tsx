@@ -3,9 +3,6 @@ import {
   QueryClientProvider as QueryClientProviderRaw,
   environmentManager
 } from "@tanstack/react-query";
-import { type PersistedClient, type Persister } from "@tanstack/react-query-persist-client";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import localforage from "localforage";
 import { type ReactNode } from "react";
 
 function createQueryClient() {
@@ -51,80 +48,8 @@ function getQueryClient() {
   return browserQueryClient;
 }
 
-// Lazy-create persister only on client side to prevent server-side leaks
-let persister: Persister | undefined;
-
-function getPersister() {
-  if (environmentManager.isServer()) {
-    return undefined;
-  }
-  persister ??= createLocalForagePersister();
-  return persister;
-}
-
 function QueryClientProvider({ children, client }: { children: ReactNode; client: QueryClient }) {
-  const clientPersister = getPersister();
-
-  // Only use persistence on the client, not on the server
-  if (clientPersister) {
-    return (
-      <PersistQueryClientProvider
-        client={client}
-        persistOptions={{
-          persister: clientPersister,
-          /**
-           * We need to add this or else we will get `Uncaught (in promise) DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.`
-           * when the query client tries to persist data that can't be structured cloned, such as a RSC payload object.
-           * By default, react-query-persist-client will attempt to persist all queries,
-           * but with this option we can filter out queries that contain unserializable data.
-           */
-          dehydrateOptions: {
-            shouldDehydrateQuery: (query) => {
-              if (query.state.status !== "success") {
-                return false;
-              }
-
-              try {
-                structuredClone(query.state.data);
-                return true;
-              } catch {
-                return false;
-              }
-            }
-          }
-        }}
-      >
-        <QueryClientProviderRaw client={client}>{children}</QueryClientProviderRaw>
-      </PersistQueryClientProvider>
-    );
-  }
-
-  // Server-side: no IndexedDB persistence, use only the raw provider
   return <QueryClientProviderRaw client={client}>{children}</QueryClientProviderRaw>;
-}
-
-/**
- * Creates a custom localForage persister to save the cache in IndexedDB
- * @see {@link https://github.com/localForage/localForage}
- * @see {@link https://tanstack.com/query/v4/docs/framework/react/plugins/persistQueryClient#building-a-persister}
- */
-function createLocalForagePersister(idbValidKey = "cache") {
-  const reactQueryLocalForage = localforage.createInstance({
-    description: "Cached site data",
-    name: "React Query",
-    storeName: "cache",
-    version: 1
-  });
-
-  return {
-    persistClient: async (client: PersistedClient) => {
-      await reactQueryLocalForage.setItem(idbValidKey, client);
-    },
-    removeClient: async () => {
-      await reactQueryLocalForage.removeItem(idbValidKey);
-    },
-    restoreClient: async () => await reactQueryLocalForage.getItem<PersistedClient>(idbValidKey)
-  } as Persister;
 }
 
 export { getQueryClient, QueryClientProvider };
