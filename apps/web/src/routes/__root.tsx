@@ -27,7 +27,7 @@ import { Toaster } from "@tsu-stack/ui/components/sonner";
 import { generateAppSeo } from "@/shared/lib/seo";
 import { ProgressProvider } from "@/shared/providers/progress.provider";
 import appCss from "@/shared/styles/app.css?url";
-import { ThemeProvider } from "@/shared/ui/theme-switcher";
+import { ThemeInitializer, ThemeProvider } from "@/shared/ui/theme-switcher";
 
 import { DefaultErrorPage } from "@/pages/default-error";
 
@@ -138,9 +138,10 @@ function RootDocumentInner({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning lang={locale}>
       <head>
+        <ThemeInitializer />
         <HeadContent />
       </head>
-      <body>
+      <body className="min-h-dvh bg-background text-foreground">
         {/* We place the progress provider here otherwise we will get "Cannot render a <style> outside the main document" error */}
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>

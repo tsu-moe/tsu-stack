@@ -5,6 +5,20 @@ import { type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Button } from "@tsu-stack/ui/components/button";
 export { ThemeProvider } from "next-themes";
 
+function getThemeInitializerScript(storageKey = "theme", defaultTheme = "dark") {
+  const key = JSON.stringify(storageKey);
+  const fallback = JSON.stringify(defaultTheme);
+
+  return `(function(){var t=${fallback};try{var s=localStorage.getItem(${key});if(s==='light'||s==='dark'||s==='system'){t=s}if(t==='system'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}}catch(e){}var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(t);r.style.colorScheme=t})()`;
+}
+
+const themeInitializerScript = getThemeInitializerScript();
+
+/** Applies the saved theme before stylesheets can paint the document. */
+export function ThemeInitializer() {
+  return <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />;
+}
+
 type ThemeSwitcherProps = {
   className?: string;
 } & ButtonProps;
