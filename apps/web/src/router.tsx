@@ -60,7 +60,7 @@ export function getRouter() {
     // https://tanstack.com/router/latest/docs/guide/render-optimizations
     defaultStructuralSharing: true,
     // Global initial context defined in __root's RouterAppContext type goes here
-    context: { queryClient, user: null },
+    context: { queryClient },
     routeTree,
     scrollRestoration: true,
     Wrap: ({ children }) => (
