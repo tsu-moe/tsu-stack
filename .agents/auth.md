@@ -13,7 +13,9 @@ Auth user query is defined in `@tsu-stack/auth`:
 
 - `getAuthUserQueryOptions()` — staleTime 5 min, gcTime 10 min, refetchOnWindowFocus "always"
 - Root route `beforeLoad` prefetches auth (non-blocking `prefetchQuery`)
-- Auth-guarded routes use blocking `ensureQueryData`
+- Auth-guarded routes use blocking `ensureQueryData`. Other loaders and components
+  consume the same shared auth query rather than router loader context, so revalidation
+  remains centralized in TanStack Query.
 
 ## Route Guards
 

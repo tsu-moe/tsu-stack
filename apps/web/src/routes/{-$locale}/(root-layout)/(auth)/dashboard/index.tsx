@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { orpc } from "@tsu-stack/api/client/tanstack-start/orpc";
+import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
 import { m } from "@tsu-stack/i18n/messages";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";
@@ -29,7 +30,11 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)/dashboard
 });
 
 function RouteComponent() {
-  const { user } = Route.useRouteContext();
+  const { user } = useAuthSuspense();
+
+  if (!user) {
+    return null;
+  }
 
   const privateData = useQuery(orpc.private.data.queryOptions());
   const isClient = useIsClient();

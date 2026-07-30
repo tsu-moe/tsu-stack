@@ -14,7 +14,6 @@ import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Fragment } from "react";
 
-import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
@@ -34,7 +33,6 @@ import { DefaultErrorPage } from "@/pages/default-error";
 // Root route with shared context for the entire app, inject them in router.tsx
 type RouterAppContext = {
   queryClient: QueryClient;
-  user: AuthQueryResult;
 };
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({

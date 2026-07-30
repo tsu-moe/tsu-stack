@@ -49,8 +49,8 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
       });
     }
 
-    // Retype the Route context to include a non-null user prop
-    return { user };
+    // Load auth data in other loaders or beforeLoad hooks through this shared query.
+    // This keeps revalidation centralized in TanStack Query rather than router context.
   },
   component: RequiresAuthLayout
 });
