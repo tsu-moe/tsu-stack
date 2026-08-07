@@ -1,4 +1,4 @@
-import { type CloudflareAccountPrompt, provisionD1 } from "./cloudflare";
+import { type CloudflareAccountPrompt, type ExistingD1Prompt, provisionD1 } from "./cloudflare";
 import { type CommandRunner, type ProjectInput, type VariantName } from "./types";
 
 type VariantTransformHook = {
@@ -9,6 +9,7 @@ type VariantTransformHook = {
 
 type PostGenerationContext = {
   accountPrompt?: CloudflareAccountPrompt;
+  existingD1Prompt?: ExistingD1Prompt;
   input: ProjectInput;
   projectRoot: string;
   runner: CommandRunner;
@@ -21,7 +22,13 @@ async function setupPostgres({ projectRoot, runner }: PostGenerationContext): Pr
 
 async function setupD1(context: PostGenerationContext): Promise<void> {
   if (context.input.setup === "cloudflare") {
-    await provisionD1(context.projectRoot, context.input, context.runner, context.accountPrompt);
+    await provisionD1(
+      context.projectRoot,
+      context.input,
+      context.runner,
+      context.accountPrompt,
+      context.existingD1Prompt
+    );
     return;
   }
   await context.runner.run("vp", ["run", "db:migrate:local"], context.projectRoot);
