@@ -138,6 +138,7 @@ describe("guided setup", () => {
             loggedIn: true
           });
         }
+        if (args.includes("list")) return "[]";
         return `database_id = "${databaseId}"`;
       },
       async run(command, args, cwd) {
@@ -166,11 +167,13 @@ describe("guided setup", () => {
     expect(calls).toEqual([
       "vp install",
       "vp exec wrangler whoami --json",
+      "vp exec wrangler d1 list --json",
       "vp exec wrangler d1 create moon-garden-db --binding DB",
       "vp exec wrangler d1 migrations apply DB --remote",
       "git init"
     ]);
     expect(wranglerDirectories).toEqual([
+      join(root, "apps", "web"),
       join(root, "apps", "web"),
       join(root, "apps", "web"),
       join(root, "apps", "web")
@@ -205,6 +208,7 @@ describe("guided setup", () => {
             loggedIn: true
           });
         }
+        if (args.includes("list")) return "[]";
         return 'database_id = "12345678-1234-4123-8123-123456789abc"';
       },
       async run(command, args) {
@@ -235,15 +239,73 @@ describe("guided setup", () => {
       }
     );
 
-    expect(calls.slice(0, 5)).toEqual([
+    expect(calls.slice(0, 6)).toEqual([
       "vp exec wrangler whoami --json",
       "vp exec wrangler logout",
       "vp exec wrangler login",
       "vp exec wrangler whoami --json",
+      "vp exec wrangler d1 list --json",
       "vp exec wrangler d1 create moon-garden-db --binding DB"
     ]);
     expect(await readFile(join(root, "apps", "web", "wrangler.jsonc"), "utf8")).toContain(
       '"account_id": "correct-account"'
     );
+  });
+
+  it("can reuse an existing D1 database after explicit confirmation", async () => {
+    const root = await projectFixture();
+    const wranglerPath = join(root, "apps", "web", "wrangler.jsonc");
+    await mkdir(join(root, "apps", "web"), { recursive: true });
+    await writeFile(
+      wranglerPath,
+      '{\n  "name": "moon-garden",\n  "d1_databases":[{"binding":"DB","database_name":"moon-garden-db","database_id":"00000000-0000-0000-0000-000000000000"}]\n}'
+    );
+    const calls: string[] = [];
+    const databaseId = "12345678-1234-4123-8123-123456789abc";
+    const runner: CommandRunner = {
+      async capture(command, args) {
+        calls.push([command, ...args].join(" "));
+        if (args.includes("whoami")) {
+          return JSON.stringify({
+            accounts: [{ id: "account-123", name: "Moon Garden Team" }],
+            loggedIn: true
+          });
+        }
+        if (args.includes("list")) {
+          return JSON.stringify([{ name: "moon-garden-db", uuid: databaseId }]);
+        }
+        throw new Error("D1 create must not run when reusing an existing database.");
+      },
+      async run(command, args) {
+        calls.push([command, ...args].join(" "));
+      },
+      async succeeds() {
+        return true;
+      }
+    };
+
+    await runPostGeneration(
+      root,
+      {
+        ...input,
+        git: false,
+        install: false,
+        projectName: "moon-garden",
+        setup: "cloudflare",
+        variant: "cloudflare-d1"
+      },
+      runner,
+      async () => {
+        return { accountId: "account-123", action: "use" };
+      },
+      async () => "reuse"
+    );
+
+    expect(calls).toEqual([
+      "vp exec wrangler whoami --json",
+      "vp exec wrangler d1 list --json",
+      "vp exec wrangler d1 migrations apply DB --remote"
+    ]);
+    expect(await readFile(wranglerPath, "utf8")).toContain(`"database_id":"${databaseId}"`);
   });
 });

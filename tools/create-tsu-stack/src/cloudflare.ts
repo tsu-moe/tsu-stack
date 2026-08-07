@@ -28,6 +28,17 @@ export type CloudflareAccountPrompt = (
   identity: WranglerIdentity
 ) => Promise<CloudflareAccountDecision>;
 
+export type D1Database = {
+  id: string;
+  name: string;
+};
+
+export type ExistingD1Decision = "reuse" | "cancel";
+export type ExistingD1Prompt = (
+  database: D1Database,
+  account: CloudflareAccount
+) => Promise<ExistingD1Decision>;
+
 export function d1DatabaseName(projectName: string): string {
   return `${projectName.slice(0, 61).replace(/-+$/u, "")}-db`;
 }
@@ -38,6 +49,20 @@ export function parseD1DatabaseId(output: string): string {
     throw new Error("Cloudflare created the D1 database, but its database ID could not be read.");
   }
   return databaseId;
+}
+
+export function parseD1DatabaseList(output: string): D1Database[] {
+  const value = JSON.parse(output) as unknown;
+  if (!Array.isArray(value)) {
+    throw new Error("Wrangler returned an invalid D1 database list.");
+  }
+  return value.flatMap((database) => {
+    if (!database || typeof database !== "object") return [];
+    const candidate = database as Record<string, unknown>;
+    const id = typeof candidate.uuid === "string" ? candidate.uuid : candidate.id;
+    if (typeof id !== "string" || typeof candidate.name !== "string") return [];
+    return [{ id, name: candidate.name }];
+  });
 }
 
 export function parseWranglerIdentity(output: string): WranglerIdentity {
@@ -106,6 +131,26 @@ export const promptForCloudflareAccount: CloudflareAccountPrompt = async (identi
       ]
     })
   );
+};
+
+export const promptForExistingD1: ExistingD1Prompt = async (database, account) => {
+  const decision = await p.select<ExistingD1Decision>({
+    message: `D1 ${database.name} already exists in ${account.name}. What should be used?`,
+    options: [
+      {
+        hint: database.id,
+        label: `Reuse existing ${database.name}`,
+        value: "reuse"
+      },
+      {
+        hint: "preserves the generated project and remote database",
+        label: "Cancel remote setup",
+        value: "cancel"
+      }
+    ]
+  });
+  if (p.isCancel(decision)) return "cancel";
+  return decision;
 };
 
 async function chooseCloudflareAccount(
@@ -232,7 +277,8 @@ export async function provisionD1(
   projectRoot: string,
   input: ProjectInput,
   runner: CommandRunner,
-  accountPrompt: CloudflareAccountPrompt = promptForCloudflareAccount
+  accountPrompt: CloudflareAccountPrompt = promptForCloudflareAccount,
+  existingD1Prompt: ExistingD1Prompt = promptForExistingD1
 ): Promise<void> {
   const webRoot = join(projectRoot, "apps", "web");
   const account = await chooseCloudflareAccount(webRoot, runner, accountPrompt);
@@ -240,21 +286,36 @@ export async function provisionD1(
   p.log.info(`Remote D1 owner: ${account.name} (${account.id})`);
 
   const databaseName = d1DatabaseName(input.projectName);
-  let output: string;
-  try {
-    output = await runner.capture(
-      "vp",
-      ["exec", "wrangler", "d1", "create", databaseName, "--binding", "DB"],
-      webRoot
-    );
-  } catch (error) {
-    throw new Error(
-      `D1 creation failed in ${account.name} (${account.id}). The Wrangler config remains scoped to that account; from apps/web, retry with \`vp exec wrangler d1 create ${databaseName} --binding DB\`.`,
-      { cause: error }
-    );
+  const databases = parseD1DatabaseList(
+    await runner.capture("vp", ["exec", "wrangler", "d1", "list", "--json"], webRoot)
+  );
+  const existingDatabase = databases.find(({ name }) => name === databaseName);
+  let databaseId: string;
+  if (existingDatabase) {
+    const decision = await existingD1Prompt(existingDatabase, account);
+    if (decision === "cancel") {
+      p.cancel("Remote D1 setup cancelled. The generated project was preserved.");
+      throw new Error("CANCELLED");
+    }
+    databaseId = existingDatabase.id;
+    p.log.info(`Reusing D1 ${existingDatabase.name} (${existingDatabase.id})`);
+  } else {
+    let output: string;
+    try {
+      output = await runner.capture(
+        "vp",
+        ["exec", "wrangler", "d1", "create", databaseName, "--binding", "DB"],
+        webRoot
+      );
+    } catch (error) {
+      throw new Error(
+        `D1 creation failed in ${account.name} (${account.id}). The Wrangler config remains scoped to that account; from apps/web, retry with \`vp exec wrangler d1 create ${databaseName} --binding DB\`.`,
+        { cause: error }
+      );
+    }
+    databaseId = parseD1DatabaseId(output);
   }
 
-  const databaseId = parseD1DatabaseId(output);
   try {
     await updateD1Binding(projectRoot, databaseName, databaseId);
     await applyRemoteD1Migrations(webRoot, runner);
