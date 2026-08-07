@@ -75,17 +75,6 @@ Here is a non-exhaustive list of the main technologies used in this project, alo
 | [**Docker**](https://www.docker.com/)             | Containerization for local development and deployment.                                                                                                                        | Podman                                                                             |
 | [**shadcn/ui**](https://ui.shadcn.com/)           | Accessible and customizable React component library.                                                                                                                          | Chakra UI, Material UI, Mantine UI                                                 |
 
-## Getting Started
-
-The easiest way to start a new, independently named project is the interactive scaffolding CLI:
-
-```bash
-npm create tsu-stack@latest my-app
-# Choose separate, merged, cloudflare, or cloudflare-d1 when prompted.
-```
-
-For repeatable automation, use `--yes` with prompt-equivalent flags. `--dry-run` prints the resolved source commit and replay command without writing files. See [`create-tsu-stack`](../tools/create-tsu-stack/README.md) for all options.
-
 ### Prerequisites
 
 - **Node.js** ≥ 25
@@ -99,56 +88,18 @@ For repeatable automation, use `--yes` with prompt-equivalent flags. `--dry-run`
 
 ### Setup
 
-1. **Clone the repository manually and install dependencies** (when developing tsu-stack itself rather than scaffolding with the CLI):
+Use the dedicated [CLI Tool](https://github.com/tsu-moe/tsu-stack/tree/main/tools/create-tsu-stack) and answer the setup wizard questions:
 
-   ```bash
-   vpx tiged https://github.com/tsu-moe/tsu-stack#main my-tsu-stack-app
-   # Available branch specifiers: `main` | `variant/merged` | `variant/merged-cloudflare` | `variant/merged-cloudflare-d1`
-
-   cd my-tsu-stack-app
-   vp env install    # install Node.js version specified in package.json
-   vp install        # install all packages in the monorepo
-   ```
-
-2. **Copy the environment files:**
-
-   ```bash
-   cp packages/env/.env.example packages/env/.env
-   ```
-
-3. **Generate a Better-Auth secret** and set it as `BETTER_AUTH_SECRET` in `packages/env/.env`:
-
-   ```bash
-   vp run auth:secret
-   ```
-
-4. **Start the local PostgreSQL database:**
-
-   ```bash
-   vp run db:dev:start
-   # you can stop it later with vp run db:dev:stop
-   ```
-
-5. **Migrate the database**:
-
-   ```bash
-   vp run db:migrate
-   ```
-
-6. **Start all development servers:**
-
-   ```bash
-   vp run dev
-   ```
-
-   The following applications will be running:
-   - **Web App**: `http://localhost:3000/web`
-   - **Server**: `http://localhost:5000/server`
+```bash
+npm create tsu-stack@next my-app
+cd my-app
+vp run dev
+```
 
 > [!TIP]
-> Run `vp run fix` to lint, format, and type-check your code. This is also automatically run when you do `git commit`.
+> For repeatable automation, use `--yes` with prompt-equivalent flags. `--dry-run` prints the resolved source commit and replay command without writing files. See [`create-tsu-stack`](../tools/create-tsu-stack/README.md) for all options.
 
-### Running with Docker Locally
+### Running PostgreSQL Variants with Docker Locally
 
 As an alternative to `vp run dev`, you can run the full stack inside Docker using the local compose file:
 
@@ -156,6 +107,17 @@ As an alternative to `vp run dev`, you can run the full stack inside Docker usin
 cp .env.docker.example .env.docker # And set environment variables as needed
 vp run docker:up
 vp run docker:up:build # OR: force a rebuild when you make changes to the code
+```
+
+## Database Migrations
+
+```bash
+# for PostgreSQL-based variants
+vp run db:migrate        # uses the database specified in packages/db/drizzle.config.ts
+
+# for Cloudflare-based variants
+vp run db:migrate:local  # for the local miniflare D1 database
+vp run db:migrate:remote # for the remote/prod D1 database
 ```
 
 ## Deployment
@@ -231,12 +193,15 @@ You can take advantage of Cloudflare's Git-based CI/CD by connecting your GitHub
 
 You will need to set up the _build environment variables_ and _variables and secrets_ manually in the Cloudflare dashboard in order for builds to succeed.
 
-| **Build Settings**                                                       | **Secrets & Variables**                                                         |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| ![Build Settings](./assets/img/cloudflare-deployment-settings-build.png) | ![Secrets & Variables](./assets/img/cloudflare-deployment-settings-secrets.png) |
+| **Build Settings**                                  | **Secrets & Variables (Runtime)**                          |
+| --------------------------------------------------- | ---------------------------------------------------------- |
+| ![Build Settings](./assets/img/build-variables.png) | ![Secrets & Variables](./assets/img/runtime-variables.png) |
 
 > [!NOTE]
 > There isn't an automatic way to do this with my current setup. So you'll need to link the repository first and trigger a failed build, _then_ set the variables and trigger another deployment for the changes to take effect.
+
+> [!CAUTION]
+> You don't need `DATABASE_URL` if you opt-in to the `cloudflare-d1` variant and enable automatic Cloudflare D1 provisioning.
 
 ### Deploying to Other Platforms
 
@@ -256,7 +221,7 @@ For the Hono server, use the following environment variables:
 | `VITE_SERVER_URL`      | ✅       | -             | Base URL for the server. May also include a subpath if needed, ex: `https://example.com/server`. |
 | `VITE_WEB_URL`         | ✅       | -             | Base URL for the web app. May also include a subpath if needed, ex: `https://example.com/web`.   |
 | `BETTER_AUTH_SECRET`   | ✅       | -             | Secret key for Better-Auth. Generate with `vp run auth:secret`.                                  |
-| `DATABASE_URL`         | ✅       | -             | PostgreSQL connection string.                                                                    |
+| `DATABASE_URL`         | ✅       | -             | PostgreSQL connection string (not required using `cloudflare-d1` variant).                       |
 | `ENABLE_OPEN_API_DOCS` | ❌       | `false`       | Enable OpenAPI `/docs` endpoint.                                                                 |
 
 ### Web
@@ -268,7 +233,7 @@ For the web app, use the following environment variables:
 | `VITE_SERVER_URL`         | ✅       | -             | Base URL for the server. May also include a subpath if needed, ex: `https://example.com/server`.                                    |
 | `VITE_WEB_URL`            | ✅       | -             | Base URL for the web app. May also include a subpath if needed, ex: `https://example.com/web`.                                      |
 | `BETTER_AUTH_SECRET`      | ✅       | -             | Secret key for Better-Auth. Generate with `vp run auth:secret`.                                                                     |
-| `DATABASE_URL`            | ✅       | -             | PostgreSQL connection string.                                                                                                       |
+| `DATABASE_URL`            | ✅       | -             | PostgreSQL connection string (not required using `cloudflare-d1` variant).                                                          |
 | `VITE_IMGPROXY_URL`       | ❌       | -             | URL for image optimization. You'll need to deploy your own [imgproxy](https://hub.docker.com/r/darthsim/imgproxy/) container first. |
 | `VITE_IMGPROXY_SIGNATURE` | ❌       | `_`           | imgproxy signature path segment. Use `insecure` or a precomputed signature if your imgproxy setup requires it.                      |
 
@@ -390,9 +355,6 @@ However, the benefit is singular deployments and lower memory usage for websites
   - `Permissions-Policy`
 - Builds are slower and more bloated in general because Vite Plus does not have a [`turbo prune`](https://turborepo.dev/docs/reference/prune) alternative
   - See this related issue: https://github.com/voidzero-dev/vite-plus/issues/839
-- On a similar note, there isn't an elegant way to install `vp` in Dockerfile images, so you need to manually bump the desired `vp` version in the `/apps/*/Dockerfile`'s `VITE_PLUS_VERSION` variable.
-- There is a hydration error when navigating to an i18n subpath like `/de`, but it subsides in subsequent navigations.
-  - Need to investigate further, but otherwise, I haven't encountered any app-breaking bugs with it.
 - `robots.txt` [needs to be at the root of the domain](https://developers.google.com/search/docs/crawling-indexing/robots/intro) to be detected by search engines (ie. `example.com/robots.txt`), but since the web app is served on a subpath (ie. `example.com/web`), you need to set up a redirect from `example.com/robots.txt` to `example.com/web/robots.txt` in order for it to be detected.
   - Other than that, you may need to set up a root sitemap index that links to as many sitemaps for every app you deploy in multiple subpaths.
     - At the moment, the `__root.tsx` points to the subpath-specific sitemap, so you may want to consider pointing it to the root if you decide to opt into that architecture.
