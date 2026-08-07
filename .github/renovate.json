@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "minimumReleaseAge": "3 days",
+  "dependencyDashboard": true,
+  "rangeStrategy": "pin",
+  "packageRules": [
+    {
+      "description": "Pin GitHub Actions to immutable digests",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    },
+    {
+      "description": "Group create-tsu-stack development tooling",
+      "matchFileNames": ["tools/create-tsu-stack/**"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "create-tsu-stack tooling"
+    },
+    {
+      "description": "Require review for major and runtime dependency updates",
+      "matchDepTypes": ["dependencies"],
+      "automerge": false
+    },
+    {
+      "description": "Never automerge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ],
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "ignoreScripts": false,
+  "vulnerabilityAlerts": { "enabled": true }
+}

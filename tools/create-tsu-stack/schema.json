@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/tsu-moe/tsu-stack/main/tools/create-tsu-stack/schema.json",
+  "title": "create-tsu-stack project metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "cliVersion",
+    "displayName",
+    "projectName",
+    "reproducibleCommand",
+    "scope",
+    "source",
+    "variant"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "cliVersion": { "type": "string" },
+    "displayName": { "type": "string", "minLength": 1 },
+    "projectName": { "type": "string", "minLength": 1 },
+    "reproducibleCommand": { "type": "string", "minLength": 1 },
+    "scope": { "type": "string", "pattern": "^@" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch", "commit", "repository", "requestedRef"],
+      "properties": {
+        "branch": { "type": "string" },
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "repository": { "const": "tsu-moe/tsu-stack" },
+        "requestedRef": { "type": "string" }
+      }
+    },
+    "variant": { "enum": ["separate", "merged", "cloudflare", "cloudflare-d1"] }
+  }
+}
