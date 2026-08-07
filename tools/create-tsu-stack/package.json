@@ -39,7 +39,7 @@
     "check": "vp check",
     "pack:check": "vp run build && publint && npm pack --dry-run && node scripts/validate-pack.mjs",
     "release:github": "changelogithub",
-    "test:unit": "vp test"
+    "test:unit": "vp test && node --test scripts/release-state.test.mjs"
   },
   "devDependencies": {
     "@clack/prompts": "1.7.0",
