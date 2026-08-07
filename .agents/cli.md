@@ -52,17 +52,21 @@ This guide is for maintainers of the generator. The transformation must remove `
 
 ## Release
 
-`vp run release [version]` performs a clean/current-`main` preflight, validates the CLI, then uses `bumpp` to create `chore(release): vX.Y.Z`, tag `vX.Y.Z`, and push. Do not run it from feature branches. It changes Git and remote state.
+`vp run release [version]` performs a clean/current-`main` preflight, confirms that the package has completed its one-time npm bootstrap, and validates the CLI. `bumpp` selects and writes the version without committing or pushing; the release script then checks that the tag is unused locally, remotely, and on npm. Finally, it creates `chore(release): vX.Y.Z`, creates an annotated `vX.Y.Z` tag, and atomically pushes explicit `origin` branch and tag refs. This does not depend on a configured upstream branch. Do not run it from feature branches. It changes Git and remote state.
+
+If the final push fails, rerun the same command after fixing access or branch-protection settings. A clean local release commit whose tag points to `HEAD` is recognized and resumed, so the version is not bumped twice. The script also verifies the remote refs after an ambiguous network failure. Failures before the commit restore the package version; a failure after the commit and tag preserves both for recovery.
 
 The tag workflow verifies package/tag parity and main ancestry, rebuilds and retests, publishes stable versions under `latest` and prereleases under `next`, then creates the GitHub release. Publication and release creation are rerun-safe.
 
 For the first release only:
 
 1. Recheck that `create-tsu-stack` is unclaimed on npm.
-2. Build and validate the exact package, then perform an owner-authenticated `npm publish --access public` from `tools/create-tsu-stack`.
-3. Configure npm trusted publishing for `tsu-moe/tsu-stack`, workflow `.github/workflows/release.yml`, and the protected `npm` environment if enabled.
+2. Build and validate the exact `0.0.0` package, then perform an owner-authenticated `npm publish --access public --tag next` from `tools/create-tsu-stack`. This claims the package without assigning the bootstrap build to `latest`.
+3. Configure npm trusted publishing for `tsu-moe/tsu-stack`, workflow `.github/workflows/release.yml`, and the protected `npm` environment if enabled. Allow the `npm publish` action in npm's trusted-publisher settings.
 4. Test the tag workflow, then restrict or revoke token-based publishing.
 
-The release job intentionally has no package-manager cache and uses `contents: write` plus `id-token: write` for npm OIDC. Never add a long-lived npm token.
+Until these bootstrap steps are complete, the release command stops before changing the version or Git history. The tag workflow has a matching guard in case a tag is created manually.
 
-If npm publication succeeds but GitHub release creation fails, rerun the tag workflow. It detects the published version and retries only the missing release. If publication fails, fix the trusted-publisher/environment configuration and rerun the same tag; do not create a replacement version unless the package contents must change.
+The release workflow intentionally has no package-manager cache. Validation receives read-only repository access, npm publication receives only `contents: read` and `id-token: write`, and GitHub release creation receives `contents: write` without an OIDC token. Never add a long-lived npm token.
+
+If npm publication succeeds but GitHub release creation fails, rerun the tag workflow. It distinguishes an npm 404 from registry/network failures, verifies the published version after publication, detects existing npm and GitHub releases, and retries only the missing work. If publication fails, fix the trusted-publisher/environment configuration and rerun the same tag; do not create a replacement version unless the package contents must change.
