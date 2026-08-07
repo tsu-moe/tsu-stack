@@ -25,6 +25,8 @@ jobs:
       - run: pnpm exec vp run --filter create-tsu-stack test:unit
       - run: pnpm exec vp run --filter create-tsu-stack pack:check
       - name: Verify dry run is mutation-free
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           TARGET="$RUNNER_TEMP/create-tsu-stack-dry-run"
@@ -59,6 +61,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec vp run --filter create-tsu-stack build
       - name: Generate ${{ matrix.variant }} project
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         shell: bash
         run: >-
           node tools/create-tsu-stack/.output/index.mjs
@@ -84,6 +88,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec vp run --filter create-tsu-stack build
       - name: Generate representative project
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: >-
           node tools/create-tsu-stack/.output/index.mjs
           "$RUNNER_TEMP/generated-tsu-stack"

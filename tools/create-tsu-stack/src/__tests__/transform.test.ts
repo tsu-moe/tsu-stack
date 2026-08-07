@@ -31,6 +31,8 @@ async function fixture(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "create-tsu-stack-transform-"));
   const files: Record<string, string> = {
     ".github/README.md": '<a href="upstream">tsu!stack</a> alt="tsu!stack Logo"',
+    ".github/workflows/ci.yml": "template maintainer CI",
+    ".github/workflows/release.yml": "template package release",
     ".agents/cli.md": "Generator maintainer instructions",
     "AGENTS.md": "# tsu-stack\nUse @tsu-stack/core.",
     "apps/web/src/config/app.config.ts":
@@ -38,7 +40,8 @@ async function fixture(): Promise<string> {
     "apps/web/wrangler.jsonc":
       '{\n  // Worker identity\n  "name": "tsu-stack",\n  "d1_databases": [{ "binding": "DB", "database_name": "tsu-stack-db", "database_id": "00000000-0000-0000-0000-000000000000" }]\n}\n',
     "docker-compose.yaml": "name: tsu-stack\nvolumes:\n  tsu-stack-data:\n",
-    "package.json": '{"name":"tsu-stack","dependencies":{"@tsu-stack/core":"workspace:*"}}',
+    "package.json":
+      '{"name":"tsu-stack","scripts":{"release":"node tools/create-tsu-stack/scripts/release.mjs"},"dependencies":{"@tsu-stack/core":"workspace:*"}}',
     "packages/env/.env.example":
       'DATABASE_URL="postgres://postgres:postgres@localhost:5432/tsu-stack"\nVITE_SERVER_URL="http://localhost:5000/server"\n',
     "packages/i18n/messages/de.json": '{"name":"tsu-stack"}',
@@ -61,11 +64,19 @@ describe("template identity transformation", () => {
 
     expect(await pathExists(join(root, "tools/create-tsu-stack"))).toBe(false);
     expect(await pathExists(join(root, ".agents/cli.md"))).toBe(false);
+    expect(await pathExists(join(root, ".github/workflows/release.yml"))).toBe(false);
     expect(await pathExists(join(root, "pnpm-lock.yaml"))).toBe(false);
     expect(await readFile(join(root, "package.json"), "utf8").then(JSON.parse)).toMatchObject({
       name: "moon-garden",
       dependencies: { "@moon-garden/core": "workspace:*" }
     });
+    expect(await readFile(join(root, "package.json"), "utf8").then(JSON.parse)).not.toHaveProperty(
+      "scripts.release"
+    );
+    const generatedCi = await readFile(join(root, ".github/workflows/ci.yml"), "utf8");
+    expect(generatedCi).toContain("pnpm exec vp run check");
+    expect(generatedCi).toContain("pnpm exec vp run build");
+    expect(generatedCi).not.toContain("create-tsu-stack");
     expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain(
       '"name": "moon-garden"'
     );
