@@ -5,14 +5,21 @@ on:
     tags:
       - "v*"
 
-permissions:
-  contents: write
-  id-token: write
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
 
 jobs:
-  publish:
+  validate:
     runs-on: ubuntu-latest
-    environment: npm
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      npm_tag: ${{ steps.release.outputs.npm_tag }}
+      package_version: ${{ steps.release.outputs.package_version }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
@@ -21,41 +28,130 @@ jobs:
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
-      - name: Verify tag and main ancestry
+      - name: Verify release commit and tag
+        id: release
         shell: bash
         run: |
+          set -euo pipefail
           VERSION=$(node -p "require('./tools/create-tsu-stack/package.json').version")
-          test "$GITHUB_REF_NAME" = "v$VERSION"
+          TAG="v$VERSION"
+          test "$GITHUB_REF_NAME" = "$TAG"
+          test "$(git cat-file -t "$GITHUB_REF")" = "tag"
+          test "$(git log -1 --format=%s "$GITHUB_SHA")" = "chore(release): $TAG"
+          test "$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")" = "tools/create-tsu-stack/package.json"
           git fetch origin main
           git merge-base --is-ancestor "$GITHUB_SHA" origin/main
           if [[ "$VERSION" == *-* ]]; then
-            echo "NPM_TAG=next" >> "$GITHUB_ENV"
+            NPM_TAG=next
           else
-            echo "NPM_TAG=latest" >> "$GITHUB_ENV"
+            NPM_TAG=latest
           fi
-          echo "PACKAGE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "npm_tag=$NPM_TAG" >> "$GITHUB_OUTPUT"
+          echo "package_version=$VERSION" >> "$GITHUB_OUTPUT"
       - run: pnpm exec vp run check
       - run: pnpm exec vp run --filter create-tsu-stack check
       - run: pnpm exec vp run --filter create-tsu-stack test:unit
       - run: pnpm exec vp run --filter create-tsu-stack pack:check
-      - name: Publish to npm with trusted publishing
-        working-directory: tools/create-tsu-stack
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vp run --filter create-tsu-stack build
+      - name: Verify trusted-publishing npm version
         shell: bash
         run: |
-          if npm view "create-tsu-stack@$PACKAGE_VERSION" version >/dev/null 2>&1; then
+          set -euo pipefail
+          NPM_VERSION=$(npm --version)
+          node -e "const [major, minor, patch] = process.argv[1].split('.').map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) throw new Error('npm 11.5.1 or newer is required for trusted publishing')" "$NPM_VERSION"
+      - name: Publish to npm with trusted publishing
+        working-directory: tools/create-tsu-stack
+        env:
+          NPM_TAG: ${{ needs.validate.outputs.npm_tag }}
+          PACKAGE_VERSION: ${{ needs.validate.outputs.package_version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          VIEW_OUTPUT=$(npm view "create-tsu-stack@$PACKAGE_VERSION" version --json 2>&1)
+          VIEW_STATUS=$?
+          set -e
+
+          if [[ $VIEW_STATUS -eq 0 ]]; then
             echo "create-tsu-stack@$PACKAGE_VERSION is already published"
-          else
+          elif grep -qE 'E404|404 Not Found' <<< "$VIEW_OUTPUT"; then
+            set +e
+            PACKAGE_OUTPUT=$(npm view create-tsu-stack name --json 2>&1)
+            PACKAGE_STATUS=$?
+            set -e
+            if [[ $PACKAGE_STATUS -ne 0 ]]; then
+              if grep -qE 'E404|404 Not Found' <<< "$PACKAGE_OUTPUT"; then
+                echo "create-tsu-stack has not been bootstrapped on npm. Perform the first owner-authenticated publish, configure this workflow as the trusted publisher, then rerun this workflow." >&2
+              else
+                echo "$PACKAGE_OUTPUT" >&2
+              fi
+              exit "$PACKAGE_STATUS"
+            fi
             npm publish --access public --tag "$NPM_TAG"
+          else
+            echo "$VIEW_OUTPUT" >&2
+            exit "$VIEW_STATUS"
           fi
+
+          for ATTEMPT in 1 2 3 4 5; do
+            OBSERVED=$(npm view "create-tsu-stack@$PACKAGE_VERSION" version --json 2>/dev/null || true)
+            if [[ "$OBSERVED" == "\"$PACKAGE_VERSION\"" ]]; then
+              exit 0
+            fi
+            sleep $((ATTEMPT * 2))
+          done
+          echo "npm did not return create-tsu-stack@$PACKAGE_VERSION after publication" >&2
+          exit 1
+
+  github-release:
+    needs: [validate, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
       - name: Create GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+          set -euo pipefail
+          set +e
+          RELEASE_OUTPUT=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" 2>&1)
+          RELEASE_STATUS=$?
+          set -e
+
+          if [[ $RELEASE_STATUS -eq 0 ]]; then
             echo "$GITHUB_REF_NAME already has a GitHub release"
-          else
+          elif grep -q 'HTTP 404' <<< "$RELEASE_OUTPUT"; then
             pnpm exec vp run --filter create-tsu-stack release:github
+          else
+            echo "$RELEASE_OUTPUT" >&2
+            exit "$RELEASE_STATUS"
           fi
