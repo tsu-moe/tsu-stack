@@ -52,7 +52,7 @@ This guide is for maintainers of the generator. The transformation must remove `
 
 ## Release
 
-`vp run release [version]` performs a clean/current-`main` preflight, validates the CLI, then uses `bumpp` to create `release: vX.Y.Z`, tag `vX.Y.Z`, and push. Do not run it from feature branches. It changes Git and remote state.
+`vp run release [version]` performs a clean/current-`main` preflight, validates the CLI, then uses `bumpp` to create `chore(release): vX.Y.Z`, tag `vX.Y.Z`, and push. Do not run it from feature branches. It changes Git and remote state.
 
 The tag workflow verifies package/tag parity and main ancestry, rebuilds and retests, publishes stable versions under `latest` and prereleases under `next`, then creates the GitHub release. Publication and release creation are rerun-safe.
 
