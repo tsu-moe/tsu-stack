@@ -77,6 +77,15 @@ Here is a non-exhaustive list of the main technologies used in this project, alo
 
 ## Getting Started
 
+The easiest way to start a new, independently named project is the interactive scaffolding CLI:
+
+```bash
+npm create tsu-stack@latest my-app
+# Choose separate, merged, cloudflare, or cloudflare-d1 when prompted.
+```
+
+For repeatable automation, use `--yes` with prompt-equivalent flags. `--dry-run` prints the resolved source commit and replay command without writing files. See [`create-tsu-stack`](../tools/create-tsu-stack/README.md) for all options.
+
 ### Prerequisites
 
 - **Node.js** ≥ 25
@@ -90,11 +99,11 @@ Here is a non-exhaustive list of the main technologies used in this project, alo
 
 ### Setup
 
-1. **Clone the repository and install dependencies:**
+1. **Clone the repository manually and install dependencies** (when developing tsu-stack itself rather than scaffolding with the CLI):
 
    ```bash
    vpx tiged https://github.com/tsu-moe/tsu-stack#main my-tsu-stack-app
-   # Available branch specifiers: `main` | `variant/merged` | `variant/merged-cloudflare`
+   # Available branch specifiers: `main` | `variant/merged` | `variant/merged-cloudflare` | `variant/merged-cloudflare-d1`
 
    cd my-tsu-stack-app
    vp env install    # install Node.js version specified in package.json

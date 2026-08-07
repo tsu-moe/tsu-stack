@@ -1,0 +1,63 @@
+{
+  "name": "create-tsu-stack",
+  "version": "0.0.0",
+  "description": "Interactive scaffolding CLI for tsu-stack projects",
+  "keywords": [
+    "cli",
+    "create",
+    "scaffold",
+    "tanstack",
+    "tsu-stack",
+    "typescript"
+  ],
+  "homepage": "https://github.com/tsu-moe/tsu-stack#readme",
+  "bugs": {
+    "url": "https://github.com/tsu-moe/tsu-stack/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsu-moe/tsu-stack.git",
+    "directory": "tools/create-tsu-stack"
+  },
+  "bin": {
+    "create-tsu-stack": ".output/index.mjs"
+  },
+  "files": [
+    ".output"
+  ],
+  "type": "module",
+  "imports": {
+    "#@/*": "./src/*.ts"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "vp pack",
+    "check": "vp check",
+    "pack:check": "vp run build && publint && npm pack --dry-run && node scripts/validate-pack.mjs",
+    "release:github": "changelogithub",
+    "test:unit": "vp test"
+  },
+  "devDependencies": {
+    "@clack/prompts": "1.7.0",
+    "@types/fs-extra": "11.0.4",
+    "@types/node": "26.1.2",
+    "bumpp": "12.2.0",
+    "changelogithub": "15.0.4",
+    "execa": "10.0.1",
+    "fs-extra": "11.4.0",
+    "publint": "0.3.23",
+    "tar": "7.5.22",
+    "typescript": "7.0.2",
+    "validate-npm-package-name": "8.0.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.7",
+    "vite-plus": "0.2.7",
+    "zod": "4.4.3"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

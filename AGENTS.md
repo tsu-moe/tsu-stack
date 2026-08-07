@@ -22,6 +22,7 @@ Use the smallest relevant doc set below. Open the most specific file first, then
 - [Testing](.agents/testing.md): focused unit/e2e coverage and test command scope.
 - [Choice flows](.agents/choice-flows.md): native approvals, structured input, human decision points.
 - [Logging](.agents/logging.md): durable logs, request logging, redaction, client/server logging.
+- [Scaffolding CLI](.agents/cli.md): generator architecture, template compatibility, tests, and releases.
 
 ## Task Entry Points
 
