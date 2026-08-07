@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 
 import { execa } from "execa";
 
+import { parsePorcelainV1Z } from "./release-state.mjs";
+
 const root = resolve(import.meta.dirname, "../../..");
 const packageRoot = resolve(root, "tools/create-tsu-stack");
 const packagePath = resolve(packageRoot, "package.json");
@@ -70,8 +72,8 @@ async function changedPaths(ref) {
 }
 
 async function worktreePaths() {
-  const output = await gitOutput(["status", "--porcelain=v1", "--untracked-files=all"]);
-  return output ? output.split(/\r?\n/).map((line) => line.slice(3)) : [];
+  const { stdout } = await git(["status", "--porcelain=v1", "-z", "--untracked-files=all"]);
+  return parsePorcelainV1Z(stdout);
 }
 
 async function runValidation() {
