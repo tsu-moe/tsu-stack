@@ -1,9 +1,10 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join, relative } from "node:path";
 
 import { pathExists, remove } from "fs-extra";
 
 import { d1DatabaseName } from "./cloudflare";
+import { GENERATED_CI_WORKFLOW } from "./generated-ci";
 import { SOURCE_REPOSITORY } from "./github";
 import { type ProjectInput, type ResolvedTemplate } from "./types";
 import { VARIANTS } from "./variants";
@@ -86,7 +87,10 @@ export async function transformTemplate(
 ): Promise<void> {
   await remove(join(root, "tools", "create-tsu-stack"));
   await remove(join(root, ".agents", "cli.md"));
+  await remove(join(root, ".github", "workflows", "release.yml"));
   await remove(join(root, "pnpm-lock.yaml"));
+  await mkdir(join(root, ".github", "workflows"), { recursive: true });
+  await writeFile(join(root, ".github", "workflows", "ci.yml"), GENERATED_CI_WORKFLOW, "utf8");
 
   const textFiles = (await listFiles(root)).filter(isTextFile);
   for (const path of textFiles) {
@@ -96,6 +100,9 @@ export async function transformTemplate(
   const packagePath = join(root, "package.json");
   const packageJson = JSON.parse(await readFile(packagePath, "utf8")) as Record<string, unknown>;
   packageJson.name = input.projectName;
+  if (packageJson.scripts && typeof packageJson.scripts === "object") {
+    delete (packageJson.scripts as Record<string, unknown>).release;
+  }
   await writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, "utf8");
 
   for (const dockerPath of [

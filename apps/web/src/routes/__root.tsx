@@ -17,10 +17,8 @@ import { Fragment } from "react";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
-import {
-  LocaleProvider,
-  useLocale
-} from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
+// oxfmt-ignore
+import { LocaleProvider, useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
 
 import { generateAppSeo } from "@/shared/lib/seo";
