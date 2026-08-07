@@ -1,6 +1,6 @@
 {
   "name": "create-tsu-stack",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "description": "Interactive scaffolding CLI for tsu-stack projects",
   "keywords": [
     "cli",
