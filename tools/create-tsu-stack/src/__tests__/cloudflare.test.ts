@@ -4,7 +4,8 @@ import {
   applyRemoteD1Migrations,
   parseD1DatabaseList,
   parseWranglerIdentity,
-  updateD1BindingContent
+  updateD1BindingContent,
+  validateD1DatabaseName
 } from "#@/cloudflare";
 import { type CommandRunner } from "#@/types";
 
@@ -40,6 +41,15 @@ describe("Wrangler identity", () => {
     expect(
       parseD1DatabaseList(JSON.stringify([{ name: "moon-garden-db", uuid: "database-123" }]))
     ).toEqual([{ id: "database-123", name: "moon-garden-db" }]);
+  });
+
+  it("validates conservative Cloudflare D1 database names", () => {
+    expect(validateD1DatabaseName("a")).toBeUndefined();
+    expect(validateD1DatabaseName("moon-garden-db")).toBeUndefined();
+    expect(validateD1DatabaseName(" ")).toContain("Enter");
+    expect(validateD1DatabaseName("Moon Garden DB")).toContain("lowercase");
+    expect(validateD1DatabaseName("-moon-garden")).toContain("start and end");
+    expect(validateD1DatabaseName("a".repeat(65))).toContain("64");
   });
 
   it("retries remote migrations through app-local Wrangler", async () => {

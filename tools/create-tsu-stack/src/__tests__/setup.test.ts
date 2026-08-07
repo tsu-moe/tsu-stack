@@ -298,7 +298,9 @@ describe("guided setup", () => {
       async () => {
         return { accountId: "account-123", action: "use" };
       },
-      async () => "reuse"
+      async () => {
+        return { action: "reuse" };
+      }
     );
 
     expect(calls).toEqual([
@@ -307,5 +309,136 @@ describe("guided setup", () => {
       "vp exec wrangler d1 migrations apply DB --remote"
     ]);
     expect(await readFile(wranglerPath, "utf8")).toContain(`"database_id":"${databaseId}"`);
+  });
+
+  it("can create a D1 database under a different name when the default exists", async () => {
+    const root = await projectFixture();
+    const wranglerPath = join(root, "apps", "web", "wrangler.jsonc");
+    await mkdir(join(root, "apps", "web"), { recursive: true });
+    await writeFile(
+      wranglerPath,
+      '{\n  "name": "moon-garden",\n  "d1_databases":[{"binding":"DB","database_name":"moon-garden-db","database_id":"00000000-0000-0000-0000-000000000000"}]\n}'
+    );
+    const calls: string[] = [];
+    const databaseId = "12345678-1234-4123-8123-123456789abc";
+    const runner: CommandRunner = {
+      async capture(command, args) {
+        calls.push([command, ...args].join(" "));
+        if (args.includes("whoami")) {
+          return JSON.stringify({
+            accounts: [{ id: "account-123", name: "Moon Garden Team" }],
+            loggedIn: true
+          });
+        }
+        if (args.includes("list")) {
+          return JSON.stringify([{ name: "moon-garden-db", uuid: "existing-database" }]);
+        }
+        return `database_id = "${databaseId}"`;
+      },
+      async run(command, args) {
+        calls.push([command, ...args].join(" "));
+      },
+      async succeeds() {
+        return true;
+      }
+    };
+
+    await runPostGeneration(
+      root,
+      {
+        ...input,
+        git: false,
+        install: false,
+        projectName: "moon-garden",
+        setup: "cloudflare",
+        variant: "cloudflare-d1"
+      },
+      runner,
+      async () => {
+        return { accountId: "account-123", action: "use" };
+      },
+      async () => {
+        return { action: "rename", databaseName: "moon-garden-staging" };
+      }
+    );
+
+    expect(calls).toEqual([
+      "vp exec wrangler whoami --json",
+      "vp exec wrangler d1 list --json",
+      "vp exec wrangler d1 create moon-garden-staging --binding DB",
+      "vp exec wrangler d1 migrations apply DB --remote"
+    ]);
+    const config = await readFile(wranglerPath, "utf8");
+    expect(config).toContain('"database_name":"moon-garden-staging"');
+    expect(config).toContain(`"database_id":"${databaseId}"`);
+  });
+
+  it("requires explicit reuse when the alternate D1 name also exists", async () => {
+    const root = await projectFixture();
+    const wranglerPath = join(root, "apps", "web", "wrangler.jsonc");
+    await mkdir(join(root, "apps", "web"), { recursive: true });
+    await writeFile(
+      wranglerPath,
+      '{\n  "name": "moon-garden",\n  "d1_databases":[{"binding":"DB","database_name":"moon-garden-db","database_id":"00000000-0000-0000-0000-000000000000"}]\n}'
+    );
+    const calls: string[] = [];
+    const databaseId = "87654321-4321-4321-8321-cba987654321";
+    const runner: CommandRunner = {
+      async capture(command, args) {
+        calls.push([command, ...args].join(" "));
+        if (args.includes("whoami")) {
+          return JSON.stringify({
+            accounts: [{ id: "account-123", name: "Moon Garden Team" }],
+            loggedIn: true
+          });
+        }
+        if (args.includes("list")) {
+          return JSON.stringify([
+            { name: "moon-garden-db", uuid: "default-database" },
+            { name: "moon-garden-staging", uuid: databaseId }
+          ]);
+        }
+        throw new Error("D1 create must not run when reusing the selected database.");
+      },
+      async run(command, args) {
+        calls.push([command, ...args].join(" "));
+      },
+      async succeeds() {
+        return true;
+      }
+    };
+    const promptedDatabases: string[] = [];
+
+    await runPostGeneration(
+      root,
+      {
+        ...input,
+        git: false,
+        install: false,
+        projectName: "moon-garden",
+        setup: "cloudflare",
+        variant: "cloudflare-d1"
+      },
+      runner,
+      async () => {
+        return { accountId: "account-123", action: "use" };
+      },
+      async (database) => {
+        promptedDatabases.push(database.name);
+        return database.name === "moon-garden-db"
+          ? { action: "rename", databaseName: "moon-garden-staging" }
+          : { action: "reuse" };
+      }
+    );
+
+    expect(promptedDatabases).toEqual(["moon-garden-db", "moon-garden-staging"]);
+    expect(calls).toEqual([
+      "vp exec wrangler whoami --json",
+      "vp exec wrangler d1 list --json",
+      "vp exec wrangler d1 migrations apply DB --remote"
+    ]);
+    const config = await readFile(wranglerPath, "utf8");
+    expect(config).toContain('"database_name":"moon-garden-staging"');
+    expect(config).toContain(`"database_id":"${databaseId}"`);
   });
 });
