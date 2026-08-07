@@ -33,7 +33,10 @@ export type D1Database = {
   name: string;
 };
 
-export type ExistingD1Decision = "reuse" | "cancel";
+export type ExistingD1Decision =
+  | { action: "cancel" }
+  | { action: "rename"; databaseName: string }
+  | { action: "reuse" };
 export type ExistingD1Prompt = (
   database: D1Database,
   account: CloudflareAccount
@@ -41,6 +44,16 @@ export type ExistingD1Prompt = (
 
 export function d1DatabaseName(projectName: string): string {
   return `${projectName.slice(0, 61).replace(/-+$/u, "")}-db`;
+}
+
+export function validateD1DatabaseName(value: string | undefined): string | undefined {
+  const databaseName = value?.trim() ?? "";
+  if (databaseName.length === 0) return "Enter a database name.";
+  if (databaseName.length > 64) return "Use 64 characters or fewer.";
+  if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/u.test(databaseName)) {
+    return "Use lowercase letters, numbers, and hyphens; start and end with a letter or number.";
+  }
+  return undefined;
 }
 
 export function parseD1DatabaseId(output: string): string {
@@ -134,23 +147,37 @@ export const promptForCloudflareAccount: CloudflareAccountPrompt = async (identi
 };
 
 export const promptForExistingD1: ExistingD1Prompt = async (database, account) => {
-  const decision = await p.select<ExistingD1Decision>({
+  const decision = await p.select<ExistingD1Decision["action"]>({
     message: `D1 ${database.name} already exists in ${account.name}. What should be used?`,
     options: [
       {
         hint: database.id,
         label: `Reuse existing ${database.name}`,
-        value: "reuse"
+        value: "reuse" as const
+      },
+      {
+        hint: "creates a separate D1 database",
+        label: "Use a different database name",
+        value: "rename" as const
       },
       {
         hint: "preserves the generated project and remote database",
         label: "Cancel remote setup",
-        value: "cancel"
+        value: "cancel" as const
       }
     ]
   });
-  if (p.isCancel(decision)) return "cancel";
-  return decision;
+  if (p.isCancel(decision) || decision === "cancel") return { action: "cancel" };
+  if (decision === "reuse") return { action: "reuse" };
+
+  const suggestedName = `${database.name.slice(0, 62).replace(/-+$/u, "")}-2`;
+  const databaseName = await p.text({
+    initialValue: suggestedName,
+    message: "What should the new D1 database be named?",
+    validate: validateD1DatabaseName
+  });
+  if (p.isCancel(databaseName)) return { action: "cancel" };
+  return { action: "rename", databaseName: databaseName.trim() };
 };
 
 async function chooseCloudflareAccount(
@@ -285,21 +312,32 @@ export async function provisionD1(
   await updateWranglerAccount(projectRoot, account.id);
   p.log.info(`Remote D1 owner: ${account.name} (${account.id})`);
 
-  const databaseName = d1DatabaseName(input.projectName);
+  let databaseName = d1DatabaseName(input.projectName);
   const databases = parseD1DatabaseList(
     await runner.capture("vp", ["exec", "wrangler", "d1", "list", "--json"], webRoot)
   );
-  const existingDatabase = databases.find(({ name }) => name === databaseName);
-  let databaseId: string;
-  if (existingDatabase) {
+  let databaseId: string | undefined;
+  let databaseWasCreated = false;
+  let existingDatabase = databases.find(({ name }) => name === databaseName);
+  while (existingDatabase) {
     const decision = await existingD1Prompt(existingDatabase, account);
-    if (decision === "cancel") {
+    if (decision.action === "cancel") {
       p.cancel("Remote D1 setup cancelled. The generated project was preserved.");
       throw new Error("CANCELLED");
     }
+    if (decision.action === "rename") {
+      const validationError = validateD1DatabaseName(decision.databaseName);
+      if (validationError) throw new Error(`Invalid D1 database name: ${validationError}`);
+      databaseName = decision.databaseName.trim();
+      existingDatabase = databases.find(({ name }) => name === databaseName);
+      continue;
+    }
     databaseId = existingDatabase.id;
     p.log.info(`Reusing D1 ${existingDatabase.name} (${existingDatabase.id})`);
-  } else {
+    break;
+  }
+
+  if (!databaseId) {
     let output: string;
     try {
       output = await runner.capture(
@@ -314,6 +352,7 @@ export async function provisionD1(
       );
     }
     databaseId = parseD1DatabaseId(output);
+    databaseWasCreated = true;
   }
 
   try {
@@ -321,7 +360,7 @@ export async function provisionD1(
     await applyRemoteD1Migrations(webRoot, runner);
   } catch (error) {
     throw new Error(
-      `D1 ${databaseName} (${databaseId}) was created, but setup did not finish: ${errorMessage(error)}. The generated project was preserved; check apps/web/wrangler.jsonc, then from apps/web run \`vp exec wrangler d1 migrations apply DB --remote\`.`,
+      `D1 ${databaseName} (${databaseId}) was ${databaseWasCreated ? "created" : "selected"}, but setup did not finish: ${errorMessage(error)}. The generated project was preserved; check apps/web/wrangler.jsonc, then from apps/web run \`vp exec wrangler d1 migrations apply DB --remote\`.`,
       { cause: error }
     );
   }
