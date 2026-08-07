@@ -10,6 +10,7 @@
     "dev": "pnpm -r --parallel dev",
     "build": "vp run -r build",
     "prepare": "vp config",
+    "release": "node tools/create-tsu-stack/scripts/release.mjs",
     "deps": "vpx taze@latest -Ilwr --maturity-period 3",
     "deps:major": "vpx taze@latest major -Ilwr --maturity-period 3",
     "fallow": "vpx fallow --skip health",

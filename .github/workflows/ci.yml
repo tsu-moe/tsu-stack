@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vp check
+      - run: pnpm exec vp run --filter create-tsu-stack check
+      - run: pnpm exec vp run --filter create-tsu-stack test:unit
+      - run: pnpm exec vp run --filter create-tsu-stack pack:check
+      - name: Verify dry run is mutation-free
+        shell: bash
+        run: |
+          TARGET="$RUNNER_TEMP/create-tsu-stack-dry-run"
+          node tools/create-tsu-stack/.output/index.mjs "$TARGET" --yes --dry-run
+          test ! -e "$TARGET"
+
+  scaffold:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            variant: separate
+          - os: ubuntu-latest
+            variant: merged
+          - os: ubuntu-latest
+            variant: cloudflare
+          - os: ubuntu-latest
+            variant: cloudflare-d1
+          - os: windows-latest
+            variant: separate
+          - os: macos-latest
+            variant: separate
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vp run --filter create-tsu-stack build
+      - name: Generate ${{ matrix.variant }} project
+        shell: bash
+        run: >-
+          node tools/create-tsu-stack/.output/index.mjs
+          "$RUNNER_TEMP/tsu-${{ matrix.variant }}"
+          --yes --variant "${{ matrix.variant }}" --no-install --no-git --setup none
+      - name: Verify generated project
+        shell: bash
+        run: |
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.tsu-stack.jsonc"
+          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/tools/create-tsu-stack"
+          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/cli.md"
+          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/pnpm-lock.yaml"
+
+  generated-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vp run --filter create-tsu-stack build
+      - name: Generate representative project
+        run: >-
+          node tools/create-tsu-stack/.output/index.mjs
+          "$RUNNER_TEMP/generated-tsu-stack"
+          --yes --variant separate --no-install --no-git --setup none
+      - name: Install and build generated project
+        working-directory: ${{ runner.temp }}/generated-tsu-stack
+        run: |
+          cp packages/env/.env.example packages/env/.env
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" install
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run build

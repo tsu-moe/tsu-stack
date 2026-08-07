@@ -1,0 +1,61 @@
+name: Release create-tsu-stack
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: Verify tag and main ancestry
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./tools/create-tsu-stack/package.json').version")
+          test "$GITHUB_REF_NAME" = "v$VERSION"
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          if [[ "$VERSION" == *-* ]]; then
+            echo "NPM_TAG=next" >> "$GITHUB_ENV"
+          else
+            echo "NPM_TAG=latest" >> "$GITHUB_ENV"
+          fi
+          echo "PACKAGE_VERSION=$VERSION" >> "$GITHUB_ENV"
+      - run: pnpm exec vp check
+      - run: pnpm exec vp run --filter create-tsu-stack check
+      - run: pnpm exec vp run --filter create-tsu-stack test:unit
+      - run: pnpm exec vp run --filter create-tsu-stack pack:check
+      - name: Publish to npm with trusted publishing
+        working-directory: tools/create-tsu-stack
+        shell: bash
+        run: |
+          if npm view "create-tsu-stack@$PACKAGE_VERSION" version >/dev/null 2>&1; then
+            echo "create-tsu-stack@$PACKAGE_VERSION is already published"
+          else
+            npm publish --access public --tag "$NPM_TAG"
+          fi
+      - name: Create GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "$GITHUB_REF_NAME already has a GitHub release"
+          else
+            pnpm exec vp run --filter create-tsu-stack release:github
+          fi

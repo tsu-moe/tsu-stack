@@ -9,6 +9,21 @@ We use a simplified version of [Conventional Commits](https://www.conventionalco
 
 - this also applies to PRs
 
+## Scaffolding CLI
+
+Changes to `tools/create-tsu-stack` must preserve prompt/flag parity, immutable source resolution, staging-directory safety, and the allowlisted identity-transformation contract. Run:
+
+```bash
+cd tools/create-tsu-stack
+vp check --fix
+vp test
+vp run pack:check
+```
+
+See [`.agents/cli.md`](../.agents/cli.md) for template compatibility, smoke coverage, adding variants, first-publication bootstrap, trusted-publisher configuration, and release recovery.
+
+Maintainers release the package from a clean, current `main` with `vp run release [version]`. This creates and pushes a release commit and tag, so it must not be used as a local validation command. The tag workflow publishes through npm trusted publishing; contributors and Renovate branches never publish packages or create release tags.
+
 ## Pull Request Process
 
 1. Your Pull Request will be merged to the preview environment by the maintainers once it's approved after review.
