@@ -5,8 +5,11 @@
   "scripts": {
     "check": "vp check",
     "check:fix": "vp check --fix",
+    "cf:types": "vp exec wrangler types worker-configuration.d.ts",
     "dev": "pnpm dotenvx run -f ../../packages/env/.env -- vp dev",
-    "deploy": "pnpm dotenvx run -f ../../packages/env/.env -- pnpm wrangler deploy",
+    "db:migrate:local": "vp exec wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "vp exec wrangler d1 migrations apply DB --remote",
+    "deploy": "vp run db:migrate:remote && pnpm dotenvx run -f ../../packages/env/.env -- vp exec wrangler deploy",
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {

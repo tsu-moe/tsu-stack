@@ -1,4 +1,4 @@
-# Environment Variables
+# Environment Variables And Bindings
 
 ## Single Source of Truth
 
@@ -14,18 +14,24 @@ All env vars live in `packages/env/.env` (copy from `.env.example`). Validated b
 
 ## Client Exposure Rule
 
-Only vars prefixed with `VITE_` are available on the client (`import.meta.env`). Server-only vars (`DATABASE_URL`, `BETTER_AUTH_SECRET`) must never be exposed to the client.
+Only vars prefixed with `VITE_` are available on the client (`import.meta.env`). Server-only values such as `BETTER_AUTH_SECRET` must never be exposed to the client.
+
+## Cloudflare Bindings
+
+`DB` is a D1 binding, not a string environment variable. It is declared in `apps/web/wrangler.jsonc`, represented in `apps/web/worker-configuration.d.ts`, and read through `cloudflare:workers` at runtime. Do not add it to `packages/env`, `.env`, or `process.env`.
+
+Worker bindings are request/runtime resources. Do not cache a D1 client or binding-derived object at module scope. Use `createDb()` at the call site so the current Worker binding is used.
 
 ## When Adding/Updating Env Vars
 
-Update in **six places**:
+Update the applicable locations:
 
 1. `packages/env/src/` — add Zod validation to the appropriate scoped object
-2. `docker-compose.yaml` — add to both `build.args` and `environment` for affected services
-3. `Dockerfile` — add matching `ARG` + `ENV` declarations in the relevant Dockerfile(s)
-4. `.env.example` — add with placeholder value for local development
-5. `.github/README.md` — update this file with the new var, its scope, and usage notes
-6. (optional) `apps/web/vite.config.ts` — if the var is used in the web app or if the environment is used in the server & is mounted on the web app, add to `define` for build-time injection
+2. `packages/env/.env.example` — add a safe placeholder for local development
+3. `apps/web/wrangler.jsonc` — add runtime text variables, secrets safeguards, or resource bindings as appropriate
+4. `apps/web/worker-configuration.d.ts` — regenerate with `vp run --filter @tsu-stack/web cf:types` after binding changes
+5. `.github/README.md` — document scope, setup, and deployment requirements
+6. `apps/web/vite.config.ts` — include build-time inputs when the build task consumes them
 
 Missing any of these causes build or runtime failures with no obvious error message.
 
@@ -34,5 +40,6 @@ Env docs and templates must mirror the validated schema in `packages/env/src/`. 
 ## Gotchas
 
 - `z.stringbool()` is used for boolean env vars (parses "true"/"false" strings)
-- Dev defaults exist for most `VITE_*` vars; `DATABASE_URL` and `BETTER_AUTH_SECRET` are always required
+- Dev defaults exist for most `VITE_*` vars; `BETTER_AUTH_SECRET` is always required
+- D1 replaces `DATABASE_URL`; do not reintroduce a connection string for the `DB` binding
 - Each env file logs loading with `console.debug` — check terminal output for validation errors

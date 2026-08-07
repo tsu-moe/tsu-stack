@@ -49,7 +49,7 @@ When extending the Better Auth `user` or `session` schema, update all three laye
 - **Drizzle schema**: add the matching column in `packages/db/src/schema/auth.schema.ts`
 - **Client inference**: keep `packages/auth/src/react/auth-client.ts` using `inferAdditionalFields<typeof auth>()` so custom fields stay typed on the client
 
-For DB-backed auth fields, also generate and apply a Drizzle migration after the schema change.
+For DB-backed auth fields, generate a SQLite migration, apply it locally, and inspect it before applying it to remote D1. Better Auth uses the `sqlite` Drizzle provider on this branch, with millisecond integer timestamps and SQLite boolean columns.
 
 ## Gotchas
 

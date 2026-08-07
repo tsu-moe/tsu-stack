@@ -10,19 +10,13 @@
     "./schema": "./src/schema/index.ts"
   },
   "scripts": {
-    "db": "pnpm dotenvx run -f ../env/.env -- drizzle-kit",
-    "db:dev:start": "docker compose -f docker-compose.dev.yaml up -d",
-    "db:dev:stop": "docker compose -f docker-compose.dev.yaml stop",
+    "db": "drizzle-kit",
     "auth:generate": "vp run -w auth:generate"
   },
   "dependencies": {
-    "@tsu-stack/logger": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "postgres": "catalog:"
+    "drizzle-orm": "catalog:"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "catalog:",
-    "@tsu-stack/env": "workspace:*",
     "@tsu-stack/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "drizzle-kit": "catalog:",

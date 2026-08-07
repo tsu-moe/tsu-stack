@@ -48,18 +48,17 @@ For end-to-end feature implementation order across `packages/db`, `packages/core
 
 1. Edit schemas in `packages/db/src/schema/`
 2. Run `vp run db:generate` to create migration files
-3. **Check `DATABASE_URL`** — must point to localhost/127.0.0.1. If it looks like a production URL, **stop and warn the user**.
-4. Run `vp run db:migrate` to apply. Features will silently fail without applied migrations.
+3. Run `vp run db:migrate:local` to apply them to the local D1 database used by Wrangler.
+4. Inspect the generated SQL and test locally before any remote migration.
+5. `vp run deploy` applies remote D1 migrations before publishing the Worker. Run `vp run db:migrate:remote` separately only with explicit authorization and after confirming the Wrangler account and database binding.
 
 ## Other Commands
 
-| Command               | Purpose                         |
-| --------------------- | ------------------------------- |
-| `vp run db:dev:start` | Start local PostgreSQL (Docker) |
-| `vp run db:dev:stop`  | Stop local PostgreSQL           |
-| `vp run db:generate`  | Generate migration files        |
-| `vp run db:migrate`   | Apply migrations                |
-| `vp run db:studio`    | Open Drizzle Studio             |
+| Command                    | Purpose                       |
+| -------------------------- | ----------------------------- |
+| `vp run db:generate`       | Generate SQLite migrations    |
+| `vp run db:migrate:local`  | Apply migrations to local D1  |
+| `vp run db:migrate:remote` | Apply migrations to remote D1 |
 
 ## UI Components And shadcn
 

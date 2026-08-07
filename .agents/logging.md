@@ -23,7 +23,7 @@ Good candidates:
 - Failed operations that need investigation.
 - Expected but actionable degraded outcomes.
 - Audit-worthy security or compliance events, with explicit approval.
-- Lifecycle events that are rare and useful, such as server startup or migration completion.
+- Lifecycle events that are rare and useful, such as server startup or explicit resource provisioning.
 
 Poor candidates:
 
@@ -56,14 +56,14 @@ log.info({ event: "server_started", url });
 For request and workflow logging, prefer evlog wide-event APIs.
 
 ```ts
-const logger = createLogger({ operation: "server__database_migration" });
+const logger = createLogger({ operation: "server__resource_provisioning" });
 
 try {
-  await migrateDatabase();
-  logger.emit({ event: "database_migration_completed" });
+  await provisionResource();
+  logger.emit({ event: "resource_provisioning_completed" });
 } catch (error) {
   logger.error(error instanceof Error ? error : String(error), {
-    event: "database_migration_failed"
+    event: "resource_provisioning_failed"
   });
   logger.emit({ _forceKeep: true });
 }

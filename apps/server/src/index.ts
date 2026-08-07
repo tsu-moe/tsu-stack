@@ -15,7 +15,6 @@ import { type ContentfulStatusCode } from "hono/utils/http-status";
 import { createContext } from "@tsu-stack/api/lib/context/hono/create-context";
 import { appRouter } from "@tsu-stack/api/routers/index";
 import { createAuth } from "@tsu-stack/auth/index";
-import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 import { log, parseError } from "@tsu-stack/logger/server";
 import {
@@ -206,7 +205,3 @@ app.use("/*", async (c, next) => {
 
   await next();
 });
-
-void (async () => {
-  await migrateDatabase();
-})();

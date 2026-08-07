@@ -4,6 +4,16 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tsu-stack-db",
+      // Replace this placeholder with the ID returned by `wrangler d1 create tsu-stack-db`.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/migrations",
+      "migrations_pattern": "../../packages/db/migrations/*/migration.sql"
+    }
+  ],
   "observability": {
     "enabled": false,
     "head_sampling_rate": 1,
@@ -25,7 +35,7 @@
     // preventing you from accidentally deploying without setting these secrets in the Cloudflare dashboard
     // It can be set in `Workers & Pages > your project > Settings > Variables & Secrets`
     // See: https://developers.cloudflare.com/workers/configuration/environment-variables/
-    "required": ["VITE_SERVER_URL", "VITE_WEB_URL", "BETTER_AUTH_SECRET", "DATABASE_URL"]
+    "required": ["VITE_SERVER_URL", "VITE_WEB_URL", "BETTER_AUTH_SECRET"]
     // PITFALL: These are DIFFERENT from *BUILD Variables and secrets*,
     // which are variables required in the build process rather than deployed runtime
     // Those will be parsed in the Cloudflare build process and error out if not set

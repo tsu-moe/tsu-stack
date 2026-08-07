@@ -19,7 +19,7 @@ When a feature introduces shared contracts that should drive both API and fronte
 ## Step 1: Database
 
 - Edit schemas in `packages/db/src/schema/` when the feature changes persisted data.
-- Follow [Workflow](./workflow.md) for migration generation, localhost `DATABASE_URL` safety, and migration application.
+- Follow [Workflow](./workflow.md) for SQLite migration generation, local D1 validation, and explicit remote migration safety.
 - Keep schema and migration work complete before defining API output shapes that depend on it.
 
 ## Step 2: Shared Domain Contract

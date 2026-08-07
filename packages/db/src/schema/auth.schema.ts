@@ -1,23 +1,26 @@
-import { defineRelationsPart } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { defineRelationsPart, sql } from "drizzle-orm";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const user = pgTable("user", {
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+const timestamp = (name: string) => integer(name, { mode: "timestamp_ms" });
+const now = sql`(unixepoch() * 1000)`;
+
+export const user = sqliteTable("user", {
+  createdAt: timestamp("created_at").default(now).notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
+  emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
   id: text("id").primaryKey(),
   image: text("image"),
   name: text("name").notNull(),
   updatedAt: timestamp("updated_at")
-    .defaultNow()
+    .default(now)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull()
 });
 
-export const session = pgTable(
+export const session = sqliteTable(
   "session",
   {
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").default(now).notNull(),
     expiresAt: timestamp("expires_at").notNull(),
     id: text("id").primaryKey(),
     ipAddress: text("ip_address"),
@@ -33,13 +36,13 @@ export const session = pgTable(
   (table) => [index("session_userId_idx").on(table.userId)]
 );
 
-export const account = pgTable(
+export const account = sqliteTable(
   "account",
   {
     accessToken: text("access_token"),
     accessTokenExpiresAt: timestamp("access_token_expires_at"),
     accountId: text("account_id").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").default(now).notNull(),
     id: text("id").primaryKey(),
     idToken: text("id_token"),
     password: text("password"),
@@ -57,15 +60,15 @@ export const account = pgTable(
   (table) => [index("account_userId_idx").on(table.userId)]
 );
 
-export const verification = pgTable(
+export const verification = sqliteTable(
   "verification",
   {
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").default(now).notNull(),
     expiresAt: timestamp("expires_at").notNull(),
     id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     updatedAt: timestamp("updated_at")
-      .defaultNow()
+      .default(now)
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
     value: text("value").notNull()

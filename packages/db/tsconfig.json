@@ -1,5 +1,5 @@
 {
   "extends": "@tsu-stack/tsconfig/tsconfig.base.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../../apps/web/worker-configuration.d.ts"],
   "exclude": ["node_modules"]
 }

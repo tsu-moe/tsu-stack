@@ -43,4 +43,4 @@ Use the smallest relevant doc set below. Open the most specific file first, then
 - [SEO patterns](.agents/seo.md): route `head()` usage and `@tsu-stack/seo`.
 - [Core package patterns](.agents/core.md): shared domain contracts in `packages/core`.
 - [TypeScript conventions](.agents/typescript.md): schema placement, import boundaries, `lib/` vs `utils/`.
-- [Environment variables](.agents/environment-variables.md): env scoping, validation, Docker propagation.
+- [Environment variables and bindings](.agents/environment-variables.md): env scoping, validation, and Cloudflare bindings.

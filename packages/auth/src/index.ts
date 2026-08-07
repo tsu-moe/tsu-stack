@@ -18,7 +18,7 @@ export function createAuth() {
     trustedOrigins: [new URL(ENV_SERVER.VITE_WEB_URL).origin],
     secret: ENV_SERVER.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
-      provider: "pg",
+      provider: "sqlite",
       schema
     }),
 
