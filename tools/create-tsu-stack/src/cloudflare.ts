@@ -7,6 +7,7 @@ import { type CommandRunner, type ProjectInput } from "./types";
 
 const D1_ID_PATTERN =
   /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/iu;
+const REMOTE_MIGRATION_ATTEMPTS = 3;
 
 export type CloudflareAccount = {
   id: string;
@@ -171,6 +172,41 @@ async function updateD1Binding(
   await writeFile(configPath, next, "utf8");
 }
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function wait(milliseconds: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+export async function applyRemoteD1Migrations(
+  webRoot: string,
+  runner: CommandRunner,
+  waitForRetry: (milliseconds: number) => Promise<void> = wait
+): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= REMOTE_MIGRATION_ATTEMPTS; attempt += 1) {
+    try {
+      await runner.run(
+        "vp",
+        ["exec", "wrangler", "d1", "migrations", "apply", "DB", "--remote"],
+        webRoot
+      );
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < REMOTE_MIGRATION_ATTEMPTS) {
+        p.log.warn(
+          `Remote D1 migration attempt ${attempt} failed; retrying after Cloudflare finishes provisioning the database.`
+        );
+        await waitForRetry(attempt * 1000);
+      }
+    }
+  }
+  throw lastError;
+}
+
 export async function provisionD1(
   projectRoot: string,
   input: ProjectInput,
@@ -200,10 +236,10 @@ export async function provisionD1(
   const databaseId = parseD1DatabaseId(output);
   try {
     await updateD1Binding(projectRoot, databaseName, databaseId);
-    await runner.run("vp", ["run", "db:migrate:remote"], webRoot);
+    await applyRemoteD1Migrations(webRoot, runner);
   } catch (error) {
     throw new Error(
-      `D1 ${databaseName} (${databaseId}) was created, but setup did not finish. The generated project was preserved; check apps/web/wrangler.jsonc and run \`vp run db:migrate:remote\`.`,
+      `D1 ${databaseName} (${databaseId}) was created, but setup did not finish: ${errorMessage(error)}. The generated project was preserved; check apps/web/wrangler.jsonc, then from apps/web run \`vp exec wrangler d1 migrations apply DB --remote\`.`,
       { cause: error }
     );
   }
