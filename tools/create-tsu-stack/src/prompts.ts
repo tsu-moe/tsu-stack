@@ -118,7 +118,7 @@ export async function collectProjectInput(
             { label: "Set up a local D1 database", value: "local" },
             {
               hint: "requires Wrangler login",
-              label: "Create and migrate remote D1",
+              label: "Set up local and remote D1 databases",
               value: "cloudflare"
             }
           ]
