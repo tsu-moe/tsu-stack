@@ -5,9 +5,10 @@
 | Command          | Purpose                                                               |
 | ---------------- | --------------------------------------------------------------------- |
 | `vp run dev`     | Start all dev servers                                                 |
+| `vp run check`   | Ensure Paraglide output exists, then check the workspace              |
 | `vp check`       | Run package-local format, lint, and typecheck for the current package |
 | `vp check --fix` | Run package-local format, lint fixes, and typecheck                   |
-| `vp run -w fix`  | Format + lint + typecheck after substantial code/config work          |
+| `vp run -w fix`  | Ensure Paraglide output exists, then fix/check the workspace          |
 | `vp run build`   | Build all packages                                                    |
 
 ## Validation Timing
@@ -21,6 +22,8 @@ Default to running fixes after making code or configuration changes. Run the nar
 - Do not reach for root filtered check commands when a package-local `vp check --fix` covers the changed surface.
 
 `vp check --fix` and `vp run -w fix` format (Oxfmt), lint (Oxlint), and type-check in one pass. Treat fix commands as the normal cleanup and validation path after edits.
+
+The root `check` and `fix` scripts run `i18n:ensure` first. This inline preflight only compiles Paraglide when a required generated entrypoint is missing; otherwise it is a filesystem-only no-op.
 
 For markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior, run an available narrow formatter/fix only when it applies cleanly to the touched surface. Otherwise, state that no code/config fix command was applicable. Staged files may be auto-checked on `git commit` via Vite Plus hooks; do not rely on those hooks as the first fix pass when edits have already been made.
 
