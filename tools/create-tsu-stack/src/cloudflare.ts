@@ -156,6 +156,32 @@ async function updateWranglerAccount(projectRoot: string, accountId: string): Pr
   await writeFile(configPath, next, "utf8");
 }
 
+export function updateD1BindingContent(
+  config: string,
+  databaseName: string,
+  databaseId: string
+): string {
+  const binding = config.match(/\{(?=[^{}]*"binding"\s*:\s*"DB")[^{}]*\}/u)?.[0];
+  if (!binding) {
+    throw new Error("Could not update the DB binding in apps/web/wrangler.jsonc.");
+  }
+  const nextBinding = binding
+    .replace(
+      /("database_name"\s*:\s*)"[^"]*"/u,
+      (_match, prefix: string) => `${prefix}${JSON.stringify(databaseName)}`
+    )
+    .replace(
+      /("database_id"\s*:\s*)"[^"]*"/u,
+      (_match, prefix: string) => `${prefix}${JSON.stringify(databaseId)}`
+    );
+  const boundName = nextBinding.match(/"database_name"\s*:\s*"([^"]*)"/u)?.[1];
+  const boundId = nextBinding.match(/"database_id"\s*:\s*"([^"]*)"/u)?.[1];
+  if (boundName !== databaseName || boundId !== databaseId) {
+    throw new Error("Could not update the DB binding in apps/web/wrangler.jsonc.");
+  }
+  return config.replace(binding, nextBinding);
+}
+
 async function updateD1Binding(
   projectRoot: string,
   databaseName: string,
@@ -163,13 +189,8 @@ async function updateD1Binding(
 ): Promise<void> {
   const configPath = join(projectRoot, "apps", "web", "wrangler.jsonc");
   const config = await readFile(configPath, "utf8");
-  const next = config
-    .replace(/("database_name"\s*:\s*)"[^"]*"/u, `$1${JSON.stringify(databaseName)}`)
-    .replace(/("database_id"\s*:\s*)"[^"]*"/u, `$1${JSON.stringify(databaseId)}`);
-  if (next === config || !next.includes(databaseId)) {
-    throw new Error("Could not update the DB binding in apps/web/wrangler.jsonc.");
-  }
-  await writeFile(configPath, next, "utf8");
+  const next = updateD1BindingContent(config, databaseName, databaseId);
+  if (next !== config) await writeFile(configPath, next, "utf8");
 }
 
 function errorMessage(error: unknown): string {
