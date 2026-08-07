@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 import { pathExists } from "fs-extra";
 
-import { type CloudflareAccountPrompt } from "./cloudflare";
+import { type CloudflareAccountPrompt, type ExistingD1Prompt } from "./cloudflare";
 import { type CommandRunner, type ProjectInput } from "./types";
 import { VARIANTS } from "./variants";
 
@@ -57,7 +57,8 @@ export async function runPostGeneration(
   projectRoot: string,
   input: ProjectInput,
   runner: CommandRunner,
-  accountPrompt?: CloudflareAccountPrompt
+  accountPrompt?: CloudflareAccountPrompt,
+  existingD1Prompt?: ExistingD1Prompt
 ): Promise<void> {
   if (input.install) await runner.run("vp", ["install"], projectRoot);
 
@@ -65,6 +66,7 @@ export async function runPostGeneration(
     await createLocalEnvironment(projectRoot, input);
     await VARIANTS[input.variant].postGenerationHook({
       accountPrompt,
+      existingD1Prompt,
       input,
       projectRoot,
       runner

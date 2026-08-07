@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 
 import {
   applyRemoteD1Migrations,
+  parseD1DatabaseList,
   parseWranglerIdentity,
   updateD1BindingContent
 } from "#@/cloudflare";
@@ -33,6 +34,12 @@ describe("Wrangler identity", () => {
     expect(() => parseWranglerIdentity(JSON.stringify({ accounts: [], loggedIn: false }))).toThrow(
       "Wrangler is not authenticated"
     );
+  });
+
+  it("parses Wrangler's remote D1 database list", () => {
+    expect(
+      parseD1DatabaseList(JSON.stringify([{ name: "moon-garden-db", uuid: "database-123" }]))
+    ).toEqual([{ id: "database-123", name: "moon-garden-db" }]);
   });
 
   it("retries remote migrations through app-local Wrangler", async () => {
