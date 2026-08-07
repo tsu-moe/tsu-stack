@@ -8,9 +8,9 @@ import { HELP_TEXT, parseCliFlags } from "./args";
 import { commandRunner } from "./commands";
 import { assertDestinationAvailable, generateProject } from "./generate";
 import { resolveTemplate } from "./github";
+import { buildNextSteps } from "./next-steps";
 import { collectProjectInput, finishPrompt } from "./prompts";
 import { assertSetupPrerequisites, runPostGeneration } from "./setup";
-import { buildReproducibleCommand } from "./transform";
 import { getCliVersion } from "./version";
 
 async function withSpinner<T>(start: string, done: string, task: () => Promise<T>): Promise<T> {
@@ -49,7 +49,6 @@ async function main(): Promise<void> {
   const target = resolve(cwd, input.projectDirectory);
   await assertDestinationAvailable(target);
 
-  const reproducibleCommand = buildReproducibleCommand(input, template);
   if (input.dryRun) {
     p.note(
       [
@@ -59,9 +58,7 @@ async function main(): Promise<void> {
         `Scope: ${input.scope}`,
         `Install: ${input.install ? "yes" : "no"}`,
         `Setup: ${input.setup}`,
-        `Git: ${input.git ? "yes" : "no"}`,
-        "",
-        `Replay: ${reproducibleCommand}`
+        `Git: ${input.git ? "yes" : "no"}`
       ].join("\n"),
       "Dry run"
     );
@@ -78,25 +75,7 @@ async function main(): Promise<void> {
 
   await runPostGeneration(generatedRoot, input, commandRunner);
 
-  const nextSteps = [
-    `cd ${JSON.stringify(input.projectDirectory)}`,
-    ...(!input.install ? ["vp install"] : []),
-    ...(input.setup === "none"
-      ? input.variant === "cloudflare-d1"
-        ? [
-            "Copy packages/env/.env.example to packages/env/.env",
-            "vp run db:migrate:local",
-            "# Optional remote setup: vp exec wrangler login, then follow .github/README.md"
-          ]
-        : [
-            "Copy packages/env/.env.example to packages/env/.env",
-            "vp run db:dev:start",
-            "vp run db:migrate"
-          ]
-      : []),
-    "vp run dev"
-  ];
-  p.note(`${nextSteps.join("\n")}\n\nReplay: ${reproducibleCommand}`, "Next steps");
+  p.note(buildNextSteps(input), "Next steps");
   finishPrompt(`${input.displayName} is ready.`);
 }
 
