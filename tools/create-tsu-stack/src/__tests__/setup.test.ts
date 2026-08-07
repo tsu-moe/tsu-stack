@@ -170,6 +170,7 @@ describe("guided setup", () => {
       "vp exec wrangler d1 list --json",
       "vp exec wrangler d1 create moon-garden-db --binding DB",
       "vp exec wrangler d1 migrations apply DB --remote",
+      "vp run db:migrate:local",
       "git init"
     ]);
     expect(wranglerDirectories).toEqual([
@@ -247,6 +248,7 @@ describe("guided setup", () => {
       "vp exec wrangler d1 list --json",
       "vp exec wrangler d1 create moon-garden-db --binding DB"
     ]);
+    expect(calls.at(-1)).toBe("vp run db:migrate:local");
     expect(await readFile(join(root, "apps", "web", "wrangler.jsonc"), "utf8")).toContain(
       '"account_id": "correct-account"'
     );
@@ -306,7 +308,8 @@ describe("guided setup", () => {
     expect(calls).toEqual([
       "vp exec wrangler whoami --json",
       "vp exec wrangler d1 list --json",
-      "vp exec wrangler d1 migrations apply DB --remote"
+      "vp exec wrangler d1 migrations apply DB --remote",
+      "vp run db:migrate:local"
     ]);
     expect(await readFile(wranglerPath, "utf8")).toContain(`"database_id":"${databaseId}"`);
   });
@@ -366,7 +369,8 @@ describe("guided setup", () => {
       "vp exec wrangler whoami --json",
       "vp exec wrangler d1 list --json",
       "vp exec wrangler d1 create moon-garden-staging --binding DB",
-      "vp exec wrangler d1 migrations apply DB --remote"
+      "vp exec wrangler d1 migrations apply DB --remote",
+      "vp run db:migrate:local"
     ]);
     const config = await readFile(wranglerPath, "utf8");
     expect(config).toContain('"database_name":"moon-garden-staging"');
@@ -435,7 +439,8 @@ describe("guided setup", () => {
     expect(calls).toEqual([
       "vp exec wrangler whoami --json",
       "vp exec wrangler d1 list --json",
-      "vp exec wrangler d1 migrations apply DB --remote"
+      "vp exec wrangler d1 migrations apply DB --remote",
+      "vp run db:migrate:local"
     ]);
     const config = await readFile(wranglerPath, "utf8");
     expect(config).toContain('"database_name":"moon-garden-staging"');

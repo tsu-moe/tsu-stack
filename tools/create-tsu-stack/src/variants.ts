@@ -29,7 +29,6 @@ async function setupD1(context: PostGenerationContext): Promise<void> {
       context.accountPrompt,
       context.existingD1Prompt
     );
-    return;
   }
   await context.runner.run("vp", ["run", "db:migrate:local"], context.projectRoot);
 }
