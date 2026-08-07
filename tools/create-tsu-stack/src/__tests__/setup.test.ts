@@ -122,17 +122,27 @@ describe("guided setup", () => {
     await mkdir(join(root, "apps", "web"), { recursive: true });
     await writeFile(
       wranglerPath,
-      '{"d1_databases":[{"binding":"DB","database_name":"tsu-stack-db","database_id":"00000000-0000-0000-0000-000000000000"}]}'
+      '{\n  "name": "moon-garden",\n  "d1_databases":[{"binding":"DB","database_name":"tsu-stack-db","database_id":"00000000-0000-0000-0000-000000000000"}]\n}'
     );
     const calls: string[] = [];
+    const wranglerDirectories: string[] = [];
     const databaseId = "12345678-1234-4123-8123-123456789abc";
     const runner: CommandRunner = {
-      async capture(command, args) {
+      async capture(command, args, cwd) {
         calls.push([command, ...args].join(" "));
+        wranglerDirectories.push(cwd);
+        if (args.includes("whoami")) {
+          return JSON.stringify({
+            accounts: [{ id: "account-123", name: "Moon Garden Team" }],
+            email: "owner@example.com",
+            loggedIn: true
+          });
+        }
         return `database_id = "${databaseId}"`;
       },
-      async run(command, args) {
+      async run(command, args, cwd) {
         calls.push([command, ...args].join(" "));
+        if (args.includes("db:migrate:remote")) wranglerDirectories.push(cwd);
       },
       async succeeds(command, args) {
         calls.push([command, ...args].join(" "));
@@ -146,17 +156,94 @@ describe("guided setup", () => {
       variant: "cloudflare-d1"
     };
 
-    await runPostGeneration(root, remoteInput, runner);
+    await runPostGeneration(root, remoteInput, runner, async () => {
+      return {
+        accountId: "account-123",
+        action: "use"
+      };
+    });
 
     expect(calls).toEqual([
       "vp install",
-      "vp exec wrangler whoami",
+      "vp exec wrangler whoami --json",
       "vp exec wrangler d1 create moon-garden-db --binding DB",
       "vp run db:migrate:remote",
       "git init"
     ]);
+    expect(wranglerDirectories).toEqual([
+      join(root, "apps", "web"),
+      join(root, "apps", "web"),
+      join(root, "apps", "web")
+    ]);
     const config = await readFile(wranglerPath, "utf8");
     expect(config).toContain(`"database_name":"moon-garden-db"`);
     expect(config).toContain(`"database_id":"${databaseId}"`);
+    expect(config).toContain('"account_id": "account-123"');
+  });
+
+  it("can switch Wrangler logins before selecting the D1 owner", async () => {
+    const root = await projectFixture();
+    await mkdir(join(root, "apps", "web"), { recursive: true });
+    await writeFile(
+      join(root, "apps", "web", "wrangler.jsonc"),
+      '{\n  "name": "moon-garden",\n  "d1_databases":[{"binding":"DB","database_name":"tsu-stack-db","database_id":"00000000-0000-0000-0000-000000000000"}]\n}'
+    );
+    const calls: string[] = [];
+    let identityCall = 0;
+    const runner: CommandRunner = {
+      async capture(command, args) {
+        calls.push([command, ...args].join(" "));
+        if (args.includes("whoami")) {
+          identityCall += 1;
+          return JSON.stringify({
+            accounts: [
+              {
+                id: identityCall === 1 ? "wrong-account" : "correct-account",
+                name: identityCall === 1 ? "Wrong Team" : "Correct Team"
+              }
+            ],
+            loggedIn: true
+          });
+        }
+        return 'database_id = "12345678-1234-4123-8123-123456789abc"';
+      },
+      async run(command, args) {
+        calls.push([command, ...args].join(" "));
+      },
+      async succeeds() {
+        return true;
+      }
+    };
+    let promptCall = 0;
+
+    await runPostGeneration(
+      root,
+      {
+        ...input,
+        git: false,
+        install: false,
+        projectName: "moon-garden",
+        setup: "cloudflare",
+        variant: "cloudflare-d1"
+      },
+      runner,
+      async () => {
+        promptCall += 1;
+        return promptCall === 1
+          ? { action: "login" }
+          : { accountId: "correct-account", action: "use" };
+      }
+    );
+
+    expect(calls.slice(0, 5)).toEqual([
+      "vp exec wrangler whoami --json",
+      "vp exec wrangler logout",
+      "vp exec wrangler login",
+      "vp exec wrangler whoami --json",
+      "vp exec wrangler d1 create moon-garden-db --binding DB"
+    ]);
+    expect(await readFile(join(root, "apps", "web", "wrangler.jsonc"), "utf8")).toContain(
+      '"account_id": "correct-account"'
+    );
   });
 });
