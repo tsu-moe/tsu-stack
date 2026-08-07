@@ -142,7 +142,7 @@ describe("guided setup", () => {
       },
       async run(command, args, cwd) {
         calls.push([command, ...args].join(" "));
-        if (args.includes("db:migrate:remote")) wranglerDirectories.push(cwd);
+        if (args.includes("migrations")) wranglerDirectories.push(cwd);
       },
       async succeeds(command, args) {
         calls.push([command, ...args].join(" "));
@@ -167,7 +167,7 @@ describe("guided setup", () => {
       "vp install",
       "vp exec wrangler whoami --json",
       "vp exec wrangler d1 create moon-garden-db --binding DB",
-      "vp run db:migrate:remote",
+      "vp exec wrangler d1 migrations apply DB --remote",
       "git init"
     ]);
     expect(wranglerDirectories).toEqual([
