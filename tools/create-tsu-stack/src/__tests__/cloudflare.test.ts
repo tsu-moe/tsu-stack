@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { applyRemoteD1Migrations, parseWranglerIdentity } from "#@/cloudflare";
+import {
+  applyRemoteD1Migrations,
+  parseWranglerIdentity,
+  updateD1BindingContent
+} from "#@/cloudflare";
 import { type CommandRunner } from "#@/types";
 
 describe("Wrangler identity", () => {
@@ -55,5 +59,19 @@ describe("Wrangler identity", () => {
       args: ["exec", "wrangler", "d1", "migrations", "apply", "DB", "--remote"],
       cwd: "project/apps/web"
     });
+  });
+
+  it("accepts a D1 binding that Wrangler already updated", () => {
+    const config = `{
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "moon-garden-db",
+    "database_id": "12345678-1234-4123-8123-123456789abc"
+  }]
+}`;
+
+    expect(
+      updateD1BindingContent(config, "moon-garden-db", "12345678-1234-4123-8123-123456789abc")
+    ).toBe(config);
   });
 });
