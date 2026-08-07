@@ -30,7 +30,7 @@ await execa("vp", ["run", "pack:check"], {
 const bumppArguments = [
   ...(requestedVersion ? ["--release", requestedVersion] : []),
   "--commit",
-  "release: v{version}",
+  "chore(release): v{version}",
   "--tag",
   "v{version}",
   "--push"
