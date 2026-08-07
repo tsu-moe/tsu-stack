@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 import { pathExists } from "fs-extra";
 
+import { type CloudflareAccountPrompt } from "./cloudflare";
 import { type CommandRunner, type ProjectInput } from "./types";
 import { VARIANTS } from "./variants";
 
@@ -55,13 +56,19 @@ export async function createLocalEnvironment(
 export async function runPostGeneration(
   projectRoot: string,
   input: ProjectInput,
-  runner: CommandRunner
+  runner: CommandRunner,
+  accountPrompt?: CloudflareAccountPrompt
 ): Promise<void> {
   if (input.install) await runner.run("vp", ["install"], projectRoot);
 
   if (input.setup !== "none") {
     await createLocalEnvironment(projectRoot, input);
-    await VARIANTS[input.variant].postGenerationHook({ input, projectRoot, runner });
+    await VARIANTS[input.variant].postGenerationHook({
+      accountPrompt,
+      input,
+      projectRoot,
+      runner
+    });
   }
 
   if (input.git) await runner.run("git", ["init"], projectRoot);
