@@ -75,6 +75,7 @@ jobs:
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/tools/create-tsu-stack"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/cli.md"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/pnpm-lock.yaml"
+          node -e "const scripts = require(process.argv[1]).scripts; if (!scripts.dev.startsWith('vp run i18n:ensure && ')) process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/package.json"
 
   generated-build:
     runs-on: ubuntu-latest
@@ -99,4 +100,7 @@ jobs:
         run: |
           cp packages/env/.env.example packages/env/.env
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" install
+          test ! -e packages/i18n/src/paraglide/runtime.js
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run i18n:ensure
+          test -f packages/i18n/src/paraglide/runtime.js
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" run build

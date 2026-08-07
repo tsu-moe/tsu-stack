@@ -23,7 +23,7 @@ Default to running fixes after making code or configuration changes. Run the nar
 
 `vp check --fix` and `vp run -w fix` format (Oxfmt), lint (Oxlint), and type-check in one pass. Treat fix commands as the normal cleanup and validation path after edits.
 
-The root `check` and `fix` scripts run `i18n:ensure` first. This inline preflight only compiles Paraglide when a required generated entrypoint is missing; otherwise it is a filesystem-only no-op.
+The root `dev`, `check`, and `fix` scripts run `i18n:ensure` first. This inline preflight only compiles Paraglide when a required generated entrypoint is missing; otherwise it is a filesystem-only no-op. Keep the preflight ahead of the parallel development processes so a fresh clone cannot start the web app before the Paraglide watcher produces its first runtime files.
 
 For markdown-only edits, small documentation tweaks, or other changes that cannot affect formatting, linting, typechecking, build output, or runtime behavior, run an available narrow formatter/fix only when it applies cleanly to the touched surface. Otherwise, state that no code/config fix command was applicable. Staged files may be auto-checked on `git commit` via Vite Plus hooks; do not rely on those hooks as the first fix pass when edits have already been made.
 

@@ -7,7 +7,7 @@
     "fix": "vp run i18n:ensure && vp check --fix",
     "test:unit:run": "pnpm dotenvx run -f ./packages/env/.env -- vp run -r test:unit",
     "test:e2e:run": "pnpm dotenvx run -f ./packages/env/.env -- vp run -r test:e2e",
-    "dev": "pnpm -r --parallel dev",
+    "dev": "vp run i18n:ensure && pnpm -r --parallel dev",
     "build": "vp run -r build",
     "deploy": "vp run -r deploy",
     "i18n:ensure": "node -e \"const { existsSync } = require('node:fs'); if (['messages/_index.js', 'messages.js', 'registry.js', 'runtime.js', 'server.js'].some((file) => !existsSync('packages/i18n/src/paraglide/' + file))) require('node:child_process').execSync('vp run --filter @tsu-stack/i18n build', { stdio: 'inherit' })\"",
