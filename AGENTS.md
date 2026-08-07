@@ -7,6 +7,7 @@ Use Vite Plus commands in this repo: `vp` for package/scripts, `vpx` for one-off
 Common commands:
 
 - `vp run dev` - start dev servers
+- `vp run check` - generate Paraglide output when missing, then check the workspace
 - `vp check --fix` - package-local format, lint fixes, and typecheck
 - `vp run -w fix` - workspace fix after cross-package/root changes
 - `vp run build` - build all packages
