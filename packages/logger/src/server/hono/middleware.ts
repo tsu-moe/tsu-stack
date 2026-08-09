@@ -1,4 +1,4 @@
-import { log, type DrainContext, type LogLevel } from "evlog";
+import { log } from "evlog";
 import {
   evlog as createEvlogHonoMiddleware,
   type EvlogHonoOptions,
@@ -7,8 +7,29 @@ import {
 import { type MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import { z } from "zod";
 
-const VALID_LEVELS = new Set<LogLevel>(["info", "error", "warn", "debug"]);
+const NormalizedLogLevelSchema = z.enum(["info", "error", "warn", "debug"]).catch("info");
+
+const ClientLogPayloadSchema = z.object({
+  event: z
+    .object({
+      environment: z.string(),
+      level: z.string(),
+      service: z.string(),
+      timestamp: z.string()
+    })
+    .catchall(z.json()),
+  request: z
+    .object({
+      method: z.string().optional(),
+      path: z.string().optional(),
+      requestId: z.string().optional()
+    })
+    .optional()
+});
+
+const ClientLogBatchSchema = z.array(ClientLogPayloadSchema);
 
 /**
  * Hono app variables added by `honoLoggerMiddleware()`.
@@ -27,6 +48,15 @@ type HonoLoggerMiddlewareOptions = EvlogHonoOptions;
 
 type HonoLogIngestionOptions = {
   maxPayloadBytes?: number;
+};
+
+type ClientLogPayload = z.infer<typeof ClientLogPayloadSchema>;
+
+type NormalizedEvent = Omit<ClientLogPayload["event"], "level" | "timestamp"> & {
+  clientTimestamp?: string;
+  method?: string;
+  path?: string;
+  requestId?: string;
 };
 
 /**
@@ -68,14 +98,13 @@ export function honoLogIngestionMiddleware(
       throw new HTTPException(413, { message: "Log payload is too large" });
     }
 
-    let body: unknown;
-    try {
-      body = await c.req.json();
-    } catch {
-      throw new HTTPException(400, { message: "Invalid JSON body" });
-    }
-
-    const batch = normalizeBatch(body);
+    const result = await c.req.json().then(
+      (body) => ClientLogBatchSchema.safeParse(body),
+      () => {
+        throw new HTTPException(400, { message: "Invalid JSON body" });
+      }
+    );
+    const batch = result.success ? result.data : [];
     for (const payload of batch) {
       emitClientLog(payload);
     }
@@ -84,33 +113,9 @@ export function honoLogIngestionMiddleware(
   });
 }
 
-function normalizeBatch(body: unknown): DrainContext[] {
-  if (!Array.isArray(body)) {
-    return [];
-  }
-
-  return body.filter(isDrainContext);
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
-
-function isDrainContext(value: unknown): value is DrainContext {
-  return isRecord(value) && isRecord(value.event);
-}
-
-function normalizeLevel(value: unknown): LogLevel {
-  if (typeof value !== "string" || !VALID_LEVELS.has(value as LogLevel)) {
-    return "info";
-  }
-
-  return value as LogLevel;
-}
-
-function emitClientLog(payload: DrainContext) {
+function emitClientLog(payload: ClientLogPayload) {
   const { level: _level, timestamp, ...event } = payload.event;
-  const normalizedEvent: Record<string, unknown> = {
+  const normalizedEvent: NormalizedEvent = {
     ...(timestamp !== undefined && event.clientTimestamp === undefined
       ? { clientTimestamp: timestamp }
       : {}),
@@ -134,7 +139,7 @@ function emitClientLog(payload: DrainContext) {
     source: "client"
   };
 
-  switch (normalizeLevel(payload.event.level)) {
+  switch (NormalizedLogLevelSchema.parse(payload.event.level)) {
     case "debug":
       log.debug(clientEvent);
       return;

@@ -219,6 +219,17 @@ export default defineConfig({
       "eslint/no-console": ["warn", { allow: ["debug"] }],
       "eslint/no-else-return": "error",
       "typescript/no-explicit-any": ["error", { fixToUnknown: true, ignoreRestArgs: true }],
+      "typescript/no-restricted-types": [
+        "error",
+        {
+          types: {
+            "Record<string, unknown>": {
+              message:
+                "Prefer the app's existing validation library at untrusted-data boundaries; if none exists, use Zod or another comparable validation library. Never use loose application types such as `Record<string, unknown>`, `object`, or `unknown` when a specific validated schema can be defined; derive the exact contract from the parsed data or library API."
+            }
+          }
+        }
+      ],
       "promise/no-new-statics": "error",
       "jsx-a11y/no-redundant-roles": "error",
       "import/no-relative-parent-imports": "error",

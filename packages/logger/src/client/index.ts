@@ -13,13 +13,14 @@ type ClientLoggerConfig = {
 };
 
 type LogMethod = typeof evlogLog.info;
+type LogEvent = Parameters<LogMethod>[0];
 
 const DEFAULT_CLIENT_LOGGER_CONFIG = {
   service: LOG_SERVICES.DEFAULT
 } satisfies ClientLoggerConfig;
 
 let isInitialized = false;
-let identityContext: Record<string, unknown> = {};
+let identityContext: LogEvent = {};
 
 const debugLogMethod = evlogLog.debug.bind(evlogLog) as LogMethod;
 const errorLogMethod = evlogLog.error.bind(evlogLog) as LogMethod;
@@ -114,7 +115,7 @@ export const log = {
  * setIdentity({ user: { id: user.id } });
  * ```
  */
-export function setIdentity(identity: Record<string, unknown>) {
+export function setIdentity(identity: LogEvent) {
   if (!isBrowserRuntime()) {
     return;
   }
@@ -141,7 +142,9 @@ export function clearIdentity() {
 }
 
 function withIdentity(method: LogMethod): LogMethod {
-  return ((tagOrEvent: unknown, message?: string) => {
+  function logWithIdentity(event: LogEvent): void;
+  function logWithIdentity(tag: string, message: string): void;
+  function logWithIdentity(tagOrEvent: LogEvent | string, message?: string) {
     if (!isBrowserRuntime()) {
       return;
     }
@@ -154,15 +157,19 @@ function withIdentity(method: LogMethod): LogMethod {
       return;
     }
 
-    if (message === undefined) {
-      method(tagOrEvent as never);
+    if (typeof tagOrEvent === "string") {
+      if (message !== undefined) {
+        method(tagOrEvent, message);
+      }
       return;
     }
 
-    method(tagOrEvent as never, message);
-  }) as LogMethod;
+    method(tagOrEvent);
+  }
+
+  return logWithIdentity;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+function isRecord(value: LogEvent | string): value is LogEvent {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }

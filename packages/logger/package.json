@@ -15,7 +15,8 @@
     "@tanstack/react-start": "catalog:",
     "defu": "catalog:",
     "evlog": "catalog:",
-    "hono": "catalog:"
+    "hono": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@tsu-stack/tsconfig": "workspace:*",
