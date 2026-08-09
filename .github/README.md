@@ -28,15 +28,17 @@
   <a href="http://tsu-stack-coolify.tsu.moe" target="_blank">Docker Compose (Coolify)</a><br>
   <a href="http://tsu-stack-merged.tsu.moe" target="_blank">Merged Web + Server with Dockerfile (Coolify)</a> | <a href="https://github.com/tsu-moe/tsu-stack/tree/variant/merged" target="_blank">see branch</a><br>
   <a href="https://tsu-stack.tsu-moe.workers.dev" target="_blank">Merged Web + Server (Cloudflare Workers)</a> | <a href="https://github.com/tsu-moe/tsu-stack/tree/variant/merged-cloudflare" target="_blank">see branch</a>
+  <a href="https://tsu-stack-d1.tsu-moe.workers.dev" target="_blank">Merged Web + Server (Cloudflare Workers + D1 SQLite Database)</a> | <a href="https://github.com/tsu-moe/tsu-stack/tree/variant/merged-cloudflare-d1" target="_blank">see branch</a>
 </p>
 
 ## Table of Contents
 
-- [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
-  - [Running with Docker Locally](#running-with-docker-locally)
+  - [Running PostgreSQL Variants with Docker Locally](#running-postgresql-variants-with-docker-locally)
+  - [Database Migrations](#database-migrations)
+- [Tech Stack](#tech-stack)
 - [Deployment](#deployment)
   - [Coolify](#coolify)
     - [Option 1: Separate Dockerfiles](#option-1-separate-dockerfiles)
@@ -57,23 +59,7 @@
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 
-## Tech Stack
-
-Here is a non-exhaustive list of the main technologies used in this project, along with their purposes and possible alternatives they replace:
-
-| Technology                                        | Purpose                                                                                                                                                                       | Replaces/Similar Alternatives                                                      |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| [**pnpm**](https://pnpm.io/)                      | Fast, disk-efficient package manager for Node.js with package catalogs for monorepo dependecy deduplication.                                                                  | npm, yarn                                                                          |
-| [**Vite Plus (Vite+)**](https://viteplus.dev/)    | Unified toolchain for development, testing, and building the monorepo.                                                                                                        | Turborepo, Nx, Vitest, Prettier, ESLint, husky, lint-staged, lefthook, tsdown, tsc |
-| [**TanStack Start**](https://tanstack.com/router) | Modern full-stack React framework with support for SPA, SSR, ISR, and integrated with TanStack Query. It uses Vite's Nitro adapter for cross-platform deployment portability. | Next.js, Remix, React Router                                                       |
-| [**Paraglide.js**](https://paraglide.dev/)        | Compiled internationalization (i18n) library for managing translations.                                                                                                       | i18next, next-intl                                                                 |
-| [**Hono**](https://hono.dev/)                     | Lightweight web server framework built on web standards and is WinterCG-compliant for cross-platform portability.                                                             | Express.js, Fastify, Elysia.js                                                     |
-| [**oRPC**](https://orpc.dev/)                     | RPC framework to define API routes and generate OpenAPI specs and documentation with [Scalar](https://scalar.com/).                                                           | tRPC                                                                               |
-| [**Drizzle ORM**](https://orm.drizzle.team/)      | Type-safe and lightweight ORM for database interactions.                                                                                                                      | Prisma, TypeORM                                                                    |
-| [**PostgreSQL**](https://www.postgresql.org/)     | Stable open-source relational database.                                                                                                                                       | MySQL, MariaDB                                                                     |
-| [**Better Auth**](https://better-auth.com/)       | Self-hosted authentication framework with support for all major OAuth providers.                                                                                              | Auth.js                                                                            |
-| [**Docker**](https://www.docker.com/)             | Containerization for local development and deployment.                                                                                                                        | Podman                                                                             |
-| [**shadcn/ui**](https://ui.shadcn.com/)           | Accessible and customizable React component library.                                                                                                                          | Chakra UI, Material UI, Mantine UI                                                 |
+## Getting Started
 
 ### Prerequisites
 
@@ -96,9 +82,6 @@ cd my-app
 vp run dev
 ```
 
-> [!TIP]
-> For repeatable automation, use `--yes` with prompt-equivalent flags. `--dry-run` prints the resolved source commit and replay command without writing files. See [`create-tsu-stack`](../tools/create-tsu-stack/README.md) for all options.
-
 ### Running PostgreSQL Variants with Docker Locally
 
 As an alternative to `vp run dev`, you can run the full stack inside Docker using the local compose file:
@@ -109,7 +92,7 @@ vp run docker:up
 vp run docker:up:build # OR: force a rebuild when you make changes to the code
 ```
 
-## Database Migrations
+### Database Migrations
 
 ```bash
 # for PostgreSQL-based variants
@@ -119,6 +102,24 @@ vp run db:migrate        # uses the database specified in packages/db/drizzle.co
 vp run db:migrate:local  # for the local miniflare D1 database
 vp run db:migrate:remote # for the remote/prod D1 database
 ```
+
+## Tech Stack
+
+Here is a non-exhaustive list of the main technologies used in this project, along with their purposes and possible alternatives they replace:
+
+| Technology                                        | Purpose                                                                                                                                                                       | Replaces/Similar Alternatives                                                      |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [**pnpm**](https://pnpm.io/)                      | Fast, disk-efficient package manager for Node.js with package catalogs for monorepo dependecy deduplication.                                                                  | npm, yarn                                                                          |
+| [**Vite Plus (Vite+)**](https://viteplus.dev/)    | Unified toolchain for development, testing, and building the monorepo.                                                                                                        | Turborepo, Nx, Vitest, Prettier, ESLint, husky, lint-staged, lefthook, tsdown, tsc |
+| [**TanStack Start**](https://tanstack.com/router) | Modern full-stack React framework with support for SPA, SSR, ISR, and integrated with TanStack Query. It uses Vite's Nitro adapter for cross-platform deployment portability. | Next.js, Remix, React Router                                                       |
+| [**Paraglide.js**](https://paraglide.dev/)        | Compiled internationalization (i18n) library for managing translations.                                                                                                       | i18next, next-intl                                                                 |
+| [**Hono**](https://hono.dev/)                     | Lightweight web server framework built on web standards and is WinterCG-compliant for cross-platform portability.                                                             | Express.js, Fastify, Elysia.js                                                     |
+| [**oRPC**](https://orpc.dev/)                     | RPC framework to define API routes and generate OpenAPI specs and documentation with [Scalar](https://scalar.com/).                                                           | tRPC                                                                               |
+| [**Drizzle ORM**](https://orm.drizzle.team/)      | Type-safe and lightweight ORM for database interactions.                                                                                                                      | Prisma, TypeORM                                                                    |
+| [**PostgreSQL**](https://www.postgresql.org/)     | Stable open-source relational database.                                                                                                                                       | MySQL, MariaDB                                                                     |
+| [**Better Auth**](https://better-auth.com/)       | Self-hosted authentication framework with support for all major OAuth providers.                                                                                              | Auth.js                                                                            |
+| [**Docker**](https://www.docker.com/)             | Containerization for local development and deployment.                                                                                                                        | Podman                                                                             |
+| [**shadcn/ui**](https://ui.shadcn.com/)           | Accessible and customizable React component library.                                                                                                                          | Chakra UI, Material UI, Mantine UI                                                 |
 
 ## Deployment
 
@@ -197,10 +198,10 @@ You will need to set up the _build environment variables_ and _variables and sec
 | --------------------------------------------------- | ---------------------------------------------------------- |
 | ![Build Settings](./assets/img/build-variables.png) | ![Secrets & Variables](./assets/img/runtime-variables.png) |
 
-> [!NOTE]
+> [!CAUTION]
 > There isn't an automatic way to do this with my current setup. So you'll need to link the repository first and trigger a failed build, _then_ set the variables and trigger another deployment for the changes to take effect.
 
-> [!CAUTION]
+> [!TIP]
 > You don't need `DATABASE_URL` if you opt-in to the `cloudflare-d1` variant and enable automatic Cloudflare D1 provisioning.
 
 ### Deploying to Other Platforms

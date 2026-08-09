@@ -30,11 +30,7 @@ export type LocalizedRedirect = <const TTo extends `/${string}`>(
   }
 ) => AnyRedirect;
 
-export const redirect: LocalizedRedirect = ((opts: {
-  to: string;
-  params?: Record<string, unknown>;
-  [key: string]: unknown;
-}): AnyRedirect => {
+export const redirect: LocalizedRedirect = (opts): AnyRedirect => {
   const locale = getLocale();
   const cleanTo = stripLocalePrefix(opts.to);
   const localizedTo = `/{-$locale}${cleanTo}`;
@@ -46,5 +42,5 @@ export const redirect: LocalizedRedirect = ((opts: {
       ...(typeof opts.params === "object" ? opts.params : {})
     },
     to: localizedTo
-  } as unknown as Parameters<typeof rawRedirect>[0]);
-}) as unknown as LocalizedRedirect;
+  } as Parameters<typeof rawRedirect>[0]);
+};

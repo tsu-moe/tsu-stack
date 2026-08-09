@@ -1,7 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
@@ -25,6 +24,8 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { Container } from "@/shared/ui/container";
 import { LogoIcon } from "@/shared/ui/logo";
 
+import { CreateAccountFormSchema, type CreateAccountCredentials } from "@/features/auth/types";
+
 import { appConfig } from "@/config/app.config";
 
 export function CreateAnAccountForm({
@@ -37,7 +38,7 @@ export function CreateAnAccountForm({
   const { isPending } = useAuth();
 
   const signUpMutation = useMutation({
-    mutationFn: async (values: { email: string; name: string; password: string }) => {
+    mutationFn: async (values: CreateAccountCredentials) => {
       const result = await authClient.signUp.email({
         email: values.email,
         name: values.name,
@@ -75,17 +76,7 @@ export function CreateAnAccountForm({
       signUpMutation.mutate({ email, name, password });
     },
     validators: {
-      onSubmit: z
-        .object({
-          confirmPassword: z.string(),
-          email: z.email(m.auth__invalid_email()),
-          name: z.string().min(2, m.auth__name_min_length()),
-          password: z.string().min(8, m.auth__password_min_length())
-        })
-        .refine((data) => data.password === data.confirmPassword, {
-          message: m.auth__passwords_no_match(),
-          path: ["confirmPassword"]
-        })
+      onSubmit: CreateAccountFormSchema
     }
   });
 
