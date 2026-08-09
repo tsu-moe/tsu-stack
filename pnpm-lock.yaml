@@ -684,6 +684,9 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.12.33
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
     devDependencies:
       '@tsu-stack/tsconfig':
         specifier: workspace:*

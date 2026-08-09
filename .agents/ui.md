@@ -24,6 +24,14 @@ This file is the source of truth for app UI composition, extraction decisions, a
 - Prefer composing `@tsu-stack/ui` primitives instead of duplicating styling across many leaf components.
 - Keep route files thin. Put UI composition in page, feature, widget, or shared components, not in route files.
 
+## FSD Types Segment
+
+- When an FSD slice owns schemas or shared contracts, add a `types/` segment with `types/index.ts` as the default starting point.
+- Keep the slice's Zod schemas and their inferred TypeScript types together in `types/index.ts` while the contract surface is small.
+- When the segment becomes complex, split it into descriptive files such as `sign-up/types/user.type.ts` and `sign-up/types/button-props.type.ts`, and keep `types/index.ts` as the segment's public barrel.
+- Keep types that are private to one component colocated with that component; a `types/` segment is for contracts shared within or exposed by the slice.
+- Follow [TypeScript conventions](./typescript.md) for validation-library usage, schema naming, and database `*.schema.ts` reservations.
+
 ## Extraction Rule
 
 - Extract a component to `packages/ui` when it is reusable, app-agnostic, and the shared package can own its styling and accessibility.

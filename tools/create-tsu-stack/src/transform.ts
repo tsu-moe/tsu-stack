@@ -6,6 +6,7 @@ import { pathExists, remove } from "fs-extra";
 import { d1DatabaseName } from "./cloudflare";
 import { GENERATED_CI_WORKFLOW } from "./generated-ci";
 import { SOURCE_REPOSITORY } from "./github";
+import { PackageJsonSchema } from "./package-json.type";
 import { type ProjectInput, type ResolvedTemplate } from "./types";
 import { VARIANTS } from "./variants";
 
@@ -98,11 +99,15 @@ export async function transformTemplate(
   }
 
   const packagePath = join(root, "package.json");
-  const packageJson = JSON.parse(await readFile(packagePath, "utf8")) as Record<string, unknown>;
-  packageJson.name = input.projectName;
-  if (packageJson.scripts && typeof packageJson.scripts === "object") {
-    delete (packageJson.scripts as Record<string, unknown>).release;
+  const packageJsonResult = PackageJsonSchema.safeParse(
+    JSON.parse(await readFile(packagePath, "utf8"))
+  );
+  if (!packageJsonResult.success) {
+    throw new Error("The generated template has an invalid package.json.");
   }
+  const packageJson = packageJsonResult.data;
+  packageJson.name = input.projectName;
+  delete packageJson.scripts?.release;
   await writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, "utf8");
 
   for (const dockerPath of [
