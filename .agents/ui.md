@@ -26,11 +26,9 @@ This file is the source of truth for app UI composition, extraction decisions, a
 
 ## FSD Types Segment
 
-- When an FSD slice owns schemas or shared contracts, add a `types/` segment with `types/index.ts` as the default starting point.
-- Keep the slice's Zod schemas and their inferred TypeScript types together in `types/index.ts` while the contract surface is small.
-- When the segment becomes complex, split it into descriptive files such as `sign-up/types/user.type.ts` and `sign-up/types/button-props.type.ts`, and keep `types/index.ts` as the segment's public barrel.
-- Keep types that are private to one component colocated with that component; a `types/` segment is for contracts shared within or exposed by the slice.
-- Follow [TypeScript conventions](./typescript.md) for validation-library usage, schema naming, and database `*.schema.ts` reservations.
+- Keep one-off schemas and types inline with their consumer.
+- Put reused slice contracts in `types/index.ts`; split into descriptive `*.type.ts` files only as complexity grows.
+- Keep ownership as narrow as possible and follow [TypeScript conventions](./typescript.md).
 
 ## Extraction Rule
 

@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
@@ -24,8 +25,6 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { Container } from "@/shared/ui/container";
 import { LogoIcon } from "@/shared/ui/logo";
 
-import { SignInFormSchema, type SignInFormValues } from "@/features/auth/types";
-
 import { appConfig } from "@/config/app.config";
 
 export function SignInForm({
@@ -38,7 +37,7 @@ export function SignInForm({
   const { isPending } = useAuth();
 
   const signInMutation = useMutation({
-    mutationFn: async (values: SignInFormValues) => {
+    mutationFn: async (values: { email: string; password: string }) => {
       const result = await authClient.signIn.email({
         email: values.email,
         password: values.password
@@ -72,7 +71,10 @@ export function SignInForm({
       signInMutation.mutate(value);
     },
     validators: {
-      onSubmit: SignInFormSchema
+      onSubmit: z.object({
+        email: z.email({ error: () => m.auth__invalid_email() }),
+        password: z.string().min(8, { error: () => m.auth__password_min_length() })
+      })
     }
   });
 

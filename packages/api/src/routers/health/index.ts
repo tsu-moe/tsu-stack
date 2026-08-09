@@ -7,6 +7,7 @@ import {
   HealthLiveOutputSchema,
   HealthReadyOutputSchema,
   type HealthCheckResult,
+  type HealthChecks,
   type HealthStatus
 } from "@tsu-stack/core/health";
 import { checkIsDbReady } from "@tsu-stack/db";
@@ -17,6 +18,8 @@ import { publicProcedure } from "#@/lib/procedures/factory";
 // #region Config
 
 const HEALTHCHECK_TIMEOUT_MS = 1_500;
+
+type ServiceCheckResult = { status: HealthStatus };
 
 // #region Utils
 
@@ -37,13 +40,12 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
   }
 }
 
-async function runCheck(check: () => Promise<object>): Promise<HealthCheckResult> {
+async function runCheck(check: () => Promise<ServiceCheckResult>): Promise<HealthCheckResult> {
   const startedAt = performance.now();
   try {
     const data = await withTimeout(check(), HEALTHCHECK_TIMEOUT_MS);
     const latencyMs = Math.round(performance.now() - startedAt);
-    const result = data as { status?: HealthStatus };
-    if (result.status === "unhealthy") return { ...data, latencyMs, status: "unhealthy" };
+    if (data.status === "unhealthy") return { ...data, latencyMs, status: "unhealthy" };
     return { ...data, latencyMs, status: "healthy" };
   } catch (error) {
     return {
@@ -65,7 +67,7 @@ function buildBaseHealth() {
 }
 
 // #region Service Checks
-async function checkDatabase() {
+async function checkDatabase(): Promise<ServiceCheckResult> {
   const isReady = await checkIsDbReady();
   return { status: isReady ? "healthy" : "unhealthy" };
 }
@@ -73,7 +75,7 @@ async function checkDatabase() {
 // TODO: Add future checks here with their corresponding functions, ex: { redis: checkRedis, ... }
 const serviceChecks = {
   database: checkDatabase
-} satisfies Record<string, () => Promise<object>>;
+};
 
 // #region Router
 
@@ -112,9 +114,11 @@ export const healthRouter = {
     .output(HealthReadyOutputSchema)
     .handler(async ({ errors }) => {
       const entries = await Promise.all(
-        Object.entries(serviceChecks).map(async ([name, check]) => [name, await runCheck(check)])
+        Object.entries(serviceChecks).map(
+          async ([name, check]) => [name, await runCheck(check)] as const
+        )
       );
-      const checks = Object.fromEntries(entries) as Record<string, HealthCheckResult>;
+      const checks: HealthChecks = Object.fromEntries(entries);
       const allHealthy = Object.values(checks).every((r) => r.status === "healthy");
 
       if (!allHealthy) {

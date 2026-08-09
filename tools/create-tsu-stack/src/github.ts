@@ -1,12 +1,10 @@
+import { z } from "zod";
+
 import { type ProjectInput, type ResolvedTemplate } from "./types";
 import { VARIANTS } from "./variants";
 
 const GITHUB_API = "https://api.github.com";
 export const SOURCE_REPOSITORY = "tsu-moe/tsu-stack";
-
-type GitHubCommitResponse = {
-  sha?: unknown;
-};
 
 export async function resolveTemplate(input: ProjectInput): Promise<ResolvedTemplate> {
   const definition = VARIANTS[input.variant];
@@ -33,14 +31,16 @@ export async function resolveTemplate(input: ProjectInput): Promise<ResolvedTemp
     );
   }
 
-  const body = (await response.json()) as GitHubCommitResponse;
-  if (typeof body.sha !== "string" || !/^[a-f0-9]{40}$/u.test(body.sha)) {
+  const bodyResult = z
+    .object({ sha: z.string().regex(/^[a-f0-9]{40}$/u) })
+    .safeParse(await response.json());
+  if (!bodyResult.success) {
     throw new Error(`GitHub returned an invalid commit for ${requestedRef}.`);
   }
 
   return {
     branch: definition.branch,
-    commit: body.sha,
+    commit: bodyResult.data.sha,
     requestedRef,
     variant: input.variant
   };

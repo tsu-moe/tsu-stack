@@ -10,7 +10,7 @@
 - Download into a temporary staging directory. Validate archive paths and reject links before extraction; move into the destination only after transformation succeeds.
 - Refuse non-empty destinations and preserve the generated directory after a post-generation command fails so the user can inspect and recover it.
 - Never require, log, or persist `GITHUB_TOKEN`. It is an optional API rate-limit aid only.
-- Keep external JSON and template manifest contracts in `*.type.ts` modules. Reserve `*.schema.ts` for database table schemas. Call validation schema methods directly in transformations; add a parser helper only when it also decodes, normalizes, recovers, composes multiple schemas, or maps validation failures to CLI-specific errors.
+- Parse external data at the command boundary. Keep one-off schemas inline; extract a colocated `*.type.ts` contract only for reuse. Add parser helpers only for decoding, normalization, recovery, composition, or CLI-specific error mapping.
 
 Run package-local validation from `tools/create-tsu-stack`:
 

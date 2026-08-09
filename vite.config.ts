@@ -225,7 +225,11 @@ export default defineConfig({
           types: {
             "Record<string, unknown>": {
               message:
-                "Prefer the app's existing validation library at untrusted-data boundaries; if none exists, use Zod or another comparable validation library. Never use loose application types such as `Record<string, unknown>`, `object`, or `unknown` when a specific validated schema can be defined; derive the exact contract from the parsed data or library API."
+                "Parse at the earliest, nearest I/O boundary into a specific domain type with the owner's existing validator (otherwise Zod). Keep one-off schemas inline; extract only for reuse."
+            },
+            object: {
+              message:
+                "Parse at the earliest, nearest I/O boundary into a specific domain type with the owner's existing validator (otherwise Zod). Keep one-off schemas inline; extract only for reuse."
             }
           }
         }
