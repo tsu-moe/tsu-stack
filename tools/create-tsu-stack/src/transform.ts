@@ -2,11 +2,11 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join, relative } from "node:path";
 
 import { pathExists, remove } from "fs-extra";
+import { z } from "zod";
 
 import { d1DatabaseName } from "./cloudflare";
 import { GENERATED_CI_WORKFLOW } from "./generated-ci";
 import { SOURCE_REPOSITORY } from "./github";
-import { PackageJsonSchema } from "./package-json.type";
 import { type ProjectInput, type ResolvedTemplate } from "./types";
 import { VARIANTS } from "./variants";
 
@@ -99,9 +99,13 @@ export async function transformTemplate(
   }
 
   const packagePath = join(root, "package.json");
-  const packageJsonResult = PackageJsonSchema.safeParse(
-    JSON.parse(await readFile(packagePath, "utf8"))
-  );
+  const packageJsonResult = z
+    .object({
+      name: z.string().optional(),
+      scripts: z.record(z.string(), z.string()).optional()
+    })
+    .catchall(z.json())
+    .safeParse(JSON.parse(await readFile(packagePath, "utf8")));
   if (!packageJsonResult.success) {
     throw new Error("The generated template has an invalid package.json.");
   }
