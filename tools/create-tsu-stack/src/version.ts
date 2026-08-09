@@ -1,11 +1,11 @@
 import { readFile } from "node:fs/promises";
 
-type PackageJson = {
-  version?: unknown;
-};
+import { z } from "zod";
 
 export async function getCliVersion(): Promise<string> {
   const packagePath = new URL("../package.json", import.meta.url);
-  const packageJson = JSON.parse(await readFile(packagePath, "utf8")) as PackageJson;
-  return typeof packageJson.version === "string" ? packageJson.version : "0.0.0";
+  const packageJsonResult = z
+    .object({ version: z.string().optional() })
+    .safeParse(JSON.parse(await readFile(packagePath, "utf8")));
+  return packageJsonResult.success ? (packageJsonResult.data.version ?? "0.0.0") : "0.0.0";
 }
