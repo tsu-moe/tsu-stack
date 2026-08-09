@@ -1,6 +1,8 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { createRequestLogger, type RequestLogger } from "evlog";
 
+type LogContext = Parameters<RequestLogger["set"]>[0];
+
 type RequestIdOptions = {
   limitLength?: number;
   headerName?: string;
@@ -19,7 +21,7 @@ type RequestContext = {
 };
 
 type LoggerMiddlewareOptions = {
-  context?: Record<string, unknown>;
+  context?: LogContext;
   requestIdOptions?: RequestIdOptions;
   excludePaths?: string[];
   excludeIps?: string[];
@@ -95,7 +97,7 @@ function matchesPathPattern(path: string, pattern: string) {
 
 async function withRequestLogging<T>(options: {
   context: RequestContext;
-  loggerContext?: Record<string, unknown>;
+  loggerContext?: LogContext;
   shouldSkip: boolean;
   execute: (logger: RequestLogger) => Promise<T>;
 }): Promise<T> {

@@ -3,21 +3,26 @@ import { join } from "node:path";
 
 import * as p from "@clack/prompts";
 
+import {
+  parseD1DatabaseList,
+  parseWranglerIdentity,
+  type CloudflareAccount,
+  type D1Database,
+  type WranglerIdentity
+} from "./cloudflare.type";
 import { type CommandRunner, type ProjectInput } from "./types";
+
+export {
+  parseD1DatabaseList,
+  parseWranglerIdentity,
+  type CloudflareAccount,
+  type D1Database,
+  type WranglerIdentity
+} from "./cloudflare.type";
 
 const D1_ID_PATTERN =
   /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/iu;
 const REMOTE_MIGRATION_ATTEMPTS = 3;
-
-export type CloudflareAccount = {
-  id: string;
-  name: string;
-};
-
-export type WranglerIdentity = {
-  accounts: CloudflareAccount[];
-  email?: string;
-};
 
 export type CloudflareAccountDecision =
   | { accountId: string; action: "use" }
@@ -27,11 +32,6 @@ export type CloudflareAccountDecision =
 export type CloudflareAccountPrompt = (
   identity: WranglerIdentity
 ) => Promise<CloudflareAccountDecision>;
-
-export type D1Database = {
-  id: string;
-  name: string;
-};
 
 export type ExistingD1Decision =
   | { action: "cancel" }
@@ -62,44 +62,6 @@ export function parseD1DatabaseId(output: string): string {
     throw new Error("Cloudflare created the D1 database, but its database ID could not be read.");
   }
   return databaseId;
-}
-
-export function parseD1DatabaseList(output: string): D1Database[] {
-  const value = JSON.parse(output) as unknown;
-  if (!Array.isArray(value)) {
-    throw new Error("Wrangler returned an invalid D1 database list.");
-  }
-  return value.flatMap((database) => {
-    if (!database || typeof database !== "object") return [];
-    const candidate = database as Record<string, unknown>;
-    const id = typeof candidate.uuid === "string" ? candidate.uuid : candidate.id;
-    if (typeof id !== "string" || typeof candidate.name !== "string") return [];
-    return [{ id, name: candidate.name }];
-  });
-}
-
-export function parseWranglerIdentity(output: string): WranglerIdentity {
-  const value = JSON.parse(output) as unknown;
-  if (!value || typeof value !== "object") {
-    throw new Error("Wrangler returned an invalid account response.");
-  }
-  const record = value as Record<string, unknown>;
-  if (record.loggedIn !== true || !Array.isArray(record.accounts)) {
-    throw new Error("Wrangler is not authenticated with a Cloudflare account.");
-  }
-  const accounts = record.accounts.flatMap((account) => {
-    if (!account || typeof account !== "object") return [];
-    const candidate = account as Record<string, unknown>;
-    if (typeof candidate.id !== "string" || typeof candidate.name !== "string") return [];
-    return [{ id: candidate.id, name: candidate.name }];
-  });
-  if (accounts.length === 0) {
-    throw new Error("The Wrangler login has no available Cloudflare accounts.");
-  }
-  return {
-    accounts,
-    ...(typeof record.email === "string" ? { email: record.email } : {})
-  };
 }
 
 function unwrapDecision(decision: CloudflareAccountDecision | symbol): CloudflareAccountDecision {
