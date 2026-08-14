@@ -8,6 +8,7 @@
     "dev": "pnpm dotenvx run -f ../../packages/env/.env -- vp dev",
     "preview": "pnpm dotenvx run -f ../../packages/env/.env -- vp preview",
     "start": "pnpm dotenvx run -f ../../packages/env/.env -- node .output/server/index.mjs",
+    "test:e2e": "vp exec playwright test",
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "@babel/core": "catalog:",
     "@dotenvx/dotenvx": "catalog:",
     "@mdx-js/rollup": "catalog:",
+    "@playwright/test": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/devtools-a11y": "catalog:",

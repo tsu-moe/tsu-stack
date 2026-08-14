@@ -9,6 +9,9 @@
       "default": "./src/*.ts"
     }
   },
+  "scripts": {
+    "test:unit": "vp test"
+  },
   "dependencies": {
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
@@ -25,6 +28,8 @@
     "@tsu-stack/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "hono": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
   }
 }
