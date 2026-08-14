@@ -33,6 +33,16 @@ const TEXT_EXTENSIONS = new Set([
 
 const TEXT_FILENAMES = new Set([".dockerignore", ".gitignore", ".npmrc", "Dockerfile", "LICENSE"]);
 
+const PACKAGE_DEPENDENCY_FIELDS = [
+  "dependencies",
+  "devDependencies",
+  "optionalDependencies",
+  "peerDependencies"
+] as const;
+
+const PACKAGE_MANIFEST_SCHEMA = z.record(z.string(), z.json());
+const PACKAGE_DEPENDENCIES_SCHEMA = z.record(z.string(), z.string());
+
 async function listFiles(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const files: string[] = [];
@@ -57,6 +67,33 @@ async function replaceInFile(path: string, replacer: (content: string) => string
   const content = await readFile(path, "utf8");
   const next = replacer(content);
   if (next !== content) await writeFile(path, next, "utf8");
+}
+
+async function normalizePackageManifests(root: string): Promise<void> {
+  const packagePaths = (await listFiles(root)).filter((path) => path.endsWith("package.json"));
+  for (const path of packagePaths) {
+    const packageJsonResult = PACKAGE_MANIFEST_SCHEMA.safeParse(
+      JSON.parse(await readFile(path, "utf8"))
+    );
+    if (!packageJsonResult.success) {
+      throw new Error(`The generated template has an invalid package manifest: ${path}`);
+    }
+    const packageJson = packageJsonResult.data;
+    for (const field of PACKAGE_DEPENDENCY_FIELDS) {
+      const dependenciesResult = PACKAGE_DEPENDENCIES_SCHEMA.safeParse(packageJson[field]);
+      if (!dependenciesResult.success) continue;
+      const sortedDependencies: [string, string][] = [];
+      for (const entry of Object.entries(dependenciesResult.data)) {
+        const insertionIndex = sortedDependencies.findIndex(
+          ([name]) => entry[0].localeCompare(name) < 0
+        );
+        if (insertionIndex === -1) sortedDependencies.push(entry);
+        else sortedDependencies.splice(insertionIndex, 0, entry);
+      }
+      packageJson[field] = Object.fromEntries(sortedDependencies);
+    }
+    await writeFile(path, `${JSON.stringify(packageJson, null, 2)}\n`, "utf8");
+  }
 }
 
 export function buildReproducibleCommand(input: ProjectInput, template: ResolvedTemplate): string {
@@ -99,20 +136,30 @@ export async function transformTemplate(
   }
 
   const packagePath = join(root, "package.json");
-  const packageJsonResult = z
+  const packageJsonResult = PACKAGE_MANIFEST_SCHEMA.safeParse(
+    JSON.parse(await readFile(packagePath, "utf8"))
+  );
+  if (!packageJsonResult.success) {
+    throw new Error("The generated template has an invalid package.json.");
+  }
+  const packageJson = packageJsonResult.data;
+  const rootPackageJsonResult = z
     .object({
       name: z.string().optional(),
       scripts: z.record(z.string(), z.string()).optional()
     })
     .catchall(z.json())
-    .safeParse(JSON.parse(await readFile(packagePath, "utf8")));
-  if (!packageJsonResult.success) {
+    .safeParse(packageJson);
+  if (!rootPackageJsonResult.success) {
     throw new Error("The generated template has an invalid package.json.");
   }
-  const packageJson = packageJsonResult.data;
   packageJson.name = input.projectName;
-  delete packageJson.scripts?.release;
+  const scripts = rootPackageJsonResult.data.scripts;
+  delete scripts?.release;
+  if (scripts) packageJson.scripts = scripts;
   await writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, "utf8");
+
+  await normalizePackageManifests(root);
 
   for (const dockerPath of [
     "docker-compose.yaml",
