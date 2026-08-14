@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, variant/merged, variant/merged-cloudflare, variant/merged-cloudflare-d1]
   pull_request:
-    branches: [main]
+    branches: [main, variant/merged, variant/merged-cloudflare, variant/merged-cloudflare-d1]
 
 permissions:
   contents: read
@@ -20,9 +20,16 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Prepare environment
+        shell: bash
+        run: cp packages/env/.env.example packages/env/.env
       - run: pnpm exec vp run check
       - run: pnpm exec vp run --filter create-tsu-stack check
-      - run: pnpm exec vp run --filter create-tsu-stack test:unit
+      - run: pnpm exec vp run test:unit:run
+      - name: Install Chromium
+        working-directory: apps/web
+        run: pnpm exec vp exec playwright install --with-deps chromium
+      - run: pnpm exec vp run test:e2e:run
       - run: pnpm exec vp run --filter create-tsu-stack pack:check
       - name: Verify dry run is mutation-free
         env:
@@ -34,6 +41,9 @@ jobs:
           test ! -e "$TARGET"
 
   scaffold:
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main')
     strategy:
       fail-fast: false
       matrix:
@@ -75,9 +85,18 @@ jobs:
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/tools/create-tsu-stack"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/cli.md"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/pnpm-lock.yaml"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/vite.config.ts"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/src/routers/private/__tests__/index.test.ts"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/playwright.config.ts"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/__e2e__/home.spec.ts"
           node -e "const scripts = require(process.argv[1]).scripts; if (!scripts.dev.startsWith('vp run i18n:ensure && ')) process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/package.json"
+          node -e "const scripts = require(process.argv[1]).scripts; if (scripts['test:unit'] !== 'vp test') process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/package.json"
+          node -e "const scripts = require(process.argv[1]).scripts; if (scripts['test:e2e'] !== 'vp exec playwright test') process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/package.json"
 
   generated-build:
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
@@ -95,12 +114,15 @@ jobs:
           node tools/create-tsu-stack/.output/index.mjs
           "$RUNNER_TEMP/generated-tsu-stack" --yes --variant separate
           --no-install --no-git --setup none
-      - name: Install and build generated project
+      - name: Install and validate generated project
         working-directory: ${{ runner.temp }}/generated-tsu-stack
         run: |
           cp packages/env/.env.example packages/env/.env
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" install
           test ! -e packages/i18n/src/paraglide/runtime.js
-          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run i18n:ensure
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run check
           test -f packages/i18n/src/paraglide/runtime.js
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run test:unit:run
+          (cd apps/web && "$GITHUB_WORKSPACE/node_modules/.bin/vp" exec playwright install --with-deps chromium)
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run test:e2e:run
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" run build
