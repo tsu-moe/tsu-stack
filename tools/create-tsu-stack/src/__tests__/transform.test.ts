@@ -41,7 +41,7 @@ async function fixture(): Promise<string> {
       '{\n  // Worker identity\n  "name": "tsu-stack",\n  "d1_databases": [{ "binding": "DB", "database_name": "tsu-stack-db", "database_id": "00000000-0000-0000-0000-000000000000" }]\n}\n',
     "docker-compose.yaml": "name: tsu-stack\nvolumes:\n  tsu-stack-data:\n",
     "package.json":
-      '{"name":"tsu-stack","scripts":{"release":"node tools/create-tsu-stack/scripts/release.mjs"},"dependencies":{"@tsu-stack/core":"workspace:*"}}',
+      '{"name":"tsu-stack","private":true,"type":"module","scripts":{"release":"node tools/create-tsu-stack/scripts/release.mjs"},"dependencies":{"@react/example":"1.0.0","@tsu-stack/core":"workspace:*"}}',
     "packages/env/.env.example":
       'DATABASE_URL="postgres://postgres:postgres@localhost:5432/tsu-stack"\nVITE_SERVER_URL="http://localhost:5000/server"\n',
     "packages/i18n/messages/de.json": '{"name":"tsu-stack"}',
@@ -66,16 +66,39 @@ describe("template identity transformation", () => {
     expect(await pathExists(join(root, ".agents/cli.md"))).toBe(false);
     expect(await pathExists(join(root, ".github/workflows/release.yml"))).toBe(false);
     expect(await pathExists(join(root, "pnpm-lock.yaml"))).toBe(false);
-    expect(await readFile(join(root, "package.json"), "utf8").then(JSON.parse)).toMatchObject({
+    const packageJsonContent = await readFile(join(root, "package.json"), "utf8");
+    const packageJson = JSON.parse(packageJsonContent);
+    expect(packageJson).toMatchObject({
       name: "moon-garden",
       dependencies: { "@moon-garden/core": "workspace:*" }
     });
-    expect(await readFile(join(root, "package.json"), "utf8").then(JSON.parse)).not.toHaveProperty(
-      "scripts.release"
-    );
+    expect(packageJson).not.toHaveProperty("scripts.release");
+    expect(Object.keys(packageJson)).toEqual([
+      "name",
+      "private",
+      "type",
+      "scripts",
+      "dependencies"
+    ]);
+    expect(Object.keys(packageJson.dependencies)).toEqual(["@moon-garden/core", "@react/example"]);
     const generatedCi = await readFile(join(root, ".github/workflows/ci.yml"), "utf8");
-    expect(generatedCi).toContain("pnpm exec vp run check");
-    expect(generatedCi).toContain("pnpm exec vp run build");
+    const generatedCiSteps = [
+      "pnpm exec vp run check",
+      "pnpm exec vp run test:unit:run",
+      "pnpm exec vp exec playwright install --with-deps chromium",
+      "pnpm exec vp run test:e2e:run",
+      "pnpm exec vp run build"
+    ];
+    const generatedCiStepIndexes = generatedCiSteps.map((step) => generatedCi.indexOf(step));
+    expect(generatedCiStepIndexes).not.toContain(-1);
+    const generatedCiStepsAreOrdered = generatedCiStepIndexes
+      .slice(1)
+      .every(
+        (stepIndex, index) =>
+          stepIndex > (generatedCiStepIndexes[index] ?? Number.POSITIVE_INFINITY)
+      );
+    expect(generatedCiStepsAreOrdered).toBe(true);
+    expect(generatedCi).toContain("working-directory: apps/web");
     expect(generatedCi).not.toContain("create-tsu-stack");
     expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain(
       '"name": "moon-garden"'
