@@ -30,6 +30,7 @@ catalog:
   "@orpc/server": 1.15.0
   "@orpc/tanstack-query": 1.15.0
   "@orpc/zod": 1.15.0
+  "@playwright/test": 1.62.1
   "@paper-design/shaders-react": 0.0.80
   "@rolldown/plugin-babel": 0.2.3
   "@t3-oss/env-core": 0.13.11
