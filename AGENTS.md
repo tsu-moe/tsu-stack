@@ -29,6 +29,7 @@ Use the smallest relevant doc set below. Open the most specific file first, then
 
 - UI work: [UI guidelines](.agents/ui.md). Add [TanStack patterns](.agents/tanstack-patterns.md) for routes/loaders/page composition, and [Zustand state management](.agents/zustand.md) for shared client-owned state.
 - Shared client state: [Zustand state management](.agents/zustand.md).
+- Tests or test requests: [Testing](.agents/testing.md), plus the owning domain guide. Add [oRPC testing](.agents/orpc-testing.md) for procedures or oRPC-backed client behavior.
 - Bugfix: start with the owning domain doc, then [Workflow](.agents/workflow.md). Add [Testing](.agents/testing.md) for regression coverage and [Core package patterns](.agents/core.md) when shared contracts change.
 - Uploads or object storage: [Media storage and uploads](.agents/media-storage.md), plus [Core](.agents/core.md), [oRPC](.agents/orpc.md), and [Environment variables](.agents/environment-variables.md) as needed.
 - End-to-end feature: [End-to-end feature workflow](.agents/end-to-end-features.md), then the domain docs it links.
@@ -38,6 +39,7 @@ Use the smallest relevant doc set below. Open the most specific file first, then
 - [TanStack patterns](.agents/tanstack-patterns.md): route structure, `beforeLoad`, layouts, route-level preloading, TanStack docs lookup.
 - [API fetching patterns](.agents/api-fetching-patterns.md): slice-local TanStack Query and oRPC client wrappers in `apps/web`.
 - [oRPC patterns](.agents/orpc.md): server procedures, router shape, typed errors, request-scoped handler logging.
+- [oRPC testing](.agents/orpc-testing.md): direct procedure calls, typed error assertions, context fixtures, and transport-test boundaries.
 - [Auth patterns](.agents/auth.md): Better Auth architecture, auth query behavior, protected/guest route rules.
 - [i18n guidelines](.agents/i18n.md): copy keys, locale file policy, Paraglide codegen.
 - [SEO patterns](.agents/seo.md): route `head()` usage and `@tsu-stack/seo`.
