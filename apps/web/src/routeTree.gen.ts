@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
+import { Route as ServerSplatRouteImport } from './routes/server/$'
 import { Route as Char123LocaleChar125centeredLayoutRouteRouteImport } from './routes/{-$locale}/(centered-layout)/route'
 import { Route as Char123LocaleChar125rootLayoutRouteRouteImport } from './routes/{-$locale}/(root-layout)/route'
 import { Route as ApiHealthLiveRouteImport } from './routes/[_]api/health/live'
@@ -42,6 +43,11 @@ const Char123LocaleChar125RouteRoute =
     path: '/{-$locale}',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ServerSplatRoute = ServerSplatRouteImport.update({
+  id: '/server/$',
+  path: '/server/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char123LocaleChar125centeredLayoutRouteRoute =
   Char123LocaleChar125centeredLayoutRouteRouteImport.update({
     id: '/(centered-layout)',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125rootLayoutauthRouteRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/server/$': typeof ServerSplatRoute
   '/_api/health/live': typeof ApiHealthLiveRoute
   '/{-$locale}/': typeof Char123LocaleChar125rootLayoutIndexRoute
   '/{-$locale}/error/': typeof Char123LocaleChar125rootLayoutErrorIndexRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/{-$locale}': typeof Char123LocaleChar125rootLayoutIndexRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/server/$': typeof ServerSplatRoute
   '/_api/health/live': typeof ApiHealthLiveRoute
   '/{-$locale}/error': typeof Char123LocaleChar125rootLayoutErrorIndexRoute
   '/{-$locale}/playground': typeof Char123LocaleChar125rootLayoutPlaygroundIndexRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/(centered-layout)': typeof Char123LocaleChar125centeredLayoutRouteRouteWithChildren
   '/{-$locale}/(root-layout)': typeof Char123LocaleChar125rootLayoutRouteRouteWithChildren
+  '/server/$': typeof ServerSplatRoute
   '/{-$locale}/(centered-layout)/(guest)': typeof Char123LocaleChar125centeredLayoutguestRouteRouteWithChildren
   '/{-$locale}/(root-layout)/(auth)': typeof Char123LocaleChar125rootLayoutauthRouteRouteWithChildren
   '/_api/health/live': typeof ApiHealthLiveRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/server/$'
     | '/_api/health/live'
     | '/{-$locale}/'
     | '/{-$locale}/error/'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/server/$'
     | '/_api/health/live'
     | '/{-$locale}/error'
     | '/{-$locale}/playground'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/{-$locale}/(centered-layout)'
     | '/{-$locale}/(root-layout)'
+    | '/server/$'
     | '/{-$locale}/(centered-layout)/(guest)'
     | '/{-$locale}/(root-layout)/(auth)'
     | '/_api/health/live'
@@ -216,6 +228,7 @@ export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ServerSplatRoute: typeof ServerSplatRoute
   ApiHealthLiveRoute: typeof ApiHealthLiveRoute
 }
 
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/{-$locale}'
       fullPath: '/{-$locale}'
       preLoaderRoute: typeof Char123LocaleChar125RouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/server/$': {
+      id: '/server/$'
+      path: '/server/$'
+      fullPath: '/server/$'
+      preLoaderRoute: typeof ServerSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}/(centered-layout)': {
@@ -436,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ServerSplatRoute: ServerSplatRoute,
   ApiHealthLiveRoute: ApiHealthLiveRoute,
 }
 export const routeTree = rootRouteImport
