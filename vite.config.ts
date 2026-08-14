@@ -14,7 +14,7 @@ export default defineConfig({
 
   // Vitest - https://vitest.dev/config
   test: {
-    include: ["**/*.test.ts"]
+    include: ["{apps,packages,tools}/*/src/**/__tests__/*.test.ts"]
   },
 
   // Oxfmt - https://oxc.rs/docs/guide/usage/formatter/config.html

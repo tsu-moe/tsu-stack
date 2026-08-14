@@ -2,6 +2,6 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   test: {
-    include: ["**/__tests__/**/*.test.ts"]
+    include: ["src/**/__tests__/*.test.ts"]
   }
 });
