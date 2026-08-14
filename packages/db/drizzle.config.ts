@@ -14,6 +14,5 @@ export default {
   out: "./migrations",
   schema: "./src/schema/index.ts",
 
-  strict: true,
   verbose: true
 } satisfies Config;

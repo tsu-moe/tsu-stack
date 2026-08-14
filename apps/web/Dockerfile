@@ -1,4 +1,4 @@
-FROM ghcr.io/voidzero-dev/vite-plus:0.2.5 AS installer
+FROM ghcr.io/voidzero-dev/vite-plus:0.2.8 AS installer
 
 WORKDIR /app
 
