@@ -27,5 +27,10 @@ export const GENERATED_CI_WORKFLOW =
     "        shell: bash",
     "        run: cp packages/env/.env.example packages/env/.env",
     "      - run: pnpm exec vp run check",
+    "      - run: pnpm exec vp run test:unit:run",
+    "      - name: Install Chromium",
+    "        working-directory: apps/web",
+    "        run: pnpm exec vp exec playwright install --with-deps chromium",
+    "      - run: pnpm exec vp run test:e2e:run",
     "      - run: pnpm exec vp run build"
   ].join("\n") + "\n";

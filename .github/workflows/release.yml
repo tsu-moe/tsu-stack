@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: 24
       - run: pnpm install --frozen-lockfile
+      - name: Prepare environment
+        shell: bash
+        run: cp packages/env/.env.example packages/env/.env
       - name: Verify release commit and tag
         id: release
         shell: bash
@@ -51,7 +54,7 @@ jobs:
           echo "package_version=$VERSION" >> "$GITHUB_OUTPUT"
       - run: pnpm exec vp run check
       - run: pnpm exec vp run --filter create-tsu-stack check
-      - run: pnpm exec vp run --filter create-tsu-stack test:unit
+      - run: pnpm exec vp run test:unit:run
       - run: pnpm exec vp run --filter create-tsu-stack pack:check
 
   publish:
