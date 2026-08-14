@@ -7,6 +7,7 @@ Use this when adding or refactoring TanStack Query code in `apps/web` slices.
 - Keep route files thin.
 - Keep `orpc` and TanStack Query wiring inside slice-local `api/` modules.
 - Keep page and feature components consuming hooks, not raw `useQuery(orpc...)` or `useMutation(orpc...)` calls.
+- Test wrappers only when they add repository-owned behavior; follow [oRPC testing](./orpc-testing.md) for the boundary between procedure, client-wrapper, transport, and browser tests.
 
 ## File Naming
 
@@ -142,3 +143,10 @@ await queryClient.invalidateQueries({
 - Non-`get` query files keep the same verb in the hook name.
 - Mutation hooks use `use<CreateVerb><Entity>Mutation`.
 - Query option factories should read naturally from the operation name: `getProfileQueryOptions`, `searchProfilesQueryOptions`, `getArticlesQueryOptions`.
+
+## Testing
+
+- Test query keys, invalidation, option defaults, or typed error mapping when the wrapper owns that behavior.
+- Do not test a wrapper that only passes oRPC options through unchanged.
+- Test server validation, authorization, handler output, and defined errors with direct procedure calls instead of through React hooks.
+- Add transport or browser coverage only when that boundary is itself part of the behavior. Follow [oRPC testing](./orpc-testing.md) and [Testing policy](./testing.md).
