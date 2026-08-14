@@ -6,6 +6,7 @@ This guide is intentionally repo-specific. It documents the current preferred wa
 
 - [Logging patterns](./logging.md)
 - [API fetching patterns](./api-fetching-patterns.md)
+- [oRPC testing](./orpc-testing.md)
 
 ## Goals
 
@@ -213,3 +214,4 @@ export type EditProfileMutationResult = Awaited<ReturnType<typeof client.profile
 - Prefer sparse, request-scoped wide events over ad hoc per-step logs.
 - Prefer shared error handling over log-and-rethrow patterns in handlers.
 - Prefer [API fetching patterns](./api-fetching-patterns.md) for slice-local query and mutation wrappers, preloading, and cache invalidation.
+- Follow [oRPC testing](./orpc-testing.md) for direct procedure calls, context fixtures, typed error assertions, and transport-test boundaries.

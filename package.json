@@ -49,5 +49,11 @@
       "@commitlint/config-conventional"
     ]
   },
-  "packageManager": "pnpm@11.21.0"
+  "packageManager": "pnpm@11.21.0",
+  "intent": {
+    "skills": [
+      "@tanstack/*",
+      "drizzle-kit"
+    ]
+  }
 }
