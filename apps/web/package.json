@@ -10,6 +10,8 @@
     "db:migrate:local": "vp exec wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "vp exec wrangler d1 migrations apply DB --remote",
     "deploy": "vp run db:migrate:remote && pnpm dotenvx run -f ../../packages/env/.env -- vp exec wrangler deploy",
+    "preview": "pnpm dotenvx run -f ../../packages/env/.env -- vp preview",
+    "start": "pnpm dotenvx run -f ../../packages/env/.env -- node .output/server/index.mjs",
     "test:e2e": "vp exec playwright test",
     "ui": "vpx shadcn@latest"
   },
