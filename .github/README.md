@@ -4,7 +4,7 @@
 </h1>
 
 <p align="center">
-   <img src="https://img.shields.io/badge/NodeJS-25.8.2-green" alt="NodeJS version badge">
+   <img src="https://img.shields.io/badge/NodeJS-26.7.0-green" alt="NodeJS version badge">
    <img src="https://img.shields.io/github/license/tsu-moe/tsu-stack" alt="License badge">
    <img src="https://img.shields.io/github/last-commit/tsu-moe/tsu-stack" alt="Last commit badge">
    <img src="https://img.shields.io/github/stars/tsu-moe/tsu-stack?style=flat" alt="GitHub stars badge">
@@ -62,7 +62,7 @@
 
 ### Prerequisites
 
-- **Node.js** ≥ 25
+- **Node.js** ≥ 26
   - install via [Node.js official website](https://nodejs.org/) or [nvm](https://github.com/nvm-sh/nvm)
 - **Vite Plus (vp)**
   - install via `curl -fsSL https://vite.plus | bash` (macOS/Linux) or `irm https://vite.plus/ps1 | iex` (Windows)
