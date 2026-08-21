@@ -7,6 +7,8 @@
     "check:fix": "vp check --fix",
     "dev": "pnpm dotenvx run -f ../../packages/env/.env -- vp dev",
     "deploy": "pnpm dotenvx run -f ../../packages/env/.env -- pnpm wrangler deploy",
+    "preview": "pnpm dotenvx run -f ../../packages/env/.env -- vp preview",
+    "start": "pnpm dotenvx run -f ../../packages/env/.env -- node .output/server/index.mjs",
     "test:e2e": "vp exec playwright test",
     "ui": "vpx shadcn@latest"
   },
