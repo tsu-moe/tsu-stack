@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vite-plus/test";
+import * as p from "@clack/prompts";
+import { describe, expect, it, vi } from "vite-plus/test";
 
 import {
   applyRemoteD1Migrations,
@@ -53,6 +54,7 @@ describe("Wrangler identity", () => {
   });
 
   it("retries remote migrations through app-local Wrangler", async () => {
+    const warn = vi.spyOn(p.log, "warn").mockImplementation(() => {});
     const calls: Array<{ args: string[]; cwd: string }> = [];
     let attempts = 0;
     const runner: CommandRunner = {
@@ -69,7 +71,11 @@ describe("Wrangler identity", () => {
       }
     };
 
-    await applyRemoteD1Migrations("project/apps/web", runner, async () => {});
+    try {
+      await applyRemoteD1Migrations("project/apps/web", runner, async () => {});
+    } finally {
+      warn.mockRestore();
+    }
 
     expect(calls).toHaveLength(3);
     expect(calls[0]).toEqual({
