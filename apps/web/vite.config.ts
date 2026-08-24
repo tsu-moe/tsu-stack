@@ -129,6 +129,8 @@ export default defineConfig({
     /** @see {@link https://tanstack.com/start/latest/docs/framework/react/guide/hosting} */
     nitro({
       baseURL: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname,
+      // FIXME: Remove this when Nitro/Rolldown preserves initialization order across server chunks, see https://github.com/rolldown/rolldown/issues/10747
+      inlineDynamicImports: true,
       /**
        * We need to add this or else we will get `Error: Cannot find module 'react'` during prod.
        * FIXME: I haven't found a fix or related issue yet, but this is where I got the idea to trace the deps:
