@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { noop, useQuery } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 
@@ -27,10 +27,11 @@ function isGuestRoute(pathname: string): boolean {
 
 export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
   beforeLoad: async ({ context, location }) => {
-    const user = await context.queryClient.ensureQueryData({
+    const user = await context.queryClient.query({
       ...getAuthUserQueryOptions(),
-      revalidateIfStale: true
+      staleTime: "static"
     });
+    void context.queryClient.query(getAuthUserQueryOptions()).catch(noop);
 
     if (!user) {
       const currentHref = stripLocalePrefix(location.href);

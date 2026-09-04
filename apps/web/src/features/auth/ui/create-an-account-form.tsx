@@ -96,6 +96,7 @@ export function CreateAnAccountForm({
   return (
     <Container className={cn("flex max-w-md flex-col gap-6", className)} {...props}>
       <form
+        aria-busy={signUpMutation.isPending}
         onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -124,8 +125,10 @@ export function CreateAnAccountForm({
                 <Input
                   id={field.name}
                   name={field.name}
+                  autoComplete="name"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  readOnly={signUpMutation.isPending}
                   value={field.state.value}
                   placeholder={m.auth__name_placeholder()}
                 />
@@ -145,8 +148,10 @@ export function CreateAnAccountForm({
                 <Input
                   id={field.name}
                   name={field.name}
+                  autoComplete="email"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  readOnly={signUpMutation.isPending}
                   type="email"
                   value={field.state.value}
                   placeholder={m.auth__email_placeholder()}
@@ -167,8 +172,10 @@ export function CreateAnAccountForm({
                 <Input
                   id={field.name}
                   name={field.name}
+                  autoComplete="new-password"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  readOnly={signUpMutation.isPending}
                   type="password"
                   value={field.state.value}
                 />
@@ -188,8 +195,10 @@ export function CreateAnAccountForm({
                 <Input
                   id={field.name}
                   name={field.name}
+                  autoComplete="new-password"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  readOnly={signUpMutation.isPending}
                   type="password"
                   value={field.state.value}
                 />

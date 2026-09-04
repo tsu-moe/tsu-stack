@@ -8,7 +8,7 @@ import instrumentSerifLatin400 from "@fontsource/instrument-serif/files/instrume
 import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
-import { type QueryClient } from "@tanstack/react-query";
+import { noop, type QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -42,7 +42,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     // Don't prefetch during preload to prevent spamming the server with getSession requests
     if (!preload) {
       // Prefetch (don't await) the user data on app load to have it ready for any route that needs it, and to set the auth state early
-      void context.queryClient.prefetchQuery(getAuthUserQueryOptions());
+      void context.queryClient.query(getAuthUserQueryOptions()).catch(noop);
     }
   },
   head: () => {
