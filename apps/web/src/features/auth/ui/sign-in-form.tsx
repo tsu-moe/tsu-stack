@@ -85,6 +85,7 @@ export function SignInForm({
   return (
     <Container className={cn("flex max-w-md flex-col gap-6", className)} {...props}>
       <form
+        aria-busy={signInMutation.isPending}
         onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -113,8 +114,10 @@ export function SignInForm({
                 <Input
                   id={field.name}
                   name={field.name}
+                  autoComplete="email"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  readOnly={signInMutation.isPending}
                   type="email"
                   value={field.state.value}
                   placeholder={m.auth__email_placeholder()}
@@ -135,8 +138,10 @@ export function SignInForm({
                 <Input
                   id={field.name}
                   name={field.name}
+                  autoComplete="current-password"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  readOnly={signInMutation.isPending}
                   type="password"
                   value={field.state.value}
                 />

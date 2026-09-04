@@ -13,13 +13,12 @@
     "@types/node",
     "@dotenvx/dotenvx",
     // Required for React Compiler, https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler
-    "babel-plugin-react-compiler",
+    "oxc-transform-react",
     // Linting packages that are not directly imported, but used
     "@tanstack/eslint-plugin-query",
     "@tanstack/eslint-plugin-router",
     "eslint-plugin-fsd-lint",
     "eslint-plugin-react-hooks",
-    "nitro-nightly",
     "vite-plus"
   ],
   "ignoreExports": [{ "file": "**/*.mdx", "exports": ["*"] }],
