@@ -10,13 +10,14 @@
     "./schema": "./src/schema/index.ts"
   },
   "scripts": {
-    "db": "drizzle-kit",
-    "auth:generate": "vp run -w auth:generate"
+    "db": "pnpm dotenvx run -f ../env/.env -- drizzle-kit",
+    "auth:generate": "pnpm dotenvx run -f ../env/.env -- vpx auth@latest generate --config ../auth/src/generate.ts -y --output ./src/schema/auth.schema.ts"
   },
   "dependencies": {
     "drizzle-orm": "catalog:"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "catalog:",
     "@tsu-stack/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "drizzle-kit": "catalog:",

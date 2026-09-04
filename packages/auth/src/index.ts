@@ -35,9 +35,11 @@ export function createAuth() {
       enabled: true
     },
 
-    experimental: {
-      // https://www.better-auth.com/docs/adapters/drizzle#joins-experimental
-      joins: true
+    advanced: {
+      database: {
+        // https://www.better-auth.com/docs/adapters/drizzle#joins
+        joins: true
+      }
     },
 
     plugins: [
@@ -46,6 +48,16 @@ export function createAuth() {
       })
     ]
   });
+}
+
+type OpenApiEndpoints = ReturnType<typeof openAPI>["endpoints"];
+
+// Better Auth exposes this endpoint at runtime, but currently omits it from the
+// inferred `auth.api` type: https://github.com/better-auth/better-auth/issues/8688
+export function generateAuthOpenApiSchema() {
+  const auth = createAuth();
+  const api = auth.api as typeof auth.api & Pick<OpenApiEndpoints, "generateOpenAPISchema">;
+  return api.generateOpenAPISchema();
 }
 
 export type AuthSession = ReturnType<typeof createAuth>["$Infer"]["Session"];

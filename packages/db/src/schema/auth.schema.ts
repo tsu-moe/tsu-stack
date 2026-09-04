@@ -1,18 +1,17 @@
 import { defineRelationsPart, sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-
-const timestamp = (name: string) => integer(name, { mode: "timestamp_ms" });
-const now = sql`(unixepoch() * 1000)`;
+import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
-  createdAt: timestamp("created_at").default(now).notNull(),
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
-  id: text("id").primaryKey(),
   image: text("image"),
-  name: text("name").notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(now)
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull()
 });
@@ -20,14 +19,16 @@ export const user = sqliteTable("user", {
 export const session = sqliteTable(
   "session",
   {
-    createdAt: timestamp("created_at").default(now).notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
     id: text("id").primaryKey(),
-    ipAddress: text("ip_address"),
+    expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
     token: text("token").notNull().unique(),
-    updatedAt: timestamp("updated_at")
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
+    ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     userId: text("user_id")
       .notNull()
@@ -39,49 +40,65 @@ export const session = sqliteTable(
 export const account = sqliteTable(
   "account",
   {
-    accessToken: text("access_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at"),
-    accountId: text("account_id").notNull(),
-    createdAt: timestamp("created_at").default(now).notNull(),
     id: text("id").primaryKey(),
-    idToken: text("id_token"),
-    password: text("password"),
+    issuer: text("issuer").notNull(),
+    accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    refreshToken: text("refresh_token"),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
-    scope: text("scope"),
-    updatedAt: timestamp("updated_at")
-      .$onUpdate(() => /* @__PURE__ */ new Date())
-      .notNull(),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" })
+      .references(() => user.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: integer("access_token_expires_at", {
+      mode: "timestamp_ms"
+    }),
+    refreshTokenExpiresAt: integer("refresh_token_expires_at", {
+      mode: "timestamp_ms"
+    }),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull()
   },
-  (table) => [index("account_userId_idx").on(table.userId)]
+  (table) => [
+    uniqueIndex("account_issuer_accountId_uidx").on(table.issuer, table.accountId),
+    index("account_userId_idx").on(table.userId)
+  ]
 );
 
 export const verification = sqliteTable(
   "verification",
   {
-    createdAt: timestamp("created_at").default(now).notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
     id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
-    updatedAt: timestamp("updated_at")
-      .default(now)
-      .$onUpdate(() => /* @__PURE__ */ new Date())
+    value: text("value").notNull(),
+    expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
       .notNull(),
-    value: text("value").notNull()
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull()
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-export const relations = defineRelationsPart({ account, session, user, verification }, (r) => {
+export const authRelations = defineRelationsPart({ user, session, account, verification }, (r) => {
   return {
-    account: {
-      user: r.one.user({
-        from: r.account.userId,
-        to: r.user.id
+    user: {
+      sessions: r.many.session({
+        from: r.user.id,
+        to: r.session.userId
+      }),
+      accounts: r.many.account({
+        from: r.user.id,
+        to: r.account.userId
       })
     },
     session: {
@@ -90,14 +107,10 @@ export const relations = defineRelationsPart({ account, session, user, verificat
         to: r.user.id
       })
     },
-    user: {
-      accounts: r.many.account({
-        from: r.user.id,
-        to: r.account.userId
-      }),
-      sessions: r.many.session({
-        from: r.user.id,
-        to: r.session.userId
+    account: {
+      user: r.one.user({
+        from: r.account.userId,
+        to: r.user.id
       })
     }
   };

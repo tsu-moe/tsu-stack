@@ -3,11 +3,10 @@ import { resolve } from "node:path";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { ohImage } from "@lonik/oh-image/plugin";
 import mdx from "@mdx-js/rollup";
-import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
+import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
@@ -130,11 +129,7 @@ export default defineConfig({
         }
       }
     }),
-    viteReact(),
-    /** @see {@link https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler} */
-    babel({
-      presets: [reactCompilerPreset()]
-    }),
+    viteReact({ compiler: true }),
     paraglideVitePlugin({
       basePath: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname
     }),

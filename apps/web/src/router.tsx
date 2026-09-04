@@ -55,7 +55,7 @@ export function getRouter() {
     defaultPreload: "intent",
     // IMPORTANT: Let TanStack Query handle data fetching & caching instead of TanStack Router, default options are found in createQueryClient()
     // https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#passing-all-loader-events-to-an-external-cache
-    // This enables Route.loader logic to rerun on every navigation, so when fetching, use queryClient.ensureQueryData() to prevent unnecessary refetches and use cached data when available
+    // This enables Route.loader logic to rerun on every navigation, so let queryClient.query() decide whether cached data is fresh enough to reuse
     defaultPreloadStaleTime: 0,
     // https://tanstack.com/router/latest/docs/guide/render-optimizations
     defaultStructuralSharing: true,

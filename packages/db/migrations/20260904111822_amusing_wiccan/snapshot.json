@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "2282052f-f80e-4777-8ea7-f46e2a2d748b",
+  "id": "ef1ccce0-2dde-4f2e-8e8d-4f1625396a6d",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -28,17 +28,17 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "access_token",
+      "name": "id",
       "entityType": "columns",
       "table": "account"
     },
     {
-      "type": "integer",
-      "notNull": false,
+      "type": "text",
+      "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "access_token_expires_at",
+      "name": "issuer",
       "entityType": "columns",
       "table": "account"
     },
@@ -49,46 +49,6 @@
       "default": null,
       "generated": null,
       "name": "account_id",
-      "entityType": "columns",
-      "table": "account"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
-      "generated": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "table": "account"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "id",
-      "entityType": "columns",
-      "table": "account"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "id_token",
-      "entityType": "columns",
-      "table": "account"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "password",
       "entityType": "columns",
       "table": "account"
     },
@@ -104,11 +64,51 @@
     },
     {
       "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "access_token",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
+      "type": "text",
       "notNull": false,
       "autoincrement": false,
       "default": null,
       "generated": null,
       "name": "refresh_token",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id_token",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "access_token_expires_at",
       "entityType": "columns",
       "table": "account"
     },
@@ -133,6 +133,26 @@
       "table": "account"
     },
     {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "password",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "account"
+    },
+    {
       "type": "integer",
       "notNull": true,
       "autoincrement": false,
@@ -141,36 +161,6 @@
       "name": "updated_at",
       "entityType": "columns",
       "table": "account"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "table": "account"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
-      "generated": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "table": "session"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "expires_at",
-      "entityType": "columns",
-      "table": "session"
     },
     {
       "type": "text",
@@ -183,12 +173,12 @@
       "table": "session"
     },
     {
-      "type": "text",
-      "notNull": false,
+      "type": "integer",
+      "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "ip_address",
+      "name": "expires_at",
       "entityType": "columns",
       "table": "session"
     },
@@ -206,9 +196,29 @@
       "type": "integer",
       "notNull": true,
       "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "session"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
       "default": null,
       "generated": null,
       "name": "updated_at",
+      "entityType": "columns",
+      "table": "session"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ip_address",
       "entityType": "columns",
       "table": "session"
     },
@@ -233,12 +243,22 @@
       "table": "session"
     },
     {
-      "type": "integer",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
+      "default": null,
       "generated": null,
-      "name": "created_at",
+      "name": "name",
       "entityType": "columns",
       "table": "user"
     },
@@ -268,27 +288,17 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "id",
-      "entityType": "columns",
-      "table": "user"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
       "name": "image",
       "entityType": "columns",
       "table": "user"
     },
     {
-      "type": "text",
+      "type": "integer",
       "notNull": true,
       "autoincrement": false,
-      "default": null,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
       "generated": null,
-      "name": "name",
+      "name": "created_at",
       "entityType": "columns",
       "table": "user"
     },
@@ -296,31 +306,11 @@
       "type": "integer",
       "notNull": true,
       "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
       "generated": null,
       "name": "updated_at",
       "entityType": "columns",
       "table": "user"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
-      "generated": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "table": "verification"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "expires_at",
-      "entityType": "columns",
-      "table": "verification"
     },
     {
       "type": "text",
@@ -343,22 +333,42 @@
       "table": "verification"
     },
     {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
-      "generated": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "table": "verification"
-    },
-    {
       "type": "text",
       "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
       "name": "value",
+      "entityType": "columns",
+      "table": "verification"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "table": "verification"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "verification"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
       "entityType": "columns",
       "table": "verification"
     },
@@ -427,6 +437,24 @@
       "name": "verification_pk",
       "table": "verification",
       "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "issuer",
+          "isExpression": false
+        },
+        {
+          "value": "account_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "account_issuer_accountId_uidx",
+      "entityType": "indexes",
+      "table": "account"
     },
     {
       "columns": [

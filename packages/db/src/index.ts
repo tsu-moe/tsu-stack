@@ -3,7 +3,7 @@ import { env } from "cloudflare:workers";
 import { sql } from "drizzle-orm";
 import { type AnyD1Database, drizzle } from "drizzle-orm/d1";
 
-import { relations as authRelations } from "#@/schema/auth.schema";
+import { authRelations } from "#@/schema/auth.schema";
 import { relations } from "#@/schema/relations";
 
 export * from "drizzle-orm/sql";

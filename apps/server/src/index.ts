@@ -14,7 +14,7 @@ import { type ContentfulStatusCode } from "hono/utils/http-status";
 
 import { createContext } from "@tsu-stack/api/lib/context/hono/create-context";
 import { appRouter } from "@tsu-stack/api/routers/index";
-import { createAuth } from "@tsu-stack/auth/index";
+import { createAuth, generateAuthOpenApiSchema } from "@tsu-stack/auth/index";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 import { log, parseError } from "@tsu-stack/logger/server";
 import {
@@ -86,7 +86,7 @@ app.on(["POST", "GET"], "/auth/reference", (c) =>
 app.get("/auth/open-api/generate-schema", async (c) => {
   // IMPORTANT: Need to explicitly do this instead of relying on the OpenAPI plugin's built-in schema generation
   // Otherwise, it will 404 with the /auth/* endpoint
-  const schema = await createAuth().api.generateOpenAPISchema();
+  const schema = await generateAuthOpenApiSchema();
   return c.json(schema);
 });
 

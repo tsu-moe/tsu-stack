@@ -21,13 +21,14 @@ Use the smallest relevant doc set below. Open the most specific file first, then
 - [Workflow](.agents/workflow.md): fix cadence, validation scope, build checks, migrations, commits.
 - [Vite+ toolchain](.agents/vite-plus.md): `vp`/`vpx`, workspace scripts, package management.
 - [Testing](.agents/testing.md): focused unit/e2e coverage and test command scope.
+- [Database conventions](.agents/database.md): Drizzle column types and generated Better Auth schema ownership.
 - [Choice flows](.agents/choice-flows.md): native approvals, structured input, human decision points.
 - [Logging](.agents/logging.md): durable logs, request logging, redaction, client/server logging.
 - [Scaffolding CLI](.agents/cli.md): generator architecture, template compatibility, tests, and releases.
 
 ## Task Entry Points
 
-- UI work: [UI guidelines](.agents/ui.md). Add [TanStack patterns](.agents/tanstack-patterns.md) for routes/loaders/page composition, and [Zustand state management](.agents/zustand.md) for shared client-owned state.
+- UI work: [UI guidelines](.agents/ui.md). Add [Data flow](.agents/data-flow.md) for routes/loaders/page composition, and [Zustand state management](.agents/zustand.md) for shared client-owned state.
 - Shared client state: [Zustand state management](.agents/zustand.md).
 - Tests or test requests: [Testing](.agents/testing.md), plus the owning domain guide. Add [oRPC testing](.agents/orpc-testing.md) for procedures or oRPC-backed client behavior.
 - Bugfix: start with the owning domain doc, then [Workflow](.agents/workflow.md). Add [Testing](.agents/testing.md) for regression coverage and [Core package patterns](.agents/core.md) when shared contracts change.
@@ -36,7 +37,7 @@ Use the smallest relevant doc set below. Open the most specific file first, then
 
 ## Domain Docs
 
-- [TanStack patterns](.agents/tanstack-patterns.md): route structure, `beforeLoad`, layouts, route-level preloading, TanStack docs lookup.
+- [Data flow](.agents/data-flow.md): Router/Query responsibilities, route structure, cache behavior, mutations, and server boundaries.
 - [API fetching patterns](.agents/api-fetching-patterns.md): slice-local TanStack Query and oRPC client wrappers in `apps/web`.
 - [oRPC patterns](.agents/orpc.md): server procedures, router shape, typed errors, request-scoped handler logging.
 - [oRPC testing](.agents/orpc-testing.md): direct procedure calls, typed error assertions, context fixtures, and transport-test boundaries.
