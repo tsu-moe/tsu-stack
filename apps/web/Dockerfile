@@ -24,7 +24,7 @@ RUN vp run test:unit:run
 # RUN vp run test:e2e:run
 
 RUN vp run -v --filter web build
-RUN cp "$(vp env which node | head -1)" /tmp/node
+RUN cp "$(vp env which node | sed -n '1p')" /tmp/node
 
 FROM debian:bookworm-slim AS production
 
