@@ -10,6 +10,7 @@ This file is the source of truth for app UI composition, extraction decisions, a
 - Keep `packages/ui` reusable and app-agnostic.
 - Keep route files thin and UI composition in pages, features, widgets, or `shared/ui`.
 - Extract shared UI only when reuse and app-agnostic boundaries are real.
+- Keep copy user-centered: describe outcomes and next actions concisely without exposing internal states or implementation details.
 
 ## Default Sources
 

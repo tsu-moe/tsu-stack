@@ -66,7 +66,7 @@
   - install via [Node.js official website](https://nodejs.org/) or [nvm](https://github.com/nvm-sh/nvm)
 - **Vite Plus (vp)**
   - install via `curl -fsSL https://vite.plus | bash` (macOS/Linux) or `irm https://vite.plus/ps1 | iex` (Windows)
-- **pnpm** ≥ 10
+- **pnpm** ≥ 12
   - install via `vp install -g pnpm`
 - **Docker**
   - install it via their [official website](https://www.docker.com/)

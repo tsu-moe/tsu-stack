@@ -9,7 +9,7 @@ import postgres from "postgres";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 import { createLogger } from "@tsu-stack/logger/server";
 
-import { relations as authRelations } from "#@/schema/auth.schema";
+import { authRelations } from "#@/schema/auth.schema";
 import { relations } from "#@/schema/relations";
 
 export * from "drizzle-orm/sql";

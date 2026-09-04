@@ -2,11 +2,10 @@ import { resolve } from "node:path";
 
 import { ohImage } from "@lonik/oh-image/plugin";
 import mdx from "@mdx-js/rollup";
-import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
+import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite-plus";
 
@@ -118,17 +117,18 @@ export default defineConfig({
         }
       }
     }),
-    viteReact(),
-    /** @see {@link https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler} */
-    babel({
-      presets: [reactCompilerPreset()]
-    }),
+    viteReact({ compiler: true }),
     paraglideVitePlugin({
       basePath: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname
     }),
     /** @see {@link https://tanstack.com/start/latest/docs/framework/react/guide/hosting} */
     nitro({
       baseURL: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname,
+      /**
+       * TODO(security): Review production headers such as CSP, Permissions-Policy,
+       * frame restrictions, COOP, Referrer-Policy, and X-Content-Type-Options for
+       * the deployed app's actual integrations and embedding requirements.
+       */
       // FIXME: Remove this when Nitro/Rolldown preserves initialization order across server chunks, see https://github.com/rolldown/rolldown/issues/10747
       inlineDynamicImports: true,
       /**

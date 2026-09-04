@@ -13,13 +13,12 @@
   "dependencies": {
     "@lonik/oh-image": "catalog:",
     "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
+    "cn": "catalog:",
     "lucide-react": "catalog:",
     "next-themes": "catalog:",
     "radix-ui": "catalog:",
     "sonner": "catalog:",
     "std-env": "catalog:",
-    "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {

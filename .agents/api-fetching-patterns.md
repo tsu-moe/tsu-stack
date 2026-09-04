@@ -110,18 +110,18 @@ export type CreateProfileMutationResult = Awaited<ReturnType<typeof client.profi
 
 ## Route Integration
 
-Route files should import query option factories from the slice barrel and preload them in `beforeLoad`.
+Route files should import query option factories from the slice barrel. Prefer component-owned fetching; warm a primary, high-value query in a loader only when it materially improves navigation.
 
 ```ts
 export const Route = createFileRoute("/{-$locale}/(root-layout)/profile/$id/")({
-  beforeLoad: ({ context, params }) => {
-    void context.queryClient.ensureQueryData(getProfileQueryOptions(params.id));
+  loader: ({ context, params }) => {
+    void context.queryClient.query(getProfileQueryOptions(params.id)).catch(noop);
   },
   component: ProfileIdPage
 });
 ```
 
-Use React Query for caching. Do not rely on the router loader cache.
+Use React Query for caching. Keep `defaultPreloadStaleTime: 0` so Query decides whether warmed data is fresh enough to reuse. Follow [Data flow](./data-flow.md) for blocking, non-blocking, and stale-while-revalidate patterns.
 
 ## Component Usage
 

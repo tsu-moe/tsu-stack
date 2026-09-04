@@ -99,6 +99,14 @@ Prefer:
 - adding regression tests for bug fixes
 - mirroring nearby test structure
 
+## Third-Party Integrations
+
+Default test commands must not call remote third-party services. They may use disposable repository-owned dependencies and provider fakes on localhost. Exercise owned integration behavior through the real application boundary with representative sanitized fixtures rather than mocking internal implementation details.
+
+A separately invoked sandbox suite may use a provider's official test environment only when local tests cannot prove authentication, SDK compatibility, hosted flows, webhook delivery, or provider configuration. Sandbox tests must use sandbox-only credentials and isolated resources, respect rate limits, clean up when supported, and stay outside routine pull-request checks unless demonstrably reliable.
+
+Test repository-owned calculations, external event validation, lifecycle transitions, idempotency, and user-visible states locally. Never commit secrets, payment details, or personal data in provider-derived fixtures.
+
 Avoid by default:
 
 - snapshots and repository-wide coverage targets

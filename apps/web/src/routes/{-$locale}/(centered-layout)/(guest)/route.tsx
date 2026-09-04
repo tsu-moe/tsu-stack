@@ -1,3 +1,4 @@
+import { noop } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -27,10 +28,11 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
   validateSearch: zodValidator(guestSearchSchema),
   component: Outlet,
   beforeLoad: async ({ context, search }) => {
-    const user = await context.queryClient.ensureQueryData({
+    const user = await context.queryClient.query({
       ...getAuthUserQueryOptions(),
-      revalidateIfStale: true
+      staleTime: "static"
     });
+    void context.queryClient.query(getAuthUserQueryOptions()).catch(noop);
 
     // `redirect` is always NavigateTo (never undefined) thanks to schema transform & i18n path validation util
     const redirectTo = search.redirect;
