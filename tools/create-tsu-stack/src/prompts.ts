@@ -18,7 +18,7 @@ import {
 import { VARIANTS } from "./variants";
 
 function unwrap<T>(value: symbol | T): T {
-  if (p.isCancel(value)) {
+  if (typeof value === "symbol") {
     p.cancel("Project creation cancelled.");
     throw new Error("CANCELLED");
   }
