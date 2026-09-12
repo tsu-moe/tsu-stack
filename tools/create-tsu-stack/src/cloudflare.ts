@@ -65,7 +65,7 @@ export function parseD1DatabaseId(output: string): string {
 }
 
 function unwrapDecision(decision: CloudflareAccountDecision | symbol): CloudflareAccountDecision {
-  if (p.isCancel(decision)) {
+  if (typeof decision === "symbol") {
     p.cancel("Remote D1 setup cancelled. The generated project was preserved.");
     throw new Error("CANCELLED");
   }
@@ -129,7 +129,7 @@ export const promptForExistingD1: ExistingD1Prompt = async (database, account) =
       }
     ]
   });
-  if (p.isCancel(decision) || decision === "cancel") return { action: "cancel" };
+  if (typeof decision === "symbol" || decision === "cancel") return { action: "cancel" };
   if (decision === "reuse") return { action: "reuse" };
 
   const suggestedName = `${database.name.slice(0, 62).replace(/-+$/u, "")}-2`;
@@ -138,7 +138,7 @@ export const promptForExistingD1: ExistingD1Prompt = async (database, account) =
     message: "What should the new D1 database be named?",
     validate: validateD1DatabaseName
   });
-  if (p.isCancel(databaseName)) return { action: "cancel" };
+  if (typeof databaseName === "symbol") return { action: "cancel" };
   return { action: "rename", databaseName: databaseName.trim() };
 };
 

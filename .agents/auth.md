@@ -44,7 +44,7 @@ Both set 401 status and throw on unauthorized.
 ## Database Configuration
 
 - Enable Drizzle joins through `advanced.database.joins`; the previous `experimental.joins` option is obsolete.
-- Better Auth 1.7's generated account schema includes the provider issuer and its uniqueness constraint. Keep the generated schema as the source of truth instead of adding unsupported account options.
+- Better Auth 1.7.3 removed the generated account `issuer` field and its uniqueness constraint. Existing databases must apply the generated migration that drops both before running the upgraded auth packages.
 - `packages/db/src/schema/auth.schema.ts` is generated from `packages/auth/src/index.ts` by `vp run auth:generate`. Do not hand-edit it.
 - Change Better Auth-owned fields through the auth config, regenerate the schema, inspect the diff, and keep the owning database's baseline migration consistent.
 
