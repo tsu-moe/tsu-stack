@@ -4,7 +4,7 @@
 </h1>
 
 <p align="center">
-   <img src="https://img.shields.io/badge/NodeJS-26.7.0-green" alt="NodeJS version badge">
+   <img src="https://img.shields.io/badge/NodeJS-26.8.2-green" alt="NodeJS version badge">
    <img src="https://img.shields.io/github/license/tsu-moe/tsu-stack" alt="License badge">
    <img src="https://img.shields.io/github/last-commit/tsu-moe/tsu-stack" alt="Last commit badge">
    <img src="https://img.shields.io/github/stars/tsu-moe/tsu-stack?style=flat" alt="GitHub stars badge">
@@ -335,13 +335,13 @@ However, the benefit is singular deployments and lower memory usage for websites
 
 ## Issue Watchlist
 
-- [Router/Start issues](https://github.com/TanStack/router/issues) - TanStack Start is in RC.
-- [Devtools releases](https://github.com/TanStack/devtools/releases) - TanStack Devtools is in alpha and may still have breaking changes.
-- [Nitro v3](https://nitro.build/blog/v3-beta) - This template is configured with Nitro Nightly (3.0.1-20260128-211656-ae83c97e) by default.
-  - Currently, when using newer versions of Nitro, you may encounter CJS to ESM interop crashes on build with the error: `TypeError: Cannot destructure property '__extends' of '__toESM$1(...).default' as it is undefined.`
-  - This is similar to the issue described in [nitrojs/nitro#4113](https://github.com/nitrojs/nitro/issues/4113)
-- [Better Auth experimental Drizzle adapter](https://github.com/better-auth/better-auth/pull/9489) - We're using a separate branch of Better Auth's Drizzle adapter that supports Drizzle relations v2.
-- [Vite+ issues](https://github.com/voidzero-dev/vite-plus/issues) - Vite+ is in alpha.
+Last verified on September 13, 2026. All issues below were open at that time.
+
+- [TanStack Router #7529](https://github.com/TanStack/router/issues/7529) - Keep the Router/Start dependency set pinned because newer `router-core` releases can leave the SSR query stream open until the serialization timeout.
+- [TanStack Router #6275](https://github.com/TanStack/router/issues/6275) - Keep the Vite preview host on `127.0.0.1` so Docker prerender builds can reach the preview server.
+- [TanStack Router #6602](https://github.com/TanStack/router/issues/6602) - Watch for the fix for uncleared SSR serialization timers that can leave a build hanging after prerendering completes.
+- [Nitro #4113](https://github.com/nitrojs/nitro/issues/4113) - Keep Nitro pinned to `3.0.1-20260128-211656-ae83c97e`; newer builds can produce CJS-to-ESM interop crashes in the server bundle.
+- [Rolldown #10747](https://github.com/rolldown/rolldown/issues/10747) - Keep `inlineDynamicImports: true` until Rolldown preserves initialization order across circular server chunks.
 
 ### Pitfalls
 
@@ -353,8 +353,6 @@ However, the benefit is singular deployments and lower memory usage for websites
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy`
   - `Permissions-Policy`
-- Builds are slower and more bloated in general because Vite Plus does not have a [`turbo prune`](https://turborepo.dev/docs/reference/prune) alternative
-  - See this related issue: https://github.com/voidzero-dev/vite-plus/issues/839
 - `robots.txt` [needs to be at the root of the domain](https://developers.google.com/search/docs/crawling-indexing/robots/intro) to be detected by search engines (ie. `example.com/robots.txt`), but since the web app is served on a subpath (ie. `example.com/web`), you need to set up a redirect from `example.com/robots.txt` to `example.com/web/robots.txt` in order for it to be detected.
   - Other than that, you may need to set up a root sitemap index that links to as many sitemaps for every app you deploy in multiple subpaths.
     - At the moment, the `__root.tsx` points to the subpath-specific sitemap, so you may want to consider pointing it to the root if you decide to opt into that architecture.

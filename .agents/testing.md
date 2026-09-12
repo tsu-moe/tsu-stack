@@ -6,7 +6,7 @@ This document is the authoritative testing policy for contributors and AI agents
 
 - Treat tests as part of normal validation when code changes affect behavior, contracts, bug fixes, or existing tested surfaces.
 - Add or update focused tests for new behavior, changed behavior, shared contracts, and regression-prone bug fixes when the package or app has a practical test surface.
-- Keep test work proportional to risk. Do not create broad, brittle, or low-signal tests for markdown-only edits, copy-only tweaks, purely mechanical formatting, or changes with no runtime behavior.
+- Keep test work proportional to risk. Prefer a small, high-signal suite, and add tests only when they protect meaningful behavior or reduce credible regression risk. Do not create broad, brittle, or low-signal tests for trivial, impractical, low-impact, markdown-only, copy-only, or purely mechanical changes.
 - Run the narrowest relevant test command after implementation and after the fix command from [Workflow](./workflow.md).
 - Inspect nearby tests before generating new ones.
 - Use Vite+ testing conventions, not standalone Vitest defaults.
@@ -115,3 +115,10 @@ Avoid by default:
 - shared fixture frameworks before repeated, stable reuse justifies one
 
 Mock only nondeterministic or external I/O boundaries that the test does not own, such as a database adapter, clock, or third-party provider. Prefer local deterministic dependencies when their real behavior is part of the test.
+
+## Local Test Database
+
+- Prefer the PostgreSQL service in `packages/db/docker-compose.dev.yaml` over a system PostgreSQL installation. Confirm the underlying Docker or Podman engine works; a Compose wrapper alone is not sufficient.
+- For finite integration or E2E runs, start it with `vp run db:dev:start`. Check whether it was already running, and stop it with `vp run db:dev:stop` afterward only if the current testing session started it.
+- When Playwright targets a different database from the Compose default, create it once inside the container with the configured database user, then apply existing migrations with the test `DATABASE_URL` before running tests.
+- Fall back to system PostgreSQL only when no usable Compose engine or database service is available.
