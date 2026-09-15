@@ -92,11 +92,20 @@ export default defineConfig({
     ssr: {
       optimizeDeps: {
         /**
-         * Force react-dom/server to be pre-bundled in the initial optimization pass otherwise, we'll get "Invalid hook call." in dev. It works in prod though.
+         * Force React and its SSR entrypoints to be pre-bundled in the initial optimization pass.
+         * Without this, the Cloudflare SSR environment can load React from both Vite's
+         * dependency cache and the workspace package path, which creates separate hook
+         * dispatchers and results in an "Invalid hook call" in dev.
          * Track this GitHub issue for updates:
          * @see {@link https://github.com/TanStack/router/issues/7119}
          */
-        include: ["react-dom/server"]
+        include: [
+          "react",
+          "react-dom",
+          "react-dom/server",
+          "react/jsx-runtime",
+          "react/jsx-dev-runtime"
+        ]
       }
     }
   },
