@@ -22,13 +22,15 @@ type ImageFormat =
   | "pdf"
   | "mp4";
 
+type ImagePlaceholder = "blur" | (string & {});
+
 type ImageProps = OhImageProps & {
   siteBaseUrl?: string;
   imgProxyBaseUrl?: string;
   imgProxySignature?: "insecure" | (string & {});
   quality?: number;
   format?: ImageFormat;
-  placeholder?: "blur";
+  placeholder?: ImagePlaceholder;
 };
 
 // Omit the injected base URL props from the consumer-facing type since we want to inject our own
@@ -44,7 +46,7 @@ export function Image(rawProps: ImageProps) {
     imgProxySignature: _imgProxySignature,
     quality: _quality,
     format: _format,
-    placeholder: _placeholder,
+    placeholder,
     ...props
   } = rawProps;
 
@@ -52,10 +54,34 @@ export function Image(rawProps: ImageProps) {
   const src = isImageRelative && siteBaseUrl ? `${siteBaseUrl}${rawProps.src}` : rawProps.src;
 
   if (isDevelopment || !imgProxyBaseUrl) {
-    return <OhImage {...props} src={src} />;
+    return <ImageWithPlaceholder {...props} src={src} placeholder={placeholder} />;
   }
 
   return <ImgProxyImage {...rawProps} src={src} />;
+}
+
+function ImageWithPlaceholder({
+  placeholder,
+  ...props
+}: OhImageProps & { placeholder?: ImagePlaceholder }) {
+  const customPlaceholder = placeholder !== "blur" ? placeholder : undefined;
+
+  return (
+    <OhImage
+      {...props}
+      style={{
+        ...props.style,
+        ...(customPlaceholder
+          ? {
+              backgroundImage: `url("${customPlaceholder}")`,
+              backgroundPosition: "50% 50%",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover"
+            }
+          : {})
+      }}
+    />
+  );
 }
 
 function ImgProxyImage(rawProps: ImageProps) {
@@ -85,5 +111,5 @@ function ImgProxyImage(rawProps: ImageProps) {
     }
   });
 
-  return <OhImage {...props} loader={loader} />;
+  return <ImageWithPlaceholder {...props} loader={loader} placeholder={placeholder} />;
 }
