@@ -82,6 +82,7 @@ jobs:
         shell: bash
         run: |
           test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.tsu-stack.jsonc"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/skills/sync-template/SKILL.md"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/tools/create-tsu-stack"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/cli.md"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/pnpm-lock.yaml"

@@ -35,6 +35,7 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
+  - [Keeping Template Changes](#keeping-template-changes)
   - [Running PostgreSQL Variants with Docker Locally](#running-postgresql-variants-with-docker-locally)
   - [Database Migrations](#database-migrations)
 - [Tech Stack](#tech-stack)
@@ -80,6 +81,10 @@ npm create tsu-stack@next my-app
 cd my-app
 vp run dev
 ```
+
+### Keeping Template Changes
+
+Projects created from this template include the `sync-template` agent skill. Ask your coding agent to use `$sync-template` when you want to compare or integrate updates from the matching tsu-stack branch. The generated `.tsu-stack.jsonc` file records the exact source commit used at creation time.
 
 ### Running PostgreSQL Variants with Docker Locally
 
