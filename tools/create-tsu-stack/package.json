@@ -42,9 +42,9 @@
     "test:unit": "vp test && node --test scripts/release-state.test.mjs"
   },
   "devDependencies": {
-    "@clack/prompts": "1.8.0",
+    "@clack/prompts": "1.8.1",
     "@types/fs-extra": "11.0.4",
-    "@types/node": "26.5.0",
+    "@types/node": "26.6.1",
     "bumpp": "12.3.0",
     "changelogithub": "15.0.5",
     "execa": "10.0.1",
@@ -55,7 +55,7 @@
     "validate-npm-package-name": "8.0.0",
     "vite": "catalog:",
     "vite-plus": "catalog:",
-    "zod": "4.5.4"
+    "zod": "4.6.5"
   },
   "engines": {
     "node": ">=22.18.0"
