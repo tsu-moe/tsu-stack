@@ -44,7 +44,7 @@
       "@commitlint/config-conventional"
     ]
   },
-  "packageManager": "pnpm@12.4.0",
+  "packageManager": "pnpm@12.4.2",
   "intent": {
     "skills": [
       "@tanstack/*",
