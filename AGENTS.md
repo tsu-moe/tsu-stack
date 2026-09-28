@@ -11,6 +11,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 - Be robust at system boundaries such as user input, auth, external APIs, and persistence. Within trusted boundaries, rely on established invariants instead of guarding against hypothetical states.
 - Handle edge cases in proportion to their likelihood and impact. Avoid complexity for contrived, extremely unlikely, low-impact scenarios while preserving security and data-integrity requirements.
 - Add concise comments only for non-obvious intent, unusual edge cases, and important constraints. Explain why, not what.
+- Do not add, edit, or revise documentation unless the user explicitly asks for documentation changes. An existing agent guideline that requires documentation to be reconciled with user-directed code or preference changes takes precedence.
 
 Use Vite Plus commands in this repo: `vp` for package/scripts, `vpx` for one-off CLIs.
 
