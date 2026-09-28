@@ -56,19 +56,21 @@ export default defineConfig({
       build: {
         command: "cross-env IS_BUILD=true pnpm dotenvx run -f ../../packages/env/.env -- vp build",
         dependsOn: ["@tsu-stack/i18n#build"],
-        // These environment variables are dependencies of the build process and need to be passed here to be picked up by the Vite Task runner.
-        // CAUTION: These are hardcoded into the image. You should consider Build Secrets for sensitive values.
-        //          In Coolify, you need to check "Use Docker Build Secrets" in the Environment Variables tab.
-        env: [
-          "NODE_ENV",
-          "VITE_SERVER_URL",
-          "VITE_WEB_URL",
-          "VITE_IMGPROXY_URL",
-          "VITE_IMGPROXY_SIGNATURE",
-          "SOURCE_COMMIT",
-          "BETTER_AUTH_SECRET",
-          "DATABASE_URL"
-        ]
+        cache: {
+          // These environment variables are dependencies of the build process and need to be passed here to be picked up by the Vite Task runner.
+          // CAUTION: These are hardcoded into the image. You should consider Build Secrets for sensitive values.
+          //          In Coolify, you need to check "Use Docker Build Secrets" in the Environment Variables tab.
+          env: [
+            "NODE_ENV",
+            "VITE_SERVER_URL",
+            "VITE_WEB_URL",
+            "VITE_IMGPROXY_URL",
+            "VITE_IMGPROXY_SIGNATURE",
+            "SOURCE_COMMIT",
+            "BETTER_AUTH_SECRET",
+            "DATABASE_URL"
+          ]
+        }
       }
     }
   },
