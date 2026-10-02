@@ -44,7 +44,7 @@
   "devDependencies": {
     "@clack/prompts": "1.8.1",
     "@types/fs-extra": "11.0.4",
-    "@types/node": "26.6.2",
+    "@types/node": "26.6.3",
     "bumpp": "12.3.0",
     "changelogithub": "15.0.5",
     "execa": "10.0.1",
