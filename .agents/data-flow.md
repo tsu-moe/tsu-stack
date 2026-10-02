@@ -92,6 +92,32 @@ Migration mapping from the deprecated methods:
 
 Never use cached route data as the server-side authorization decision. Authorization and destructive-operation checks belong in server procedures, server functions, or middleware.
 
+## Query GC During Prerendering
+
+TanStack Query uses `gcTime: Infinity` on the server by default. Preserve that behavior when a reusable query-options factory needs a finite browser `gcTime` and can be instantiated during prerendering. A finite server-side `gcTime` creates a Node.js timer; build tools that prerender by importing the server entry can remain alive until every timer expires even after the pages and bundles are complete.
+
+This workaround is not required for every query with `gcTime`. Use it only when both conditions apply:
+
+- The query can run during build-time SSR or prerendering, including through a route loader, `beforeLoad`, auth guard, provider, or component rendered for a prerendered route.
+- The query options explicitly set a finite `gcTime` for browser cache behavior.
+
+Browser-only queries can keep a finite `gcTime` directly. Queries that do not override `gcTime` already inherit TanStack Query's server-safe default.
+
+```ts
+import { environmentManager, queryOptions } from "@tanstack/react-query";
+
+export function getThingQueryOptions() {
+  return queryOptions({
+    queryKey: ["thing"],
+    queryFn: getThing,
+    // IMPORTANT: Server-side GC timers keep prerender builds alive until they expire.
+    gcTime: environmentManager.isServer() ? Infinity : 1000 * 60 * 10
+  });
+}
+```
+
+When a prerender build finishes its visible work but does not exit, compare the unexplained delay with configured `gcTime` values and inspect active Node.js `Timeout` handles. Do not apply the conditional override to unrelated timers without first tracing their owner.
+
 ## Mutations
 
 - Prefer one round trip: return canonical affected data and update exact caches that can be reconstructed safely.
