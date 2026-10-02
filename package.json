@@ -49,7 +49,7 @@
       "@commitlint/config-conventional"
     ]
   },
-  "packageManager": "pnpm@12.6.0",
+  "packageManager": "pnpm@12.8.1",
   "intent": {
     "skills": [
       "@tanstack/*",
