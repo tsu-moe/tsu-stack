@@ -340,13 +340,10 @@ However, the benefit is singular deployments and lower memory usage for websites
 
 ## Issue Watchlist
 
-Last verified on September 13, 2026. All issues below were open at that time.
+Last verified on October 2, 2026.
 
 - [TanStack Router #7529](https://github.com/TanStack/router/issues/7529) - Keep the Router/Start dependency set pinned because newer `router-core` releases can leave the SSR query stream open until the serialization timeout.
 - [TanStack Router #6275](https://github.com/TanStack/router/issues/6275) - Keep the Vite preview host on `127.0.0.1` so Docker prerender builds can reach the preview server.
-- [TanStack Router #6602](https://github.com/TanStack/router/issues/6602) - Watch for the fix for uncleared SSR serialization timers that can leave a build hanging after prerendering completes.
-- [Nitro #4113](https://github.com/nitrojs/nitro/issues/4113) - Keep Nitro pinned to `3.0.1-20260128-211656-ae83c97e`; newer builds can produce CJS-to-ESM interop crashes in the server bundle.
-- [Rolldown #10747](https://github.com/rolldown/rolldown/issues/10747) - Keep `inlineDynamicImports: true` until Rolldown preserves initialization order across circular server chunks.
 
 ### Pitfalls
 
