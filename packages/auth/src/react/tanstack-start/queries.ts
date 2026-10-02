@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { environmentManager, queryOptions } from "@tanstack/react-query";
 
 import { $getUser } from "#@/react/tanstack-start/functions";
 
@@ -9,7 +9,8 @@ export const authQueryKeys = {
 export function getAuthUserQueryOptions() {
   return queryOptions({
     staleTime: 1000 * 60 * 5, // 5 minute (matches /packages/auth/src/index.ts)
-    gcTime: 1000 * 60 * 10, // 10 minutes
+    // IMPORTANT: Server-side GC timers keep prerender builds alive until they expire.
+    gcTime: environmentManager.isServer() ? Infinity : 1000 * 60 * 10,
     refetchOnReconnect: "always",
     refetchOnWindowFocus: "always", // To sync auth state across tabs if user signs in/out in another tab
     refetchOnMount: false,
