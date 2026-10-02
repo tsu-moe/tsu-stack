@@ -51,6 +51,13 @@ const PAGES_PRERENDER_CONFIG = [
 ];
 
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        banner: '"use client";'
+      }
+    }
+  },
   run: {
     tasks: {
       build: {
