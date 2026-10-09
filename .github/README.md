@@ -47,6 +47,7 @@
     - [Option 2: Docker Compose](#option-2-docker-compose)
   - [Cloudflare Workers](#cloudflare-workers)
     - [Git-based CI/CD](#git-based-cicd)
+  - [Dokploy](#dokploy)
   - [Deploying to Other Platforms](#deploying-to-other-platforms)
 - [Environment Variables](#environment-variables)
   - [Server](#server)
@@ -207,6 +208,29 @@ You will need to set up the _build environment variables_ and _variables and sec
 
 > [!TIP]
 > You don't need `DATABASE_URL` if you opt-in to the `cloudflare-d1` variant and enable automatic Cloudflare D1 provisioning.
+
+### Dokploy
+
+[Dokploy](https://dokploy.com) can deploy the server and web applications using the included Dockerfiles.
+
+1. Create two applications connected to your repository, one for the server and one for the web app.
+2. Select the **Dockerfile** build type for each application and configure:
+
+   | Setting             | Server                   | Web                   |
+   | ------------------- | ------------------------ | --------------------- |
+   | Dockerfile Path     | `apps/server/Dockerfile` | `apps/web/Dockerfile` |
+   | Docker Context Path | `.` (repository root)    | `.` (repository root) |
+   | Docker Build Stage  | `production`             | `production`          |
+
+3. In each application's **Environment** tab, populate **Build Time Arguments** with the `ARG` values declared in its Dockerfile. Both applications require `VITE_SERVER_URL`, `VITE_WEB_URL`, `DATABASE_URL`, and `BETTER_AUTH_SECRET`. For the web app, also set `VITE_IMGPROXY_URL` and `VITE_IMGPROXY_SIGNATURE` if using imgproxy. See [Environment Variables](#environment-variables) for their meanings.
+4. Configure the required runtime **Environment Variables** in the same tab as well. Build arguments do not automatically populate the final runtime container.
+5. Assign domains matching `VITE_SERVER_URL` and `VITE_WEB_URL`, routing to container ports `5000` for the server and `3000` for the web app. Save the settings and deploy both applications.
+
+> [!IMPORTANT]
+> Setting only runtime environment variables is not enough: the web build also needs them. Local `.env` files are excluded from the Docker build context, so provide build-time values through Dokploy and rebuild after changing them.
+
+> [!CAUTION]
+> The included Dockerfiles consume build arguments, not Dokploy's **Build-time Secrets**. Build arguments can be exposed in build metadata or cache; use non-sensitive build-only values where possible and configure real credentials at runtime. To pass sensitive values during the build, adapt the Dockerfiles to consume secret mounts first. See Dokploy's [environment variables for Dockerfile builds](https://docs.dokploy.com/docs/core/applications/build-type#environment-variables-for-dockerfile-builds).
 
 ### Deploying to Other Platforms
 
