@@ -19,6 +19,15 @@ export default defineConfig({
 
   // Oxfmt - https://oxc.rs/docs/guide/usage/formatter/config.html
   fmt: {
+    overrides: [
+      {
+        files: ["**/*.md"],
+        options: {
+          // Keep documentation examples unchanged when upgrading the formatter.
+          embeddedLanguageFormatting: "off"
+        }
+      }
+    ],
     ignorePatterns: [
       "pnpm-lock.yaml",
       "package-lock.json",
