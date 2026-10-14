@@ -25,7 +25,9 @@ let identityContext: LogEvent = {};
 
 const debugLogMethod = evlogLog.debug.bind(evlogLog) as LogMethod;
 const errorLogMethod = evlogLog.error.bind(evlogLog) as ErrorLogMethod;
+const fatalLogMethod = evlogLog.fatal.bind(evlogLog) as ErrorLogMethod;
 const infoLogMethod = evlogLog.info.bind(evlogLog) as LogMethod;
+const traceLogMethod = evlogLog.trace.bind(evlogLog) as LogMethod;
 const warnLogMethod = evlogLog.warn.bind(evlogLog) as LogMethod;
 
 function isBrowserRuntime() {
@@ -102,7 +104,9 @@ export { LOG_SERVICES };
 export const log = {
   debug: withIdentity(debugLogMethod),
   error: withIdentity(errorLogMethod),
+  fatal: withIdentity(fatalLogMethod),
   info: withIdentity(infoLogMethod),
+  trace: withIdentity(traceLogMethod),
   warn: withIdentity(warnLogMethod)
 } satisfies typeof evlogLog;
 
