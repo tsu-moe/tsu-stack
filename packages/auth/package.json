@@ -8,6 +8,9 @@
   "exports": {
     "./*": "./src/*.ts"
   },
+  "scripts": {
+    "test:unit": "vp test"
+  },
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:",
     "better-auth": "catalog:"

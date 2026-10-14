@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 
 import { m } from "@tsu-stack/i18n/messages";
@@ -42,6 +43,8 @@ export function Footer({
   props?: React.ComponentProps<"footer">;
   className?: string;
 }) {
+  const [year] = useState(() => new Date().getFullYear());
+
   return (
     <footer className={cn("border-t", className)} {...props}>
       <div className="container mx-auto flex flex-col gap-6 px-4 py-6">
@@ -89,7 +92,7 @@ export function Footer({
 
       <div className="container mx-auto flex items-center justify-between gap-4 border-t px-4 py-6 text-sm text-muted-foreground">
         <p>
-          &copy; {new Date().getFullYear()} {appConfig.site.author}
+          &copy; {year} {appConfig.site.author}
         </p>
 
         <p className="inline-flex items-center gap-1">
