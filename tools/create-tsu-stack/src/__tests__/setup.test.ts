@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -94,6 +94,14 @@ describe("guided setup", () => {
     expect(env).toContain('VITE_SERVER_URL="http://localhost:5000/server"');
     expect(env).toContain('VITE_WEB_URL="http://localhost:3000/web"');
     expect(env).toMatch(/BETTER_AUTH_SECRET="[A-Za-z0-9_-]{43}"/u);
+  });
+
+  it.skipIf(process.platform === "win32")("keeps the local env private to its owner", async () => {
+    const root = await projectFixture();
+
+    await createLocalEnvironment(root, input);
+    const { mode } = await stat(join(root, "packages", "env", ".env"));
+    expect(mode & 0o077).toBe(0);
   });
 
   it("sets up local D1 without requiring Docker", async () => {

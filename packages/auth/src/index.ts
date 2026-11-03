@@ -35,6 +35,10 @@ export function createAuth() {
       enabled: true
     },
 
+    rateLimit: {
+      storage: "database"
+    },
+
     advanced: {
       database: {
         // https://www.better-auth.com/docs/adapters/drizzle#joins
