@@ -44,10 +44,10 @@
   "devDependencies": {
     "@clack/prompts": "1.8.1",
     "@types/fs-extra": "11.0.4",
-    "@types/node": "26.6.5",
+    "@types/node": "26.6.6",
     "bumpp": "12.3.0",
     "changelogithub": "15.0.5",
-    "execa": "10.1.0",
+    "execa": "10.2.1",
     "fs-extra": "11.4.1",
     "publint": "0.3.25",
     "tar": "7.5.22",
@@ -55,7 +55,7 @@
     "validate-npm-package-name": "8.0.0",
     "vite": "catalog:",
     "vite-plus": "catalog:",
-    "zod": "4.6.5"
+    "zod": "4.6.7"
   },
   "engines": {
     "node": ">=22.18.0"

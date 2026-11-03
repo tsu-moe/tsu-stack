@@ -14,6 +14,7 @@ export default defineConfig({
 
   // Vitest - https://vitest.dev/config
   test: {
+    fsModuleCache: false,
     include: ["{apps,packages,tools}/*/src/**/__tests__/*.test.ts"]
   },
 
