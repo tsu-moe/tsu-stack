@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
@@ -37,7 +39,7 @@ jobs:
         shell: bash
         run: |
           TARGET="$RUNNER_TEMP/create-tsu-stack-dry-run"
-          node tools/create-tsu-stack/.output/index.mjs "$TARGET" --yes --dry-run
+          node tools/create-tsu-stack/.output/index.mjs "$TARGET" --yes --dry-run --ref "${{ github.sha }}"
           test ! -e "$TARGET"
 
   scaffold:
@@ -63,6 +65,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
@@ -77,7 +81,7 @@ jobs:
         run: >-
           node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/tsu-${{
           matrix.variant }}" --yes --variant "${{ matrix.variant }}"
-          --no-install --no-git --setup none
+          --no-install --no-git --setup none --ref "${{ github.sha }}"
       - name: Verify generated project
         shell: bash
         run: |
@@ -101,6 +105,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
@@ -114,7 +120,7 @@ jobs:
         run: >-
           node tools/create-tsu-stack/.output/index.mjs
           "$RUNNER_TEMP/generated-tsu-stack" --yes --variant separate
-          --no-install --no-git --setup none
+          --no-install --no-git --setup none --ref "${{ github.sha }}"
       - name: Install and validate generated project
         working-directory: ${{ runner.temp }}/generated-tsu-stack
         run: |
