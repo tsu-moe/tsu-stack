@@ -5,8 +5,6 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "observability": {
-    "enabled": false,
-    "head_sampling_rate": 1,
     "logs": {
       "enabled": true,
       "head_sampling_rate": 1,
