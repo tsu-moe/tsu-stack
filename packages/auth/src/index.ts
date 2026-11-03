@@ -35,7 +35,14 @@ export function createAuth() {
       enabled: true
     },
 
+    rateLimit: {
+      storage: "database"
+    },
+
     advanced: {
+      ipAddress: {
+        ipAddressHeaders: ["cf-connecting-ip"]
+      },
       database: {
         // https://www.better-auth.com/docs/adapters/drizzle#joins
         joins: true

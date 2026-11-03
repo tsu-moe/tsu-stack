@@ -1,5 +1,5 @@
 import { defineRelationsPart } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, bigint, timestamp, boolean, integer, index } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -73,29 +73,39 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-export const authRelations = defineRelationsPart({ user, session, account, verification }, (r) => {
-  return {
-    user: {
-      sessions: r.many.session({
-        from: r.user.id,
-        to: r.session.userId
-      }),
-      accounts: r.many.account({
-        from: r.user.id,
-        to: r.account.userId
-      })
-    },
-    session: {
-      user: r.one.user({
-        from: r.session.userId,
-        to: r.user.id
-      })
-    },
-    account: {
-      user: r.one.user({
-        from: r.account.userId,
-        to: r.user.id
-      })
-    }
-  };
+export const rateLimit = pgTable("rate_limit", {
+  id: text("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  count: integer("count").notNull(),
+  lastRequest: bigint("last_request", { mode: "number" }).notNull()
 });
+
+export const authRelations = defineRelationsPart(
+  { user, session, account, verification, rateLimit },
+  (r) => {
+    return {
+      user: {
+        sessions: r.many.session({
+          from: r.user.id,
+          to: r.session.userId
+        }),
+        accounts: r.many.account({
+          from: r.user.id,
+          to: r.account.userId
+        })
+      },
+      session: {
+        user: r.one.user({
+          from: r.session.userId,
+          to: r.user.id
+        })
+      },
+      account: {
+        user: r.one.user({
+          from: r.account.userId,
+          to: r.user.id
+        })
+      }
+    };
+  }
+);
