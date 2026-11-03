@@ -112,6 +112,7 @@ minimumReleaseAgeExclude:
   - "@orpc/standard-server@1.15.2 || 1.15.7"
   - "@orpc/tanstack-query@1.15.2 || 1.15.7"
   - "@orpc/zod@1.15.2 || 1.15.7"
+  - seroval@1.7.7
 
 overrides:
   "@tanstack/router-core": 1.171.37
@@ -125,7 +126,7 @@ overrides:
   "js-yaml@>=4.0.0 <4.3.2": 4.3.2
   "nanoid@<3.3.18": 3.3.20
   "postcss@<8.5.23": 8.5.30
-  "seroval@<1.6.11": 1.6.11
+  "seroval@<1.7.0": 1.7.7
   "source-map-js@<1.2.2": 1.2.2
   "undici@<6.29.1": 6.29.1
   "zod@<4.6.6": 4.6.7
