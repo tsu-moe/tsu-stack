@@ -20,6 +20,9 @@ export async function assertDestinationAvailable(target: string): Promise<void> 
 }
 
 async function placeProject(stagedProject: string, target: string, cwd: string): Promise<void> {
+  // The destination was validated before the download: recheck it so a directory populated in the
+  // meantime is never removed.
+  await assertDestinationAvailable(target);
   await mkdir(dirname(target), { recursive: true });
   if (resolve(target) === resolve(cwd)) {
     await copy(stagedProject, target, { errorOnExist: true, overwrite: false });
