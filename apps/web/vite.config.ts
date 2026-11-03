@@ -130,7 +130,13 @@ export default defineConfig({
       consolePiping: { enabled: false }
     }),
     mdx(),
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    cloudflare({
+      viteEnvironment: { name: "ssr" },
+      // Workers need explicit runtime bindings for values read through process.env.
+      config: {
+        vars: { NODE_ENV: ENV_WEB_SERVER.NODE_ENV, SOURCE_COMMIT: ENV_WEB_SERVER.SOURCE_COMMIT }
+      }
+    }),
     tanstackStart({
       pages: PAGES_PRERENDER_CONFIG,
       prerender: {

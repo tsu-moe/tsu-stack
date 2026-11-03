@@ -40,6 +40,9 @@ export function createAuth() {
     },
 
     advanced: {
+      ipAddress: {
+        ipAddressHeaders: ["cf-connecting-ip"]
+      },
       database: {
         // https://www.better-auth.com/docs/adapters/drizzle#joins
         joins: true
