@@ -37,6 +37,9 @@ export const auth = betterAuth({
   },
 
   advanced: {
+    defaultCookieAttributes: {
+      sameSite: "lax"
+    },
     database: {
       // https://www.better-auth.com/docs/adapters/drizzle#joins
       joins: true
