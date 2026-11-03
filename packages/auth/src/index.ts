@@ -32,6 +32,10 @@ export const auth = betterAuth({
     enabled: true
   },
 
+  rateLimit: {
+    storage: "database"
+  },
+
   advanced: {
     database: {
       // https://www.better-auth.com/docs/adapters/drizzle#joins
