@@ -75,6 +75,16 @@ export async function migrateDatabase(): Promise<void> {
     return;
   }
 
+  // Workers cannot read migration files at startup; deploy them separately.
+  if (import.meta.dirname === undefined) {
+    log.emit({
+      environment: ENV_SERVER.NODE_ENV,
+      event: "database_migration_skipped",
+      reason: "no_filesystem"
+    });
+    return;
+  }
+
   for (let attempt = 1; attempt <= MIGRATION_MAX_ATTEMPTS; attempt++) {
     try {
       await migrate(createDb(), {
