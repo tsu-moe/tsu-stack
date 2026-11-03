@@ -7,6 +7,8 @@ export const Route = createFileRoute("/server/$")({
     handlers: {
       GET: ({ request }) => app.fetch(request),
 
+      OPTIONS: ({ request }) => app.fetch(request),
+
       POST: ({ request }) => app.fetch(request)
     }
   }

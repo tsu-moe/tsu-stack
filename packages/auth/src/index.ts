@@ -40,6 +40,9 @@ export function createAuth() {
     },
 
     advanced: {
+      defaultCookieAttributes: {
+        sameSite: "lax"
+      },
       ipAddress: {
         ipAddressHeaders: ["cf-connecting-ip"]
       },
@@ -53,7 +56,11 @@ export function createAuth() {
       openAPI({
         theme: "deepSpace"
       })
-    ]
+    ],
+
+    telemetry: {
+      enabled: false
+    }
   });
 }
 

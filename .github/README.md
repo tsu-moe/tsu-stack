@@ -371,14 +371,13 @@ Last verified on October 2, 2026.
 
 ### Pitfalls
 
-- Better Auth uses its default cookie settings (`SameSite=Lax`) here to better support OAuth and other redirect-based flows. Cross-domain deployments still require deliberate cookie, domain, and CORS configuration. See [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups) for context.
-- This implementation does not include security headers by default. You should add the following headers in production for improved security:
-  - `Content-Security-Policy`
-  - `Strict-Transport-Security`
-  - `X-Frame-Options`
-  - `X-Content-Type-Options: nosniff`
-  - `Referrer-Policy`
-  - `Permissions-Policy`
+- Better Auth sets `SameSite=Lax` explicitly here to support OAuth and other redirect-based flows while meeting the oRPC GET CSRF plugin's cookie requirement. Cross-domain deployments still require deliberate cookie, domain, and CORS configuration. See [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups) for context.
+- The web and Hono responses set `X-Content-Type-Options`, `Referrer-Policy`, and `X-Frame-Options`. HTTPS deployments also set HSTS. The web app sends `Cache-Control: private, no-store` on dynamic HTML, including authenticated SSR pages. Cloudflare applies `apps/web/public/_headers` to static assets, which bypass the Worker. CSP and `Permissions-Policy` need an application-specific policy for inline scripts and external integrations before enabling them.
+- oRPC v2 is currently a beta and changes the RPC wire format. Deploy the web client and Hono API from the same revision, especially when using separate Dockerfiles or Coolify Compose. The `variant/merged` and Cloudflare variants mount Hono at `/server/*`; preserve this path and forward `OPTIONS` as well if the web and API use different origins. The v2 GET CSRF plugin guards navigation requests; Hono rejects cross-origin form content types on unsafe methods.
+- The Hono API caps request bodies at 1 MiB; the browser log endpoint uses a separate 64 KiB cap, JSON content type, and a limit of 50 events per batch. Browser-controlled log fields are nested under `client`. Increase these limits deliberately if your app needs larger uploads.
+- Better Auth stores rate limits in the database and uses Cloudflare's `cf-connecting-ip` header on this Worker variant. Keep that header restricted to requests arriving through Cloudflare; direct Worker entry points need their own trust boundary. The separate Docker and Coolify deployments on `main` require a verified proxy header before enabling per-client IP limits.
+- Sign-up still signs users in immediately, so a duplicate email can receive a distinct response. If your product needs to hide registration status, design an email verification or delayed sign-in flow before changing this behavior.
+- Production startup rejects the example Better Auth secret; generate a real secret and share it between the web and API. Build steps using `IS_BUILD=true` may use placeholders, but the runtime must not. On Cloudflare variants, inspect build artifacts before publishing them: Vite can write secrets to `dist/<worker>/.dev.vars` even though Worker assets exclude the file.
 - `robots.txt` [needs to be at the root of the domain](https://developers.google.com/search/docs/crawling-indexing/robots/intro) to be detected by search engines (ie. `example.com/robots.txt`), but since the web app is served on a subpath (ie. `example.com/web`), you need to set up a redirect from `example.com/robots.txt` to `example.com/web/robots.txt` in order for it to be detected.
   - Other than that, you may need to set up a root sitemap index that links to as many sitemaps for every app you deploy in multiple subpaths.
     - At the moment, the `__root.tsx` points to the subpath-specific sitemap, so you may want to consider pointing it to the root if you decide to opt into that architecture.

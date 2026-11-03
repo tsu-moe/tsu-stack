@@ -23,12 +23,12 @@ catalog:
   "@inlang/paraglide-js": 2.27.0
   "@lonik/oh-image": 3.5.0
   "@mdx-js/rollup": 3.1.1
-  "@orpc/client": 1.15.7
-  "@orpc/json-schema": 1.15.7
-  "@orpc/openapi": 1.15.7
-  "@orpc/server": 1.15.7
-  "@orpc/tanstack-query": 1.15.7
-  "@orpc/zod": 1.15.7
+  "@orpc/client": 2.0.0-beta.48
+  "@orpc/json-schema": 2.0.0-beta.48
+  "@orpc/openapi": 2.0.0-beta.48
+  "@orpc/server": 2.0.0-beta.48
+  "@orpc/tanstack-query": 2.0.0-beta.48
+  "@orpc/zod": 2.0.0-beta.48
   "@playwright/test": 1.64.0
   "@paper-design/shaders-react": 0.0.81
   "@t3-oss/env-core": 0.13.11
@@ -98,22 +98,21 @@ minimumReleaseAgeExclude:
   - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.0.0"
   - "@voidzero-dev/vite-plus-win32-x64-msvc@1.0.0"
   - vite-plus@1.0.0
-  - "@orpc/client@1.15.2 || 1.15.7"
-  - "@orpc/contract@1.15.2 || 1.15.7"
-  - "@orpc/interop@1.15.2 || 1.15.7"
-  - "@orpc/json-schema@1.15.2 || 1.15.7"
-  - "@orpc/openapi-client@1.15.2 || 1.15.7"
-  - "@orpc/openapi@1.15.2 || 1.15.7"
-  - "@orpc/server@1.15.2 || 1.15.7"
-  - "@orpc/shared@1.15.2 || 1.15.7"
-  - "@orpc/standard-server-aws-lambda@1.15.2 || 1.15.7"
-  - "@orpc/standard-server-fastify@1.15.2 || 1.15.7"
-  - "@orpc/standard-server-fetch@1.15.2 || 1.15.7"
-  - "@orpc/standard-server-node@1.15.2 || 1.15.7"
-  - "@orpc/standard-server-peer@1.15.2 || 1.15.7"
-  - "@orpc/standard-server@1.15.2 || 1.15.7"
-  - "@orpc/tanstack-query@1.15.2 || 1.15.7"
-  - "@orpc/zod@1.15.2 || 1.15.7"
+  - "@orpc/client@2.0.0-beta.48"
+  - "@orpc/contract@2.0.0-beta.48"
+  - "@orpc/interop@2.0.0-beta.48"
+  - "@orpc/json-schema@2.0.0-beta.48"
+  - "@orpc/openapi@2.0.0-beta.48"
+  - "@orpc/server@2.0.0-beta.48"
+  - "@orpc/shared@2.0.0-beta.48"
+  - "@orpc/standard-server-aws-lambda@2.0.0-beta.48"
+  - "@orpc/standard-server-fastify@2.0.0-beta.48"
+  - "@orpc/standard-server-fetch@2.0.0-beta.48"
+  - "@orpc/standard-server-node@2.0.0-beta.48"
+  - "@orpc/standard-server-peer@2.0.0-beta.48"
+  - "@orpc/standard-server@2.0.0-beta.48"
+  - "@orpc/tanstack-query@2.0.0-beta.48"
+  - "@orpc/zod@2.0.0-beta.48"
   - seroval@1.7.7
 
 overrides:

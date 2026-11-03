@@ -19,6 +19,7 @@ export async function createContext({
   });
   return {
     logger,
+    requestHeaders: context.req.raw.headers,
     session
   };
 }
