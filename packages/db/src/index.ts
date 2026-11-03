@@ -72,25 +72,29 @@ export async function migrateDatabase(): Promise<void> {
   }
 
   for (let attempt = 1; attempt <= MIGRATION_MAX_ATTEMPTS; attempt++) {
+    // An emitted wide event cannot be reused for the next retry.
+    const attemptLog =
+      attempt === 1 ? log : createLogger({ operation: "server__database_migration" });
+
     try {
       await migrate(db, {
         migrationsFolder: join(import.meta.dirname, "migrations")
       });
-      log.emit({ attempt, event: "database_migration_completed" });
+      attemptLog.emit({ attempt, event: "database_migration_completed" });
       return;
     } catch (error) {
-      log.error(error instanceof Error ? error : String(error), {
+      attemptLog.error(error instanceof Error ? error : String(error), {
         attempt,
         event: "database_migration_failed",
         maxAttempts: MIGRATION_MAX_ATTEMPTS
       });
 
       if (attempt === MIGRATION_MAX_ATTEMPTS) {
-        log.emit({ _forceKeep: true });
+        attemptLog.emit({ _forceKeep: true });
         throw error;
       }
 
-      log.emit({
+      attemptLog.emit({
         attempt,
         event: "database_migration_retrying",
         maxAttempts: MIGRATION_MAX_ATTEMPTS,

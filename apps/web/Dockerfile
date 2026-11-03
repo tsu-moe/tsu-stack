@@ -22,9 +22,6 @@ FROM installer AS builder
 
 COPY --chown=vp:vp . .
 
-# Ensure the migrations directory exists so that the build doesn't fail when trying to copy it in the production stage.
-RUN mkdir -p packages/db/migrations
-
 ARG SOURCE_COMMIT VITE_SERVER_URL VITE_WEB_URL VITE_IMGPROXY_URL VITE_IMGPROXY_SIGNATURE DATABASE_URL BETTER_AUTH_SECRET
 ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
     VITE_SERVER_URL=${VITE_SERVER_URL} \
@@ -58,7 +55,7 @@ RUN addgroup --gid 1001 nodejs \
 COPY --from=builder /tmp/node /usr/local/bin/node
 COPY --from=builder --chown=web:nodejs /app/apps/web/.output /app/.output
 
-COPY --from=builder --chown=web:nodejs /app/packages/db/migrations /app/.output/server/_ssr/migrations
+COPY --from=builder --chown=web:nodejs /app/packages/db/migrations /app/.output/server/migrations
 
 USER web
 
