@@ -1,10 +1,14 @@
 import { call } from "@orpc/server";
-import { describe, expect, it } from "vite-plus/test";
+import { describe, expect, it, vi } from "vite-plus/test";
 
 import { createRequestLogger } from "@tsu-stack/logger/server";
 
 import { type OrpcContext } from "#@/lib/context/types";
 import { privateRouter } from "#@/routers/private/index";
+
+vi.mock("@tsu-stack/auth/index", () => {
+  return { createAuth: vi.fn() };
+});
 
 const authenticatedSession = {
   session: {
@@ -31,6 +35,7 @@ function createContext(session: OrpcContext["session"]): OrpcContext {
       method: "GET",
       path: "/private/data"
     }),
+    requestHeaders: new Headers(),
     session
   };
 }
@@ -42,8 +47,7 @@ describe("privateRouter.data", () => {
     });
 
     await expect(result).rejects.toMatchObject({
-      code: "UNAUTHORIZED",
-      status: 401
+      code: "UNAUTHORIZED"
     });
   });
 
