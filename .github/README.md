@@ -394,9 +394,7 @@ You can support the project by giving it a star, sharing it with your friends, c
 
 ## Acknowledgements
 
-This repository builds on [mugnavo/tanstarter-plus](https://github.com/mugnavo/tanstarter-plus).
-
-- It will continue to be a reference for new dependency features.
+This repository builds on [mugnavo/cove-monorepo](https://github.com/mugnavo/cove-monorepo).
 
 ## License
 
