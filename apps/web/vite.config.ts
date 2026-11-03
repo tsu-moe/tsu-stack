@@ -133,11 +133,19 @@ export default defineConfig({
     /** @see {@link https://tanstack.com/start/latest/docs/framework/react/guide/hosting} */
     nitro({
       baseURL: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname,
-      /**
-       * TODO(security): Review production headers such as CSP, Permissions-Policy,
-       * frame restrictions, COOP, Referrer-Policy, and X-Content-Type-Options for
-       * the deployed app's actual integrations and embedding requirements.
-       */
+      routeRules: {
+        "/**": {
+          headers: {
+            "X-Content-Type-Options": "nosniff",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+            "X-Frame-Options": "SAMEORIGIN",
+            ...(ENV_WEB_ISOMORPHIC.VITE_WEB_URL.startsWith("https:")
+              ? { "Strict-Transport-Security": "max-age=15552000; includeSubDomains" }
+              : {})
+          }
+        }
+      },
+      // CSP and Permissions-Policy need policies tailored to the deployed integrations.
       // FIXME: Remove this when Nitro/Rolldown preserves initialization order across server chunks, see https://github.com/rolldown/rolldown/issues/10747
       inlineDynamicImports: true,
       /**

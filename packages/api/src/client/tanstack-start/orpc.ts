@@ -19,12 +19,14 @@ const getORPCClient = createIsomorphicFn()
         const session = await auth.api.getSession({ headers });
         return {
           logger: createLogger({ operation: "web__client__orpc" }),
+          requestHeaders: headers,
           session
         };
       }
     })
   )
   .client((): RouterClient<typeof appRouter> => {
+    const serverUrl = new URL(ENV_WEB_ISOMORPHIC.VITE_SERVER_URL);
     const link = new RPCLink({
       fetch(url, options) {
         return fetch(url, {
@@ -32,7 +34,8 @@ const getORPCClient = createIsomorphicFn()
           credentials: "include"
         });
       },
-      url: `${ENV_WEB_ISOMORPHIC.VITE_SERVER_URL}/rpc`
+      origin: serverUrl.origin,
+      url: `${serverUrl.pathname.replace(/\/$/, "")}/rpc` as `/${string}`
     });
 
     return createORPCClient(link);

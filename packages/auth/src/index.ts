@@ -40,6 +40,12 @@ export const auth = betterAuth({
     database: {
       // https://www.better-auth.com/docs/adapters/drizzle#joins
       joins: true
+    },
+    ipAddress: {
+      // No proxy header is trustworthy unless the deployment opts in explicitly.
+      ipAddressHeaders: ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER
+        ? [ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER]
+        : []
     }
   },
 

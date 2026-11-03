@@ -31,6 +31,7 @@ function createContext(session: OrpcContext["session"]): OrpcContext {
       method: "GET",
       path: "/private/data"
     }),
+    requestHeaders: new Headers(),
     session
   };
 }
@@ -42,8 +43,7 @@ describe("privateRouter.data", () => {
     });
 
     await expect(result).rejects.toMatchObject({
-      code: "UNAUTHORIZED",
-      status: 401
+      code: "UNAUTHORIZED"
     });
   });
 

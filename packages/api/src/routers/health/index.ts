@@ -1,5 +1,6 @@
 import process from "node:process";
 
+import { openapi } from "@orpc/openapi";
 import { z } from "zod";
 
 import {
@@ -81,34 +82,37 @@ const serviceChecks = {
 
 export const healthRouter = {
   live: publicProcedure
-    .route({
-      description: "Check if the server is alive",
-      method: "GET",
-      spec: (spec) => {
-        return { ...spec, security: [] };
-      }
-    })
+    .meta(
+      openapi({
+        description: "Check if the server is alive",
+        method: "GET",
+        spec: (spec) => {
+          return { ...spec, security: [] };
+        }
+      })
+    )
     .errors({})
     .output(HealthLiveOutputSchema)
     .handler(() => {
       return { status: "healthy", ...buildBaseHealth() };
     }),
   ready: publicProcedure
-    .route({
-      description:
-        "Check if the server is ready to handle requests and connect to external services",
-      method: "GET",
-      spec: (spec) => {
-        return { ...spec, security: [] };
-      }
-    })
+    .meta(
+      openapi({
+        description:
+          "Check if the server is ready to handle requests and connect to external services",
+        method: "GET",
+        spec: (spec) => {
+          return { ...spec, security: [] };
+        }
+      })
+    )
     .errors({
       SERVICE_UNAVAILABLE: {
         data: z.object({
           checks: HealthChecksSchema
         }),
-        description: "One or more services are unhealthy",
-        status: 503
+        description: "One or more services are unhealthy"
       }
     })
     .output(HealthReadyOutputSchema)

@@ -1,4 +1,7 @@
+import { openapi } from "@orpc/openapi";
 import { ORPCError, os } from "@orpc/server";
+
+import { auth } from "@tsu-stack/auth/index";
 
 import { type OrpcContext } from "#@/lib/context/types";
 
@@ -17,11 +20,28 @@ const requireAuth = o.middleware(async ({ context, next }) => {
   });
 });
 
-export const protectedProcedure = publicProcedure.use(requireAuth).route({
-  spec: (spec) => {
-    return {
-      ...spec,
-      security: [{ authCookie: [] }]
-    };
-  }
-});
+export const protectedProcedure = publicProcedure.use(requireAuth).meta(
+  openapi({
+    spec: (spec) => {
+      return {
+        ...spec,
+        security: [{ authCookie: [] }]
+      };
+    }
+  })
+);
+
+export const freshProtectedProcedure = protectedProcedure.use(
+  o.middleware(async ({ context, next }) => {
+    const session = await auth.api.getSession({
+      headers: context.requestHeaders,
+      query: { disableCookieCache: true }
+    });
+
+    if (!session?.user) {
+      throw new ORPCError("UNAUTHORIZED");
+    }
+
+    return next({ context: { session } });
+  })
+);

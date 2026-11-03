@@ -245,13 +245,14 @@ TanStack Start uses [Nitro](https://nitro.build) as its server engine, which mea
 
 For the Hono server, use the following environment variables:
 
-| Variable Name          | Required | Default Value | Description                                                                                      |
-| ---------------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------ |
-| `VITE_SERVER_URL`      | ✅       | -             | Base URL for the server. May also include a subpath if needed, ex: `https://example.com/server`. |
-| `VITE_WEB_URL`         | ✅       | -             | Base URL for the web app. May also include a subpath if needed, ex: `https://example.com/web`.   |
-| `BETTER_AUTH_SECRET`   | ✅       | -             | Secret key for Better-Auth. Generate with `vp run auth:secret`.                                  |
-| `DATABASE_URL`         | ✅       | -             | PostgreSQL connection string (not required using `cloudflare-d1` variant).                       |
-| `ENABLE_OPEN_API_DOCS` | ❌       | `false`       | Enable OpenAPI `/docs` endpoint.                                                                 |
+| Variable Name                   | Required | Default Value | Description                                                                                                                 |
+| ------------------------------- | -------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_SERVER_URL`               | ✅       | -             | Base URL for the server. May also include a subpath if needed, ex: `https://example.com/server`.                            |
+| `VITE_WEB_URL`                  | ✅       | -             | Base URL for the web app. May also include a subpath if needed, ex: `https://example.com/web`.                              |
+| `BETTER_AUTH_SECRET`            | ✅       | -             | Secret key for Better-Auth. Generate with `vp run auth:secret`.                                                             |
+| `BETTER_AUTH_TRUSTED_IP_HEADER` | ❌       | -             | Client IP header overwritten by your trusted proxy on every request: `x-forwarded-for`, `x-real-ip`, or `cf-connecting-ip`. |
+| `DATABASE_URL`                  | ✅       | -             | PostgreSQL connection string (not required using `cloudflare-d1` variant).                                                  |
+| `ENABLE_OPEN_API_DOCS`          | ❌       | `false`       | Enable OpenAPI `/docs` endpoint.                                                                                            |
 
 ### Web
 
@@ -372,13 +373,12 @@ Last verified on October 2, 2026.
 ### Pitfalls
 
 - Better Auth uses its default cookie settings (`SameSite=Lax`) here to better support OAuth and other redirect-based flows. Cross-domain deployments still require deliberate cookie, domain, and CORS configuration. See [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups) for context.
-- This implementation does not include security headers by default. You should add the following headers in production for improved security:
-  - `Content-Security-Policy`
-  - `Strict-Transport-Security`
-  - `X-Frame-Options`
-  - `X-Content-Type-Options: nosniff`
-  - `Referrer-Policy`
-  - `Permissions-Policy`
+- The web and Hono responses set `X-Content-Type-Options`, `Referrer-Policy`, and `X-Frame-Options`. HTTPS deployments also set HSTS. The web app sends `Cache-Control: private, no-store` on HTML, including authenticated SSR pages. Nitro route rules cover static assets in the production Node server; verify that your CDN or Worker asset configuration also applies these headers when it serves files without running the app. CSP and `Permissions-Policy` need an application-specific policy for inline scripts and external integrations before enabling them.
+- oRPC v2 is currently a beta and changes the RPC wire format. Deploy the web client and Hono API from the same revision, especially when using separate Dockerfiles or Coolify Compose. The `variant/merged` and Cloudflare variants mount Hono at `/server/*`; preserve this path and forward `OPTIONS` as well if the web and API use different origins. The v2 GET CSRF plugin guards navigation requests; Hono rejects cross-origin form content types on unsafe methods. Keep Better Auth cookies explicitly `SameSite=Lax` or stricter.
+- The Hono API caps request bodies at 1 MiB; the browser log endpoint uses a separate 64 KiB cap, JSON content type, and a limit of 50 events per batch. Browser-controlled log fields are nested under `client`. Increase these limits deliberately if your app needs larger uploads.
+- Better Auth stores rate limits in the database. With no trusted client IP header configured, clients share a per-endpoint bucket. Set `BETTER_AUTH_TRUSTED_IP_HEADER` only when the proxy strips incoming copies and overwrites the header on every request. Cloudflare Workers can use `cf-connecting-ip`; Docker and Coolify need a verified proxy setting. Never trust a client-supplied `X-Forwarded-For` header.
+- Sign-up still signs users in immediately, so a duplicate email can receive a distinct response. If your product needs to hide registration status, design an email verification or delayed sign-in flow before changing this behavior.
+- Production startup rejects the example Better Auth secret; generate a real secret and share it between the web and API. Build steps using `IS_BUILD=true` may use placeholders, but the runtime must not. On Cloudflare variants, inspect build artifacts before publishing them: Vite can write secrets to `dist/<worker>/.dev.vars` even though Worker assets exclude the file.
 - `robots.txt` [needs to be at the root of the domain](https://developers.google.com/search/docs/crawling-indexing/robots/intro) to be detected by search engines (ie. `example.com/robots.txt`), but since the web app is served on a subpath (ie. `example.com/web`), you need to set up a redirect from `example.com/robots.txt` to `example.com/web/robots.txt` in order for it to be detected.
   - Other than that, you may need to set up a root sitemap index that links to as many sitemaps for every app you deploy in multiple subpaths.
     - At the moment, the `__root.tsx` points to the subpath-specific sitemap, so you may want to consider pointing it to the root if you decide to opt into that architecture.
