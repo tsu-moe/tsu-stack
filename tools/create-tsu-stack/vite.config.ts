@@ -19,6 +19,7 @@ export default defineConfig({
     sourcemap: true
   },
   test: {
+    fsModuleCache: false,
     include: ["src/**/__tests__/*.test.ts"]
   }
 });
