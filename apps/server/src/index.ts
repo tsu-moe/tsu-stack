@@ -1,15 +1,20 @@
 import { hostname } from "node:os";
 import { join } from "node:path/posix";
 
-import { SmartCoercionPlugin } from "@orpc/json-schema";
+import { SmartCoercionHandlerPlugin } from "@orpc/json-schema";
+import { OpenAPIGenerator } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import { ORPCError, onError } from "@orpc/server";
+import { OpenAPIReferenceHandlerPlugin } from "@orpc/openapi/plugins";
+import { COMMON_ERROR_STATUS_MAP, ORPCError, onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
-import { experimental_RethrowHandlerPlugin as RethrowHandlerPlugin } from "@orpc/server/plugins";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { GetMethodCsrfProtectionHandlerPlugin, RethrowHandlerPlugin } from "@orpc/server/plugins";
+import { ZodToJsonSchemaConverter } from "@orpc/zod";
 import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
+import { HTTPException } from "hono/http-exception";
+import { secureHeaders } from "hono/secure-headers";
 import { type ContentfulStatusCode } from "hono/utils/http-status";
 
 import { createContext } from "@tsu-stack/api/lib/context/hono/create-context";
@@ -34,6 +39,14 @@ export const app = new Hono<HonoLogVariables>().basePath(
 
 app.use(
   "/*",
+  secureHeaders({
+    referrerPolicy: "strict-origin-when-cross-origin",
+    strictTransportSecurity: ENV_SERVER.VITE_SERVER_URL.startsWith("https:")
+  })
+);
+
+app.use(
+  "/*",
   cors({
     allowHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
@@ -41,6 +54,18 @@ app.use(
     origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin]
   })
 );
+
+const formCsrf = csrf({
+  origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin, new URL(ENV_SERVER.VITE_SERVER_URL).origin]
+});
+
+app.use("/*", (c, next) => {
+  // A bodyless server-to-server POST has no browser origin or form content type.
+  if (!c.req.header("origin") && !c.req.header("sec-fetch-site") && !c.req.header("content-type")) {
+    return next();
+  }
+  return formCsrf(c, next);
+});
 
 app.use(
   "/*",
@@ -54,12 +79,17 @@ app.use(
 
 app.post("/_logs/ingest", honoLogIngestionMiddleware());
 
+// Apply the general cap after the log route, which has its own smaller limit.
+app.use("/*", bodyLimit({ maxSize: 1024 * 1024 }));
+
 app.onError((error, c) => {
-  const requestLog = c.get("log");
-  if (requestLog) {
-    requestLog.error(error);
-  } else {
-    log.error({ event: "hono_global_error", error });
+  if (!(error instanceof HTTPException && error.status < 500)) {
+    const requestLog = c.get("log");
+    if (requestLog) {
+      requestLog.error(error);
+    } else {
+      log.error({ event: "hono_global_error", error });
+    }
   }
 
   const parsed = parseError(error);
@@ -93,7 +123,13 @@ app.get("/auth/open-api/generate-schema", async (c) => {
 
 app.on(["POST", "GET"], "/auth/*", async (c) => auth.handler(c.req.raw));
 
+const errorStatusMap = { ...COMMON_ERROR_STATUS_MAP, SERVICE_UNAVAILABLE: 503 };
+const openApiGenerator = new OpenAPIGenerator({
+  converters: [new ZodToJsonSchemaConverter()]
+});
+
 export const openApiHandler = new OpenAPIHandler(appRouter, {
+  errorStatusMap,
   interceptors: [
     onError((error, { context }) => {
       context.logger.set({ handler: "openapi" });
@@ -101,58 +137,64 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
     })
   ],
   plugins: [
-    new SmartCoercionPlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()]
+    new SmartCoercionHandlerPlugin({
+      converters: [new ZodToJsonSchemaConverter()]
     }),
-    new OpenAPIReferencePlugin({
-      docsConfig: () => {
-        const apiBasePath = new URL(ENV_SERVER.VITE_SERVER_URL).pathname;
-        return {
-          content: undefined,
-          metaData: {
-            description: "Documentation for the @tsu-stack/server API.",
-            title: "@tsu-stack/server API Documentation"
-          },
-          sources: [
-            {
-              title: "API Reference",
-              url: join(apiBasePath, "docs", "spec.json")
-            },
-            {
-              title: "Auth API Reference",
-              url: join(apiBasePath, "auth", "open-api", "generate-schema")
-            }
-          ],
-          theme: "deepSpace"
-        };
-      },
+    new OpenAPIReferenceHandlerPlugin({
+      allow: ENV_SERVER.ENABLE_OPEN_API_DOCS,
       docsPath: "/docs",
-      schemaConverters: [new ZodToJsonSchemaConverter()],
-      specGenerateOptions: {
-        components: {
-          securitySchemes: {
-            authCookie: {
-              description: `**(optional)** Session cookie from signing-in, required for protected endpoints [View Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
-              in: "cookie",
-              name: "better_auth.session_token",
-              type: "apiKey"
-            }
-          }
-        },
-        info: {
-          description: `This is the API for @tsu-stack/server.\n## Usage\nFor authentication, you can sign in via the \`/sign-in\` endpoint in [the Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference). Include the session cookie in subsequent requests to access protected endpoints.\n## Resources\n - [Official Website](${ENV_SERVER.VITE_WEB_URL})\n - [Auth API Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
-          title: "@tsu-stack/server API",
-          version: ENV_SERVER.SOURCE_COMMIT
-        },
-        servers: [
+      docsTitle: "@tsu-stack/server API Documentation",
+      provider: "scalar",
+      providerConfig: {
+        sources: [
           {
-            description: "Primary API Server",
-            url: ENV_SERVER.VITE_SERVER_URL
+            title: "API Reference",
+            url: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "docs", "spec.json")
+          },
+          {
+            title: "Auth API Reference",
+            url: join(
+              new URL(ENV_SERVER.VITE_SERVER_URL).pathname,
+              "auth",
+              "open-api",
+              "generate-schema"
+            )
           }
-        ]
+        ],
+        theme: "deepSpace"
       },
+      providerScriptUrl: "https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4",
+      spec: () =>
+        openApiGenerator.generate(appRouter, {
+          version: "3.1.1",
+          errorStatusMap,
+          base: {
+            components: {
+              securitySchemes: {
+                authCookie: {
+                  description: `**(optional)** Session cookie from signing-in, required for protected endpoints [View Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
+                  in: "cookie",
+                  name: "better_auth.session_token",
+                  type: "apiKey"
+                }
+              }
+            },
+            info: {
+              description: `This is the API for @tsu-stack/server.\n## Usage\nFor authentication, you can sign in via the \`/sign-in\` endpoint in [the Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference). Include the session cookie in subsequent requests to access protected endpoints.\n## Resources\n - [Official Website](${ENV_SERVER.VITE_WEB_URL})\n - [Auth API Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
+              title: "@tsu-stack/server API",
+              version: ENV_SERVER.SOURCE_COMMIT
+            },
+            servers: [
+              {
+                description: "Primary API Server",
+                url: ENV_SERVER.VITE_SERVER_URL
+              }
+            ]
+          }
+        }),
       specPath: "/docs/spec.json"
     }),
+    new GetMethodCsrfProtectionHandlerPlugin(),
     new RethrowHandlerPlugin({
       filter: (error) => !(error instanceof ORPCError)
     })
@@ -160,13 +202,14 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
 });
 
 export const rpcHandler = new RPCHandler(appRouter, {
+  errorStatusMap,
   interceptors: [
     onError((error, { context }) => {
       context.logger.set({ handler: "rpc" });
       context.logger.error(error instanceof Error ? error : String(error));
     })
   ],
-  plugins: []
+  plugins: [new GetMethodCsrfProtectionHandlerPlugin()]
 });
 
 app.use("/*", async (c, next) => {
@@ -182,18 +225,6 @@ app.use("/*", async (c, next) => {
     return c.newResponse(rpcResult.response.body, rpcResult.response);
   }
 
-  // OpenAPI docs at /docs/*
-  if (ENV_SERVER.ENABLE_OPEN_API_DOCS) {
-    const docsResult = await openApiHandler.handle(c.req.raw, {
-      context,
-      prefix: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "docs") as `/${string}`
-    });
-
-    if (docsResult.matched) {
-      return c.newResponse(docsResult.response.body, docsResult.response);
-    }
-  }
-
   // OpenAPI REST API at /*
   const openApiResult = await openApiHandler.handle(c.req.raw, {
     context,
@@ -207,6 +238,8 @@ app.use("/*", async (c, next) => {
   await next();
 });
 
-void (async () => {
-  await migrateDatabase();
-})();
+if (!ENV_SERVER.IS_BUILD) {
+  void (async () => {
+    await migrateDatabase();
+  })();
+}

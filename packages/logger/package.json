@@ -11,6 +11,9 @@
     "./server/tanstack-start/middleware": "./src/server/tanstack-start/middleware.ts",
     "./server/hono/middleware": "./src/server/hono/middleware.ts"
   },
+  "scripts": {
+    "test:unit": "vp test"
+  },
   "dependencies": {
     "@tanstack/react-start": "catalog:",
     "defu": "catalog:",
@@ -21,6 +24,7 @@
   "devDependencies": {
     "@tsu-stack/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

@@ -5,6 +5,8 @@ import {
   type EvlogVariables
 } from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
+import { bodyLimit } from "hono/body-limit";
+import { every } from "hono/combine";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
@@ -29,7 +31,7 @@ const ClientLogPayloadSchema = z.object({
     .optional()
 });
 
-const ClientLogBatchSchema = z.array(ClientLogPayloadSchema);
+const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
 
 /**
  * Hono app variables added by `honoLoggerMiddleware()`.
@@ -92,25 +94,34 @@ export function honoLogIngestionMiddleware(
 ): MiddlewareHandler {
   const maxPayloadBytes = options.maxPayloadBytes ?? 64 * 1024;
 
-  return createMiddleware(async (c) => {
-    const contentLength = Number(c.req.header("content-length") ?? 0);
-    if (contentLength > maxPayloadBytes) {
-      throw new HTTPException(413, { message: "Log payload is too large" });
-    }
-
-    const result = await c.req.json().then(
-      (body) => ClientLogBatchSchema.safeParse(body),
-      () => {
-        throw new HTTPException(400, { message: "Invalid JSON body" });
+  return every(
+    bodyLimit({
+      maxSize: maxPayloadBytes,
+      onError: () => {
+        throw new HTTPException(413, { message: "Log payload is too large" });
       }
-    );
-    const batch = result.success ? result.data : [];
-    for (const payload of batch) {
-      emitClientLog(payload);
-    }
+    }),
+    createMiddleware(async (c) => {
+      if (
+        c.req.header("content-type")?.split(";", 1)[0]?.trim().toLowerCase() !== "application/json"
+      ) {
+        throw new HTTPException(415, { message: "Expected application/json" });
+      }
 
-    return c.body(null, 204);
-  });
+      const result = await c.req.json().then(
+        (body) => ClientLogBatchSchema.safeParse(body),
+        () => {
+          throw new HTTPException(400, { message: "Invalid JSON body" });
+        }
+      );
+      const batch = result.success ? result.data : [];
+      for (const payload of batch) {
+        emitClientLog(payload);
+      }
+
+      return c.body(null, 204);
+    })
+  );
 }
 
 function emitClientLog(payload: ClientLogPayload) {
@@ -134,10 +145,8 @@ function emitClientLog(payload: ClientLogPayload) {
     normalizedEvent.requestId = payload.request.requestId;
   }
 
-  const clientEvent = {
-    ...normalizedEvent,
-    source: "client"
-  };
+  // Keep browser-controlled fields separate from authoritative server log fields.
+  const clientEvent = { client: normalizedEvent, source: "client" };
 
   switch (NormalizedLogLevelSchema.parse(payload.event.level)) {
     case "debug":

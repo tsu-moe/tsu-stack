@@ -40,6 +40,7 @@ services:
       - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
       - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
       - "ENABLE_OPEN_API_DOCS=${ENABLE_OPEN_API_DOCS:-false}"
+      - "BETTER_AUTH_TRUSTED_IP_HEADER=${BETTER_AUTH_TRUSTED_IP_HEADER:-}"
     ports:
       - "${WEB_PORT:-3000}:3000"
     healthcheck:
