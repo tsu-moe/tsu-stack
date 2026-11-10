@@ -39,9 +39,9 @@ describe("Wrangler identity", () => {
   });
 
   it("parses Wrangler's remote D1 database list", () => {
-    expect(
-      parseD1DatabaseList(JSON.stringify([{ name: "moon-garden-db", uuid: "database-123" }]))
-    ).toEqual([{ id: "database-123", name: "moon-garden-db" }]);
+    expect(parseD1DatabaseList(JSON.stringify([{ name: "moon-garden-db", uuid: "database-123" }]))).toEqual([
+      { id: "database-123", name: "moon-garden-db" }
+    ]);
   });
 
   it("validates conservative Cloudflare D1 database names", () => {
@@ -93,8 +93,6 @@ describe("Wrangler identity", () => {
   }]
 }`;
 
-    expect(
-      updateD1BindingContent(config, "moon-garden-db", "12345678-1234-4123-8123-123456789abc")
-    ).toBe(config);
+    expect(updateD1BindingContent(config, "moon-garden-db", "12345678-1234-4123-8123-123456789abc")).toBe(config);
   });
 });

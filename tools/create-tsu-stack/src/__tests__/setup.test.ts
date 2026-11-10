@@ -59,9 +59,7 @@ describe("guided setup", () => {
         return command !== "docker";
       }
     };
-    await expect(assertSetupPrerequisites(input, runner, ".")).rejects.toThrow(
-      "Docker is required"
-    );
+    await expect(assertSetupPrerequisites(input, runner, ".")).rejects.toThrow("Docker is required");
   });
 
   it("leaves git uninitialized when a setup command fails", async () => {
@@ -79,9 +77,7 @@ describe("guided setup", () => {
         return true;
       }
     };
-    await expect(runPostGeneration(await projectFixture(), input, runner)).rejects.toThrow(
-      "migration failed"
-    );
+    await expect(runPostGeneration(await projectFixture(), input, runner)).rejects.toThrow("migration failed");
     expect(calls).not.toContain("git init");
   });
 
@@ -242,9 +238,7 @@ describe("guided setup", () => {
       runner,
       async () => {
         promptCall += 1;
-        return promptCall === 1
-          ? { action: "login" }
-          : { accountId: "correct-account", action: "use" };
+        return promptCall === 1 ? { action: "login" } : { accountId: "correct-account", action: "use" };
       }
     );
 

@@ -21,7 +21,6 @@ export default defineConfig({
     command: "vp run build && vp preview --host 127.0.0.1 --port 3100",
     env: {
       BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-      DATABASE_URL: "postgresql://invalid:invalid@127.0.0.1:1/tsu-stack-e2e",
       SOURCE_COMMIT: "e2e",
       VITE_IMGPROXY_SIGNATURE: "_",
       VITE_SERVER_URL: "http://127.0.0.1:3199/server",

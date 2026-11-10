@@ -4,6 +4,7 @@ import {
   createError as createEvlogError,
   createLogger as createEvlogLogger,
   createRequestLogger as createEvlogRequestLogger,
+  EvlogError,
   initLogger as initEvlogLogger,
   log as evlog,
   parseError as parseEvlogError,
@@ -18,16 +19,12 @@ type ServerLoggerConfig = EvlogLoggerConfig;
 
 const DEFAULT_REDACT_PATHS = [
   ...(auditRedactPreset.paths ?? []),
-  "apiKey",
-  "authorization",
-  "cookie",
+  "BETTER_AUTH_SECRET",
+  "DATABASE_URL",
+  "confirmPassword",
   "cookies",
-  "password",
-  "secret",
-  "set-cookie",
-  "token",
-  "accessToken",
-  "refreshToken"
+  "idToken"
+  // TODO: Add more if you plan to use more sensitive paths
 ];
 
 const DEFAULT_SERVER_LOGGER_CONFIG = {
@@ -35,7 +32,8 @@ const DEFAULT_SERVER_LOGGER_CONFIG = {
     service: LOG_SERVICES.DEFAULT
   },
   redact: {
-    paths: DEFAULT_REDACT_PATHS
+    paths: DEFAULT_REDACT_PATHS,
+    patterns: [/(?<=\nparams: )[^\n]*/g]
   }
 } satisfies ServerLoggerConfig;
 
@@ -142,7 +140,13 @@ export const log = evlog;
 export const createError = createEvlogError;
 
 /**
- * Convert unknown thrown values into structured, response-safe error fields.
+ * Whether an error was created with `createError` and is safe to expose to clients.
+ */
+export const isEvlogError = (error: unknown): error is EvlogError => EvlogError.isEvlogError(error);
+
+/**
+ * Convert unknown thrown values into structured error fields. Unexpected error messages may
+ * contain sensitive internal details and must not be returned directly to clients.
  *
  * @example
  * ```ts

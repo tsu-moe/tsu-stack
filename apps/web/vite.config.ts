@@ -108,13 +108,7 @@ export default defineConfig({
          * Track this GitHub issue for updates:
          * @see {@link https://github.com/TanStack/router/issues/7119}
          */
-        include: [
-          "react",
-          "react-dom",
-          "react-dom/server",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime"
-        ]
+        include: ["react", "react-dom", "react-dom/server", "react/jsx-runtime", "react/jsx-dev-runtime"]
       }
     }
   },

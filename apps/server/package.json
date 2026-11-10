@@ -8,6 +8,9 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "test:unit": "vp test"
+  },
   "dependencies": {
     "@dotenvx/dotenvx": "catalog:",
     "@orpc/json-schema": "catalog:",
@@ -27,6 +30,7 @@
     "@types/node": "catalog:",
     "cross-env": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

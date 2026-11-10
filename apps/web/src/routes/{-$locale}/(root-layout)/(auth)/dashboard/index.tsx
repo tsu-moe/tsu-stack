@@ -61,11 +61,7 @@ function RouteComponent() {
           </div>
 
           <pre className="overflow-auto rounded bg-muted p-2 text-sm">
-            {isClient ? (
-              JSON.stringify(privateData.data, null, 2)
-            ) : (
-              <Spinner className="mx-auto my-28" />
-            )}
+            {isClient ? JSON.stringify(privateData.data, null, 2) : <Spinner className="mx-auto my-28" />}
           </pre>
         </div>
       </section>

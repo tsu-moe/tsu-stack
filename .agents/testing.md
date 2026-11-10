@@ -118,7 +118,6 @@ Mock only nondeterministic or external I/O boundaries that the test does not own
 
 ## Local Test Database
 
-- Prefer the PostgreSQL service in `packages/db/docker-compose.dev.yaml` over a system PostgreSQL installation. Confirm the underlying Docker or Podman engine works; a Compose wrapper alone is not sufficient.
-- For finite integration or E2E runs, start it with `vp run db:dev:start`. Check whether it was already running, and stop it with `vp run db:dev:stop` afterward only if the current testing session started it.
-- When Playwright targets a different database from the Compose default, create it once inside the container with the configured database user, then apply existing migrations with the test `DATABASE_URL` before running tests.
-- Fall back to system PostgreSQL only when no usable Compose engine or database service is available.
+- Use Wrangler's local D1 binding for integration and E2E tests. Do not introduce a PostgreSQL service or `DATABASE_URL` for this runtime.
+- Apply the checked-in migrations with `vp run db:migrate:local` before a test that needs the local database.
+- Keep tests isolated from the remote D1 database unless the user explicitly requests a remote integration check.

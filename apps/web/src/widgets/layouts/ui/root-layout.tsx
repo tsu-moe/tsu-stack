@@ -3,13 +3,7 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { Footer } from "@/features/footer";
 import { Navbar } from "@/features/navbar";
 
-export function RootLayout({
-  children,
-  className
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+export function RootLayout({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <>
       <div className={cn("flex min-h-screen flex-col", className)}>

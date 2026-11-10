@@ -1,12 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 
 import { parseCliFlags } from "#@/args";
-import {
-  defaultDisplayName,
-  normalizeProjectName,
-  normalizeScope,
-  projectNameFromDirectory
-} from "#@/naming";
+import { defaultDisplayName, normalizeProjectName, normalizeScope, projectNameFromDirectory } from "#@/naming";
 import { projectInputSchema } from "#@/schema";
 
 describe("project identity", () => {
@@ -93,8 +88,6 @@ describe("CLI inputs", () => {
   });
 
   it("rejects contradictory boolean flags", () => {
-    expect(() => parseCliFlags(["app", "--install", "--no-install"])).toThrow(
-      "Use either --install or --no-install"
-    );
+    expect(() => parseCliFlags(["app", "--install", "--no-install"])).toThrow("Use either --install or --no-install");
   });
 });

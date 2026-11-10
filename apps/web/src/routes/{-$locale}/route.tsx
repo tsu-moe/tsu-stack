@@ -6,10 +6,7 @@ export const Route = createFileRoute("/{-$locale}")({
   beforeLoad: ({ params, location }) => {
     const availableLocales = appConfig.i18n.locales;
     // catches invalid locales like /custom-app-path/not-found-locale/i18n
-    if (
-      params.locale &&
-      !availableLocales.includes(params.locale as (typeof availableLocales)[0])
-    ) {
+    if (params.locale && !availableLocales.includes(params.locale as (typeof availableLocales)[0])) {
       throw notFound();
     }
 

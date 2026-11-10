@@ -18,5 +18,10 @@ export default defineConfig({
     minify: true,
     outDir: "./.output",
     sourcemap: true
+  },
+  test: {
+    fsModuleCache: false,
+    include: ["src/**/__tests__/*.test.ts"],
+    testTimeout: 10_000
   }
 });

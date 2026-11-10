@@ -77,9 +77,7 @@ function getRouteTreePaths(routeTree: AnyRoute): Array<BaseRouteInfo> {
       return;
     }
 
-    const children = Array.isArray(childrenToProcess)
-      ? childrenToProcess
-      : Object.values(childrenToProcess);
+    const children = Array.isArray(childrenToProcess) ? childrenToProcess : Object.values(childrenToProcess);
 
     for (const child of children) {
       extractRoutes(child, fullPath);

@@ -187,6 +187,20 @@ Do not log in React render paths. If a client log is necessary, emit it from an 
 
 When browser transport is enabled, remember that client logs are sent to the server ingestion endpoint. Treat them as production logs, not just DevTools messages.
 
+## Operational Limits And Health Checks
+
+Keep the server boundaries and their intent aligned:
+
+- General Hono request bodies are capped at 1 MiB. Routes requiring larger uploads must use a deliberately designed streaming or upload path instead of raising the global limit casually.
+- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP.
+- Database readiness checks allow 30 requests per minute per resolved client IP. Liveness checks are intentionally not rate limited.
+- The in-memory operational limits are per Worker isolate. Deployments that need a global abuse boundary must also enforce one with a Cloudflare WAF or rate-limiting rule, or use an atomic shared limiter.
+- A missing client address uses a shared `unknown` bucket. Fix production IP resolution rather than increasing limits to compensate.
+
+Health checks and log ingestion are excluded from request logging. Preserve that exclusion: logging health probes creates noise, and request-logging the ingestion endpoint can create recursive client/server log traffic.
+
+Cloudflare and external monitors may call `/_api/health/live` freely because liveness is cheap, unlogged, and outside the readiness limiter. Keep liveness free of database and downstream checks. `/server/health/ready` may check dependencies and allows 30 requests per minute per resolved client IP; calculate the combined cadence before configuring several monitors behind the same egress address.
+
 ## Bootstrap Console
 
 Bootstrap/config packages such as `@tsu-stack/env` may use small `console.debug` statements because they are loaded before logger initialization and by Vite config. Do not route env bootstrap through `@tsu-stack/logger`.
