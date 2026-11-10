@@ -383,6 +383,7 @@ catalogs:
 
 overrides:
   '@tanstack/router-core': 1.171.39
+  '@tanstack/router-core@1.171.39>seroval-plugins': 1.7.7
   kysely: 0.29.7
   drizzle-orm: 1.0.0-rc.5-ab785fc
   vite@*: npm:@voidzero-dev/vite-plus-core@1.4.0
@@ -421,6 +422,9 @@ importers:
       '@tanstack/eslint-plugin-router':
         specifier: 'catalog:'
         version: 1.162.0(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
+      '@tsu-stack/vite-plus':
+        specifier: workspace:*
+        version: link:tools/vite-plus
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260707.2
@@ -494,6 +498,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@types/node@26.6.6)(@typescript/native-preview@7.0.0-dev.20260707.2)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.0)
 
   apps/web:
     dependencies:
@@ -961,10 +968,17 @@ importers:
         version: 7.0.2
 
   tools/create-tsu-stack:
+    dependencies:
+      oxfmt:
+        specifier: 0.74.0
+        version: 0.74.0(vite-plus@1.4.0(@types/node@26.6.6)(@typescript/native-preview@7.0.0-dev.20260707.2)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.0))
     devDependencies:
       '@clack/prompts':
         specifier: 1.8.1
         version: 1.8.1
+      '@tsu-stack/vite-plus':
+        specifier: workspace:*
+        version: link:../vite-plus
       '@types/fs-extra':
         specifier: 11.0.4
         version: 11.0.4
@@ -1007,7 +1021,11 @@ importers:
 
   tools/tsconfig: {}
 
-  tools/vite-plus: {}
+  tools/vite-plus:
+    devDependencies:
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@types/node@26.6.6)(@typescript/native-preview@7.0.0-dev.20260707.2)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.0)
 
 packages:
 
@@ -7012,9 +7030,9 @@ packages:
     peerDependencies:
       seroval: 1.7.7
 
-  seroval-plugins@1.6.9:
-    resolution: {integrity: sha512-kiDK/Tb8IWZ61WEU8pA2PDmAuw37gKph9Y77OZlD56mg0Y2g0Bg7gZ1HeHhs5d40w+nRoUq/wj08V26ilbez9g==}
-    engines: {node: '>=10'}
+  seroval-plugins@1.7.7:
+    resolution: {integrity: sha512-5PAKQPAfj2MD332QeCdzXKm334ftIb0B1Ek3I9IQa73rPOlBSHko9mODFo8XNjzs6KJQG3nE6dn9dw7hJjrZAQ==}
+    engines: {node: '>=20'}
     peerDependencies:
       seroval: 1.7.7
 
@@ -10585,7 +10603,7 @@ snapshots:
       '@tanstack/history': 1.162.5
       cookie-es: 3.1.1
       seroval: 1.7.7
-      seroval-plugins: 1.6.9(seroval@1.7.7)
+      seroval-plugins: 1.7.7(seroval@1.7.7)
 
   '@tanstack/router-devtools-core@1.168.2(@tanstack/router-core@1.171.39)(csstype@3.2.3)':
     dependencies:
@@ -13176,7 +13194,7 @@ snapshots:
     dependencies:
       seroval: 1.7.7
 
-  seroval-plugins@1.6.9(seroval@1.7.7):
+  seroval-plugins@1.7.7(seroval@1.7.7):
     dependencies:
       seroval: 1.7.7
 

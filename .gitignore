@@ -13,7 +13,11 @@ dist-ssr
 **/project.inlang/cache
 **/project.inlang/project_id
 .env
-.env.docker
+.env.*
+!.env*.example
+.dev.vars
+.dev.vars.*
+!.dev.vars*.example
 *.local
 tmp
 .output

@@ -6,13 +6,7 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { log } from "@tsu-stack/logger/client";
 import { Button } from "@tsu-stack/ui/components/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle
-} from "@tsu-stack/ui/components/empty";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@tsu-stack/ui/components/empty";
 
 import { CenteredLayout } from "@/widgets/layouts";
 

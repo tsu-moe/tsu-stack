@@ -31,11 +31,7 @@ const FORWARDED_FOR_REGEX = /for=([^;,\s]+)/;
 const IPV6_PREFIX_REGEX = /^::ffff:/i;
 
 function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
-  const {
-    limitLength = 255,
-    headerName = "X-Request-Id",
-    generator = () => crypto.randomUUID()
-  } = options;
+  const { limitLength = 255, headerName = "X-Request-Id", generator = () => crypto.randomUUID() } = options;
 
   return createMiddleware().server(({ next, request }) => {
     let reqId = headerName ? request.headers.get(headerName) : undefined;

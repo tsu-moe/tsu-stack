@@ -34,7 +34,6 @@ export function createAuth() {
     emailAndPassword: {
       enabled: true
     },
-
     rateLimit: {
       storage: "database"
     },
@@ -44,7 +43,8 @@ export function createAuth() {
         sameSite: "lax"
       },
       ipAddress: {
-        ipAddressHeaders: ["cf-connecting-ip"]
+        // The Worker verifies Cloudflare's ingress header before setting this private value.
+        ipAddressHeaders: ["x-tsu-client-ip"]
       },
       database: {
         // https://www.better-auth.com/docs/adapters/drizzle#joins

@@ -8,11 +8,7 @@ import { type CloudflareAccountPrompt, type ExistingD1Prompt } from "./cloudflar
 import { type CommandRunner, type ProjectInput } from "./types";
 import { VARIANTS } from "./variants";
 
-export async function assertSetupPrerequisites(
-  input: ProjectInput,
-  runner: CommandRunner,
-  cwd: string
-): Promise<void> {
+export async function assertSetupPrerequisites(input: ProjectInput, runner: CommandRunner, cwd: string): Promise<void> {
   if (input.install && !(await runner.succeeds("vp", ["--version"], cwd))) {
     throw new Error(
       "Vite Plus is required to install this template. Install it from https://vite.plus or use --no-install."
@@ -26,24 +22,16 @@ export async function assertSetupPrerequisites(
     input.variant !== "cloudflare-d1" &&
     !(await runner.succeeds("docker", ["version"], cwd))
   ) {
-    throw new Error(
-      "Docker is required for guided PostgreSQL setup. Start Docker or use --setup none."
-    );
+    throw new Error("Docker is required for guided PostgreSQL setup. Start Docker or use --setup none.");
   }
 }
 
-export async function createLocalEnvironment(
-  projectRoot: string,
-  input: ProjectInput
-): Promise<void> {
+export async function createLocalEnvironment(projectRoot: string, input: ProjectInput): Promise<void> {
   const examplePath = join(projectRoot, "packages", "env", ".env.example");
   const envPath = join(projectRoot, "packages", "env", ".env");
   const content = await readFile((await pathExists(envPath)) ? envPath : examplePath, "utf8");
   const secret = randomBytes(32).toString("base64url");
-  const serverUrl =
-    input.variant === "separate"
-      ? "http://localhost:5000/server"
-      : "http://localhost:3000/web/server";
+  const serverUrl = input.variant === "separate" ? "http://localhost:5000/server" : "http://localhost:3000/web/server";
   const next = content
     .replace(/^VITE_SERVER_URL=.*$/mu, `VITE_SERVER_URL="${serverUrl}"`)
     .replace(/^VITE_WEB_URL=.*$/mu, 'VITE_WEB_URL="http://localhost:3000/web"')

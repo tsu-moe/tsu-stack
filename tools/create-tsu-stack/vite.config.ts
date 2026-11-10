@@ -9,6 +9,7 @@ export default defineConfig({
       // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
       resolveDepSubpath: true,
       alwaysBundle: [/./],
+      neverBundle: ["oxfmt"],
       onlyBundle: false
     },
     dts: false,

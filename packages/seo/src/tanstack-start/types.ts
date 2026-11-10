@@ -28,14 +28,7 @@ export type TanStackStartSeoHead = {
 export type TanStackStartSeoImage = {
   alt?: string;
   height?: number;
-  type?:
-    | "image/apng"
-    | "image/avif"
-    | "image/gif"
-    | "image/jpeg"
-    | "image/png"
-    | "image/svg+xml"
-    | "image/webp";
+  type?: "image/apng" | "image/avif" | "image/gif" | "image/jpeg" | "image/png" | "image/svg+xml" | "image/webp";
   url: string;
   width?: number;
 };

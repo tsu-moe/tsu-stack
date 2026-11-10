@@ -41,10 +41,6 @@
 - [Tech Stack](#tech-stack)
 - [Deployment](#deployment)
   - [Coolify](#coolify)
-    - [Option 1: Separate Dockerfiles](#option-1-separate-dockerfiles)
-      - [Server Deployment](#server-deployment)
-      - [Web Deployment](#web-deployment)
-    - [Option 2: Docker Compose](#option-2-docker-compose)
   - [Cloudflare Workers](#cloudflare-workers)
     - [Git-based CI/CD](#git-based-cicd)
   - [Dokploy](#dokploy)
@@ -52,7 +48,7 @@
 - [Environment Variables](#environment-variables)
   - [Server](#server)
   - [Web](#web)
-- [Merging Server to Web App](#merging-server-to-web-app)
+- [Merged Worker Architecture](#merged-worker-architecture)
   - [Resource Usage](#resource-usage)
 - [Issue Watchlist](#issue-watchlist)
   - [Pitfalls](#pitfalls)
@@ -128,58 +124,15 @@ Here is a non-exhaustive list of the main technologies used in this project, alo
 
 ## Deployment
 
-This project is designed to be deployed as separate applications for the server and web frontend. Below are the recommended deployment strategies and configurations.
+This template deploys the TanStack Start frontend and Hono API as one Cloudflare Worker. The API is mounted at the subpath configured by `VITE_SERVER_URL`, which defaults to `/server`.
 
 ### Coolify
 
-Coolify can be used to deploy the server and web applications. Choose a strategy and follow the steps below to configure each app:
-
-#### Option 1: Separate Dockerfiles
-
-> [!WARNING]
-> This approach retains rolling updates in Coolify and has minimal downtime, but it is harder to scale compared to Docker Compose.
-
-##### Server Deployment
-
-1. **Base Directory**: `/`.
-2. **Dockerfile Location**: `/apps/server/Dockerfile`.
-3. **Domain**: Assign a domain, e.g., `https://example.com/server`.
-4. **Port**: Expose port `5000`.
-
-##### Web Deployment
-
-1. **Base Directory**: `/`.
-2. **Dockerfile Location**: `/apps/web/Dockerfile`.
-3. **Domain**: Assign a domain, e.g., `https://example.com/web`.
-4. **Port**: Expose port `3000`.
-
-> [!CAUTION]
-> Ensure that the `Strip Prefixes` option is unchecked in the `Advanced` settings to avoid issues with custom base paths.
-
-Finally, set any required [environment variables](#environment-variables) in the "Environment Variables" tab for each application and press the "Deploy" button to start the deployment process.
-
-#### Option 2: Docker Compose
-
-1. When creating a new application in Coolify, select "Private Repository (with GitHub App)" and select your repository with your tsu-stack app.
-2. Next, change the "Build Pack" to "Docker Compose" and set the "Docker Compose Location" to `/docker-compose.coolify.yaml`.
-3. Refer to [Server Deployment](#server-deployment) and [Web Deployment](#web-deployment) sections above for domain configurations.
-
-- you need to explicitly bind the port in the domain since Docker Compose doesn't have `Expose Port`, for example: `https://example.com:3000/web` for the web app and `https://example.com:5000/server` for the server.
-
-4. Set any required [environment variables](#environment-variables) in the "Environment Variables" tab.
-5. Press the "Deploy" button to start the deployment process.
-
-> [!CAUTION]
-> Ensure that the `Strip Prefixes` option is unchecked in the `Advanced` settings to avoid issues with custom base paths.
+This template is not configured for Coolify or Docker. Use the Node merged template when a container deployment is required.
 
 ### Cloudflare Workers
 
-> [!TIP]
-> You can clone the [`variant/merged-cloudflare` branch](https://github.com/tsu-moe/tsu-stack/tree/variant/merged-cloudflare) for a Cloudflare Workers-compatible setup.
-
-You will need to use the `@cloudflare/vite-plugin` adapter instead of `nitro`. See [this commit](https://github.com/tsu-moe/tsu-stack/commit/644ceb10a47836d8a3eb6f23c0b664e20207a9e0) for example changes.
-
-Then, you will need to switch to using a singleton `db` instance instead of a connection pool in the server app since Cloudflare Workers do not support long-lived connections. See [this commit](https://github.com/tsu-moe/tsu-stack/commit/8d6cf54b52e430ac6b3f840bbf5eecec040238b3) for example changes.
+The Cloudflare Vite plugin, Worker entrypoint, Hyperdrive-compatible PostgreSQL access, and Wrangler configuration are already included.
 
 You'll need to set the secrets manually in the Cloudflare dashboard before running the deployment commands or via `pnpm wrangler secret put <VARIABLE_NAME>` one-by-one.
 
@@ -211,33 +164,14 @@ You will need to set up the _build environment variables_ and _variables and sec
 
 ### Dokploy
 
-[Dokploy](https://dokploy.com) can deploy the server and web applications using the included Dockerfiles.
-
-1. Create two applications connected to your repository, one for the server and one for the web app.
-2. Select the **Dockerfile** build type for each application and configure:
-
-   | Setting             | Server                   | Web                   |
-   | ------------------- | ------------------------ | --------------------- |
-   | Dockerfile Path     | `apps/server/Dockerfile` | `apps/web/Dockerfile` |
-   | Docker Context Path | `.` (repository root)    | `.` (repository root) |
-   | Docker Build Stage  | `production`             | `production`          |
-
-3. In each application's **Environment** tab, populate **Build Time Arguments** with the `ARG` values declared in its Dockerfile. Both applications require `VITE_SERVER_URL`, `VITE_WEB_URL`, `DATABASE_URL`, and `BETTER_AUTH_SECRET`. For the web app, also set `VITE_IMGPROXY_URL` and `VITE_IMGPROXY_SIGNATURE` if using imgproxy. See [Environment Variables](#environment-variables) for their meanings.
-4. Configure the required runtime **Environment Variables** in the same tab as well. Build arguments do not automatically populate the final runtime container.
-5. Assign domains matching `VITE_SERVER_URL` and `VITE_WEB_URL`, routing to container ports `5000` for the server and `3000` for the web app. Save the settings and deploy both applications.
-
-> [!IMPORTANT]
-> Setting only runtime environment variables is not enough: the web build also needs them. Local `.env` files are excluded from the Docker build context, so provide build-time values through Dokploy and rebuild after changing them.
-
-> [!CAUTION]
-> The included Dockerfiles consume build arguments, not Dokploy's **Build-time Secrets**. Build arguments can be exposed in build metadata or cache; use non-sensitive build-only values where possible and configure real credentials at runtime. To pass sensitive values during the build, adapt the Dockerfiles to consume secret mounts first. See Dokploy's [environment variables for Dockerfile builds](https://docs.dokploy.com/docs/core/applications/build-type#environment-variables-for-dockerfile-builds).
+[Dokploy](https://dokploy.com) is not a deployment target for this Worker template. Use the Node merged template for Dokploy.
 
 ### Deploying to Other Platforms
 
-TanStack Start uses [Nitro](https://nitro.build) as its server engine, which means the **web app** can be deployed to any platform Nitro supports out of the box - Cloudflare Workers, Vercel, AWS Lambda, Deno Deploy, and [many more](https://nitro.build/deploy). Configure the target by setting the appropriate Nitro preset in `apps/web/vite.config.ts`.
+This template is coupled to the Cloudflare Vite plugin and Workers runtime. Moving it to another platform requires adapting database access, bindings, the build adapter, and verified client-IP handling together.
 
 > [!CAUTION]
-> The **server** (`apps/server`) is a Node.js/Hono server and is not compatible with edge runtimes like Cloudflare Workers. It must be deployed to a Node.js-capable environment (e.g. a VPS, container, or serverless platform with Node.js support). This is by design - the dedicated Node.js server is cheaper to self-host for database-heavy workloads.
+> Changing only the Vite adapter is not sufficient. Runtime bindings and database connection behavior are part of the deployment contract.
 
 ## Environment Variables
 
@@ -266,117 +200,31 @@ For the web app, use the following environment variables:
 | `VITE_IMGPROXY_URL`       | ❌       | -             | URL for image optimization. You'll need to deploy your own [imgproxy](https://hub.docker.com/r/darthsim/imgproxy/) container first. |
 | `VITE_IMGPROXY_SIGNATURE` | ❌       | `_`           | imgproxy signature path segment. Use `insecure` or a precomputed signature if your imgproxy setup requires it.                      |
 
-## Merging Server to Web App
+## Merged Worker Architecture
 
-> [!TIP]
-> An example can be found in the [`variant/merged`](https://github.com/tsu-moe/tsu-stack/compare/variant/merged) branch. You can check [this commit](https://github.com/tsu-moe/tsu-stack/commit/cf576db302cc1380bf0f5f27017cf0951ea1c6c5) to see the changes needed.
+`apps/web/src/routes/server/$.ts` forwards the API subpath to the Hono app exported by `apps/server`. Cloudflare owns the network listener, so `apps/server` is an internal package rather than a separately deployed service.
 
-Since Hono is built on web standards, you can mount the Hono App into the TanStack Start web server.
-
-```json5
-// apps/web/package.json
-"dependencies": {
-  // ...
-  "@tsu-stack/i18n": "workspace:*",
-  "@tsu-stack/server": "workspace:*", // add this to import the server app into the web app
-  "@tsu-stack/ui": "workspace:*",
-  // ...
-}
-```
-
-Then we can import our app from the server package.
-
-```ts
-// apps/web/src/routes/server/$.ts
-import { createFileRoute } from "@tanstack/react-router";
-
-import { app } from "@tsu-stack/server";
-
-export const Route = createFileRoute("/server/$")({
-  server: {
-    handlers: {
-      GET: ({ request }) => {
-        return app.fetch(request);
-      },
-
-      POST: ({ request }) => {
-        return app.fetch(request);
-      }
-    }
-  }
-});
-```
-
-Then merge your web environment variables with the server ones and make sure `VITE_SERVER_URL` points to the web domain's subpath.
-
-```diff
--VITE_SERVER_URL=http://localhost:5000/server
-+VITE_SERVER_URL=http://localhost:3000/web/server
-VITE_WEB_URL=http://localhost:3000/web
-```
-
-You will also need to adjust the `getConnInfo` import to match your runtime environment.
-
-```diff
--import { getConnInfo } from '@hono/node-server/conninfo'
-+import { getConnInfo } from 'hono/vercel'
-```
-
-> [!WARNING]
-> `hono/vercel` works in any environment, but it may not have all the information needed for the logger middleware.
-
-Then lastly, remove the `serve()` call in `apps/server/src/index.ts` since the Hono app is now being served by the TanStack Start server.
-
-```diff
--import { serve } from "@hono/node-server";
-
-void (async () => {
-  await migrateDatabase()
-
--  serve(
--    {
--      fetch: app.fetch,
--      port: 5000,
--    },
--    (info) => {
--      logger.info(`Server is running on http://localhost:${info.port}${new URL(apiEnvServer.VITE_SERVER_URL).pathname}`)
--    },
--  )
-})()
-```
-
-> [!WARNING]
-> You may want to refactor the logging middlewares since the TanStack Start server also logs incoming/outgoing requests, similar to the Hono app's middleware.
-
-> [!WARNING]
-> You may also need to adjust your Docker Compose file and the `apps/web/Dockerfile` to include build args needed in the server app such as `DATABASE_URL` and handle other environment variables.
+Keep `VITE_SERVER_URL` on the same public origin as `VITE_WEB_URL` and include the API subpath, for example `https://example.com/server`. Configure required values as both Cloudflare build variables and Worker runtime secrets where applicable.
 
 ### Resource Usage
 
-When mounting the Hono app into the TanStack Start web server, you will save the resources of running a separate Node.js server.
-
-But keep in mind that all API requests will now consume resources from the web server container, leading to the web server being less responsive under heavy API load.
-
-However, the benefit is singular deployments and lower memory usage for websites that don't receive much traffic (around 70MB with a single app vs 130MB when separated on idle).
-
-> [!NOTE]
-> I personally keep them separated so that when it's time to scale, I can scale the web server independently or deploy it to another platform like Cloudflare Workers for serverless edge performance.
+Web rendering and API traffic share one Worker deployment and its limits. Better Auth rate limits use the database for shared enforcement, while log-ingestion and readiness limits are intentionally lightweight and isolate-local. Add a Cloudflare edge rule when those operational endpoints need a global abuse boundary.
 
 ## Issue Watchlist
 
-Last verified on October 2, 2026.
+Last verified on November 10, 2026.
 
 - [TanStack Router #7529](https://github.com/TanStack/router/issues/7529) - Keep the Router/Start dependency set pinned because newer `router-core` releases can leave the SSR query stream open until the serialization timeout.
 - [TanStack Router #6275](https://github.com/TanStack/router/issues/6275) - Keep the Vite preview host on `127.0.0.1` so Docker prerender builds can reach the preview server.
+- [TanStack Router #8550](https://github.com/TanStack/router/issues/8550) - A CSP nonce delivered in a response header can make hydration duplicate inline module scripts because the browser hides the nonce from `getAttribute()`.
+- [TanStack Router #8789](https://github.com/TanStack/router/issues/8789) - Hydration scripts can miss a CSP nonce when it is assigned after the router's SSR state is created.
 
 ### Pitfalls
 
-- If you deploy the web app and API on different sites, configure Better Auth's cookie domain and `SameSite` settings, trusted origins, and Hono CORS for those sites. The default `SameSite=Lax` setup assumes same-site requests. See the [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups).
-- If a CDN or proxy serves assets without running the app, configure its security headers separately. To enable CSP or `Permissions-Policy`, define policies for your app's inline scripts and external integrations.
+- Prefer exposing the web app and API on one public origin, such as `https://example.com` and `https://example.com/server`. Host-only auth cookies then reach authenticated SSR without being shared with sibling subdomains. Different-site auth can also fail in Safari because WebKit's [Intelligent Tracking Prevention (ITP)](https://webkit.org/tracking-prevention/) applies Full Third-Party Cookie Blocking. If separate public origins are unavoidable, test authenticated SSR and OAuth in Safari and configure Better Auth cookies, trusted origins, CORS, and proxy routing deliberately; sibling subdomains are same-site for ITP but still do not share host-only cookies.
+- The template does not enforce CSP because the TanStack nonce issues in the watchlist can break hydration. Treat all user-authored HTML as untrusted and sanitize it before rendering. Revisit a strict nonce- or hash-based CSP before adding high-risk script integrations; do not silence CSP errors with `unsafe-inline` as a permanent fix.
 - If you change the API's `/server` path or put web and API on different origins, update `VITE_SERVER_URL`, proxy routing, CORS origins, and `OPTIONS` forwarding to match.
-- If your app needs requests larger than 1 MiB, or log batches larger than 64 KiB or 50 events, change the Hono body limits and log ingestion limits for those endpoints.
-- If you want per-client auth rate limits in Docker or Coolify, configure your proxy to remove incoming copies of a client IP header and set its own value on every request. Then set `BETTER_AUTH_TRUSTED_IP_HEADER` to that header; do not trust a client-supplied `X-Forwarded-For`.
-- If you need to hide whether an email address is registered, change the automatic sign-in flow and add email verification or delayed sign-in so sign-up responses can be uniform.
+- Per-client rate limits rely on Cloudflare's `CF-Connecting-IP` header. If you add a non-Cloudflare ingress or Worker-to-Worker subrequest path, establish and test an equally trustworthy client-address boundary before relying on those limits.
 - If you deploy to production, replace the example `BETTER_AUTH_SECRET` with a generated secret shared by the web app and API. If you publish Cloudflare build artifacts outside Wrangler, exclude `dist/<worker>/.dev.vars`, which can contain build secrets.
 - If the web app runs under a subpath such as `/web` and you want search engines to discover `robots.txt`, expose it at the [domain root](https://developers.google.com/search/docs/crawling-indexing/robots/intro) through a redirect or root route. For multiple subpath apps, add a root sitemap index and point `__root.tsx` at it if you want the app to advertise that index.
 

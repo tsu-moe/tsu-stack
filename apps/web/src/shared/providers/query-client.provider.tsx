@@ -1,8 +1,4 @@
-import {
-  QueryClient,
-  QueryClientProvider as QueryClientProviderRaw,
-  environmentManager
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider as QueryClientProviderRaw, environmentManager } from "@tanstack/react-query";
 import { type ReactNode } from "react";
 
 function createQueryClient() {

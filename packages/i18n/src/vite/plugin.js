@@ -33,9 +33,7 @@ export function paraglideVitePlugin(options) {
       locale,
       normalizedBasePath ? `${normalizedBasePath}/${locale}/:path(.*)?` : `/${locale}/:path(.*)?`
     ])
-    .concat([
-      [baseLocale, normalizedBasePath ? `${normalizedBasePath}/:path(.*)?` : "/:path(.*)?"]
-    ]);
+    .concat([[baseLocale, normalizedBasePath ? `${normalizedBasePath}/:path(.*)?` : "/:path(.*)?"]]);
 
   /** @type {PluginOptions} */
   const DEFAULT_OPTIONS = {

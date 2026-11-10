@@ -38,6 +38,7 @@
     "@dotenvx/dotenvx": "catalog:",
     "@tanstack/eslint-plugin-query": "catalog:",
     "@tanstack/eslint-plugin-router": "catalog:",
+    "@tsu-stack/vite-plus": "workspace:*",
     "@typescript/native-preview": "catalog:",
     "eslint-plugin-fsd-lint": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",

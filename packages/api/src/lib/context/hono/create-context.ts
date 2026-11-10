@@ -1,25 +1,20 @@
-import { type Context as HonoContext } from "hono";
-
 import { createAuth } from "@tsu-stack/auth/index";
 import { type RequestLogger } from "@tsu-stack/logger/server";
 
 import { type OrpcContext } from "#@/lib/context/types";
 
 export type CreateContextOptions = {
-  context: HonoContext;
   logger: RequestLogger;
+  requestHeaders: Headers;
 };
 
-export async function createContext({
-  context,
-  logger
-}: CreateContextOptions): Promise<OrpcContext> {
+export async function createContext({ logger, requestHeaders }: CreateContextOptions): Promise<OrpcContext> {
   const session = await createAuth().api.getSession({
-    headers: context.req.raw.headers
+    headers: requestHeaders
   });
   return {
     logger,
-    requestHeaders: context.req.raw.headers,
+    requestHeaders,
     session
   };
 }

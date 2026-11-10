@@ -19,11 +19,9 @@ try {
   tarball = join(temporaryDirectory, result[0].filename);
   await readFile(tarball);
 
-  const execution = await execa(
-    "npm",
-    ["exec", "--yes", "--package", tarball, "--", "create-tsu-stack", "--help"],
-    { cwd: temporaryDirectory }
-  );
+  const execution = await execa("npm", ["exec", "--yes", "--package", tarball, "--", "create-tsu-stack", "--help"], {
+    cwd: temporaryDirectory
+  });
   if (!execution.stdout.includes("create-tsu-stack [project-directory]")) {
     throw new Error("Packed CLI help output was not recognized.");
   }

@@ -51,9 +51,7 @@ function getAllMetaByProperty(meta: TanStackStartSeoMetaTag[] | undefined, prope
 }
 
 function getTitle(meta: TanStackStartSeoMetaTag[] | undefined) {
-  return meta?.find(
-    (tag): tag is Extract<TanStackStartSeoMetaTag, { title: string }> => "title" in tag
-  );
+  return meta?.find((tag): tag is Extract<TanStackStartSeoMetaTag, { title: string }> => "title" in tag);
 }
 
 describe("generateTanStackStartSeo", () => {
@@ -288,8 +286,7 @@ describe("generateTanStackStartSeo", () => {
           type: "application/ld+json"
         },
         {
-          children:
-            '{"@context":"https://schema.org","@type":"Organization","name":"Example Studio"}',
+          children: '{"@context":"https://schema.org","@type":"Organization","name":"Example Studio"}',
           type: "application/ld+json"
         }
       ]);
