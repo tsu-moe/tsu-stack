@@ -69,11 +69,12 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/package"
           TARBALL=$(npm pack --silent --pack-destination "$RUNNER_TEMP/package" | tail -n 1)
+          cp scripts/verify-npm-publication.mjs "$RUNNER_TEMP/package/verify-npm-publication.mjs"
           echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: package
-          path: ${{ runner.temp }}/package/${{ steps.pack.outputs.tarball }}
+          path: ${{ runner.temp }}/package
           if-no-files-found: error
           retention-days: 7
 
@@ -134,15 +135,7 @@ jobs:
             exit "$VIEW_STATUS"
           fi
 
-          for ATTEMPT in 1 2 3 4 5; do
-            OBSERVED=$(npm view "create-tsu-stack@$PACKAGE_VERSION" version --json 2>/dev/null || true)
-            if [[ "$OBSERVED" == "\"$PACKAGE_VERSION\"" ]]; then
-              exit 0
-            fi
-            sleep $((ATTEMPT * 2))
-          done
-          echo "npm did not return create-tsu-stack@$PACKAGE_VERSION after publication" >&2
-          exit 1
+          node "$RUNNER_TEMP/package/verify-npm-publication.mjs" create-tsu-stack "$PACKAGE_VERSION"
 
   github-release:
     needs: [validate, publish]
