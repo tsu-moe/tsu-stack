@@ -245,14 +245,14 @@ TanStack Start uses [Nitro](https://nitro.build) as its server engine, which mea
 
 For the Hono server, use the following environment variables:
 
-| Variable Name                   | Required | Default Value | Description                                                                                                                 |
-| ------------------------------- | -------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_SERVER_URL`               | ✅       | -             | Base URL for the server. May also include a subpath if needed, ex: `https://example.com/server`.                            |
-| `VITE_WEB_URL`                  | ✅       | -             | Base URL for the web app. May also include a subpath if needed, ex: `https://example.com/web`.                              |
-| `BETTER_AUTH_SECRET`            | ✅       | -             | Secret key for Better-Auth. Generate with `vp run auth:secret`.                                                             |
-| `BETTER_AUTH_TRUSTED_IP_HEADER` | ❌       | -             | Client IP header overwritten by your trusted proxy on every request: `x-forwarded-for`, `x-real-ip`, or `cf-connecting-ip`. |
-| `DATABASE_URL`                  | ✅       | -             | PostgreSQL connection string (not required using `cloudflare-d1` variant).                                                  |
-| `ENABLE_OPEN_API_DOCS`          | ❌       | `false`       | Enable OpenAPI `/docs` endpoint.                                                                                            |
+| Variable Name                 | Required | Default Value | Description                                                                                                   |
+| ----------------------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------- |
+| `VITE_SERVER_URL`             | ✅       | -             | Base URL for the server. May also include a subpath if needed, ex: `https://example.com/server`.              |
+| `VITE_WEB_URL`                | ✅       | -             | Base URL for the web app. May also include a subpath if needed, ex: `https://example.com/web`.                |
+| `BETTER_AUTH_SECRET`          | ✅       | -             | Secret key for Better-Auth. Generate with `vp run auth:secret`.                                               |
+| `BETTER_AUTH_TRUSTED_PROXIES` | ❌       | -             | Comma-separated IP addresses or CIDR ranges for proxies allowed to append the client `X-Forwarded-For` chain. |
+| `DATABASE_URL`                | ✅       | -             | PostgreSQL connection string (not required using `cloudflare-d1` variant).                                    |
+| `ENABLE_OPEN_API_DOCS`        | ❌       | `false`       | Enable OpenAPI `/docs` endpoint.                                                                              |
 
 ### Web
 
@@ -365,19 +365,19 @@ However, the benefit is singular deployments and lower memory usage for websites
 
 ## Issue Watchlist
 
-Last verified on October 2, 2026.
+Last verified on November 10, 2026.
 
 - [TanStack Router #7529](https://github.com/TanStack/router/issues/7529) - Keep the Router/Start dependency set pinned because newer `router-core` releases can leave the SSR query stream open until the serialization timeout.
 - [TanStack Router #6275](https://github.com/TanStack/router/issues/6275) - Keep the Vite preview host on `127.0.0.1` so Docker prerender builds can reach the preview server.
+- [TanStack Router #8550](https://github.com/TanStack/router/issues/8550) - A CSP nonce delivered in a response header can make hydration duplicate inline module scripts because the browser hides the nonce from `getAttribute()`.
+- [TanStack Router #8789](https://github.com/TanStack/router/issues/8789) - Hydration scripts can miss a CSP nonce when it is assigned after the router's SSR state is created.
 
 ### Pitfalls
 
-- If you deploy the web app and API on different sites, configure Better Auth's cookie domain and `SameSite` settings, trusted origins, and Hono CORS for those sites. The default `SameSite=Lax` setup assumes same-site requests. See the [Better Auth cookie docs](https://better-auth.com/docs/concepts/cookies#safari-itp-and-cross-domain-setups).
-- If a CDN or proxy serves assets without running the app, configure its security headers separately. To enable CSP or `Permissions-Policy`, define policies for your app's inline scripts and external integrations.
+- Prefer exposing the web app and API on one public origin, such as `https://example.com` and `https://example.com/server`. Host-only auth cookies then reach authenticated SSR without being shared with sibling subdomains. Different-site auth can also fail in Safari because WebKit's [Intelligent Tracking Prevention (ITP)](https://webkit.org/tracking-prevention/) applies Full Third-Party Cookie Blocking. If separate public origins are unavoidable, test authenticated SSR and OAuth in Safari and configure Better Auth cookies, trusted origins, CORS, and proxy routing deliberately; sibling subdomains are same-site for ITP but still do not share host-only cookies.
+- The template does not enforce CSP because the TanStack nonce issues in the watchlist can break hydration. Treat all user-authored HTML as untrusted and sanitize it before rendering. Revisit a strict nonce- or hash-based CSP before adding high-risk script integrations; do not silence CSP errors with `unsafe-inline` as a permanent fix.
 - If you change the API's `/server` path or put web and API on different origins, update `VITE_SERVER_URL`, proxy routing, CORS origins, and `OPTIONS` forwarding to match.
-- If your app needs requests larger than 1 MiB, or log batches larger than 64 KiB or 50 events, change the Hono body limits and log ingestion limits for those endpoints.
-- If you want per-client auth rate limits in Docker or Coolify, configure your proxy to remove incoming copies of a client IP header and set its own value on every request. Then set `BETTER_AUTH_TRUSTED_IP_HEADER` to that header; do not trust a client-supplied `X-Forwarded-For`.
-- If you need to hide whether an email address is registered, change the automatic sign-in flow and add email verification or delayed sign-in so sign-up responses can be uniform.
+- For per-client rate limits behind a proxy, set `BETTER_AUTH_TRUSTED_PROXIES` to only the proxy IP addresses or CIDR ranges that append `X-Forwarded-For`. Leave it empty for direct connections. If the list is too broad, clients in that range can spoof forwarded addresses and bypass limits; if the actual proxy is omitted, all traffic is grouped under the proxy address.
 - If you deploy to production, replace the example `BETTER_AUTH_SECRET` with a generated secret shared by the web app and API. If you publish Cloudflare build artifacts outside Wrangler, exclude `dist/<worker>/.dev.vars`, which can contain build secrets.
 - If the web app runs under a subpath such as `/web` and you want search engines to discover `robots.txt`, expose it at the [domain root](https://developers.google.com/search/docs/crawling-indexing/robots/intro) through a redirect or root route. For multiple subpath apps, add a root sitemap index and point `__root.tsx` at it if you want the app to advertise that index.
 

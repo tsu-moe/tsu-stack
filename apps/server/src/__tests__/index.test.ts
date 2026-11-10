@@ -136,3 +136,43 @@ describe("error responses", () => {
     });
   });
 });
+
+describe("operational rate limits", () => {
+  it("keeps liveness available during health-check bursts", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+
+    for (let attempt = 0; attempt < 61; attempt++) {
+      expect((await app.request("/server/health/live")).status).toBe(200);
+    }
+  });
+
+  it("limits browser log ingestion per client", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+    const request = () =>
+      app.request("/server/_logs/ingest", {
+        body: "[]",
+        headers: { "content-type": "application/json" },
+        method: "POST"
+      });
+
+    for (let attempt = 0; attempt < 60; attempt++) {
+      expect((await request()).status).toBe(204);
+    }
+
+    const limited = await request();
+    expect(limited.status).toBe(429);
+    expect(limited.headers.get("retry-after")).toBeTruthy();
+  });
+
+  it("limits database readiness checks per client", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+
+    for (let attempt = 0; attempt < 30; attempt++) {
+      expect((await app.request("/server/health/ready")).status).toBe(503);
+    }
+
+    const limited = await app.request("/server/health/ready");
+    expect(limited.status).toBe(429);
+    expect(limited.headers.get("retry-after")).toBeTruthy();
+  });
+});
