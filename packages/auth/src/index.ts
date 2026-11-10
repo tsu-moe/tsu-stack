@@ -45,8 +45,8 @@ export const auth = betterAuth({
       joins: true
     },
     ipAddress: {
-      // No proxy header is trustworthy unless the deployment opts in explicitly.
-      ipAddressHeaders: ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER ? [ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER] : []
+      // The Node server derives this from the socket and configured trusted proxy chain.
+      ipAddressHeaders: ["x-tsu-client-ip"]
     }
   },
 

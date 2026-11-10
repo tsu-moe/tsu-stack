@@ -30,11 +30,16 @@ import {
   type HonoLogVariables
 } from "@tsu-stack/logger/server/hono/middleware";
 
+import { type ClientIpVariables, clientIpMiddleware, withClientIp } from "#@/shared/lib/client-ip";
 import "#@/shared/lib/logger";
+import { fixedWindowRateLimit } from "#@/shared/lib/rate-limit";
 
 const serverHostname = hostname();
+const OPERATIONAL_RATE_LIMIT_WINDOW_MS = 60_000;
 
-export const app = new Hono<HonoLogVariables>().basePath(new URL(ENV_SERVER.VITE_SERVER_URL).pathname);
+export const app = new Hono<HonoLogVariables & { Variables: ClientIpVariables }>().basePath(
+  new URL(ENV_SERVER.VITE_SERVER_URL).pathname
+);
 
 app.use(
   "/*",
@@ -53,6 +58,8 @@ app.use(
     origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin]
   })
 );
+
+app.use("/*", clientIpMiddleware(ENV_SERVER.BETTER_AUTH_TRUSTED_PROXIES));
 
 const formCsrf = csrf({
   origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin, new URL(ENV_SERVER.VITE_SERVER_URL).origin]
@@ -76,7 +83,15 @@ app.use(
   })
 );
 
-app.post("/_logs/ingest", honoLogIngestionMiddleware());
+app.post(
+  "/_logs/ingest",
+  fixedWindowRateLimit({ limit: 60, windowMs: OPERATIONAL_RATE_LIMIT_WINDOW_MS }),
+  honoLogIngestionMiddleware()
+);
+
+const readinessRateLimit = fixedWindowRateLimit({ limit: 30, windowMs: OPERATIONAL_RATE_LIMIT_WINDOW_MS });
+app.use("/health/ready", readinessRateLimit);
+app.use("/rpc/health/ready", readinessRateLimit);
 
 // Apply the general cap after the log route, which has its own smaller limit.
 app.use("/*", bodyLimit({ maxSize: 1024 * 1024 }));
@@ -132,7 +147,7 @@ app.get("/auth/open-api/generate-schema", async (c) => {
   return c.json(schema);
 });
 
-app.on(["POST", "GET"], "/auth/*", async (c) => auth.handler(c.req.raw));
+app.on(["POST", "GET"], "/auth/*", async (c) => auth.handler(withClientIp(c.req.raw, c.get("clientIp"))));
 
 const errorStatusMap = { ...COMMON_ERROR_STATUS_MAP, SERVICE_UNAVAILABLE: 503 };
 const openApiGenerator = new OpenAPIGenerator({
