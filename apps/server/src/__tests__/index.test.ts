@@ -57,9 +57,7 @@ describe("OpenAPI documentation", () => {
     const response = await app.request("/server/auth/reference");
 
     expect(response.status).toBe(301);
-    expect(response.headers.get("location")).toBe(
-      "http://localhost:5000/server/docs#auth-api-reference"
-    );
+    expect(response.headers.get("location")).toBe("http://localhost:5000/server/docs#auth-api-reference");
   });
 });
 
@@ -83,9 +81,7 @@ describe("error responses", () => {
   it("masks unexpected error messages", async () => {
     const { app } = await loadApp({ enableDocs: false });
     app.get("/boom", () => {
-      throw new Error(
-        'Failed query: select * from "user" where "email" = $1\nparams: victim@example.com'
-      );
+      throw new Error('Failed query: select * from "user" where "email" = $1\nparams: victim@example.com');
     });
 
     const response = await app.request("/server/boom");

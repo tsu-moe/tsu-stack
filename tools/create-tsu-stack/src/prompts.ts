@@ -1,20 +1,9 @@
 import * as p from "@clack/prompts";
 
 import { commandRunner } from "./commands";
-import {
-  defaultDisplayName,
-  normalizeProjectName,
-  normalizeScope,
-  projectNameFromDirectory
-} from "./naming";
+import { defaultDisplayName, normalizeProjectName, normalizeScope, projectNameFromDirectory } from "./naming";
 import { projectInputSchema } from "./schema";
-import {
-  type CliFlags,
-  type CommandRunner,
-  type ProjectInput,
-  type SetupMode,
-  type VariantName
-} from "./types";
+import { type CliFlags, type CommandRunner, type ProjectInput, type SetupMode, type VariantName } from "./types";
 import { VARIANTS } from "./variants";
 
 function unwrap<T>(value: T | typeof p.CANCEL_SYMBOL): T {
@@ -102,9 +91,7 @@ export async function collectProjectInput(
     : (flags.install ??
       (flags.yes
         ? true
-        : unwrap(
-            await p.confirm({ initialValue: true, message: "Install dependencies with Vite Plus?" })
-          )));
+        : unwrap(await p.confirm({ initialValue: true, message: "Install dependencies with Vite Plus?" }))));
 
   let promptedSetup: SetupMode = "none";
   if (!flags.setup && !flags.yes && install) {
@@ -125,9 +112,7 @@ export async function collectProjectInput(
         })
       ) as SetupMode;
     } else {
-      const dockerAvailable = flags.dryRun
-        ? true
-        : await runner.succeeds("docker", ["version"], cwd);
+      const dockerAvailable = flags.dryRun ? true : await runner.succeeds("docker", ["version"], cwd);
       if (!dockerAvailable) {
         p.log.warn("Docker is unavailable, so guided local database setup has been disabled.");
       } else {
@@ -149,11 +134,7 @@ export async function collectProjectInput(
   const git = flags.noGit
     ? false
     : (flags.git ??
-      (flags.yes
-        ? true
-        : unwrap(
-            await p.confirm({ initialValue: true, message: "Initialize a Git repository?" })
-          )));
+      (flags.yes ? true : unwrap(await p.confirm({ initialValue: true, message: "Initialize a Git repository?" }))));
 
   return projectInputSchema.parse({
     displayName,

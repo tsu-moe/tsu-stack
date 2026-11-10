@@ -19,11 +19,7 @@ type LocaleSwitcherProps = {
   className?: string;
 };
 
-export function LocaleSwitcher({
-  size = "icon",
-  variant = "ghost",
-  className
-}: LocaleSwitcherProps) {
+export function LocaleSwitcher({ size = "icon", variant = "ghost", className }: LocaleSwitcherProps) {
   const { locale: currentLocale, switchLocale } = useLocale();
 
   return (

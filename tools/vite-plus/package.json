@@ -1,8 +1,16 @@
 {
   "name": "@tsu-stack/vite-plus",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./base-config.fmt": "./base-config.fmt.ts",
+    "./tanstack-start-fsd.lint": "./tanstack-start-fsd.lint.ts"
+  },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:"
   }
 }

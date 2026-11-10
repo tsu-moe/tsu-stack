@@ -10,10 +10,7 @@ export type CreateContextOptions = {
   logger: RequestLogger;
 };
 
-export async function createContext({
-  context,
-  logger
-}: CreateContextOptions): Promise<OrpcContext> {
+export async function createContext({ context, logger }: CreateContextOptions): Promise<OrpcContext> {
   const session = await auth.api.getSession({
     headers: context.req.raw.headers
   });

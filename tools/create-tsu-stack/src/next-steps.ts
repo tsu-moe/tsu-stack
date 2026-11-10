@@ -9,22 +9,13 @@ export function buildNextSteps(input: NextStepsInput): string {
     ...(input.setup === "none"
       ? input.variant === "cloudflare-d1"
         ? ["cp packages/env/.env.example packages/env/.env", "vp run db:migrate:local"]
-        : [
-            "cp packages/env/.env.example packages/env/.env",
-            "vp run db:dev:start",
-            "vp run db:migrate"
-          ]
+        : ["cp packages/env/.env.example packages/env/.env", "vp run db:dev:start", "vp run db:migrate"]
       : []),
     "vp run dev"
   ];
 
   if (input.variant === "cloudflare-d1" && input.setup !== "cloudflare") {
-    commands.push(
-      "",
-      "OPTIONAL:",
-      "vp exec wrangler login",
-      "# Follow .github/README.md for remote setup"
-    );
+    commands.push("", "OPTIONAL:", "vp exec wrangler login", "# Follow .github/README.md for remote setup");
   }
 
   return commands.join("\n");

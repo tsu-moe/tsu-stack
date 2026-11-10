@@ -34,10 +34,7 @@ type ImageProps = OhImageProps & {
 };
 
 // Omit the injected base URL props from the consumer-facing type since we want to inject our own
-export type WrapperImageProps = DistributiveOmit<
-  ImageProps,
-  "siteBaseUrl" | "imgProxyBaseUrl" | "imgProxySignature"
->;
+export type WrapperImageProps = DistributiveOmit<ImageProps, "siteBaseUrl" | "imgProxyBaseUrl" | "imgProxySignature">;
 
 export function Image(rawProps: ImageProps) {
   const {
@@ -60,10 +57,7 @@ export function Image(rawProps: ImageProps) {
   return <ImgProxyImage {...rawProps} src={src} />;
 }
 
-function ImageWithPlaceholder({
-  placeholder,
-  ...props
-}: OhImageProps & { placeholder?: ImagePlaceholder }) {
+function ImageWithPlaceholder({ placeholder, ...props }: OhImageProps & { placeholder?: ImagePlaceholder }) {
   const customPlaceholder = placeholder !== "blur" ? placeholder : undefined;
 
   return (
@@ -85,15 +79,7 @@ function ImageWithPlaceholder({
 }
 
 function ImgProxyImage(rawProps: ImageProps) {
-  const {
-    siteBaseUrl: _,
-    imgProxyBaseUrl,
-    imgProxySignature,
-    quality = 80,
-    format,
-    placeholder,
-    ...props
-  } = rawProps;
+  const { siteBaseUrl: _, imgProxyBaseUrl, imgProxySignature, quality = 80, format, placeholder, ...props } = rawProps;
 
   const loader = useImgproxyLoader({
     path: imgProxyBaseUrl,

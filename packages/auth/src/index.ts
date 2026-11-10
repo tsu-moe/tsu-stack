@@ -46,9 +46,7 @@ export const auth = betterAuth({
     },
     ipAddress: {
       // No proxy header is trustworthy unless the deployment opts in explicitly.
-      ipAddressHeaders: ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER
-        ? [ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER]
-        : []
+      ipAddressHeaders: ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER ? [ENV_SERVER.BETTER_AUTH_TRUSTED_IP_HEADER] : []
     }
   },
 
@@ -67,8 +65,7 @@ type OpenApiEndpoints = ReturnType<typeof openAPI>["endpoints"];
 
 // Better Auth exposes this endpoint at runtime, but currently omits it from the
 // inferred `auth.api` type: https://github.com/better-auth/better-auth/issues/8688
-export const generateAuthOpenApiSchema = (
-  auth.api as typeof auth.api & Pick<OpenApiEndpoints, "generateOpenAPISchema">
-).generateOpenAPISchema;
+export const generateAuthOpenApiSchema = (auth.api as typeof auth.api & Pick<OpenApiEndpoints, "generateOpenAPISchema">)
+  .generateOpenAPISchema;
 
 export type AuthSession = typeof auth.$Infer.Session;

@@ -421,6 +421,9 @@ importers:
       '@tanstack/eslint-plugin-router':
         specifier: 'catalog:'
         version: 1.162.0(eslint@10.7.0(jiti@2.7.0))(typescript@7.0.2)
+      '@tsu-stack/vite-plus':
+        specifier: workspace:*
+        version: link:tools/vite-plus
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260707.2
@@ -961,10 +964,17 @@ importers:
         version: 7.0.2
 
   tools/create-tsu-stack:
+    dependencies:
+      oxfmt:
+        specifier: 0.74.0
+        version: 0.74.0(vite-plus@1.4.0(@types/node@26.6.6)(@typescript/native-preview@7.0.0-dev.20260707.2)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.0))
     devDependencies:
       '@clack/prompts':
         specifier: 1.8.1
         version: 1.8.1
+      '@tsu-stack/vite-plus':
+        specifier: workspace:*
+        version: link:../vite-plus
       '@types/fs-extra':
         specifier: 11.0.4
         version: 11.0.4
@@ -1007,7 +1017,11 @@ importers:
 
   tools/tsconfig: {}
 
-  tools/vite-plus: {}
+  tools/vite-plus:
+    devDependencies:
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@types/node@26.6.6)(@typescript/native-preview@7.0.0-dev.20260707.2)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.0)
 
 packages:
 

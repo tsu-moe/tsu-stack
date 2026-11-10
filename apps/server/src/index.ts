@@ -34,9 +34,7 @@ import "#@/shared/lib/logger";
 
 const serverHostname = hostname();
 
-export const app = new Hono<HonoLogVariables>().basePath(
-  new URL(ENV_SERVER.VITE_SERVER_URL).pathname
-);
+export const app = new Hono<HonoLogVariables>().basePath(new URL(ENV_SERVER.VITE_SERVER_URL).pathname);
 
 app.use(
   "/*",
@@ -166,12 +164,7 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
           },
           {
             title: "Auth API Reference",
-            url: join(
-              new URL(ENV_SERVER.VITE_SERVER_URL).pathname,
-              "auth",
-              "open-api",
-              "generate-schema"
-            )
+            url: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "auth", "open-api", "generate-schema")
           }
         ],
         theme: "deepSpace"

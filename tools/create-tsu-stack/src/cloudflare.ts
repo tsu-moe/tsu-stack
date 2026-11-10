@@ -20,8 +20,7 @@ export {
   type WranglerIdentity
 } from "./cloudflare.type";
 
-const D1_ID_PATTERN =
-  /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/iu;
+const D1_ID_PATTERN = /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/iu;
 const REMOTE_MIGRATION_ATTEMPTS = 3;
 
 export type CloudflareAccountDecision =
@@ -29,18 +28,13 @@ export type CloudflareAccountDecision =
   | { action: "login" }
   | { action: "cancel" };
 
-export type CloudflareAccountPrompt = (
-  identity: WranglerIdentity
-) => Promise<CloudflareAccountDecision>;
+export type CloudflareAccountPrompt = (identity: WranglerIdentity) => Promise<CloudflareAccountDecision>;
 
 export type ExistingD1Decision =
   | { action: "cancel" }
   | { action: "rename"; databaseName: string }
   | { action: "reuse" };
-export type ExistingD1Prompt = (
-  database: D1Database,
-  account: CloudflareAccount
-) => Promise<ExistingD1Decision>;
+export type ExistingD1Prompt = (database: D1Database, account: CloudflareAccount) => Promise<ExistingD1Decision>;
 
 export function d1DatabaseName(projectName: string): string {
   return `${projectName.slice(0, 61).replace(/-+$/u, "")}-db`;
@@ -73,13 +67,9 @@ function unwrapDecision(decision: CloudflareAccountDecision | symbol): Cloudflar
 }
 
 export const promptForCloudflareAccount: CloudflareAccountPrompt = async (identity) => {
-  const accountSummary = identity.accounts
-    .map((account) => `${account.name} (${account.id})`)
-    .join("\n");
+  const accountSummary = identity.accounts.map((account) => `${account.name} (${account.id})`).join("\n");
   p.note(
-    [identity.email ? `Wrangler user: ${identity.email}` : undefined, accountSummary]
-      .filter(Boolean)
-      .join("\n"),
+    [identity.email ? `Wrangler user: ${identity.email}` : undefined, accountSummary].filter(Boolean).join("\n"),
     "Cloudflare account"
   );
 
@@ -150,15 +140,11 @@ async function chooseCloudflareAccount(
   while (true) {
     let identity: WranglerIdentity;
     try {
-      identity = parseWranglerIdentity(
-        await runner.capture("vp", ["exec", "wrangler", "whoami", "--json"], webRoot)
-      );
+      identity = parseWranglerIdentity(await runner.capture("vp", ["exec", "wrangler", "whoami", "--json"], webRoot));
     } catch {
       p.log.info("Wrangler is not authenticated. Opening Cloudflare login...");
       await runner.run("vp", ["exec", "wrangler", "login"], webRoot);
-      identity = parseWranglerIdentity(
-        await runner.capture("vp", ["exec", "wrangler", "whoami", "--json"], webRoot)
-      );
+      identity = parseWranglerIdentity(await runner.capture("vp", ["exec", "wrangler", "whoami", "--json"], webRoot));
     }
 
     const decision = await prompt(identity);
@@ -190,24 +176,14 @@ async function updateWranglerAccount(projectRoot: string, accountId: string): Pr
   await writeFile(configPath, next, "utf8");
 }
 
-export function updateD1BindingContent(
-  config: string,
-  databaseName: string,
-  databaseId: string
-): string {
+export function updateD1BindingContent(config: string, databaseName: string, databaseId: string): string {
   const binding = config.match(/\{(?=[^{}]*"binding"\s*:\s*"DB")[^{}]*\}/u)?.[0];
   if (!binding) {
     throw new Error("Could not update the DB binding in apps/web/wrangler.jsonc.");
   }
   const nextBinding = binding
-    .replace(
-      /("database_name"\s*:\s*)"[^"]*"/u,
-      (_match, prefix: string) => `${prefix}${JSON.stringify(databaseName)}`
-    )
-    .replace(
-      /("database_id"\s*:\s*)"[^"]*"/u,
-      (_match, prefix: string) => `${prefix}${JSON.stringify(databaseId)}`
-    );
+    .replace(/("database_name"\s*:\s*)"[^"]*"/u, (_match, prefix: string) => `${prefix}${JSON.stringify(databaseName)}`)
+    .replace(/("database_id"\s*:\s*)"[^"]*"/u, (_match, prefix: string) => `${prefix}${JSON.stringify(databaseId)}`);
   const boundName = nextBinding.match(/"database_name"\s*:\s*"([^"]*)"/u)?.[1];
   const boundId = nextBinding.match(/"database_id"\s*:\s*"([^"]*)"/u)?.[1];
   if (boundName !== databaseName || boundId !== databaseId) {
@@ -216,11 +192,7 @@ export function updateD1BindingContent(
   return config.replace(binding, nextBinding);
 }
 
-async function updateD1Binding(
-  projectRoot: string,
-  databaseName: string,
-  databaseId: string
-): Promise<void> {
+async function updateD1Binding(projectRoot: string, databaseName: string, databaseId: string): Promise<void> {
   const configPath = join(projectRoot, "apps", "web", "wrangler.jsonc");
   const config = await readFile(configPath, "utf8");
   const next = updateD1BindingContent(config, databaseName, databaseId);
@@ -243,11 +215,7 @@ export async function applyRemoteD1Migrations(
   let lastError: unknown;
   for (let attempt = 1; attempt <= REMOTE_MIGRATION_ATTEMPTS; attempt += 1) {
     try {
-      await runner.run(
-        "vp",
-        ["exec", "wrangler", "d1", "migrations", "apply", "DB", "--remote"],
-        webRoot
-      );
+      await runner.run("vp", ["exec", "wrangler", "d1", "migrations", "apply", "DB", "--remote"], webRoot);
       return;
     } catch (error) {
       lastError = error;

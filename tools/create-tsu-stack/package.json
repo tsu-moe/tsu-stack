@@ -41,8 +41,12 @@
     "release:github": "changelogithub",
     "test:unit": "vp test && node --test scripts/release-state.test.mjs"
   },
+  "dependencies": {
+    "oxfmt": "0.74.0"
+  },
   "devDependencies": {
     "@clack/prompts": "1.8.1",
+    "@tsu-stack/vite-plus": "workspace:*",
     "@types/fs-extra": "11.0.4",
     "@types/node": "26.6.6",
     "bumpp": "12.3.0",

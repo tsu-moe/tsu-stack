@@ -18,10 +18,7 @@ const WEB_SHARED_FSD_OPTIONS = {
 export const tanstackStartFsdLint = {
   jsPlugins: [{ name: "fsd", specifier: "eslint-plugin-fsd-lint" }],
   rules: {
-    "fsd/forbidden-imports": [
-      "error",
-      { ...WEB_SHARED_FSD_OPTIONS, alias: { value: "@", withSlash: false } }
-    ],
+    "fsd/forbidden-imports": ["error", { ...WEB_SHARED_FSD_OPTIONS, alias: { value: "@", withSlash: false } }],
     "fsd/no-relative-imports": [
       "error",
       {
