@@ -1,8 +1,4 @@
-import {
-  type LinkComponentProps,
-  type NavigateOptions,
-  type RegisteredRouter
-} from "@tanstack/react-router";
+import { type LinkComponentProps, type NavigateOptions, type RegisteredRouter } from "@tanstack/react-router";
 import type React from "react";
 
 import { type LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
@@ -26,10 +22,9 @@ type LocalizedNavigateOptions = Omit<NavigateOptions, "to" | "from"> & {
 };
 
 // Helpers
-type RemoveAll<
-  TString extends string,
-  TSub extends string
-> = TString extends `${infer H}${TSub}${infer T}` ? RemoveAll<`${H}${T}`, TSub> : TString;
+type RemoveAll<TString extends string, TSub extends string> = TString extends `${infer H}${TSub}${infer T}`
+  ? RemoveAll<`${H}${T}`, TSub>
+  : TString;
 
 type RemoveLocaleFromString<TString extends string> = CollapseDoubleSlashes<
   RemoveAll<TString, typeof LOCALE_ROUTE_PREFIX>
@@ -41,16 +36,11 @@ type InternalLinkProps = LocalizedLinkProps & {
 };
 
 // External link props (native anchor)
-type ExternalLinkProps = Omit<
-  React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  "href" | "children"
-> & {
+type ExternalLinkProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "children"> & {
   href: string;
   to?: never;
   params?: never;
-  children?:
-    | React.ReactNode
-    | ((props: { isActive: boolean; isTransitioning: boolean }) => React.ReactNode);
+  children?: React.ReactNode | ((props: { isActive: boolean; isTransitioning: boolean }) => React.ReactNode);
 };
 
 export type LinkProps = InternalLinkProps | ExternalLinkProps;

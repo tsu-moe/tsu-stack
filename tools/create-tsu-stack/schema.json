@@ -4,15 +4,7 @@
   "title": "create-tsu-stack project metadata",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "cliVersion",
-    "displayName",
-    "projectName",
-    "reproducibleCommand",
-    "scope",
-    "source",
-    "variant"
-  ],
+  "required": ["cliVersion", "displayName", "projectName", "reproducibleCommand", "scope", "source", "variant"],
   "properties": {
     "$schema": { "type": "string" },
     "cliVersion": { "type": "string" },

@@ -1,9 +1,5 @@
 import { log } from "evlog";
-import {
-  evlog as createEvlogHonoMiddleware,
-  type EvlogHonoOptions,
-  type EvlogVariables
-} from "evlog/hono";
+import { evlog as createEvlogHonoMiddleware, type EvlogHonoOptions, type EvlogVariables } from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { every } from "hono/combine";
@@ -89,9 +85,7 @@ export function honoLoggerMiddleware(options?: HonoLoggerMiddlewareOptions): Mid
  * app.post("/_logs/ingest", honoLogIngestionMiddleware());
  * ```
  */
-export function honoLogIngestionMiddleware(
-  options: HonoLogIngestionOptions = {}
-): MiddlewareHandler {
+export function honoLogIngestionMiddleware(options: HonoLogIngestionOptions = {}): MiddlewareHandler {
   const maxPayloadBytes = options.maxPayloadBytes ?? 64 * 1024;
 
   return every(
@@ -102,9 +96,7 @@ export function honoLogIngestionMiddleware(
       }
     }),
     createMiddleware(async (c) => {
-      if (
-        c.req.header("content-type")?.split(";", 1)[0]?.trim().toLowerCase() !== "application/json"
-      ) {
+      if (c.req.header("content-type")?.split(";", 1)[0]?.trim().toLowerCase() !== "application/json") {
         throw new HTTPException(415, { message: "Expected application/json" });
       }
 
@@ -127,9 +119,7 @@ export function honoLogIngestionMiddleware(
 function emitClientLog(payload: ClientLogPayload) {
   const { level: _level, timestamp, ...event } = payload.event;
   const normalizedEvent: NormalizedEvent = {
-    ...(timestamp !== undefined && event.clientTimestamp === undefined
-      ? { clientTimestamp: timestamp }
-      : {}),
+    ...(timestamp !== undefined && event.clientTimestamp === undefined ? { clientTimestamp: timestamp } : {}),
     ...event
   };
 

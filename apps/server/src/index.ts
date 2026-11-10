@@ -23,7 +23,7 @@ import { appRouter } from "@tsu-stack/api/routers/index";
 import { auth, generateAuthOpenApiSchema } from "@tsu-stack/auth/index";
 import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
-import { log, parseError } from "@tsu-stack/logger/server";
+import { createRequestLogger, isEvlogError, log, parseError } from "@tsu-stack/logger/server";
 import {
   honoLogIngestionMiddleware,
   honoLoggerMiddleware,
@@ -34,9 +34,7 @@ import "#@/shared/lib/logger";
 
 const serverHostname = hostname();
 
-export const app = new Hono<HonoLogVariables>().basePath(
-  new URL(ENV_SERVER.VITE_SERVER_URL).pathname
-);
+export const app = new Hono<HonoLogVariables>().basePath(new URL(ENV_SERVER.VITE_SERVER_URL).pathname);
 
 app.use(
   "/*",
@@ -93,6 +91,10 @@ app.onError((error, c) => {
     }
   }
 
+  if (!(error instanceof HTTPException) && !isEvlogError(error)) {
+    return c.json({ message: "Internal Server Error" }, 500);
+  }
+
   const parsed = parseError(error);
 
   return c.json(
@@ -111,11 +113,19 @@ app.onError((error, c) => {
  * Disable /auth/reference calls as they are handled by the OpenAPI generator
  * @see https://better-auth.com/docs/plugins/open-api#configuration
  */
-app.on(["POST", "GET"], "/auth/reference", (c) =>
-  c.redirect(`${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference`, 301)
-);
+app.on(["POST", "GET"], "/auth/reference", (c) => {
+  if (!ENV_SERVER.ENABLE_OPEN_API_DOCS) {
+    return c.notFound();
+  }
+
+  return c.redirect(`${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference`, 301);
+});
 
 app.get("/auth/open-api/generate-schema", async (c) => {
+  if (!ENV_SERVER.ENABLE_OPEN_API_DOCS) {
+    return c.notFound();
+  }
+
   // IMPORTANT: Need to explicitly do this instead of relying on the OpenAPI plugin's built-in schema generation
   // Otherwise, it will 404 with the /auth/* endpoint
   const schema = await generateAuthOpenApiSchema();
@@ -154,19 +164,16 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
           },
           {
             title: "Auth API Reference",
-            url: join(
-              new URL(ENV_SERVER.VITE_SERVER_URL).pathname,
-              "auth",
-              "open-api",
-              "generate-schema"
-            )
+            url: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "auth", "open-api", "generate-schema")
           }
         ],
         theme: "deepSpace"
       },
       providerScriptUrl: "https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.76.4",
-      spec: () =>
-        openApiGenerator.generate(appRouter, {
+      spec: async () => {
+        const { authCookies } = await auth.$context;
+
+        return openApiGenerator.generate(appRouter, {
           version: "3.1.1",
           errorStatusMap,
           base: {
@@ -175,7 +182,7 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
                 authCookie: {
                   description: `**(optional)** Session cookie from signing-in, required for protected endpoints [View Auth Reference](${ENV_SERVER.VITE_SERVER_URL}/docs#auth-api-reference)`,
                   in: "cookie",
-                  name: "better_auth.session_token",
+                  name: authCookies.sessionToken.name,
                   type: "apiKey"
                 }
               }
@@ -192,7 +199,8 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
               }
             ]
           }
-        }),
+        });
+      },
       specPath: "/docs/spec.json"
     }),
     new GetMethodCsrfProtectionHandlerPlugin(),
@@ -214,7 +222,10 @@ export const rpcHandler = new RPCHandler(appRouter, {
 });
 
 app.use("/*", async (c, next) => {
-  const context = await createContext({ context: c, logger: c.get("log") });
+  const context = await createContext({
+    context: c,
+    logger: c.get("log") ?? createRequestLogger({ method: c.req.method, path: c.req.path })
+  });
 
   // oRPC at /rpc/*
   const rpcResult = await rpcHandler.handle(c.req.raw, {

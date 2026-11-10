@@ -43,9 +43,7 @@ export function useMatches<TSelected = unknown>(opts?: {
  * Same locale-stripping behaviour as `useMatches` but limited to parent matches.
  */
 export function useParentMatches(): Match[];
-export function useParentMatches<TSelected>(opts: {
-  select: (matches: Match[]) => TSelected;
-}): TSelected;
+export function useParentMatches<TSelected>(opts: { select: (matches: Match[]) => TSelected }): TSelected;
 export function useParentMatches<TSelected = unknown>(opts?: {
   select?: (matches: Match[]) => TSelected;
 }): Match[] | TSelected {
@@ -62,9 +60,7 @@ export function useParentMatches<TSelected = unknown>(opts?: {
  * Same locale-stripping behaviour as `useMatches` but limited to child matches.
  */
 export function useChildMatches(): Match[];
-export function useChildMatches<TSelected>(opts: {
-  select: (matches: Match[]) => TSelected;
-}): TSelected;
+export function useChildMatches<TSelected>(opts: { select: (matches: Match[]) => TSelected }): TSelected;
 export function useChildMatches<TSelected = unknown>(opts?: {
   select?: (matches: Match[]) => TSelected;
 }): Match[] | TSelected {

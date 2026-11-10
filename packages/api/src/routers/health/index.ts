@@ -99,8 +99,7 @@ export const healthRouter = {
   ready: publicProcedure
     .meta(
       openapi({
-        description:
-          "Check if the server is ready to handle requests and connect to external services",
+        description: "Check if the server is ready to handle requests and connect to external services",
         method: "GET",
         spec: (spec) => {
           return { ...spec, security: [] };
@@ -118,9 +117,7 @@ export const healthRouter = {
     .output(HealthReadyOutputSchema)
     .handler(async ({ errors }) => {
       const entries = await Promise.all(
-        Object.entries(serviceChecks).map(
-          async ([name, check]) => [name, await runCheck(check)] as const
-        )
+        Object.entries(serviceChecks).map(async ([name, check]) => [name, await runCheck(check)] as const)
       );
       const checks: HealthChecks = Object.fromEntries(entries);
       const allHealthy = Object.values(checks).every((r) => r.status === "healthy");

@@ -1,8 +1,4 @@
-import {
-  type RegisteredRouter,
-  type RouterState,
-  useLocation as rawUseLocation
-} from "@tanstack/react-router";
+import { type RegisteredRouter, type RouterState, useLocation as rawUseLocation } from "@tanstack/react-router";
 
 import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
 
@@ -14,9 +10,7 @@ type ParsedLocation = RouterState<RegisteredRouter["routeTree"]>["location"];
  * always receive clean paths like `/app/library` instead of `/en/app/library`.
  */
 export function useLocation(): ParsedLocation;
-export function useLocation<TSelected>(opts: {
-  select: (location: ParsedLocation) => TSelected;
-}): TSelected;
+export function useLocation<TSelected>(opts: { select: (location: ParsedLocation) => TSelected }): TSelected;
 export function useLocation<TSelected = unknown>(opts?: {
   select?: (location: ParsedLocation) => TSelected;
 }): ParsedLocation | TSelected {

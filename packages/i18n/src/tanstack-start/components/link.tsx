@@ -27,9 +27,7 @@ export const Link: FC<LinkProps> = (props) => {
         href={props.href}
         onClick={onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
       >
-        {typeof children === "function"
-          ? children({ isActive: false, isTransitioning: false })
-          : children}
+        {typeof children === "function" ? children({ isActive: false, isTransitioning: false }) : children}
       </a>
     );
   }

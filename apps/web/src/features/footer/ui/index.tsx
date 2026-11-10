@@ -36,13 +36,7 @@ const socialLinks: (FooterLink & { icon: React.ReactNode })[] = [
   }
 ];
 
-export function Footer({
-  props,
-  className
-}: {
-  props?: React.ComponentProps<"footer">;
-  className?: string;
-}) {
+export function Footer({ props, className }: { props?: React.ComponentProps<"footer">; className?: string }) {
   const [year] = useState(() => new Date().getFullYear());
 
   return (
