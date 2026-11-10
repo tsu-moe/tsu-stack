@@ -138,6 +138,14 @@ describe("error responses", () => {
 });
 
 describe("operational rate limits", () => {
+  it("keeps liveness available during health-check bursts", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+
+    for (let attempt = 0; attempt < 61; attempt++) {
+      expect((await app.request("/server/health/live")).status).toBe(200);
+    }
+  });
+
   it("limits browser log ingestion per client", async () => {
     const { app } = await loadApp({ enableDocs: false });
     const request = () =>
