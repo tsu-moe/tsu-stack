@@ -1,8 +1,4 @@
-import {
-  type AnyRedirect,
-  type RedirectOptions,
-  type RegisteredRouter
-} from "@tanstack/react-router";
+import { type AnyRedirect, type RedirectOptions, type RegisteredRouter } from "@tanstack/react-router";
 import { redirect as rawRedirect } from "@tanstack/react-router";
 
 import { baseLocale, getLocale } from "#@/paraglide/runtime";
@@ -19,11 +15,7 @@ import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
  */
 export type LocalizedRedirect = <const TTo extends `/${string}`>(
   opts: Omit<
-    RedirectOptions<
-      RegisteredRouter,
-      `/${typeof LOCALE_ROUTE_PREFIX}/`,
-      `/${typeof LOCALE_ROUTE_PREFIX}${TTo}`
-    >,
+    RedirectOptions<RegisteredRouter, `/${typeof LOCALE_ROUTE_PREFIX}/`, `/${typeof LOCALE_ROUTE_PREFIX}${TTo}`>,
     "to" | "from"
   > & {
     to: TTo;

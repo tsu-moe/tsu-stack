@@ -40,10 +40,7 @@ export function MobileNav() {
         <Portal className="top-(--navbar-height)" id="mobile-menu">
           <PortalBackdrop className="bg-background!" />
           <div
-            className={cn(
-              "ease-out data-[slot=open]:animate-in data-[slot=open]:zoom-in-97",
-              "size-full p-4"
-            )}
+            className={cn("ease-out data-[slot=open]:animate-in data-[slot=open]:zoom-in-97", "size-full p-4")}
             data-slot={open ? "open" : "closed"}
           >
             <div className="grid gap-y-2">

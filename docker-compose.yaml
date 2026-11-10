@@ -10,8 +10,8 @@ services:
     environment:
       - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:3000/server}"
       - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
-      - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-      - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
+      - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
+      - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env.docker (generate one with vp run auth:secret)}"
     networks:
       - tsu-stack-network
     depends_on:
@@ -30,15 +30,15 @@ services:
         - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
         - "VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL:-}"
         - "VITE_IMGPROXY_SIGNATURE=${VITE_IMGPROXY_SIGNATURE:-_}"
-        - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-        - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
+        - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
+        - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env.docker (generate one with vp run auth:secret)}"
     environment:
       - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:3000/server}"
       - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
       - "VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL:-}"
       - "VITE_IMGPROXY_SIGNATURE=${VITE_IMGPROXY_SIGNATURE:-_}"
-      - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-      - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-replace_me_run_pnpm_auth_secret_to_generate_a_real_value_here}"
+      - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
+      - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env.docker (generate one with vp run auth:secret)}"
       - "ENABLE_OPEN_API_DOCS=${ENABLE_OPEN_API_DOCS:-false}"
       - "BETTER_AUTH_TRUSTED_IP_HEADER=${BETTER_AUTH_TRUSTED_IP_HEADER:-}"
     ports:
@@ -62,10 +62,10 @@ services:
     image: postgres:18-alpine
     container_name: tsu-stack-postgres
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     environment:
       - "POSTGRES_USER=${POSTGRES_USER:-postgres}"
-      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}"
       - "POSTGRES_DB=${POSTGRES_DB:-tsu-stack}"
     volumes:
       - tsu-stack-pg-data:/var/lib/postgresql

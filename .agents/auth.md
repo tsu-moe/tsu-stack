@@ -30,16 +30,41 @@ Auth user query is defined in `@tsu-stack/auth`:
 - Authenticated users → redirected to stored redirect path
 - `?redirect` param validated against route tree (sanitized)
 
-## Middleware
+## Middleware And Procedures
 
-Two auth middlewares exist for different sensitivity levels:
+TanStack Start middleware and oRPC procedures each have cached and fresh-session variants:
 
-| Middleware            | Behavior                                 | Use case                                     |
-| --------------------- | ---------------------------------------- | -------------------------------------------- |
-| `authMiddleware`      | Uses cached session (5-min cookie cache) | Normal protected pages                       |
-| `freshAuthMiddleware` | Hits DB, bypasses cache                  | Sensitive operations (password change, etc.) |
+| Surface        | Cached session          | Fresh database session        |
+| -------------- | ----------------------- | ----------------------------- |
+| TanStack Start | `authMiddleware`        | `freshAuthMiddleware`         |
+| oRPC           | `protectedProcedure`    | `freshProtectedProcedure`     |
+| Use case       | Normal protected access | Sensitive or destructive work |
 
-Both set 401 status and throw on unauthorized.
+The template's cookie cache can keep a revoked session usable for up to five minutes. Use the cached variants for ordinary protected pages, reads, and low-risk mutations where that tradeoff is acceptable. Use `freshAuthMiddleware` or `freshProtectedProcedure` for custom operations that must observe revocation immediately, including account deletion, email or password changes, role and permission changes, billing changes, secret rotation, and other privilege-sensitive mutations.
+
+The fresh variants pass `disableCookieCache: true` to Better Auth and fetch the session from the database. They do not replace resource-level authorization, role checks, CSRF protection, or a recent-authentication challenge. Both middleware variants set status 401 and throw when unauthorized; both protected procedure variants throw `ORPCError("UNAUTHORIZED")`.
+
+```ts
+export const deleteProject = freshProtectedProcedure.handler(async ({ context }) => {
+  // Still verify that context.session.user may delete this specific project.
+});
+```
+
+## Registration Privacy
+
+The default email-and-password sign-up flow automatically signs in a new user, so an existing email receives `422 USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL`. This reveals whether an address is registered. That may be acceptable for low-risk products, but agents must raise it when an application needs account-enumeration resistance.
+
+For a uniform `200` sign-up response, configure either `emailAndPassword.requireEmailVerification: true` or `emailAndPassword.autoSignIn: false`. Email verification also requires a real `emailVerification.sendVerificationEmail` implementation and deliberate resend/sign-in behavior. Keep user-facing copy and timing uniform, and test both new and already-registered addresses. Plugins that add required user fields may also need `customSyntheticUser` so the synthetic duplicate response matches a real sign-up response.
+
+## Client IP At The Merged Runtime Boundary
+
+IP-based rate limiting is only trustworthy when the runtime derives the address from connection metadata or from a header that the deployment platform overwrites. Never accept an arbitrary client-supplied forwarding header as the verified address.
+
+The Hono app runs behind TanStack Start's fetch boundary, so it cannot inspect the original network socket. Configure `BETTER_AUTH_TRUSTED_IP_HEADER` only when the application is reachable through an edge or reverse proxy that removes any incoming value and overwrites the header with exactly one validated client IP.
+
+- Leave `BETTER_AUTH_TRUSTED_IP_HEADER` empty when requests can bypass the trusted edge. Rate limits then share the `unknown` bucket instead of trusting spoofable input.
+- Do not point it at a forwarding chain such as an unnormalized `X-Forwarded-For` header. Multiple addresses are rejected because the application cannot prove which hops are trusted after the fetch boundary.
+- The server must overwrite the private `x-tsu-client-ip` header before calling Better Auth. Better Auth reads only that internal header; feature code must use the resolved Hono `clientIp` value instead of reparsing request headers.
 
 ## Database Configuration
 

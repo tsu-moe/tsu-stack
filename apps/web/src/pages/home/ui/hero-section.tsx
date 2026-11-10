@@ -72,10 +72,7 @@ export function HeroSection() {
               target="_blank"
             >
               <span className="relative z-10">{m.home_page__hero_cta()}</span>
-              <ArrowRight
-                aria-hidden
-                className="relative z-10 size-5.5 transition-transform duration-300"
-              />
+              <ArrowRight aria-hidden className="relative z-10 size-5.5 transition-transform duration-300" />
             </Link>
           </div>
         </div>

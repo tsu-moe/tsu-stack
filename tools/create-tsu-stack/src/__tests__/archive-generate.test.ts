@@ -22,9 +22,7 @@ describe("archive safety", () => {
   });
 
   it("identifies the single archive root used during extraction", () => {
-    expect(archiveRootFromEntry("tsu-stack-abc123/packages/core/package.json")).toBe(
-      "tsu-stack-abc123"
-    );
+    expect(archiveRootFromEntry("tsu-stack-abc123/packages/core/package.json")).toBe("tsu-stack-abc123");
     expect(archiveRootFromEntry("../escape")).toBeUndefined();
   });
 });

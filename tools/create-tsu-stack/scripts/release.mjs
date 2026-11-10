@@ -131,20 +131,14 @@ async function detectLocalRelease(remoteHead) {
 
 async function pushRelease(tag, branchAlreadyPushed = false) {
   const tagRefspec = `refs/tags/${tag}:refs/tags/${tag}`;
-  const refspecs = branchAlreadyPushed
-    ? [tagRefspec]
-    : [`HEAD:refs/heads/${releaseBranch}`, tagRefspec];
+  const refspecs = branchAlreadyPushed ? [tagRefspec] : [`HEAD:refs/heads/${releaseBranch}`, tagRefspec];
 
   await git(["push", "--dry-run", "--atomic", remote, ...refspecs], { stdio: "inherit" });
   await git(["push", "--atomic", remote, ...refspecs], { stdio: "inherit" });
 }
 
 async function verifyRemoteRelease(head, tag) {
-  const refs = await remoteRefs(
-    `refs/heads/${releaseBranch}`,
-    `refs/tags/${tag}`,
-    `refs/tags/${tag}^{}`
-  );
+  const refs = await remoteRefs(`refs/heads/${releaseBranch}`, `refs/tags/${tag}`, `refs/tags/${tag}^{}`);
   const branchCommit = refs.get(`refs/heads/${releaseBranch}`);
   const tagCommit = refs.get(`refs/tags/${tag}^{}`) ?? refs.get(`refs/tags/${tag}`);
   return branchCommit === head && tagCommit === head;
@@ -155,9 +149,7 @@ async function pushReleaseWithRecovery(head, tag, branchAlreadyPushed = false) {
     await pushRelease(tag, branchAlreadyPushed);
   } catch (error) {
     if (await verifyRemoteRelease(head, tag)) {
-      console.log(
-        `${tag} reached the remote despite the local push error; treating the release as pushed.`
-      );
+      console.log(`${tag} reached the remote despite the local push error; treating the release as pushed.`);
       return;
     }
 
@@ -180,9 +172,7 @@ async function rollbackUnpublishedCommit(startHead, tag) {
 
   const parent = await gitOutput(["rev-parse", "HEAD^"]);
   if (parent !== startHead || (await changedPaths(head)).join("\n") !== packageRelativePath) {
-    throw new Error(
-      "Release rollback stopped because HEAD no longer matches the commit created by this run."
-    );
+    throw new Error("Release rollback stopped because HEAD no longer matches the commit created by this run.");
   }
 
   await git(["reset", "--mixed", startHead]);
@@ -204,9 +194,7 @@ async function main() {
   const existingRelease = await detectLocalRelease(remoteHead);
 
   if (existingRelease?.state === "complete") {
-    console.log(
-      `${existingRelease.tag} is already present on ${remote}/${releaseBranch}; nothing to push.`
-    );
+    console.log(`${existingRelease.tag} is already present on ${remote}/${releaseBranch}; nothing to push.`);
     return;
   }
 
@@ -214,11 +202,7 @@ async function main() {
     await assertRegistryBootstrap(existingRelease.manifest);
     console.log(`Resuming ${existingRelease.tag} from its validated local release commit.`);
     await runValidation();
-    await pushReleaseWithRecovery(
-      existingRelease.head,
-      existingRelease.tag,
-      existingRelease.state === "pending-tag"
-    );
+    await pushReleaseWithRecovery(existingRelease.head, existingRelease.tag, existingRelease.state === "pending-tag");
     console.log(`Pushed ${existingRelease.tag}. The tag workflow will publish the package.`);
     return;
   }
@@ -246,9 +230,7 @@ async function main() {
 
     const touchedPaths = await worktreePaths();
     if (touchedPaths.length !== 1 || touchedPaths[0] !== packageRelativePath) {
-      throw new Error(
-        `Version bump touched unexpected paths: ${touchedPaths.join(", ") || "none"}.`
-      );
+      throw new Error(`Version bump touched unexpected paths: ${touchedPaths.join(", ") || "none"}.`);
     }
 
     const manifest = await readPackage();
@@ -260,17 +242,9 @@ async function main() {
     }
 
     // Exercise authentication, branch/tag protections, and atomic-push support before creating a commit.
-    await git(
-      [
-        "push",
-        "--dry-run",
-        "--atomic",
-        remote,
-        `HEAD:refs/heads/${releaseBranch}`,
-        `HEAD:refs/tags/${tag}`
-      ],
-      { stdio: "inherit" }
-    );
+    await git(["push", "--dry-run", "--atomic", remote, `HEAD:refs/heads/${releaseBranch}`, `HEAD:refs/tags/${tag}`], {
+      stdio: "inherit"
+    });
 
     await git(["add", "--", packageRelativePath]);
     await git(["commit", "--message", `chore(release): ${tag}`, "--", packageRelativePath], {
@@ -287,9 +261,7 @@ async function main() {
   const releaseHead = await gitOutput(["rev-parse", "HEAD"]);
   await pushReleaseWithRecovery(releaseHead, tag);
 
-  console.log(
-    `Pushed ${tag} atomically with ${releaseBranch}. The tag workflow will publish the package.`
-  );
+  console.log(`Pushed ${tag} atomically with ${releaseBranch}. The tag workflow will publish the package.`);
 }
 
 await main();

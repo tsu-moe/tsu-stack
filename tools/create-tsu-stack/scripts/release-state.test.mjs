@@ -10,17 +10,11 @@ test("preserves paths for unstaged changes with a leading status space", () => {
 });
 
 test("parses staged and untracked paths", () => {
-  assert.deepEqual(parsePorcelainV1Z("M  staged.json\0?? untracked.json\0"), [
-    "staged.json",
-    "untracked.json"
-  ]);
+  assert.deepEqual(parsePorcelainV1Z("M  staged.json\0?? untracked.json\0"), ["staged.json", "untracked.json"]);
 });
 
 test("includes both paths from rename entries", () => {
-  assert.deepEqual(parsePorcelainV1Z("R  renamed.json\0original.json\0"), [
-    "renamed.json",
-    "original.json"
-  ]);
+  assert.deepEqual(parsePorcelainV1Z("R  renamed.json\0original.json\0"), ["renamed.json", "original.json"]);
 });
 
 test("parses a clean worktree", () => {

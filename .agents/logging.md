@@ -187,6 +187,20 @@ Do not log in React render paths. If a client log is necessary, emit it from an 
 
 When browser transport is enabled, remember that client logs are sent to the server ingestion endpoint. Treat them as production logs, not just DevTools messages.
 
+## Operational Limits And Health Checks
+
+Keep the server boundaries and their intent aligned:
+
+- General Hono request bodies are capped at 1 MiB. Routes requiring larger uploads must use a deliberately designed streaming or upload path instead of raising the global limit casually.
+- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP.
+- Database readiness checks allow 30 requests per minute per resolved client IP. Liveness checks are intentionally not rate limited.
+- The in-memory operational limits are per Node process or Worker isolate. Multi-replica deployments that need a global abuse boundary must also enforce one at the proxy/edge or use an atomic shared limiter.
+- A missing client address uses a shared `unknown` bucket. Fix production IP resolution rather than increasing limits to compensate.
+
+Health checks and log ingestion are excluded from request logging. Preserve that exclusion: logging health probes creates noise, and request-logging the ingestion endpoint can create recursive client/server log traffic.
+
+Docker and Coolify health checks call the server's `/health/live` and the web app's `/_api/health/live` every 10 seconds, or about 6 requests per minute each. Those routes are cheap, unlogged, and outside the readiness limiter, so normal probe cadence cannot exhaust the rate limit. Keep liveness free of database and downstream checks. `/health/ready` may check dependencies and its 30-per-minute limit leaves five times the capacity of one 10-second checker; if several external monitors share one resolved IP or use a faster cadence, calculate their combined rate and adjust that route deliberately.
+
 ## Bootstrap Console
 
 Bootstrap/config packages such as `@tsu-stack/env` may use small `console.debug` statements because they are loaded before logger initialization and by Vite config. Do not route env bootstrap through `@tsu-stack/logger`.

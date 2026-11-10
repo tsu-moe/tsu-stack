@@ -2,7 +2,10 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join, relative } from "node:path";
 
 import { pathExists, remove } from "fs-extra";
+import { format } from "oxfmt";
 import { z } from "zod";
+
+import { getBaseFormatOptions } from "@tsu-stack/vite-plus/base-config.fmt";
 
 import { d1DatabaseName } from "./cloudflare";
 import { GENERATED_CI_WORKFLOW } from "./generated-ci";
@@ -32,6 +35,8 @@ const TEXT_EXTENSIONS = new Set([
 ]);
 
 const TEXT_FILENAMES = new Set([".dockerignore", ".gitignore", ".npmrc", "Dockerfile", "LICENSE"]);
+
+const FORMATTABLE_SOURCE_EXTENSIONS = new Set([".js", ".mjs", ".ts", ".tsx"]);
 
 const PACKAGE_DEPENDENCY_FIELDS = [
   "dependencies",
@@ -63,30 +68,40 @@ function isTextFile(path: string): boolean {
 }
 
 function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }
 
 function quotePosixShellArgument(value: string): string {
   return `'${value.replaceAll("'", "'\\''")}'`;
 }
 
-async function replaceInFile(path: string, replacer: (content: string) => string): Promise<void> {
-  if (!(await pathExists(path))) return;
+async function replaceInFile(path: string, replacer: (content: string) => string): Promise<boolean> {
+  if (!(await pathExists(path))) return false;
   const content = await readFile(path, "utf8");
   const next = replacer(content);
-  if (next !== content) await writeFile(path, next, "utf8");
+  if (next === content) return false;
+  await writeFile(path, next, "utf8");
+  return true;
+}
+
+async function formatTransformedSources(root: string, paths: string[], scope: string): Promise<void> {
+  const options = getBaseFormatOptions({ scope, sortTailwindcss: false });
+  for (const path of paths) {
+    const source = await readFile(path, "utf8");
+    const result = await format(path, source, options);
+    if (result.errors.length > 0) {
+      throw new Error(
+        `Could not format transformed source ${relative(root, path)}: ${result.errors.map((error) => error.message).join("; ")}`
+      );
+    }
+    if (result.code !== source) await writeFile(path, result.code, "utf8");
+  }
 }
 
 async function normalizePackageManifests(root: string): Promise<void> {
   const packagePaths = (await listFiles(root)).filter((path) => path.endsWith("package.json"));
   for (const path of packagePaths) {
-    const packageJsonResult = PACKAGE_MANIFEST_SCHEMA.safeParse(
-      JSON.parse(await readFile(path, "utf8"))
-    );
+    const packageJsonResult = PACKAGE_MANIFEST_SCHEMA.safeParse(JSON.parse(await readFile(path, "utf8")));
     if (!packageJsonResult.success) {
       throw new Error(`The generated template has an invalid package manifest: ${path}`);
     }
@@ -96,9 +111,7 @@ async function normalizePackageManifests(root: string): Promise<void> {
       if (!dependenciesResult.success) continue;
       const sortedDependencies: [string, string][] = [];
       for (const entry of Object.entries(dependenciesResult.data)) {
-        const insertionIndex = sortedDependencies.findIndex(
-          ([name]) => entry[0].localeCompare(name) < 0
-        );
+        const insertionIndex = sortedDependencies.findIndex(([name]) => entry[0].localeCompare(name) < 0);
         if (insertionIndex === -1) sortedDependencies.push(entry);
         else sortedDependencies.splice(insertionIndex, 0, entry);
       }
@@ -143,14 +156,16 @@ export async function transformTemplate(
   await writeFile(join(root, ".github", "workflows", "ci.yml"), GENERATED_CI_WORKFLOW, "utf8");
 
   const textFiles = (await listFiles(root)).filter(isTextFile);
+  const transformedSourceFiles: string[] = [];
   for (const path of textFiles) {
-    await replaceInFile(path, (content) => content.replaceAll("@tsu-stack", input.scope));
+    const changed = await replaceInFile(path, (content) => content.replaceAll("@tsu-stack", input.scope));
+    if (changed && FORMATTABLE_SOURCE_EXTENSIONS.has(extname(path)) && !path.endsWith("routeTree.gen.ts")) {
+      transformedSourceFiles.push(path);
+    }
   }
 
   const packagePath = join(root, "package.json");
-  const packageJsonResult = PACKAGE_MANIFEST_SCHEMA.safeParse(
-    JSON.parse(await readFile(packagePath, "utf8"))
-  );
+  const packageJsonResult = PACKAGE_MANIFEST_SCHEMA.safeParse(JSON.parse(await readFile(packagePath, "utf8")));
   if (!packageJsonResult.success) {
     throw new Error("The generated template has an invalid package.json.");
   }
@@ -178,9 +193,7 @@ export async function transformTemplate(
     "docker-compose.coolify.yaml",
     "packages/db/docker-compose.dev.yaml"
   ]) {
-    await replaceInFile(join(root, dockerPath), (content) =>
-      content.replaceAll("tsu-stack", input.projectName)
-    );
+    await replaceInFile(join(root, dockerPath), (content) => content.replaceAll("tsu-stack", input.projectName));
   }
 
   const variant = VARIANTS[input.variant];
@@ -191,10 +204,7 @@ export async function transformTemplate(
   }
   if (variant.transformHook.d1Database) {
     await replaceInFile(join(root, "apps", "web", "wrangler.jsonc"), (content) =>
-      content.replace(
-        /("database_name"\s*:\s*)"[^"]*"/u,
-        `$1${JSON.stringify(d1DatabaseName(input.projectName))}`
-      )
+      content.replace(/("database_name"\s*:\s*)"[^"]*"/u, `$1${JSON.stringify(d1DatabaseName(input.projectName))}`)
     );
   }
   await replaceInFile(join(root, "packages", "env", ".env.example"), (content) =>
@@ -208,10 +218,7 @@ export async function transformTemplate(
   );
   await replaceInFile(join(root, "apps", "web", "src", "config", "app.config.ts"), (content) =>
     content
-      .replace(
-        /longName: "[^"]*tsu!stack"/u,
-        () => `longName: ${JSON.stringify(input.displayName)}`
-      )
+      .replace(/longName: "[^"]*tsu!stack"/u, () => `longName: ${JSON.stringify(input.displayName)}`)
       .replace(/shortName: "tsu!stack"/u, () => `shortName: ${JSON.stringify(input.displayName)}`)
   );
   await replaceInFile(join(root, "packages", "i18n", "messages", "en.json"), (content) =>
@@ -239,6 +246,8 @@ export async function transformTemplate(
     );
   }
 
+  await formatTransformedSources(root, transformedSourceFiles, input.scope);
+
   const remainingScopeReferences: string[] = [];
   for (const path of (await listFiles(root)).filter(isTextFile)) {
     if ((await readFile(path, "utf8")).includes("@tsu-stack")) {
@@ -253,8 +262,7 @@ export async function transformTemplate(
 
   const reproducibleCommand = buildReproducibleCommand(input, template);
   const metadata = {
-    $schema:
-      "https://raw.githubusercontent.com/tsu-moe/tsu-stack/main/tools/create-tsu-stack/schema.json",
+    $schema: "https://raw.githubusercontent.com/tsu-moe/tsu-stack/main/tools/create-tsu-stack/schema.json",
     cliVersion,
     displayName: input.displayName,
     projectName: input.projectName,

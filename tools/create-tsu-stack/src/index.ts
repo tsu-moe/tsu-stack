@@ -41,10 +41,8 @@ async function main(): Promise<void> {
 
   const cwd = process.cwd();
   const input = await collectProjectInput(flags);
-  const template = await withSpinner(
-    `Resolving ${input.variant} template`,
-    "Template resolved",
-    async () => resolveTemplate(input)
+  const template = await withSpinner(`Resolving ${input.variant} template`, "Template resolved", async () =>
+    resolveTemplate(input)
   );
   const target = resolve(cwd, input.projectDirectory);
   await assertDestinationAvailable(target);

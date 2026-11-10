@@ -45,10 +45,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
 
     const spinner = (
       <Comp
-        className={cn(
-          "relative -left-0.25",
-          spinnerVariants({ className: filteredClassName, size })
-        )}
+        className={cn("relative -left-0.25", spinnerVariants({ className: filteredClassName, size }))}
         ref={ref}
         {...props}
       >

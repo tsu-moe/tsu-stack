@@ -23,8 +23,7 @@ export function validateArchiveEntry(entryPath: string, entryType?: string): boo
 
   const segments = normalized.split("/");
   return (
-    segments.every((segment) => segment !== ".." && segment !== ".") &&
-    !posix.normalize(normalized).startsWith("../")
+    segments.every((segment) => segment !== ".." && segment !== ".") && !posix.normalize(normalized).startsWith("../")
   );
 }
 
@@ -38,9 +37,7 @@ export async function downloadAndExtractTemplate(
     redirect: "follow"
   });
   if (!response.ok) {
-    throw new Error(
-      `Unable to download template archive (${response.status} ${response.statusText}).`
-    );
+    throw new Error(`Unable to download template archive (${response.status} ${response.statusText}).`);
   }
 
   await writeFile(archivePath, Buffer.from(await response.arrayBuffer()));

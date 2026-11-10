@@ -11,8 +11,8 @@ export const ENV_WEB_ISOMORPHIC = createEnv({
   client: {
     VITE_IMGPROXY_SIGNATURE: z.string().default("_"),
     VITE_IMGPROXY_URL: z.url().optional(),
-    VITE_SERVER_URL: isProduction ? z.url() : z.url().default("http://localhost:5000/server"),
-    VITE_WEB_URL: isProduction ? z.url() : z.url().default("http://localhost:3000/web")
+    VITE_SERVER_URL: isProduction ? z.url() : z.url().default("http://localhost:3000/server"),
+    VITE_WEB_URL: isProduction ? z.url() : z.url().default("http://localhost:3000")
   },
   clientPrefix: "VITE_",
   emptyStringAsUndefined: true,

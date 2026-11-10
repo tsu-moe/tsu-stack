@@ -35,8 +35,7 @@ async function fixture(): Promise<string> {
     ".github/workflows/release.yml": "template package release",
     ".agents/cli.md": "Generator maintainer instructions",
     "AGENTS.md": "# tsu-stack\nUse @tsu-stack/core.",
-    "apps/web/src/config/app.config.ts":
-      'export const app = { longName: "The tsu!stack", shortName: "tsu!stack" }',
+    "apps/web/src/config/app.config.ts": 'export const app = { longName: "The tsu!stack", shortName: "tsu!stack" }',
     "apps/web/wrangler.jsonc":
       '{\n  // Worker identity\n  "name": "tsu-stack",\n  "d1_databases": [{ "binding": "DB", "database_name": "tsu-stack-db", "database_id": "00000000-0000-0000-0000-000000000000" }]\n}\n',
     "docker-compose.yaml": "name: tsu-stack\nvolumes:\n  tsu-stack-data:\n",
@@ -73,13 +72,7 @@ describe("template identity transformation", () => {
       dependencies: { "@moon-garden/core": "workspace:*" }
     });
     expect(packageJson).not.toHaveProperty("scripts.release");
-    expect(Object.keys(packageJson)).toEqual([
-      "name",
-      "private",
-      "type",
-      "scripts",
-      "dependencies"
-    ]);
+    expect(Object.keys(packageJson)).toEqual(["name", "private", "type", "scripts", "dependencies"]);
     expect(Object.keys(packageJson.dependencies)).toEqual(["@moon-garden/core", "@react/example"]);
     const generatedCi = await readFile(join(root, ".github/workflows/ci.yml"), "utf8");
     const generatedCiSteps = [
@@ -93,16 +86,11 @@ describe("template identity transformation", () => {
     expect(generatedCiStepIndexes).not.toContain(-1);
     const generatedCiStepsAreOrdered = generatedCiStepIndexes
       .slice(1)
-      .every(
-        (stepIndex, index) =>
-          stepIndex > (generatedCiStepIndexes[index] ?? Number.POSITIVE_INFINITY)
-      );
+      .every((stepIndex, index) => stepIndex > (generatedCiStepIndexes[index] ?? Number.POSITIVE_INFINITY));
     expect(generatedCiStepsAreOrdered).toBe(true);
     expect(generatedCi).toContain("working-directory: apps/web");
     expect(generatedCi).not.toContain("create-tsu-stack");
-    expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain(
-      '"name": "moon-garden"'
-    );
+    expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain('"name": "moon-garden"');
     expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain(
       '"database_name": "moon-garden-db"'
     );
@@ -157,5 +145,26 @@ describe("template identity transformation", () => {
     expect(await readFile(join(root, ".github/README.md"), "utf8")).toContain(
       ">My &quot;Quoted&quot; $&amp; &lt;App&gt; \\ Co</a>"
     );
+  });
+
+  it("formats source files after replacing the workspace scope", async () => {
+    const root = await fixture();
+    const sourcePath = join(root, "apps/web/src/example.ts");
+    await mkdir(dirname(sourcePath), { recursive: true });
+    await writeFile(
+      sourcePath,
+      'import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@tsu-stack/ui/components/field";\n'
+    );
+
+    await transformTemplate(root, { ...input, scope: "@generated-tsu-stack" }, template, "1.2.3");
+
+    expect(await readFile(sourcePath, "utf8")).toBe(`import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator
+} from "@generated-tsu-stack/ui/components/field";
+`);
   });
 });

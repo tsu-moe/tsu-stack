@@ -73,8 +73,7 @@ export async function migrateDatabase(): Promise<void> {
 
   for (let attempt = 1; attempt <= MIGRATION_MAX_ATTEMPTS; attempt++) {
     // An emitted wide event cannot be reused for the next retry.
-    const attemptLog =
-      attempt === 1 ? log : createLogger({ operation: "server__database_migration" });
+    const attemptLog = attempt === 1 ? log : createLogger({ operation: "server__database_migration" });
 
     try {
       await migrate(db, {

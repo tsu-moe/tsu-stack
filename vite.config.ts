@@ -1,6 +1,7 @@
 import { defineConfig } from "vite-plus";
 
-import { tanstackStartFsdLint } from "./tools/vite-plus/tanstack-start-fsd.lint.ts";
+import { getBaseFormatOptions } from "@tsu-stack/vite-plus/base-config.fmt";
+import { tanstackStartFsdLint } from "@tsu-stack/vite-plus/tanstack-start-fsd.lint";
 
 /**
  * Defines top-level Vite+ configurations for the different tools in its ecosystem.
@@ -19,6 +20,7 @@ export default defineConfig({
 
   // Oxfmt - https://oxc.rs/docs/guide/usage/formatter/config.html
   fmt: {
+    ...getBaseFormatOptions(),
     overrides: [
       {
         files: ["**/*.md"],
@@ -46,58 +48,7 @@ export default defineConfig({
       ".wrangler",
       ".netlify",
       "dist"
-    ],
-    sortImports: {
-      customGroups: [
-        {
-          elementNamePattern: ["@tsu-stack/**"],
-          groupName: "@tsu-stack"
-        },
-        {
-          elementNamePattern: ["@/pages/**"],
-          groupName: "pages"
-        },
-        {
-          elementNamePattern: ["@/widgets/**"],
-          groupName: "widgets"
-        },
-        {
-          elementNamePattern: ["@/features/**"],
-          groupName: "features"
-        },
-        {
-          elementNamePattern: ["@/entities/**"],
-          groupName: "entities"
-        },
-        {
-          elementNamePattern: ["@/shared/**"],
-          groupName: "shared"
-        }
-      ],
-      groups: [
-        "builtin",
-        "external",
-        "@tsu-stack",
-        "shared",
-        "entities",
-        "features",
-        "widgets",
-        "pages",
-        ["internal", "subpath"],
-        ["parent", "sibling", "index"],
-        "style",
-        "unknown"
-      ],
-      internalPattern: ["@/", "#@/", "~/", "~~/", "#"],
-      sortSideEffects: true
-    },
-    sortPackageJson: true,
-    sortTailwindcss: {
-      attributes: ["class", "className"],
-      functions: ["clsx", "cn", "cva", "tw"],
-      stylesheet: "./packages/ui/styles/globals.css"
-    },
-    trailingComma: "none"
+    ]
   },
 
   // Oxlint - https://oxc.rs/docs/guide/usage/linter/config
@@ -136,17 +87,7 @@ export default defineConfig({
       }
     ],
     options: { typeAware: true, typeCheck: true },
-    plugins: [
-      "eslint",
-      "react",
-      "react-perf",
-      "jsx-a11y",
-      "typescript",
-      "import",
-      "promise",
-      "jest",
-      "unicorn"
-    ],
+    plugins: ["eslint", "react", "react-perf", "jsx-a11y", "typescript", "import", "promise", "jest", "unicorn"],
     // #endregion
 
     // #region App-specific lint overrides
@@ -212,10 +153,7 @@ export default defineConfig({
       "typescript/consistent-indexed-object-style": ["error", "record"],
       "jest/consistent-test-it": ["error", { fn: "it" }],
       "typescript/consistent-type-definitions": ["error", "type"],
-      "typescript/consistent-type-imports": [
-        "error",
-        { fixStyle: "inline-type-imports", prefer: "type-imports" }
-      ],
+      "typescript/consistent-type-imports": ["error", { fixStyle: "inline-type-imports", prefer: "type-imports" }],
       "import/consistent-type-specifier-style": ["error", "prefer-inline"],
       "eslint/curly": ["error", "multi-line"],
       "unicorn/escape-case": "warn",

@@ -56,9 +56,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     [router]
   );
 
-  return (
-    <LocaleContext.Provider value={{ locale, switchLocale }}>{children}</LocaleContext.Provider>
-  );
+  return <LocaleContext.Provider value={{ locale, switchLocale }}>{children}</LocaleContext.Provider>;
 }
 
 export function useLocale() {
