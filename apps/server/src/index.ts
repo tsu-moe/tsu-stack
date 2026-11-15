@@ -23,7 +23,7 @@ import { appRouter } from "@tsu-stack/api/routers/index";
 import { auth, generateAuthOpenApiSchema } from "@tsu-stack/auth/index";
 import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
-import { createRequestLogger, isEvlogError, log, parseError } from "@tsu-stack/logger/server";
+import { createLogger, createRequestLogger, isEvlogError, log, parseError } from "@tsu-stack/logger/server";
 import {
   honoLogIngestionMiddleware,
   honoLoggerMiddleware,
@@ -275,10 +275,10 @@ if (!ENV_SERVER.IS_BUILD) {
         port: 5000
       },
       (info) => {
-        log.info(
-          "server",
-          `Server is running on http://localhost:${info.port}${new URL(ENV_SERVER.VITE_SERVER_URL).pathname}`
-        );
+        createLogger({
+          event: "server_started",
+          url: `http://localhost:${info.port}${new URL(ENV_SERVER.VITE_SERVER_URL).pathname}`
+        }).emit({ _forceKeep: true });
       }
     );
   })();

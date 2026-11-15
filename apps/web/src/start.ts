@@ -1,6 +1,6 @@
 import { createCsrfMiddleware, createStart } from "@tanstack/react-start";
 
-import { LOG_SERVICES, initLogger } from "@tsu-stack/logger/server";
+import { LOG_SERVICES, REQUEST_LOG_SAMPLING, initLogger } from "@tsu-stack/logger/server";
 import { tanstackStartRequestLoggerMiddleware } from "@tsu-stack/logger/server/tanstack-start/middleware";
 
 // We load it in vite.config.ts because they are originally from ENV_WEB_SERVER variables
@@ -13,12 +13,7 @@ initLogger({
     service: LOG_SERVICES.WEB_SERVER,
     version: __BUILD_SOURCE_COMMIT__
   },
-  sampling: {
-    keep: [{ status: 400 }, { duration: 1000 }],
-    rates: {
-      info: 0
-    }
-  }
+  sampling: REQUEST_LOG_SAMPLING
 });
 
 export const startInstance = createStart(() => {

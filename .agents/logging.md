@@ -176,8 +176,10 @@ Prefer IDs over full records. Prefer allowlisted fields, then rely on centralize
 
 Request logging should be sampled and outcome-oriented.
 
+- Use the shared `REQUEST_LOG_SAMPLING` policy for web and API request loggers so services retain the same failures and slow requests.
 - Keep errors and slow requests.
 - Sample or drop routine successful requests.
+- Force-keep a non-request lifecycle event only when it is deliberately useful despite the request sampling policy.
 - Include `requestId`, method, route/path, status, duration, and approved coarse context.
 - Do not derive client IP from forwarding headers unless the runtime also verifies the socket peer
   against an explicit trusted-proxy configuration. Omit IP when it is not operationally needed.

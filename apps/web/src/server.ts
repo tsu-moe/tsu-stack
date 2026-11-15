@@ -3,7 +3,7 @@ import handler from "@tanstack/react-start/server-entry";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { ENV_WEB_SERVER } from "@tsu-stack/env/web/env.server";
 import { paraglideMiddleware } from "@tsu-stack/i18n/server";
-import { LOG_SERVICES, initLogger } from "@tsu-stack/logger/server";
+import { LOG_SERVICES, REQUEST_LOG_SAMPLING, initLogger } from "@tsu-stack/logger/server";
 
 initLogger({
   env: {
@@ -11,12 +11,7 @@ initLogger({
     service: LOG_SERVICES.WEB_SERVER,
     version: ENV_WEB_SERVER.SOURCE_COMMIT
   },
-  sampling: {
-    keep: [{ status: 400 }, { duration: 1000 }],
-    rates: {
-      info: 0
-    }
-  }
+  sampling: REQUEST_LOG_SAMPLING
 });
 
 export default {
