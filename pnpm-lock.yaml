@@ -731,9 +731,6 @@ importers:
       '@tsu-stack/db':
         specifier: workspace:*
         version: link:../db
-      '@tsu-stack/logger':
-        specifier: workspace:*
-        version: link:../logger
       better-auth:
         specifier: 'catalog:'
         version: 1.7.14(@tanstack/react-start@1.169.4(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.6)(@typescript/native-preview@7.0.0-dev.20260707.2)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.0))(esbuild@0.28.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(rolldown@1.2.12)(rollup@4.62.2))(drizzle-kit@1.0.0-rc.5-ab785fc)(drizzle-orm@1.0.0-rc.5-ab785fc(postgres@4.0.0)(valibot@1.5.0(typescript@7.0.2))(zod@4.6.7))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(solid-js@1.9.15)(vitest@5.0.5)

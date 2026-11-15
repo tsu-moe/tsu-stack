@@ -155,16 +155,11 @@ export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOp
 }
 
 export function getTanstackStartRequestLogger() {
-  const logger = getOptionalTanstackStartRequestLogger();
-  if (!logger) {
+  const context = getGlobalStartContext() as { logger?: RequestLogger } | undefined;
+  if (!context?.logger) {
     throw new Error("TanStack Start request logger is unavailable");
   }
-  return logger;
-}
-
-export function getOptionalTanstackStartRequestLogger() {
-  const context = getGlobalStartContext() as { logger?: RequestLogger } | undefined;
-  return context?.logger;
+  return context.logger;
 }
 
 declare module "@tanstack/react-start" {

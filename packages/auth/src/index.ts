@@ -32,10 +32,6 @@ export const auth = betterAuth({
     enabled: true
   },
 
-  rateLimit: {
-    storage: "database"
-  },
-
   advanced: {
     defaultCookieAttributes: {
       sameSite: "lax"

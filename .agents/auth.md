@@ -5,7 +5,6 @@
 - **Server**: Better Auth handles `/auth/*` on the Hono server (`apps/server`)
 - **Client**: `authClient` from `@tsu-stack/auth` (nanostore-based, client-side only)
 - **SSR**: `$getUser` server function resolves session from request headers, forwards `Set-Cookie` for refresh
-- **Logging**: Central Hono and TanStack session resolution enriches the active request log with `user.id`; do not resolve a second session only for logging
 - **Cookies**: Prefer Better Auth defaults for reusable projects — `SameSite=Lax` supports OAuth and other redirect-based flows without custom per-project overrides
 
 ## Query Pattern
@@ -60,6 +59,8 @@ For a uniform `200` sign-up response, configure either `emailAndPassword.require
 ## Client IP And Trusted Proxies
 
 IP-based rate limiting is only trustworthy when the runtime derives the address from connection metadata or from a header that the deployment platform overwrites. Never accept an arbitrary client-supplied forwarding header as the verified address.
+
+The template uses Better Auth's in-memory rate-limit storage, avoiding a rate-limit database operation on each auth request. Deployments that require limits shared across replicas should choose an appropriate shared or edge-backed limiter deliberately.
 
 ### Node, Docker, And Coolify
 

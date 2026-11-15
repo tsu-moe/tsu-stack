@@ -131,17 +131,9 @@ throw createError({
 
 Do not log an error and then rethrow it unless the downstream global handler will not see it. Add useful context with `log.set(...)`, then let the global handler record the failure once. If a framework integration handles errors internally, prefer its request-scoped logger/context; use the global `log.error(...)` only when no request logger exists.
 
-## Identity And Better Auth
+## Identity
 
-Use Better Auth identification through evlog's Better Auth integration when request identity is needed. Keep that integration behind `@tsu-stack/logger`; do not import `evlog/better-auth` directly from app or feature code unless the logger package is being updated.
-
-Server request identity should be automatic and request-scoped:
-
-- Enrich the active request logger when the central Hono or TanStack auth resolver already obtains a session; do not add a second session lookup for logging.
-- Include only the stable user ID by default. Session metadata and profile fields require an explicit operational need.
-- Do not manually `log.set({ user })` or attach full Better Auth session objects in feature handlers.
-
-Use the logger facade's Better Auth adapter for allowlisted extraction. Do not log passwords, tokens, raw cookies, authorization headers, or full user/session records.
+Request logs use request IDs for correlation and do not resolve auth sessions for enrichment by default. When a workflow already owns an authenticated user ID and has a concrete operational need for it, attach only that allowlisted ID; do not attach full user or session objects.
 
 Client identity sync is separate from server request identity. Browser logs should only mirror the minimal current identity needed for correlation, usually `user.id`.
 

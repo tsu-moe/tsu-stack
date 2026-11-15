@@ -5,22 +5,13 @@ import { type RequestLogger } from "@tsu-stack/logger/server";
 
 import { createContext } from "#@/lib/context/hono/create-context";
 
-const { getSession, identifyRequestUser } = vi.hoisted(() => {
-  return {
-    getSession: vi.fn(),
-    identifyRequestUser: vi.fn()
-  };
-});
+const getSession = vi.hoisted(() => vi.fn());
 
 vi.mock("@tsu-stack/auth/index", () => {
   return { auth: { api: { getSession } } };
 });
 
-vi.mock("@tsu-stack/logger/server/better-auth", () => {
-  return { identifyRequestUser };
-});
-
-it("reuses the resolved session to identify the request logger", async () => {
+it("adds the resolved session to the oRPC context", async () => {
   const logger = {} as RequestLogger;
   const session = {
     session: { id: "session-1" },
@@ -41,6 +32,5 @@ it("reuses the resolved session to identify the request logger", async () => {
 
   expect(response.status).toBe(204);
   expect(getSession).toHaveBeenCalledOnce();
-  expect(identifyRequestUser).toHaveBeenCalledWith(logger, session);
   expect(contextResult?.session).toBe(session);
 });

@@ -1,9 +1,6 @@
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
 import { appendResponseHeader, getRequest } from "@tanstack/react-start/server";
 
-import { identifyRequestUser } from "@tsu-stack/logger/server/better-auth";
-import { getOptionalTanstackStartRequestLogger } from "@tsu-stack/logger/server/tanstack-start/middleware";
-
 import { auth } from "#@/index";
 
 /**
@@ -43,11 +40,5 @@ export const _getUser = createServerOnlyFn(async (query?: GetUserServerQuery) =>
     }
   }
 
-  const authSession = session.response;
-  const logger = getOptionalTanstackStartRequestLogger();
-  if (authSession && logger) {
-    identifyRequestUser(logger, authSession);
-  }
-
-  return authSession?.user ?? null;
+  return session.response?.user ?? null;
 });
