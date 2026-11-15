@@ -17,6 +17,13 @@ import { LOG_SERVICES } from "#@/constants/services";
 
 type ServerLoggerConfig = EvlogLoggerConfig;
 
+export const REQUEST_LOG_SAMPLING = {
+  keep: [{ status: 400 }, { duration: 1000 }],
+  rates: {
+    info: 0
+  }
+} satisfies NonNullable<ServerLoggerConfig["sampling"]>;
+
 const DEFAULT_REDACT_PATHS = [
   ...(auditRedactPreset.paths ?? []),
   "BETTER_AUTH_SECRET",

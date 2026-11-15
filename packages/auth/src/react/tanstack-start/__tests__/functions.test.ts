@@ -3,9 +3,7 @@ import { expect, it, vi } from "vite-plus/test";
 
 import { _getUser } from "#@/react/tanstack-start/functions";
 
-const { getSession } = vi.hoisted(() => {
-  return { getSession: vi.fn() };
-});
+const getSession = vi.hoisted(() => vi.fn());
 
 vi.mock("#@/index", () => {
   return { auth: { api: { getSession } } };

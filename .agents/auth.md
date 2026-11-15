@@ -62,6 +62,8 @@ IP-based rate limiting is only trustworthy when the runtime derives the address 
 
 The Hono app runs behind TanStack Start's fetch boundary, so it cannot inspect the original network socket. Configure `BETTER_AUTH_TRUSTED_IP_HEADER` only when the application is reachable through an edge or reverse proxy that removes any incoming value and overwrites the header with exactly one validated client IP.
 
+The template uses Better Auth's in-memory rate-limit storage, avoiding a rate-limit database operation on each auth request. Deployments that require limits shared across replicas should choose an appropriate shared or edge-backed limiter deliberately.
+
 - Leave `BETTER_AUTH_TRUSTED_IP_HEADER` empty when requests can bypass the trusted edge. Rate limits then share the `unknown` bucket instead of trusting spoofable input.
 - Do not point it at a forwarding chain such as an unnormalized `X-Forwarded-For` header. Multiple addresses are rejected because the application cannot prove which hops are trusted after the fetch boundary.
 - The server must overwrite the private `x-tsu-client-ip` header before calling Better Auth. Better Auth reads only that internal header; feature code must use the resolved Hono `clientIp` value instead of reparsing request headers.
