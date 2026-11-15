@@ -178,7 +178,8 @@ Request logging should be sampled and outcome-oriented.
 - Keep errors and slow requests.
 - Sample or drop routine successful requests.
 - Force-keep a non-request lifecycle event only when it is deliberately useful despite the request sampling policy.
-- Include `requestId`, method, route/path, status, duration, and approved coarse context.
+- Include `requestId`, method, route/path, status, duration, and approved coarse context. Accept only validated request IDs, generate one otherwise, and echo the effective `X-Request-Id` response header.
+- Browser API requests create a request ID when one is not already present. Treat it as correlation metadata, never as identity or authorization. Full OTEL tracing remains an optional deployment feature.
 - Do not derive client IP from forwarding headers unless the runtime also verifies the socket peer
   against an explicit trusted-proxy configuration. Omit IP when it is not operationally needed.
 - Do not include raw cookies, headers, bodies, or arbitrary query params.

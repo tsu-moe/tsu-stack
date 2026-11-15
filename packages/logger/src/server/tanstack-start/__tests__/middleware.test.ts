@@ -92,7 +92,7 @@ describe("tanstackStartRequestLoggerMiddleware", () => {
       }
     });
 
-    await runMiddleware({
+    const result = await runMiddleware({
       middleware: tanstackStartRequestLoggerMiddleware(),
       request,
       response: new Response(null, { status: 418 })
@@ -111,6 +111,7 @@ describe("tanstackStartRequestLoggerMiddleware", () => {
     });
     expect(requestLogger.emit).toHaveBeenCalledOnce();
     expect(requestLogger.emit).toHaveBeenCalledWith({ status: 418 });
+    expect(result.response.headers.get("x-request-id")).toBe("request-123");
   });
 
   it("replaces an invalid request ID and records an error once", async () => {

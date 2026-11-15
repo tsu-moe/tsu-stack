@@ -7,6 +7,7 @@ import { getRequestHeaders } from "@tanstack/react-start/server";
 
 import { auth } from "@tsu-stack/auth/index";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
+import { REQUEST_ID_HEADER, resolveRequestId } from "@tsu-stack/logger/request-id";
 import { getTanstackStartRequestLogger } from "@tsu-stack/logger/server/tanstack-start/middleware";
 
 import { appRouter } from "#@/routers/index";
@@ -29,9 +30,12 @@ const getORPCClient = createIsomorphicFn()
     const serverUrl = new URL(ENV_WEB_ISOMORPHIC.VITE_SERVER_URL);
     const link = new RPCLink({
       fetch(url, options) {
+        const headers = new Headers(options?.headers);
+        headers.set(REQUEST_ID_HEADER, resolveRequestId(headers));
         return fetch(url, {
           ...options,
-          credentials: "include"
+          credentials: "include",
+          headers
         });
       },
       origin: serverUrl.origin,

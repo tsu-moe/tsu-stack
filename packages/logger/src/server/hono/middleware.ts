@@ -7,6 +7,8 @@ import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
+import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
+
 const NormalizedLogLevelSchema = z.enum(["info", "error", "warn", "debug"]).catch("info");
 
 const ClientLogPayloadSchema = z.object({
@@ -42,7 +44,9 @@ const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
  */
 export type HonoLogVariables = EvlogVariables;
 
-type HonoLoggerMiddlewareOptions = EvlogHonoOptions;
+type HonoLoggerMiddlewareOptions = EvlogHonoOptions & {
+  requestIdOptions?: RequestIdOptions;
+};
 
 type HonoLogIngestionOptions = {
   maxPayloadBytes?: number;
@@ -71,8 +75,19 @@ type NormalizedEvent = Omit<ClientLogPayload["event"], "level" | "timestamp"> & 
  * });
  * ```
  */
-export function honoLoggerMiddleware(options?: HonoLoggerMiddlewareOptions): MiddlewareHandler {
-  return createEvlogHonoMiddleware(options);
+export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}): MiddlewareHandler {
+  const { requestIdOptions = {}, ...evlogOptions } = options;
+  const evlogMiddleware = createEvlogHonoMiddleware(evlogOptions);
+
+  return async (context, next) => {
+    const requestId = resolveRequestId(context.req.raw.headers, requestIdOptions);
+    context.header(requestIdOptions.headerName ?? REQUEST_ID_HEADER, requestId);
+
+    return evlogMiddleware(context, async () => {
+      context.get("log")?.set({ requestId });
+      await next();
+    });
+  };
 }
 
 /**

@@ -1,13 +1,9 @@
 import { createMiddleware, getGlobalStartContext } from "@tanstack/react-start";
 import { createRequestLogger, type RequestLogger } from "evlog";
 
-type LogContext = Parameters<RequestLogger["set"]>[0];
+import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
 
-type RequestIdOptions = {
-  limitLength?: number;
-  headerName?: string;
-  generator?: () => string;
-};
+type LogContext = Parameters<RequestLogger["set"]>[0];
 
 type RequestContext = {
   requestId: string;
@@ -24,23 +20,23 @@ type LoggerMiddlewareOptions = {
   excludePaths?: string[];
 };
 
-const INVALID_REQUEST_ID_CHARS_REGEX = /[^\w\-=]/;
-
 function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
-  const { limitLength = 255, headerName = "X-Request-Id", generator = () => crypto.randomUUID() } = options;
-
-  return createMiddleware().server(({ next, request }) => {
-    let reqId = headerName ? request.headers.get(headerName) : undefined;
-
-    if (!reqId || reqId.length > limitLength || INVALID_REQUEST_ID_CHARS_REGEX.test(reqId)) {
-      reqId = generator();
-    }
-
-    return next({
+  return createMiddleware().server(({ next, request }) =>
+    next({
       context: {
-        requestId: reqId
+        requestId: resolveRequestId(request.headers, options)
       }
-    });
+    })
+  );
+}
+
+function withRequestId(response: Response, requestId: string, headerName = REQUEST_ID_HEADER) {
+  const headers = new Headers(response.headers);
+  headers.set(headerName, requestId);
+  return new Response(response.body, {
+    headers,
+    status: response.status,
+    statusText: response.statusText
   });
 }
 
@@ -140,12 +136,17 @@ export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOp
     .server(({ next, context }) =>
       withRequestLogging({
         context,
-        execute: async (logger) =>
-          next({
+        execute: async (logger) => {
+          const result = await next({
             context: {
               logger
             }
-          }),
+          });
+          return {
+            ...result,
+            response: withRequestId(result.response, context.requestId, options.requestIdOptions?.headerName)
+          };
+        },
         getStatus: (result) => result.response.status,
         loggerContext: options.context,
         shouldSkip: shouldSkip(context)
