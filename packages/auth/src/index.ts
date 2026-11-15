@@ -34,10 +34,6 @@ export function createAuth() {
     emailAndPassword: {
       enabled: true
     },
-    rateLimit: {
-      storage: "database"
-    },
-
     advanced: {
       defaultCookieAttributes: {
         sameSite: "lax"

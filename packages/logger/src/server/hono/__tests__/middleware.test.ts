@@ -69,20 +69,42 @@ describe("honoLogIngestionMiddleware", () => {
     expect(infoLog).not.toHaveBeenCalled();
   });
 
-  it("rejects text/plain and ignores batches larger than 50", async () => {
+  it("rejects unsupported media types", async () => {
     const plain = await app.request("/_logs/ingest", {
       method: "POST",
       headers: { "content-type": "text/plain" },
       body: JSON.stringify([payload()])
     });
+
+    expect(plain.status).toBe(415);
+    expect(infoLog).not.toHaveBeenCalled();
+  });
+
+  it("rejects malformed JSON", async () => {
+    const response = await app.request("/_logs/ingest", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "["
+    });
+
+    expect(response.status).toBe(400);
+    expect(infoLog).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid batches without accepting any events", async () => {
     const oversizedBatch = await app.request("/_logs/ingest", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(Array.from({ length: 51 }, () => payload()))
     });
+    const invalidEvent = await app.request("/_logs/ingest", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify([payload(), { event: { level: "info" } }])
+    });
 
-    expect(plain.status).toBe(415);
-    expect(oversizedBatch.status).toBe(204);
+    expect(oversizedBatch.status).toBe(422);
+    expect(invalidEvent.status).toBe(422);
     expect(infoLog).not.toHaveBeenCalled();
   });
 });

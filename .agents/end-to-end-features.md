@@ -48,7 +48,7 @@ When a feature introduces shared contracts that should drive both API and fronte
 
 ## Step 6: Routes And UI
 
-- Follow [TanStack patterns](./tanstack-patterns.md) for route placement, thin `beforeLoad`, and page composition.
+- Follow [Data flow](./data-flow.md) for route placement, thin `beforeLoad`, and page composition.
 - Follow [UI guidelines](./ui.md) for app-level component composition.
 - Add [Auth patterns](./auth.md), [SEO patterns](./seo.md), or [i18n guidelines](./i18n.md) when the feature touches those surfaces.
 

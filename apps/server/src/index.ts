@@ -22,6 +22,7 @@ import { appRouter } from "@tsu-stack/api/routers/index";
 import { createAuth, generateAuthOpenApiSchema } from "@tsu-stack/auth/index";
 import { migrateDatabase } from "@tsu-stack/db";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
+import { REQUEST_ID_HEADER } from "@tsu-stack/logger/request-id";
 import { createRequestLogger, isEvlogError, log, parseError } from "@tsu-stack/logger/server";
 import {
   honoLogIngestionMiddleware,
@@ -54,6 +55,7 @@ app.use(
     allowHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
+    exposeHeaders: [REQUEST_ID_HEADER],
     origin: [new URL(ENV_SERVER.VITE_WEB_URL).origin]
   })
 );

@@ -75,6 +75,8 @@ For framework request handlers, use the request-scoped logger provided by middle
 - TanStack Start/oRPC context: pass and use the provided request logger
 
 Do not create a new standalone logger inside a request if a request logger is already available.
+TanStack request middleware covers SSR, server routes, and server functions; do not add a second
+server-function or outer-entry request logger around it.
 
 ## Post-Emit Warnings
 
@@ -129,19 +131,9 @@ throw createError({
 
 Do not log an error and then rethrow it unless the downstream global handler will not see it. Add useful context with `log.set(...)`, then let the global handler record the failure once. If a framework integration handles errors internally, prefer its request-scoped logger/context; use the global `log.error(...)` only when no request logger exists.
 
-## Identity And Better Auth
+## Identity
 
-Use Better Auth identification through evlog's Better Auth integration when request identity is needed. Keep that integration behind `@tsu-stack/logger`; do not import `evlog/better-auth` directly from app or feature code unless the logger package is being updated.
-
-Server request identity should be automatic and request-scoped:
-
-- Resolve identity in middleware after the request logger exists and before route handlers run.
-- Hono: identify `c.get("log")` with `c.req.raw.headers` and `c.req.path`.
-- TanStack Start/oRPC: identify the request logger passed through context, using request headers.
-- Exclude auth endpoints, log ingestion endpoints, health checks, and other noisy/system routes unless explicitly needed.
-- Do not manually `log.set({ user })` or attach full Better Auth session objects in feature handlers.
-
-Rely on the Better Auth integration's safe field extraction. It should identify users with stable, allowlisted fields such as user/session IDs and approved profile/session metadata. Do not log passwords, tokens, raw cookies, authorization headers, or full user/session records.
+Request logs use request IDs for correlation and do not resolve auth sessions for enrichment by default. When a workflow already owns an authenticated user ID and has a concrete operational need for it, attach only that allowlisted ID; do not attach full user or session objects.
 
 Client identity sync is separate from server request identity. Browser logs should only mirror the minimal current identity needed for correlation, usually `user.id`.
 
@@ -174,9 +166,14 @@ Prefer IDs over full records. Prefer allowlisted fields, then rely on centralize
 
 Request logging should be sampled and outcome-oriented.
 
+- Use the shared `REQUEST_LOG_SAMPLING` policy for web and API request loggers so services retain the same failures and slow requests.
 - Keep errors and slow requests.
 - Sample or drop routine successful requests.
-- Include `requestId`, method, route/path, status, duration, and approved coarse context.
+- Force-keep a non-request lifecycle event only when it is deliberately useful despite the request sampling policy.
+- Include `requestId`, method, route/path, status, duration, and approved coarse context. Accept only validated request IDs, generate one otherwise, and echo the effective `X-Request-Id` response header.
+- Browser API requests create a request ID when one is not already present. Treat it as correlation metadata, never as identity or authorization. Full OTEL tracing remains an optional deployment feature.
+- Do not derive client IP from forwarding headers unless the runtime also verifies the socket peer
+  against an explicit trusted-proxy configuration. Omit IP when it is not operationally needed.
 - Do not include raw cookies, headers, bodies, or arbitrary query params.
 
 ## Client Logging
@@ -192,7 +189,7 @@ When browser transport is enabled, remember that client logs are sent to the ser
 Keep the server boundaries and their intent aligned:
 
 - General Hono request bodies are capped at 1 MiB. Routes requiring larger uploads must use a deliberately designed streaming or upload path instead of raising the global limit casually.
-- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP.
+- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP. Malformed JSON returns `400`; schema-invalid or oversized batches return `422` and are rejected atomically.
 - Database readiness checks allow 30 requests per minute per resolved client IP. Liveness checks are intentionally not rate limited.
 - The in-memory operational limits are per Worker isolate. Deployments that need a global abuse boundary must also enforce one with a Cloudflare WAF or rate-limiting rule, or use an atomic shared limiter.
 - A missing client address uses a shared `unknown` bucket. Fix production IP resolution rather than increasing limits to compensate.
