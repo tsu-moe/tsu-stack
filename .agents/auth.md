@@ -5,6 +5,7 @@
 - **Server**: Better Auth handles `/auth/*` on the Hono server (`apps/server`)
 - **Client**: `authClient` from `@tsu-stack/auth` (nanostore-based, client-side only)
 - **SSR**: `$getUser` server function resolves session from request headers, forwards `Set-Cookie` for refresh
+- **Logging**: Central Hono and TanStack session resolution enriches the active request log with `user.id`; do not resolve a second session only for logging
 - **Cookies**: Prefer Better Auth defaults for reusable projects — `SameSite=Lax` supports OAuth and other redirect-based flows without custom per-project overrides
 
 ## Query Pattern

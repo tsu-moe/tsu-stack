@@ -137,13 +137,11 @@ Use Better Auth identification through evlog's Better Auth integration when requ
 
 Server request identity should be automatic and request-scoped:
 
-- Resolve identity in middleware after the request logger exists and before route handlers run.
-- Hono: identify `c.get("log")` with `c.req.raw.headers` and `c.req.path`.
-- TanStack Start/oRPC: identify the request logger passed through context, using request headers.
-- Exclude auth endpoints, log ingestion endpoints, health checks, and other noisy/system routes unless explicitly needed.
+- Enrich the active request logger when the central Hono or TanStack auth resolver already obtains a session; do not add a second session lookup for logging.
+- Include only the stable user ID by default. Session metadata and profile fields require an explicit operational need.
 - Do not manually `log.set({ user })` or attach full Better Auth session objects in feature handlers.
 
-Rely on the Better Auth integration's safe field extraction. It should identify users with stable, allowlisted fields such as user/session IDs and approved profile/session metadata. Do not log passwords, tokens, raw cookies, authorization headers, or full user/session records.
+Use the logger facade's Better Auth adapter for allowlisted extraction. Do not log passwords, tokens, raw cookies, authorization headers, or full user/session records.
 
 Client identity sync is separate from server request identity. Browser logs should only mirror the minimal current identity needed for correlation, usually `user.id`.
 

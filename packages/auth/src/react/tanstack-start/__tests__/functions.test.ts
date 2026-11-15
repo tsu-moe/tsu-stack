@@ -3,12 +3,20 @@ import { expect, it, vi } from "vite-plus/test";
 
 import { _getUser } from "#@/react/tanstack-start/functions";
 
-const { getSession } = vi.hoisted(() => {
-  return { getSession: vi.fn() };
+const { getSession, setLogContext } = vi.hoisted(() => {
+  return { getSession: vi.fn(), setLogContext: vi.fn() };
 });
 
 vi.mock("#@/index", () => {
   return { auth: { api: { getSession } } };
+});
+
+vi.mock("@tsu-stack/logger/server/tanstack-start/middleware", () => {
+  return {
+    getOptionalTanstackStartRequestLogger: () => {
+      return { set: setLogContext };
+    }
+  };
 });
 
 it("preserves existing response cookies while forwarding every refreshed auth cookie", async () => {
@@ -44,5 +52,9 @@ it("preserves existing response cookies while forwarding every refreshed auth co
     headers: request.headers,
     query: undefined,
     returnHeaders: true
+  });
+  expect(setLogContext).toHaveBeenCalledWith({
+    user: { id: "user-1" },
+    userId: "user-1"
   });
 });

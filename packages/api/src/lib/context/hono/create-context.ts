@@ -2,6 +2,7 @@ import { type Context as HonoContext } from "hono";
 
 import { auth } from "@tsu-stack/auth/index";
 import { type RequestLogger } from "@tsu-stack/logger/server";
+import { identifyRequestUser } from "@tsu-stack/logger/server/better-auth";
 
 import { type OrpcContext } from "#@/lib/context/types";
 
@@ -14,6 +15,10 @@ export async function createContext({ context, logger }: CreateContextOptions): 
   const session = await auth.api.getSession({
     headers: context.req.raw.headers
   });
+  if (session) {
+    identifyRequestUser(logger, session);
+  }
+
   return {
     logger,
     requestHeaders: context.req.raw.headers,
