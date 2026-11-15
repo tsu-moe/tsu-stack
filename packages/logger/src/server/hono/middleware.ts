@@ -106,8 +106,11 @@ export function honoLogIngestionMiddleware(options: HonoLogIngestionOptions = {}
           throw new HTTPException(400, { message: "Invalid JSON body" });
         }
       );
-      const batch = result.success ? result.data : [];
-      for (const payload of batch) {
+      if (!result.success) {
+        throw new HTTPException(422, { message: "Invalid log batch" });
+      }
+
+      for (const payload of result.data) {
         emitClientLog(payload);
       }
 

@@ -196,7 +196,7 @@ When browser transport is enabled, remember that client logs are sent to the ser
 Keep the server boundaries and their intent aligned:
 
 - General Hono request bodies are capped at 1 MiB. Routes requiring larger uploads must use a deliberately designed streaming or upload path instead of raising the global limit casually.
-- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP.
+- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP. Malformed JSON returns `400`; schema-invalid or oversized batches return `422` and are rejected atomically.
 - Database readiness checks allow 30 requests per minute per resolved client IP. Liveness checks are intentionally not rate limited.
 - The in-memory operational limits are per Node process or Worker isolate. Multi-replica deployments that need a global abuse boundary must also enforce one at the proxy/edge or use an atomic shared limiter.
 - A missing client address uses a shared `unknown` bucket. Fix production IP resolution rather than increasing limits to compensate.
