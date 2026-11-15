@@ -7,7 +7,7 @@ import { getRequestHeaders } from "@tanstack/react-start/server";
 
 import { auth } from "@tsu-stack/auth/index";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
-import { createLogger } from "@tsu-stack/logger/server";
+import { getTanstackStartRequestLogger } from "@tsu-stack/logger/server/tanstack-start/middleware";
 
 import { appRouter } from "#@/routers/index";
 
@@ -18,7 +18,7 @@ const getORPCClient = createIsomorphicFn()
         const headers = getRequestHeaders();
         const session = await auth.api.getSession({ headers });
         return {
-          logger: createLogger({ operation: "web__client__orpc" }),
+          logger: getTanstackStartRequestLogger(),
           requestHeaders: headers,
           session
         };

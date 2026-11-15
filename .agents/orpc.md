@@ -96,7 +96,8 @@ oRPC handlers receive the request-scoped logger as `context.logger`.
 - If extra context is needed for an unexpected failure, attach it with `logger.set(...)` and let shared error handling record the failure once.
 - Do not log routine reads or duplicate middleware and global error logging.
 
-When a handler genuinely needs a durable outcome log, use one wide terminal event:
+When a handler genuinely needs durable outcome context, add it to the request event and let framework
+middleware perform the single terminal emit:
 
 ```ts
 .handler(async ({ context, input, errors }) => {
@@ -113,7 +114,7 @@ When a handler genuinely needs a durable outcome log, use one wide terminal even
     throw errors.PROFILE_NOT_FOUND();
   }
 
-  logger.emit({
+  logger.set({
     event: "profile_edit_completed",
     profile: { id: row.id },
   });

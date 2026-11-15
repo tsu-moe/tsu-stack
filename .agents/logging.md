@@ -75,6 +75,8 @@ For framework request handlers, use the request-scoped logger provided by middle
 - TanStack Start/oRPC context: pass and use the provided request logger
 
 Do not create a new standalone logger inside a request if a request logger is already available.
+TanStack request middleware covers SSR, server routes, and server functions; do not add a second
+server-function or outer-entry request logger around it.
 
 ## Post-Emit Warnings
 
@@ -177,6 +179,8 @@ Request logging should be sampled and outcome-oriented.
 - Keep errors and slow requests.
 - Sample or drop routine successful requests.
 - Include `requestId`, method, route/path, status, duration, and approved coarse context.
+- Do not derive client IP from forwarding headers unless the runtime also verifies the socket peer
+  against an explicit trusted-proxy configuration. Omit IP when it is not operationally needed.
 - Do not include raw cookies, headers, bodies, or arbitrary query params.
 
 ## Client Logging

@@ -1,4 +1,4 @@
-import { createMiddleware } from "@tanstack/react-start";
+import { createMiddleware, getGlobalStartContext } from "@tanstack/react-start";
 import { createRequestLogger, type RequestLogger } from "evlog";
 
 type LogContext = Parameters<RequestLogger["set"]>[0];
@@ -13,7 +13,6 @@ type RequestContext = {
   requestId: string;
   request: {
     hostname: string;
-    ip?: string;
     method: string;
     path: string;
   };
@@ -23,12 +22,9 @@ type LoggerMiddlewareOptions = {
   context?: LogContext;
   requestIdOptions?: RequestIdOptions;
   excludePaths?: string[];
-  excludeIps?: string[];
 };
 
 const INVALID_REQUEST_ID_CHARS_REGEX = /[^\w\-=]/;
-const FORWARDED_FOR_REGEX = /for=([^;,\s]+)/;
-const IPV6_PREFIX_REGEX = /^::ffff:/i;
 
 function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
   const { limitLength = 255, headerName = "X-Request-Id", generator = () => crypto.randomUUID() } = options;
@@ -50,13 +46,11 @@ function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
 
 const injectRequestMiddleware = createMiddleware().server(({ next, request }) => {
   const url = new URL(request.url);
-  const realIp = getRealIpFromHeaders(request.headers);
 
   return next({
     context: {
       request: {
         hostname: url.hostname,
-        ip: normalizeIp(realIp),
         method: request.method,
         path: url.pathname
       }
@@ -64,13 +58,11 @@ const injectRequestMiddleware = createMiddleware().server(({ next, request }) =>
   });
 });
 
-function createSkipChecker(options: { excludePaths?: string[]; excludeIps?: string[] }) {
-  const excludedIpsSet = new Set(options.excludeIps?.map((ip) => normalizeIp(ip)) ?? []);
+function createSkipChecker(options: { excludePaths?: string[] }) {
   const excludedPaths = options.excludePaths ?? [];
 
   return (context: RequestContext) =>
-    excludedPaths.some((pattern) => matchesPathPattern(context.request.path, pattern)) ||
-    excludedIpsSet.has(context.request.ip ?? "");
+    excludedPaths.some((pattern) => matchesPathPattern(context.request.path, pattern));
 }
 
 function matchesPathPattern(path: string, pattern: string) {
@@ -93,8 +85,9 @@ async function withRequestLogging<T>(options: {
   loggerContext?: LogContext;
   shouldSkip: boolean;
   execute: (logger: RequestLogger) => Promise<T>;
+  getStatus?: (result: T) => number | undefined;
 }): Promise<T> {
-  const { context, execute, loggerContext, shouldSkip } = options;
+  const { context, execute, getStatus, loggerContext, shouldSkip } = options;
   const logger = createRequestLogger({
     method: context.request.method,
     path: context.request.path,
@@ -109,7 +102,8 @@ async function withRequestLogging<T>(options: {
   try {
     const result = await execute(logger);
     if (!shouldSkip) {
-      logger.emit();
+      const status = getStatus?.(result);
+      logger.emit(status === undefined ? undefined : { status });
     }
     return result;
   } catch (error) {
@@ -122,42 +116,7 @@ async function withRequestLogging<T>(options: {
 }
 
 /**
- * Add evlog request context to TanStack Start server functions.
- *
- * The logger is passed through middleware context as `logger`.
- *
- * @example
- * ```ts
- * import { tanstackStartServerFnLoggerMiddleware } from "@tsu-stack/logger/server/tanstack-start/middleware";
- *
- * export const startInstance = createStart(() => ({
- *   functionMiddleware: [tanstackStartServerFnLoggerMiddleware()],
- * }));
- * ```
- */
-export function tanstackStartServerFnLoggerMiddleware(options: LoggerMiddlewareOptions = {}) {
-  const requestIdMiddleware = injectRequestIdMiddleware(options.requestIdOptions);
-  const shouldSkip = createSkipChecker({ excludeIps: options.excludeIps });
-
-  return createMiddleware({ type: "function" })
-    .middleware([requestIdMiddleware, injectRequestMiddleware])
-    .server(({ next, context }) =>
-      withRequestLogging({
-        context,
-        execute: async (logger) =>
-          next({
-            context: {
-              logger
-            }
-          }),
-        loggerContext: options.context,
-        shouldSkip: shouldSkip(context)
-      })
-    );
-}
-
-/**
- * Add evlog request logging to TanStack Start API routes.
+ * Add one evlog request logger to every TanStack Start request, including server functions.
  *
  * The logger is passed through middleware context as `logger`.
  *
@@ -173,7 +132,6 @@ export function tanstackStartServerFnLoggerMiddleware(options: LoggerMiddlewareO
 export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOptions = {}) {
   const requestIdMiddleware = injectRequestIdMiddleware(options.requestIdOptions);
   const shouldSkip = createSkipChecker({
-    excludeIps: options.excludeIps,
     excludePaths: options.excludePaths
   });
 
@@ -188,31 +146,24 @@ export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOp
               logger
             }
           }),
+        getStatus: (result) => result.response.status,
         loggerContext: options.context,
         shouldSkip: shouldSkip(context)
       })
     );
 }
 
-function getRealIpFromHeaders(headers: Headers): string | undefined {
-  return (
-    headers.get("cf-connecting-ip") ??
-    headers.get("true-client-ip") ??
-    headers.get("x-real-ip") ??
-    headers.get("x-client-ip") ??
-    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    headers.get("forwarded")?.match(FORWARDED_FOR_REGEX)?.[1]
-  );
-}
-
-function normalizeIp(ip: string | undefined): string | undefined {
-  return ip?.replace(IPV6_PREFIX_REGEX, "");
+export function getTanstackStartRequestLogger() {
+  const context = getGlobalStartContext() as { logger?: RequestLogger } | undefined;
+  if (!context?.logger) {
+    throw new Error("TanStack Start request logger is unavailable");
+  }
+  return context.logger;
 }
 
 declare module "@tanstack/react-start" {
   // @ts-expect-error - module augmentation to add our custom RouterAppContext to TanStack Router's createRouter generic
   type Register = {
-    functionMiddleware: readonly [ReturnType<typeof tanstackStartServerFnLoggerMiddleware>];
     requestMiddleware: readonly [ReturnType<typeof tanstackStartRequestLoggerMiddleware>];
   };
 }
