@@ -1,0 +1,1 @@
+DROP TABLE `rate_limit`;

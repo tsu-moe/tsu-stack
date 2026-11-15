@@ -87,7 +87,7 @@ ESLint-style comments (`eslint-disable-*`) also work for compatibility.
 
 ## Checking Changes
 
-Use `vp run -w check` for repo-wide TypeScript validation. It runs Oxlint with type-aware linting and type checking. Do not run `tsc --noEmit` separately; it is unnecessary. See [Workflow](./workflow.md) for the full validation guidance.
+Use `vp run check` for repo-wide TypeScript validation. It runs Oxlint with type-aware linting and type checking. Do not run `tsc --noEmit` separately; it is unnecessary. See [Workflow](./workflow.md) for the full validation guidance.
 
 ## Import Sorting (auto-enforced by Oxfmt)
 

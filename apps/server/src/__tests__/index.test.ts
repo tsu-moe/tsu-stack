@@ -138,6 +138,34 @@ describe("error responses", () => {
   });
 });
 
+describe("request correlation", () => {
+  it("echoes a valid request ID and exposes it to the web origin", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+
+    const response = await app.request("/server/health/live", {
+      headers: {
+        origin: "http://localhost:3000",
+        "x-request-id": "request-123"
+      }
+    });
+
+    expect(response.headers.get("x-request-id")).toBe("request-123");
+    expect(response.headers.get("access-control-expose-headers")).toContain("X-Request-Id");
+  });
+
+  it("replaces an invalid request ID", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+
+    const response = await app.request("/server/health/live", {
+      headers: { "x-request-id": "invalid request id" }
+    });
+    const requestId = response.headers.get("x-request-id");
+
+    expect(requestId).toBeTruthy();
+    expect(requestId).not.toBe("invalid request id");
+  });
+});
+
 describe("operational rate limits", () => {
   it("keeps liveness available during health-check bursts", async () => {
     const { app } = await loadApp({ enableDocs: false });

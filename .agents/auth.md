@@ -60,6 +60,8 @@ For a uniform `200` sign-up response, configure either `emailAndPassword.require
 
 IP-based rate limiting is only trustworthy when the runtime derives the address from connection metadata or from a header that the deployment platform overwrites. Never accept an arbitrary client-supplied forwarding header as the verified address.
 
+The template uses Better Auth's in-memory rate-limit storage, avoiding a rate-limit database operation on each auth request. Deployments that require limits shared across isolates should choose an appropriate shared or edge-backed limiter deliberately.
+
 - Read the client address only from Cloudflare's `CF-Connecting-IP` ingress header. Do not add a configurable `X-Forwarded-For` trust list to this runtime.
 - Validate that the value is one IPv4 or IPv6 address. Missing or invalid values use the shared `unknown` bucket.
 - If the Worker becomes reachable through a non-Cloudflare runtime or an internal subrequest path, re-evaluate how that path establishes a verified client address before relying on per-client limits.

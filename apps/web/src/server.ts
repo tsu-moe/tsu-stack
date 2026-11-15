@@ -3,7 +3,7 @@ import handler from "@tanstack/react-start/server-entry";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { ENV_WEB_SERVER } from "@tsu-stack/env/web/env.server";
 import { paraglideMiddleware } from "@tsu-stack/i18n/server";
-import { LOG_SERVICES, createRequestLogger, initLogger } from "@tsu-stack/logger/server";
+import { LOG_SERVICES, REQUEST_LOG_SAMPLING, initLogger } from "@tsu-stack/logger/server";
 
 initLogger({
   env: {
@@ -11,45 +11,27 @@ initLogger({
     service: LOG_SERVICES.WEB_SERVER,
     version: ENV_WEB_SERVER.SOURCE_COMMIT
   },
-  sampling: {
-    keep: [{ status: 400 }, { duration: 1000 }],
-    rates: {
-      info: 0
-    }
-  }
+  sampling: REQUEST_LOG_SAMPLING
 });
 
 export default {
   async fetch(req: Request): Promise<Response> {
-    const url = new URL(req.url);
-    const requestLog = createRequestLogger({
-      method: req.method,
-      path: url.pathname
-    });
-
-    try {
-      const response = await paraglideMiddleware(req, () => handler.fetch(req));
-      requestLog.emit({ status: response.status });
-      const headers = new Headers(response.headers);
-      headers.set("X-Content-Type-Options", "nosniff");
-      headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-      headers.set("X-Frame-Options", "SAMEORIGIN");
-      if (ENV_WEB_ISOMORPHIC.VITE_WEB_URL.startsWith("https:")) {
-        headers.set("Strict-Transport-Security", "max-age=15552000; includeSubDomains");
-      }
-      if (headers.get("Content-Type")?.includes("text/html")) {
-        headers.set("Cache-Control", "private, no-store");
-      }
-
-      return new Response(response.body, {
-        headers,
-        status: response.status,
-        statusText: response.statusText
-      });
-    } catch (error) {
-      requestLog.error(error instanceof Error ? error : new Error(String(error)));
-      requestLog.emit();
-      throw error;
+    const response = await paraglideMiddleware(req, () => handler.fetch(req));
+    const headers = new Headers(response.headers);
+    headers.set("X-Content-Type-Options", "nosniff");
+    headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    headers.set("X-Frame-Options", "SAMEORIGIN");
+    if (ENV_WEB_ISOMORPHIC.VITE_WEB_URL.startsWith("https:")) {
+      headers.set("Strict-Transport-Security", "max-age=15552000; includeSubDomains");
     }
+    if (headers.get("Content-Type")?.includes("text/html")) {
+      headers.set("Cache-Control", "private, no-store");
+    }
+
+    return new Response(response.body, {
+      headers,
+      status: response.status,
+      statusText: response.statusText
+    });
   }
 };

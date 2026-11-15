@@ -85,14 +85,7 @@ export const verification = sqliteTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-export const rateLimit = sqliteTable("rate_limit", {
-  id: text("id").primaryKey(),
-  key: text("key").notNull().unique(),
-  count: integer("count").notNull(),
-  lastRequest: integer("last_request").notNull()
-});
-
-export const authRelations = defineRelationsPart({ user, session, account, verification, rateLimit }, (r) => {
+export const authRelations = defineRelationsPart({ user, session, account, verification }, (r) => {
   return {
     user: {
       sessions: r.many.session({
