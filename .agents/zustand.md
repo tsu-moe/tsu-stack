@@ -2,7 +2,7 @@
 
 Use this when adding or refactoring complex client-owned state that needs to be accessed from different components in `apps/web` or reusable UI packages.
 
-For server data, route preloading, and mutations, follow [API fetching patterns](./api-fetching-patterns.md) and [TanStack patterns](./tanstack-patterns.md). Zustand is for client-owned state: UI coordination, local preferences, local drafts, local-first workflows, and reusable component state.
+For server data, route preloading, and mutations, follow [API fetching patterns](./api-fetching-patterns.md) and [Data flow](./data-flow.md). Zustand is for client-owned state: UI coordination, local preferences, local drafts, local-first workflows, and reusable component state.
 
 ## Default Rule
 
@@ -40,7 +40,7 @@ Examples:
 
 ## Placement
 
-Follow the FSD segment structure from [TanStack patterns](./tanstack-patterns.md).
+Follow the FSD segment structure from [Data flow](./data-flow.md).
 
 ```text
 features/example/
@@ -174,7 +174,7 @@ Do not use Zustand as the server cache. Use TanStack Query and route `beforeLoad
 TanStack Router `beforeLoad` and loaders are not React components, so do not call Zustand hooks there.
 
 - Use route context for dependencies that routes need.
-- Use React Query option factories with `ensureQueryData(...)` for server data.
+- Use React Query option factories with `query({ ...options, staleTime: "static" })` for blocking server-data reads.
 - Read or initialize Zustand from React components or hook wrappers after hydration.
 - If a store change affects route guards or router context, call `router.invalidate()` from React code after the state change.
 
