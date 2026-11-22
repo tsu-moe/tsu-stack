@@ -24,7 +24,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Prepare environment
         shell: bash
-        run: cp packages/env/.env.example packages/env/.env
+        run: |
+          cp packages/env/.env.example packages/env/.env
+          secret="$(openssl rand -hex 32)"
+          sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$secret\"|" packages/env/.env
       - run: pnpm exec vp run check
       - run: pnpm exec vp run --filter create-tsu-stack check
       - run: pnpm exec vp run test:unit:run
@@ -119,6 +122,8 @@ jobs:
         working-directory: ${{ runner.temp }}/generated-tsu-stack
         run: |
           cp packages/env/.env.example packages/env/.env
+          secret="$(openssl rand -hex 32)"
+          sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$secret\"|" packages/env/.env
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" install
           test ! -e packages/i18n/src/paraglide/runtime.js
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" run check
