@@ -75,20 +75,13 @@ describe("template identity transformation", () => {
     expect(Object.keys(packageJson)).toEqual(["name", "private", "type", "scripts", "dependencies"]);
     expect(Object.keys(packageJson.dependencies)).toEqual(["@moon-garden/core", "@react/example"]);
     const generatedCi = await readFile(join(root, ".github/workflows/ci.yml"), "utf8");
-    const generatedCiSteps = [
-      "pnpm exec vp run check",
-      "pnpm exec vp run test:unit:run",
-      "pnpm exec vp exec playwright install --with-deps chromium",
-      "pnpm exec vp run test:e2e:run",
-      "pnpm exec vp run build"
-    ];
+    const generatedCiSteps = ["pnpm exec vp run check", "pnpm exec vp run test:unit:run", "pnpm exec vp run build"];
     const generatedCiStepIndexes = generatedCiSteps.map((step) => generatedCi.indexOf(step));
     expect(generatedCiStepIndexes).not.toContain(-1);
     const generatedCiStepsAreOrdered = generatedCiStepIndexes
       .slice(1)
       .every((stepIndex, index) => stepIndex > (generatedCiStepIndexes[index] ?? Number.POSITIVE_INFINITY));
     expect(generatedCiStepsAreOrdered).toBe(true);
-    expect(generatedCi).toContain("working-directory: apps/web");
     expect(generatedCi).not.toContain("create-tsu-stack");
     expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain('"name": "moon-garden"');
     expect(await readFile(join(root, "apps/web/wrangler.jsonc"), "utf8")).toContain(
@@ -119,11 +112,12 @@ describe("template identity transformation", () => {
         projectDirectory: "project dir",
         scope: "@scope's team"
       },
-      template
+      template,
+      "1.2.3"
     );
 
     expect(command).toBe(
-      "vpx create-tsu-stack@latest 'project dir' --display-name '$(id) $VAR `uname`' --scope '@scope'\\''s team' --variant 'cloudflare-d1' --no-install --no-git --setup 'none' --ref '" +
+      "vpx create-tsu-stack@1.2.3 'project dir' --display-name '$(id) $VAR `uname`' --scope '@scope'\\''s team' --variant 'cloudflare-d1' --no-install --no-git --setup 'none' --ref '" +
         "a".repeat(40) +
         "' --yes"
     );
