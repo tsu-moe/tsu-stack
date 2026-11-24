@@ -40,7 +40,7 @@ Test scope:
 
 - Package-local unit tests when available.
 - Repo unit wrapper: `vp run test:unit:run`.
-- Repo e2e wrapper: `vp run test:e2e:run`.
+- Repo browser wrapper: `vp run test:e2e:run`.
 - Custom: wait for custom instructions.
 
 Migration or generated artifact handling:

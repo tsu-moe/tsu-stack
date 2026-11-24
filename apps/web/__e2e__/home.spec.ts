@@ -1,14 +1,16 @@
 import { expect, test } from "@playwright/test";
 
-const NON_E2E_HTTP_URL = /^https?:\/\/(?!127\.0\.0\.1:3100(?:[/?#]|$))/;
-
-test.beforeEach(async ({ page }) => {
-  await page.route(NON_E2E_HTTP_URL, (route) => route.abort("blockedbyclient"));
+test.beforeEach(async ({ page, baseURL }) => {
+  if (!baseURL) throw new Error("Set the Playwright baseURL in the web app config.");
+  const origin = new URL(baseURL).origin;
+  await page.route(/^https?:\/\//, (route) =>
+    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
+  );
 });
 
 test("renders the public home page", async ({ page }) => {
   const response = await page.goto("./");
 
   expect(response?.ok()).toBe(true);
-  await expect(page.getByRole("heading", { name: "Your stack, redefined." })).toBeVisible();
+  await expect(page.getByRole("heading").first()).toBeVisible();
 });

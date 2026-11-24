@@ -121,9 +121,9 @@ async function normalizePackageManifests(root: string): Promise<void> {
   }
 }
 
-export function buildReproducibleCommand(input: ProjectInput, template: ResolvedTemplate): string {
+export function buildReproducibleCommand(input: ProjectInput, template: ResolvedTemplate, cliVersion: string): string {
   const args = [
-    "vpx create-tsu-stack@latest",
+    `vpx create-tsu-stack@${cliVersion}`,
     quotePosixShellArgument(input.projectDirectory),
     "--display-name",
     quotePosixShellArgument(input.displayName),
@@ -151,6 +151,9 @@ export async function transformTemplate(
   await remove(join(root, "tools", "create-tsu-stack"));
   await remove(join(root, ".agents", "cli.md"));
   await remove(join(root, ".github", "workflows", "release.yml"));
+  await remove(join(root, ".github", "scripts", "scaffold"));
+  await remove(join(root, "apps", "web", "__e2e__", "mobile-nav.spec.ts"));
+  await remove(join(root, "packages", "api", "src", "routers", "private", "__tests__", "index.test.ts"));
   await remove(join(root, "pnpm-lock.yaml"));
   await mkdir(join(root, ".github", "workflows"), { recursive: true });
   await writeFile(join(root, ".github", "workflows", "ci.yml"), GENERATED_CI_WORKFLOW, "utf8");
@@ -260,7 +263,7 @@ export async function transformTemplate(
     );
   }
 
-  const reproducibleCommand = buildReproducibleCommand(input, template);
+  const reproducibleCommand = buildReproducibleCommand(input, template, cliVersion);
   const metadata = {
     $schema: "https://raw.githubusercontent.com/tsu-moe/tsu-stack/main/tools/create-tsu-stack/schema.json",
     cliVersion,
