@@ -1,8 +1,7 @@
-import { mkdtemp, mkdir, readdir, rm, stat } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdtemp, mkdir, readdir, rename, rm, rmdir, stat } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 
-import { copy, move, pathExists, remove } from "fs-extra";
+import { copy, pathExists } from "fs-extra";
 
 import { downloadAndExtractTemplate } from "./archive";
 import { transformTemplate } from "./transform";
@@ -19,17 +18,46 @@ export async function assertDestinationAvailable(target: string): Promise<void> 
   }
 }
 
+function errorCode(error: unknown): string | undefined {
+  return error && typeof error === "object" && "code" in error && typeof error.code === "string"
+    ? error.code
+    : undefined;
+}
+
+async function removeEmptyDestination(target: string): Promise<void> {
+  try {
+    // rmdir is intentionally non-recursive: if a user populates the destination after the initial
+    // check, the operation fails without deleting their files.
+    await rmdir(target);
+  } catch (error) {
+    const code = errorCode(error);
+    if (code === "ENOENT") return;
+    if (code === "ENOTEMPTY" || code === "EEXIST" || code === "ENOTDIR") {
+      throw new Error(`Destination directory is no longer empty: ${target}`, { cause: error });
+    }
+    throw error;
+  }
+}
+
 async function placeProject(stagedProject: string, target: string, cwd: string): Promise<void> {
-  // The destination was validated before the download: recheck it so a directory populated in the
-  // meantime is never removed.
-  await assertDestinationAvailable(target);
   await mkdir(dirname(target), { recursive: true });
   if (resolve(target) === resolve(cwd)) {
+    await assertDestinationAvailable(target);
     await copy(stagedProject, target, { errorOnExist: true, overwrite: false });
     return;
   }
-  if (await pathExists(target)) await remove(target);
-  await move(stagedProject, target);
+  await removeEmptyDestination(target);
+  try {
+    // Staging is created beside the destination below, so this rename remains atomic across
+    // supported filesystems and cannot silently copy over a destination on another volume.
+    await rename(stagedProject, target);
+  } catch (error) {
+    const code = errorCode(error);
+    if (code === "EEXIST" || code === "ENOTEMPTY" || code === "ENOTDIR" || code === "EISDIR") {
+      throw new Error(`Destination became occupied while publishing: ${target}`, { cause: error });
+    }
+    throw error;
+  }
 }
 
 export async function generateProject(options: {
@@ -42,7 +70,10 @@ export async function generateProject(options: {
   const target = resolve(cwd, input.projectDirectory);
   await assertDestinationAvailable(target);
 
-  const temporaryRoot = await mkdtemp(join(tmpdir(), "create-tsu-stack-"));
+  // Keep the staging directory on the destination's volume so publication can use rename even
+  // when the user's project lives outside the operating system's default temporary directory.
+  await mkdir(dirname(target), { recursive: true });
+  const temporaryRoot = await mkdtemp(join(dirname(target), ".create-tsu-stack-"));
   const archivePath = join(temporaryRoot, "template.tar.gz");
   const stagedProject = join(temporaryRoot, "project");
   await mkdir(stagedProject, { recursive: true });

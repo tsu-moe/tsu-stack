@@ -18,16 +18,15 @@ Only vars prefixed with `VITE_` are available on the client (`import.meta.env`).
 
 ## When Adding/Updating Env Vars
 
-Update in **six places**:
+Update the applicable locations:
 
 1. `packages/env/src/` — add Zod validation to the appropriate scoped object
-2. `docker-compose.yaml` — add to both `build.args` and `environment` for affected services
-3. `Dockerfile` — add matching `ARG` + `ENV` declarations in the relevant Dockerfile(s)
-4. `.env.example` — add with placeholder value for local development
-5. `.github/README.md` — update this file with the new var, its scope, and usage notes
-6. (optional) `apps/web/vite.config.ts` — if the var is used in the web app or if the environment is used in the server & is mounted on the web app, add to `define` for build-time injection
+2. `packages/env/.env.example` — add a safe placeholder for local development
+3. `apps/web/wrangler.jsonc` — declare runtime variables and required secrets as appropriate
+4. `.github/README.md` — document scope, setup, and deployment requirements
+5. `apps/web/vite.config.ts` — forward inputs consumed by the build task
 
-Missing any of these causes build or runtime failures with no obvious error message.
+Configure production credentials as Worker secrets. Use Cloudflare build secrets for credentials that the build consumes.
 
 Env docs and templates must mirror the validated schema in `packages/env/src/`. Do not invent, retain, or document env vars that are not actually read there. If a setting is code-owned, document it as code-owned instead of adding a new env knob.
 
