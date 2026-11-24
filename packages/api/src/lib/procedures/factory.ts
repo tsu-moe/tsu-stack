@@ -10,6 +10,8 @@ const o = os.$context<OrpcContext>();
 export const publicProcedure = o;
 
 const requireAuth = o.middleware(async ({ context, next }) => {
+  context.resHeaders?.set("Cache-Control", "private, no-store");
+
   if (!context.session?.user) {
     throw new ORPCError("UNAUTHORIZED");
   }

@@ -7,7 +7,11 @@ import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferenceHandlerPlugin } from "@orpc/openapi/plugins";
 import { COMMON_ERROR_STATUS_MAP, ORPCError, onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
-import { GetMethodCsrfProtectionHandlerPlugin, RethrowHandlerPlugin } from "@orpc/server/plugins";
+import {
+  GetMethodCsrfProtectionHandlerPlugin,
+  ResponseHeadersHandlerPlugin,
+  RethrowHandlerPlugin
+} from "@orpc/server/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
@@ -163,6 +167,7 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
     })
   ],
   plugins: [
+    new ResponseHeadersHandlerPlugin(),
     new SmartCoercionHandlerPlugin({
       converters: [new ZodToJsonSchemaConverter()]
     }),
@@ -233,7 +238,7 @@ export const rpcHandler = new RPCHandler(appRouter, {
       context.logger.error(error instanceof Error ? error : String(error));
     })
   ],
-  plugins: [new GetMethodCsrfProtectionHandlerPlugin()]
+  plugins: [new GetMethodCsrfProtectionHandlerPlugin(), new ResponseHeadersHandlerPlugin()]
 });
 
 app.use("/*", async (c, next) => {
