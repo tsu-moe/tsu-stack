@@ -29,10 +29,15 @@ jobs:
           secret="$(openssl rand -hex 32)"
           sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$secret\"|" packages/env/.env
       - run: pnpm exec vp run check
-      - run: pnpm exec vp run --filter create-tsu-stack check
+      - name: Check generator
+        if: github.repository == 'tsu-moe/tsu-stack'
+        run: pnpm exec vp run --filter create-tsu-stack check
       - run: pnpm exec vp run test:unit:run
-      - run: pnpm exec vp run --filter create-tsu-stack pack:check
+      - name: Check generator package
+        if: github.repository == 'tsu-moe/tsu-stack'
+        run: pnpm exec vp run --filter create-tsu-stack pack:check
       - name: Verify dry run is mutation-free
+        if: github.repository == 'tsu-moe/tsu-stack'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         shell: bash
@@ -43,23 +48,31 @@ jobs:
 
   scaffold:
     if: >-
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
+      github.repository == 'tsu-moe/tsu-stack' &&
+      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main'))
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
             variant: separate
+            source-branch: main
           - os: ubuntu-latest
             variant: merged
+            source-branch: variant/merged
           - os: ubuntu-latest
             variant: cloudflare
+            source-branch: variant/merged-cloudflare
           - os: ubuntu-latest
             variant: cloudflare-d1
+            source-branch: variant/merged-cloudflare-d1
           - os: windows-latest
             variant: separate
+            source-branch: main
           - os: macos-latest
             variant: separate
+            source-branch: main
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
@@ -75,43 +88,60 @@ jobs:
       - name: Generate ${{ matrix.variant }} project
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        shell: bash
-        run: >-
-          node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/tsu-${{ matrix.variant }}" --yes --variant "${{ matrix.variant }}" --no-install --no-git --setup none --ref "${{ github.sha }}"
-      - name: Verify generated project
+          VARIANT: ${{ matrix.variant }}
+          SOURCE_BRANCH: ${{ matrix.source-branch }}
         shell: bash
         run: |
+          if [[ "$VARIANT" == separate ]]; then
+            ref="$GITHUB_SHA"
+          else
+            ref="$(git ls-remote --exit-code https://github.com/tsu-moe/tsu-stack.git "refs/heads/$SOURCE_BRANCH" | cut -f1)"
+          fi
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          echo "TEMPLATE_SHA=$ref" >> "$GITHUB_ENV"
+          node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/tsu-$VARIANT" --yes --variant "$VARIANT" --no-install --no-git --setup none --ref "$ref"
+      - name: Verify generated project
+        env:
+          VARIANT: ${{ matrix.variant }}
+          SOURCE_BRANCH: ${{ matrix.source-branch }}
+        shell: bash
+        run: |
+          node - "$RUNNER_TEMP/tsu-$VARIANT" <<'NODE'
+          const assert = require("node:assert/strict");
+          const { existsSync, readFileSync } = require("node:fs");
+          const root = process.argv[2];
+          const { VARIANT, SOURCE_BRANCH, TEMPLATE_SHA } = process.env;
+          const metadata = JSON.parse(readFileSync(root + "/.tsu-stack.jsonc", "utf8"));
+          assert.equal(metadata.variant, VARIANT);
+          assert.equal(metadata.source.branch, SOURCE_BRANCH);
+          assert.equal(metadata.source.commit, TEMPLATE_SHA);
+          const api = JSON.parse(readFileSync(root + "/apps/server/package.json", "utf8"));
+          assert.equal(Boolean(api.scripts.build && api.scripts.start), VARIANT === "separate");
+          assert.equal(existsSync(root + "/apps/web/src/routes/server"), VARIANT !== "separate");
+          const workerPath = root + "/apps/web/wrangler.jsonc";
+          assert.equal(existsSync(workerPath), VARIANT.startsWith("cloudflare"));
+          if (existsSync(workerPath)) {
+            const config = readFileSync(workerPath, "utf8");
+            assert.match(config, /"main": "src\/server\.ts"/);
+            assert.equal(config.includes('"d1_databases"'), VARIANT === "cloudflare-d1");
+          }
+          NODE
           test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.tsu-stack.jsonc"
           test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/skills/sync-template/SKILL.md"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/tools/create-tsu-stack"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/cli.md"
+          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.github/scripts/scaffold"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/playwright.config.ts"
+          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/__e2e__/home.spec.ts"
+          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/src/routers/private/__tests__/index.test.ts"
           test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/pnpm-lock.yaml"
           test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/vite.config.ts"
           node -e "const scripts = require(process.argv[1]).scripts; if (!scripts.dev.startsWith('vp run i18n:ensure && ')) process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/package.json"
           node -e "const scripts = require(process.argv[1]).scripts; if (scripts['test:unit'] !== 'vp test') process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/package.json"
 
-  generated-build:
-    if: >-
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec vp run --filter create-tsu-stack build
-      - name: Generate representative project
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: >-
-          node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/generated-tsu-stack" --yes --variant separate --no-install --no-git --setup none --ref "${{ github.sha }}"
       - name: Install and validate generated project
-        working-directory: ${{ runner.temp }}/generated-tsu-stack
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}
         run: |
           cp packages/env/.env.example packages/env/.env
           secret="$(openssl rand -hex 32)"
@@ -121,4 +151,19 @@ jobs:
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" run check
           test -f packages/i18n/src/paraglide/runtime.js
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" run test:unit:run
-          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run build
+      - name: Install browser for template smoke
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web"
+          "$GITHUB_WORKSPACE/node_modules/.bin/vp" exec playwright install --with-deps chromium
+      - name: Smoke generated production app
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}
+        env:
+          VARIANT: ${{ matrix.variant }}
+        shell: bash
+        run: |
+          bash "$GITHUB_WORKSPACE/.github/scripts/scaffold/smoke-generated-production.sh" \
+            "$VARIANT" "$GITHUB_WORKSPACE/node_modules/.bin/vp" \
+            "$GITHUB_WORKSPACE/.github/scripts/scaffold/verify-generated-production.mjs"
