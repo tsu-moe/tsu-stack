@@ -125,6 +125,8 @@ This template mounts the Hono API inside the TanStack Start application. Deploy 
 
 ### Coolify
 
+For Dockerfile builds, configure the public URLs at build time and runtime. Set the Build time scope of `DATABASE_URL` and `BETTER_AUTH_SECRET` to **Not available during build** and leave them available at runtime. The Compose definition already passes the database and auth credentials at runtime. See [Coolify environment variable scopes](https://coolify.io/docs/applications/configuration/environment-variables#build-and-runtime-scope).
+
 1. When creating a new application in Coolify, select "Private Repository (with GitHub App)" and select your repository with your tsu-stack app.
 2. Next, change the "Build Pack" to "Docker Compose" and set the "Docker Compose Location" to `/docker-compose.coolify.yaml`.
 3. Assign the public domain to the `web` service on port `3000`. Route the configured API subpath to that same service.
@@ -142,13 +144,9 @@ This Node-oriented template is not configured for Workers. A Workers deployment 
 
 [Dokploy](https://dokploy.com) can deploy the merged application with `apps/web/Dockerfile` and the repository root as its build context. Use the `production` target, expose port `3000`, and route both the web URL and API subpath to this one service.
 
-Provide `VITE_SERVER_URL`, `VITE_WEB_URL`, `DATABASE_URL`, and `BETTER_AUTH_SECRET` as build arguments and runtime variables. Also set `VITE_IMGPROXY_URL` and `VITE_IMGPROXY_SIGNATURE` when using imgproxy.
+Set `VITE_SERVER_URL` and `VITE_WEB_URL` as **Build Time Arguments** and runtime variables. Also set the public imgproxy values if you use imgproxy. Put `DATABASE_URL` and `BETTER_AUTH_SECRET` in the runtime **Environment Variables**.
 
-> [!IMPORTANT]
-> Setting only runtime environment variables is not enough: the web build also needs them. Local `.env` files are excluded from the Docker build context, so provide build-time values through Dokploy and rebuild after changing them.
-
-> [!CAUTION]
-> The included Dockerfiles consume build arguments, not Dokploy's **Build-time Secrets**. Build arguments can be exposed in build metadata or cache; use non-sensitive build-only values where possible and configure real credentials at runtime. To pass sensitive values during the build, adapt the Dockerfiles to consume secret mounts first. See Dokploy's [environment variables for Dockerfile builds](https://docs.dokploy.com/docs/core/applications/build-type#environment-variables-for-dockerfile-builds).
+The Docker build uses the checked-in `packages/env/.env.example` for validation and prerendering. Rebuild when the public URLs change. If you add a build step that requires sensitive input, use a [BuildKit secret mount](https://docs.docker.com/build/building/secrets/) for that step.
 
 ### Deploying to Other Platforms
 
@@ -176,7 +174,7 @@ The merged TanStack Start and Hono application uses these environment variables:
 
 `apps/web/src/routes/server/$.ts` forwards the API subpath to the Hono app exported by `apps/server`. TanStack Start owns the network listener, so `apps/server` is an internal package rather than a separately deployed service.
 
-Keep `VITE_SERVER_URL` on the same public origin as `VITE_WEB_URL` and include the API subpath, for example `https://example.com/server`. The application container needs both web and server environment variables at build time and runtime.
+Keep `VITE_SERVER_URL` on the same public origin as `VITE_WEB_URL` and include the API subpath, for example `https://example.com/server`. Supply the public URLs during the build and at runtime. The database URL and auth secret are runtime credentials.
 
 ### Resource Usage
 

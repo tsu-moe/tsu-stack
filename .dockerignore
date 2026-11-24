@@ -43,6 +43,7 @@ pnpm-debug.log*
 **/.env.test
 **/.env.production
 **/.env.docker
+!packages/env/.env.example
 
 # -----------------------------
 # VCS

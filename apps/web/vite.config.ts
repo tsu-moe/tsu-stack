@@ -1,3 +1,4 @@
+import { cp } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { ohImage } from "@lonik/oh-image/plugin";
@@ -64,9 +65,9 @@ export default defineConfig({
         command: "cross-env IS_BUILD=true pnpm dotenvx run -f ../../packages/env/.env -- vp build",
         dependsOn: ["@tsu-stack/i18n#build"],
         cache: {
-          // These environment variables are dependencies of the build process and need to be passed here to be picked up by the Vite Task runner.
-          // CAUTION: These are hardcoded into the image. You should consider Build Secrets for sensitive values.
-          //          In Coolify, you need to check "Use Docker Build Secrets" in the Environment Variables tab.
+          // These environment variables are dependencies of the build process and need to be passed here
+          // to be picked up by the Vite Task runner. Docker uses disposable local fixtures for credentials;
+          // production credentials remain runtime-only and are supplied by the container.
           env: [
             "NODE_ENV",
             "VITE_SERVER_URL",
@@ -155,7 +156,16 @@ export default defineConfig({
        * Recent Discord discussion on the matter
        * @see {@link https://discord.com/channels/719702312431386674/1490005967067414608}
        */
-      traceDeps: ["react", "react-dom"]
+      traceDeps: ["react", "react-dom"],
+      hooks: {
+        compiled: async (nitro) => {
+          await cp(
+            resolve(import.meta.dirname, "../../packages/db/migrations"),
+            resolve(nitro.options.output.serverDir, "migrations"),
+            { recursive: true }
+          );
+        }
+      }
     }),
     tailwindcss(),
     ohImage({
