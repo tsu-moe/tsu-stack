@@ -13,6 +13,18 @@ vi.mock("#@/index", () => {
   };
 });
 
+it("skips the auth session lookup during prerendering", async () => {
+  vi.stubEnv("IS_BUILD", "true");
+  getSession.mockClear();
+
+  try {
+    expect(await _getUser()).toBeNull();
+    expect(getSession).not.toHaveBeenCalled();
+  } finally {
+    vi.unstubAllEnvs();
+  }
+});
+
 it("preserves existing response cookies while forwarding every refreshed auth cookie", async () => {
   const headers = new Headers();
   headers.append("Set-Cookie", "session=refreshed; Path=/; HttpOnly");

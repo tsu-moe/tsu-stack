@@ -26,6 +26,8 @@ type GetUserServerQuery = {
  * For server app logic, consider using authMiddleware instead.
  */
 export const _getUser = createServerOnlyFn(async (query?: GetUserServerQuery) => {
+  if (process.env.IS_BUILD === "true") return null;
+
   const session = await createAuth().api.getSession({
     headers: getRequest().headers,
     query,

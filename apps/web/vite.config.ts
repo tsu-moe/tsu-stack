@@ -128,8 +128,17 @@ export default defineConfig({
     cloudflare({
       viteEnvironment: { name: "ssr" },
       // Workers need explicit runtime bindings for values read through process.env.
-      config: {
-        vars: { NODE_ENV: ENV_WEB_SERVER.NODE_ENV, SOURCE_COMMIT: ENV_WEB_SERVER.SOURCE_COMMIT }
+      config: (workerConfig) => {
+        return {
+          assets: {
+            ...workerConfig.assets,
+            // Keep Cloudflare's static-asset router aligned with Vite's configured base.
+            // This is resolved at build time so root and subdirectory deployments use the
+            // same client output without copying assets after the build.
+            base_path: new URL(ENV_WEB_ISOMORPHIC.VITE_WEB_URL).pathname
+          },
+          vars: { NODE_ENV: ENV_WEB_SERVER.NODE_ENV, SOURCE_COMMIT: ENV_WEB_SERVER.SOURCE_COMMIT }
+        };
       }
     }),
     tanstackStart({
