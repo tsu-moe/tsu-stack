@@ -51,6 +51,7 @@ export function parseCliFlags(argv: string[]): CliFlags {
 export const HELP_TEXT = `create-tsu-stack [project-directory]
 
 Create a new tsu-stack project from a maintained repository variant.
+Choose a new path or an empty directory. Use . for the current directory.
 
 Options:
   --display-name <name>                  Application display name
@@ -59,10 +60,11 @@ Options:
                                           Template variant
   --install / --no-install               Install dependencies (default: install)
   --git / --no-git                       Initialize Git (default: git)
-  --setup <none|local|cloudflare>        Optional database setup; cloud provisioning is D1-only
+  --setup <none|local|cloudflare>        Optional database setup (default for --yes: none)
+                                          Cloudflare setup requires a terminal and the D1 variant
   --ref <branch|tag|sha>                 Override the selected variant's Git ref
   --dry-run                              Resolve and print the plan without writing
-  -y, --yes                              Accept safe defaults for omitted options
+  -y, --yes                              Use defaults without project prompts (required in scripts)
   -v, --version                          Print the CLI version
   -h, --help                             Print this help
 
@@ -70,5 +72,6 @@ Examples:
   npm create tsu-stack@latest my-app
   vpx create-tsu-stack@latest my-app --variant cloudflare
   vpx create-tsu-stack@latest my-app --variant cloudflare-d1 --setup cloudflare
-  create-tsu-stack my-app --yes --no-install --ref fafde6b
+  create-tsu-stack my-app --yes --no-install --no-git
+  create-tsu-stack . --yes --dry-run
 `;

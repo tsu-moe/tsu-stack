@@ -46,3 +46,5 @@ export type CommandRunner = {
   run(command: string, args: string[], cwd: string): Promise<void>;
   succeeds(command: string, args: string[], cwd: string): Promise<boolean>;
 };
+
+export type SetupStep = (label: string, recovery: readonly string[], task: () => Promise<void>) => Promise<void>;

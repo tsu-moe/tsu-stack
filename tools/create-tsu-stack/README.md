@@ -25,6 +25,12 @@ vpx create-tsu-stack@latest my-app \
 
 `--yes` defaults to `separate`, installs dependencies, initializes Git, and does not provision a database or cloud resource. Use `--dry-run` to resolve the source commit and inspect the exact replay command without writing or running setup commands.
 
+## Destinations and recovery
+
+Use a new path, an empty directory, or `.` for an empty current directory. If a path is occupied, the interactive CLI lets you choose another directory. Scripts use an explicit directory and `--yes` and exit with an error if it is occupied. For Cloudflare provisioning, use a terminal so you can select the owning account.
+
+The CLI stages files before publishing them. If a copy into the current directory fails, it gives you the staging path and keeps the files already copied. If installation, local setup, or Git initialization fails after publication, it prints the failed step, the project path, and how to continue from inside the generated directory. Setup preserves any existing `packages/env/.env` so retrying does not rotate the auth secret.
+
 ## Variants
 
 - `separate`: separate TanStack Start web and Node/Hono server applications (`main`)
