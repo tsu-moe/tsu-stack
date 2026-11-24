@@ -28,8 +28,6 @@ services:
         - "SOURCE_COMMIT=${SOURCE_COMMIT}"
         - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:5000}"
         - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
-        - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-        - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env.docker (generate one with vp run auth:secret)}"
     ports:
       - "${SERVER_PORT:-5000}:5000"
     environment:
@@ -65,8 +63,6 @@ services:
         - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"
         - "VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL:-}"
         - "VITE_IMGPROXY_SIGNATURE=${VITE_IMGPROXY_SIGNATURE:-_}"
-        - "DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}@postgres:5432/${POSTGRES_DB:-tsu-stack}"
-        - "BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env.docker (generate one with vp run auth:secret)}"
     environment:
       - "VITE_SERVER_URL=${VITE_SERVER_URL:-http://localhost:5000}"
       - "VITE_WEB_URL=${VITE_WEB_URL:-http://localhost:3000}"

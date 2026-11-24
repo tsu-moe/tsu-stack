@@ -10,20 +10,12 @@ FROM installer AS builder
 
 COPY --chown=vp:vp . .
 
-ARG SOURCE_COMMIT VITE_SERVER_URL VITE_WEB_URL VITE_IMGPROXY_URL VITE_IMGPROXY_SIGNATURE DATABASE_URL BETTER_AUTH_SECRET
-ENV SOURCE_COMMIT=${SOURCE_COMMIT} \
-    VITE_SERVER_URL=${VITE_SERVER_URL} \
-    VITE_WEB_URL=${VITE_WEB_URL} \
-    VITE_IMGPROXY_URL=${VITE_IMGPROXY_URL} \
-    VITE_IMGPROXY_SIGNATURE=${VITE_IMGPROXY_SIGNATURE} \
-    DATABASE_URL=${DATABASE_URL} \
-    BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+ARG SOURCE_COMMIT VITE_SERVER_URL VITE_WEB_URL VITE_IMGPROXY_URL VITE_IMGPROXY_SIGNATURE
 
-# TODO: Uncomment this when you have `test:unit` or `test:e2e` scripts defined in your apps/*/package.json or packages/*/package.json files.
-RUN vp run test:unit:run
-# RUN vp run test:e2e:run
-
-RUN vp run -v --filter web build
+# Use the example environment for tests and build-time validation.
+RUN --mount=type=bind,source=packages/env/.env.example,target=/app/packages/env/.env \
+    vp run test:unit:run \
+    && vp run -v --filter web build
 RUN cp "$(vp env which node | sed -n '1p')" /tmp/node
 
 FROM debian:bookworm-slim AS production

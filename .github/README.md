@@ -132,6 +132,8 @@ This project is designed to be deployed as separate applications for the server 
 
 ### Coolify
 
+For Dockerfile builds, configure the public URLs at build time and runtime. Set the Build time scope of `DATABASE_URL` and `BETTER_AUTH_SECRET` to **Not available during build** and leave them available at runtime. The Compose definition already passes the database and auth credentials at runtime. See [Coolify environment variable scopes](https://coolify.io/docs/applications/configuration/environment-variables#build-and-runtime-scope).
+
 Coolify can be used to deploy the server and web applications. Choose a strategy and follow the steps below to configure each app:
 
 #### Option 1: Separate Dockerfiles
@@ -222,15 +224,11 @@ You will need to set up the _build environment variables_ and _variables and sec
    | Docker Context Path | `.` (repository root)    | `.` (repository root) |
    | Docker Build Stage  | `production`             | `production`          |
 
-3. In each application's **Environment** tab, populate **Build Time Arguments** with the `ARG` values declared in its Dockerfile. Both applications require `VITE_SERVER_URL`, `VITE_WEB_URL`, `DATABASE_URL`, and `BETTER_AUTH_SECRET`. For the web app, also set `VITE_IMGPROXY_URL` and `VITE_IMGPROXY_SIGNATURE` if using imgproxy. See [Environment Variables](#environment-variables) for their meanings.
-4. Configure the required runtime **Environment Variables** in the same tab as well. Build arguments do not automatically populate the final runtime container.
+3. Set `VITE_SERVER_URL` and `VITE_WEB_URL` as **Build Time Arguments** and runtime variables. On the web application, also set the public imgproxy values if you use imgproxy.
+4. Put `DATABASE_URL` and `BETTER_AUTH_SECRET` in the runtime **Environment Variables** for both applications.
 5. Assign domains matching `VITE_SERVER_URL` and `VITE_WEB_URL`, routing to container ports `5000` for the server and `3000` for the web app. Save the settings and deploy both applications.
 
-> [!IMPORTANT]
-> Setting only runtime environment variables is not enough: the web build also needs them. Local `.env` files are excluded from the Docker build context, so provide build-time values through Dokploy and rebuild after changing them.
-
-> [!CAUTION]
-> The included Dockerfiles consume build arguments, not Dokploy's **Build-time Secrets**. Build arguments can be exposed in build metadata or cache; use non-sensitive build-only values where possible and configure real credentials at runtime. To pass sensitive values during the build, adapt the Dockerfiles to consume secret mounts first. See Dokploy's [environment variables for Dockerfile builds](https://docs.dokploy.com/docs/core/applications/build-type#environment-variables-for-dockerfile-builds).
+The Docker build uses the checked-in `packages/env/.env.example` for validation and prerendering. Rebuild when the public URLs change. If you add a build step that requires sensitive input, use a [BuildKit secret mount](https://docs.docker.com/build/building/secrets/) for that step.
 
 ### Deploying to Other Platforms
 

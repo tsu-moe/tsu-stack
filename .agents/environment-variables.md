@@ -21,13 +21,13 @@ Only vars prefixed with `VITE_` are available on the client (`import.meta.env`).
 Update in **six places**:
 
 1. `packages/env/src/` — add Zod validation to the appropriate scoped object
-2. `docker-compose.yaml` — add to both `build.args` and `environment` for affected services
-3. `Dockerfile` — add matching `ARG` + `ENV` declarations in the relevant Dockerfile(s)
+2. `docker-compose.yaml` — add non-sensitive build inputs to `build.args`; add runtime values to `environment` for affected services
+3. `Dockerfile` — add matching `ARG` + `ENV` declarations only for non-sensitive build inputs. Keep `DATABASE_URL`, `BETTER_AUTH_SECRET`, and other credentials runtime-only; the Docker builder mounts `packages/env/.env.example` for tests and prerender validation. If a new build step requires sensitive input, use a BuildKit secret mount for that step
 4. `.env.example` — add with placeholder value for local development
 5. `.github/README.md` — update this file with the new var, its scope, and usage notes
 6. (optional) `apps/web/vite.config.ts` — if the var is used in the web app or if the environment is used in the server & is mounted on the web app, add to `define` for build-time injection
 
-Missing any of these causes build or runtime failures with no obvious error message.
+Missing any of these causes build or runtime failures with no obvious error message. Do not put production credentials in Docker build arguments or image metadata.
 
 Env docs and templates must mirror the validated schema in `packages/env/src/`. Do not invent, retain, or document env vars that are not actually read there. If a setting is code-owned, document it as code-owned instead of adding a new env knob.
 
