@@ -19,6 +19,37 @@ import { NavbarAvatar } from "@/features/navbar/ui/navbar-avatar";
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
 
+  const closeMenu = React.useCallback(() => {
+    setOpen(false);
+    document.querySelector<HTMLButtonElement>("#mobile-menu-toggle")?.focus();
+  }, []);
+
+  const toggleMenu = React.useCallback(() => {
+    if (open) {
+      closeMenu();
+    } else {
+      setOpen(true);
+    }
+  }, [closeMenu, open]);
+
+  React.useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.key !== "Escape") {
+        return;
+      }
+
+      event.preventDefault();
+      closeMenu();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [closeMenu, open]);
+
   const onNavigate = () => setOpen(false);
 
   return (
@@ -30,7 +61,8 @@ export function MobileNav() {
         aria-expanded={open}
         aria-label="Toggle menu"
         className="md:hidden"
-        onClick={() => setOpen(!open)}
+        id="mobile-menu-toggle"
+        onClick={toggleMenu}
         size="icon"
         variant="outline"
       >
