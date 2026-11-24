@@ -31,10 +31,7 @@ Canonical commands:
 
 Prefer package-local test commands when they exist and cover the touched surface. Use the repo wrappers when changes span packages or when package-local coverage is not available.
 
-Package-local defaults:
-
-- Unit: `vp test`
-- E2E: `vp exec playwright test`
+Use `vp test` for package-local unit tests. For browser tests, run `vp exec playwright install chromium` from `apps/web` once, then run `vp run test:e2e:run` from the repository root.
 
 Every root test lane advertised by the repository or generated-project CI must select at least one workspace task. Do not hide an empty lane with `--pass-with-no-tests` or an equivalent fallback.
 
@@ -49,9 +46,9 @@ Unit tests:
 End-to-end tests:
 
 - `__e2e__/**/*.spec.ts`
-- Name specs after the user-visible surface or workflow, for example `__e2e__/home.spec.ts`.
+- Name specs after the user-visible surface or workflow, for example `__e2e__/checkout.spec.ts`.
 
-Use `__e2e__` as the project convention for end-to-end tests.
+Use [the home example](../apps/web/__e2e__/home.spec.ts) as a starting point. Navigate with URLs relative to `baseURL` so the configured subpath is preserved. Use role-based locators, keep traffic on the test origin, and use the isolated preview configured in `apps/web/playwright.config.ts`. Adapt the home assertion to the project's own entry point.
 
 ## Vite+ / Vitest Setup Rule
 
