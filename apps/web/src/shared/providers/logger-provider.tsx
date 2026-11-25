@@ -8,9 +8,9 @@ export function LoggerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (user) {
-      setIdentity({ user: { id: user.id } });
+      setIdentity(user.id);
     } else {
-      setIdentity({ user: { id: "anonymous" } });
+      clearIdentity();
     }
 
     return () => {

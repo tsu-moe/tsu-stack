@@ -1,4 +1,4 @@
-import { log } from "evlog";
+import { createLogger } from "evlog";
 import { evlog as createEvlogHonoMiddleware, type EvlogHonoOptions } from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
 import { bodyLimit } from "hono/body-limit";
@@ -7,30 +7,11 @@ import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
+import { BROWSER_LOG_MAX_EVENTS, BrowserLogPayloadSchema } from "#@/browser-event";
 import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
-import { reportLoggingFailure, requestLogger, type RequestLogger } from "#@/server/runtime";
+import { logSafely, reportLoggingFailure, requestLogger, type RequestLogger } from "#@/server/runtime";
 
-const NormalizedLogLevelSchema = z.enum(["info", "error", "warn", "debug"]).catch("info");
-
-const ClientLogPayloadSchema = z.object({
-  event: z
-    .object({
-      environment: z.string(),
-      level: z.string(),
-      service: z.string(),
-      timestamp: z.string()
-    })
-    .catchall(z.json()),
-  request: z
-    .object({
-      method: z.string().optional(),
-      path: z.string().optional(),
-      requestId: z.string().optional()
-    })
-    .optional()
-});
-
-const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
+const ClientLogBatchSchema = z.array(BrowserLogPayloadSchema).max(BROWSER_LOG_MAX_EVENTS);
 
 /**
  * Hono app variables added by `honoLoggerMiddleware()`.
@@ -51,15 +32,6 @@ type HonoLoggerMiddlewareOptions = EvlogHonoOptions & {
 
 type HonoLogIngestionOptions = {
   maxPayloadBytes?: number;
-};
-
-type ClientLogPayload = z.infer<typeof ClientLogPayloadSchema>;
-
-type NormalizedEvent = Omit<ClientLogPayload["event"], "level" | "timestamp"> & {
-  clientTimestamp?: string;
-  method?: string;
-  path?: string;
-  requestId?: string;
 };
 
 /**
@@ -155,40 +127,12 @@ export function honoLogIngestionMiddleware(options: HonoLogIngestionOptions = {}
   );
 }
 
-function emitClientLog(payload: ClientLogPayload) {
-  const { audit: _audit, level: _level, timestamp, ...event } = payload.event;
-  const normalizedEvent: NormalizedEvent = {
-    ...(timestamp !== undefined && event.clientTimestamp === undefined ? { clientTimestamp: timestamp } : {}),
-    ...event
-  };
-
-  if (payload.request?.method && normalizedEvent.method === undefined) {
-    normalizedEvent.method = payload.request.method;
-  }
-
-  if (payload.request?.path && normalizedEvent.path === undefined) {
-    normalizedEvent.path = payload.request.path;
-  }
-
-  if (payload.request?.requestId && normalizedEvent.requestId === undefined) {
-    normalizedEvent.requestId = payload.request.requestId;
-  }
-
-  // Keep browser-controlled fields separate from authoritative server log fields.
-  const clientEvent = { client: normalizedEvent, source: "client" };
-
-  switch (NormalizedLogLevelSchema.parse(payload.event.level)) {
-    case "debug":
-      log.debug(clientEvent);
-      return;
-    case "error":
-      log.error(clientEvent);
-      return;
-    case "warn":
-      log.warn(clientEvent);
-      return;
-    case "info":
-      log.info(clientEvent);
-      return;
-  }
+function emitClientLog(payload: z.output<typeof BrowserLogPayloadSchema>) {
+  const { timestamp, ...event } = payload.event;
+  logSafely(() =>
+    createLogger({
+      client: { ...event, clientTimestamp: timestamp, requestId: payload.request?.requestId },
+      source: "client"
+    }).emit({ _forceKeep: true })
+  );
 }

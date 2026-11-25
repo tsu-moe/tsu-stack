@@ -1,6 +1,8 @@
-import { initLogger as initEvlogLogger, log as evlogLog } from "evlog";
+import { initLogger as initEvlogLogger, log as evlogLog, type LogLevel } from "evlog";
 import { createHttpLogDrain, type HttpLogDrainOptions } from "evlog/http";
+import { type z } from "zod";
 
+import { BROWSER_LOG_BATCH_SIZE, BrowserLogFieldsSchema, BrowserLogPayloadSchema } from "#@/browser-event";
 import { LOG_SERVICES } from "#@/constants/services";
 
 type ClientLoggerConfig = {
@@ -12,23 +14,14 @@ type ClientLoggerConfig = {
   service?: string;
 };
 
-type LogMethod = typeof evlogLog.info;
-type ErrorLogMethod = typeof evlogLog.error;
-type LogEvent = Parameters<LogMethod>[0];
+type BrowserLogInput = Omit<z.input<typeof BrowserLogFieldsSchema>, "user"> & { event: `${string}.${string}` };
 
 const DEFAULT_CLIENT_LOGGER_CONFIG = {
   service: LOG_SERVICES.DEFAULT
 } satisfies ClientLoggerConfig;
 
 let isInitialized = false;
-let identityContext: LogEvent = {};
-
-const debugLogMethod = evlogLog.debug.bind(evlogLog) as LogMethod;
-const errorLogMethod = evlogLog.error.bind(evlogLog) as ErrorLogMethod;
-const fatalLogMethod = evlogLog.fatal.bind(evlogLog) as ErrorLogMethod;
-const infoLogMethod = evlogLog.info.bind(evlogLog) as LogMethod;
-const traceLogMethod = evlogLog.trace.bind(evlogLog) as LogMethod;
-const warnLogMethod = evlogLog.warn.bind(evlogLog) as LogMethod;
+let userId: string | undefined;
 
 function isBrowserRuntime() {
   return typeof window !== "undefined" && typeof document !== "undefined";
@@ -65,14 +58,29 @@ export function initLog(config: ClientLoggerConfig = {}) {
     return;
   }
 
+  const transport = config.batchedTransport;
+  const batch = transport?.pipeline?.batch;
+  const service = BrowserLogPayloadSchema.shape.event.shape.service.safeParse(config.service);
   initEvlogLogger({
-    drain: config.batchedTransport ? createHttpLogDrain(config.batchedTransport) : undefined,
+    drain: transport
+      ? createHttpLogDrain({
+          ...transport,
+          pipeline: {
+            ...transport.pipeline,
+            batch: {
+              intervalMs: batch?.intervalMs ?? 2000,
+              size: Math.max(1, Math.min(batch?.size ?? BROWSER_LOG_BATCH_SIZE, BROWSER_LOG_BATCH_SIZE))
+            }
+          }
+        })
+      : undefined,
     enabled: config.enabled,
     env: {
-      service: config.service ?? DEFAULT_CLIENT_LOGGER_CONFIG.service
+      service: service.data ?? DEFAULT_CLIENT_LOGGER_CONFIG.service
     },
     minLevel: config.minLevel,
     pretty: config.pretty,
+    redact: true,
     silent: config.console === false
   });
   isInitialized = true;
@@ -97,34 +105,34 @@ export { LOG_SERVICES };
  * ```ts
  * import { log } from "@tsu-stack/logger/client";
  *
- * log.error({ event: "ui.error.caught", error });
+ * log.error({ event: "ui.error.caught", error: { name: error.name } });
  * ```
  */
 export const log = {
-  debug: withIdentity(debugLogMethod),
-  error: withIdentity(errorLogMethod),
-  fatal: withIdentity(fatalLogMethod),
-  info: withIdentity(infoLogMethod),
-  trace: withIdentity(traceLogMethod),
-  warn: withIdentity(warnLogMethod)
-} satisfies typeof evlogLog;
+  debug: browserLog("debug"),
+  error: browserLog("error"),
+  fatal: browserLog("fatal"),
+  info: browserLog("info"),
+  trace: browserLog("trace"),
+  warn: browserLog("warn")
+};
 
 /**
- * Attach user/session context to future browser log events.
+ * Attach an opaque user ID to future browser log events.
  *
  * @example
  * ```ts
  * import { setIdentity } from "@tsu-stack/logger/client";
  *
- * setIdentity({ user: { id: user.id } });
+ * setIdentity(user.id);
  * ```
  */
-export function setIdentity(identity: LogEvent) {
+export function setIdentity(id: string) {
   if (!isBrowserRuntime()) {
     return;
   }
 
-  identityContext = { ...identity };
+  userId = BrowserLogFieldsSchema.shape.user.unwrap().shape.id.safeParse(id).data;
 }
 
 /**
@@ -142,48 +150,13 @@ export function clearIdentity() {
     return;
   }
 
-  identityContext = {};
+  userId = undefined;
 }
 
-function withIdentity(method: ErrorLogMethod): ErrorLogMethod;
-function withIdentity(method: LogMethod): LogMethod;
-function withIdentity(method: LogMethod | ErrorLogMethod) {
-  function logWithIdentity(event: LogEvent): void;
-  function logWithIdentity(error: Error): void;
-  function logWithIdentity(tag: string, message: string): void;
-  function logWithIdentity(tagOrEvent: Error | LogEvent | string, message?: string) {
-    if (!isBrowserRuntime()) {
-      return;
-    }
-
-    const invoke = method as (tagOrEvent: Error | LogEvent | string, message?: string) => void;
-
-    if (tagOrEvent instanceof Error && message === undefined) {
-      invoke(tagOrEvent);
-      return;
-    }
-
-    if (isRecord(tagOrEvent) && message === undefined) {
-      invoke({
-        ...identityContext,
-        ...tagOrEvent
-      });
-      return;
-    }
-
-    if (typeof tagOrEvent === "string") {
-      if (message !== undefined) {
-        invoke(tagOrEvent, message);
-      }
-      return;
-    }
-
-    invoke(tagOrEvent);
-  }
-
-  return logWithIdentity;
-}
-
-function isRecord(value: Error | LogEvent | string): value is LogEvent {
-  return !!value && typeof value === "object" && !Array.isArray(value) && !(value instanceof Error);
+function browserLog(level: LogLevel) {
+  return (input: BrowserLogInput) => {
+    if (!isBrowserRuntime()) return;
+    const result = BrowserLogFieldsSchema.safeParse({ ...input, user: userId ? { id: userId } : undefined });
+    if (result.success) evlogLog[level](result.data);
+  };
 }

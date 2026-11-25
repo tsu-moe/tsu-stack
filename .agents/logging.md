@@ -160,13 +160,12 @@ Request logs use request IDs for correlation and do not resolve auth sessions fo
 
 Client identity sync is separate from server request identity. Browser logs should only mirror the minimal current identity needed for correlation, usually `user.id`.
 
-When using `setIdentity` on the client:
+When using `setIdentity(user.id)` on the client:
 
 - Call `clearIdentity()` when the user logs out.
 - Call `clearIdentity()` when the session expires or the auth query resolves to no user.
 - Call `clearIdentity()` in provider cleanup before setting a different identity.
 - Do not keep the previous user identity while showing anonymous, signed-out, or expired-session UI.
-- Prefer clearing first, then setting `{ user: { id: "anonymous" } }` only if anonymous correlation is useful.
 
 ## Sensitive Data
 
@@ -206,6 +205,8 @@ Client logs should be rare. Prefer logging client errors and failed important us
 Do not log in React render paths. If a client log is necessary, emit it from an effect or event handler and dedupe where needed.
 
 When browser transport is enabled, remember that client logs are sent to the server ingestion endpoint. Treat them as production logs, not just DevTools messages.
+
+Send a stable event name, a coarse error type, and a status if it is useful. Browser error messages and stacks stay in the browser. The transport caps batch size and ingestion accepts only bounded fields. Ingested events use `source: "client"` and carry the reported severity as `client.level`. Filter on server provenance for operational paging.
 
 ## Operational Limits And Health Checks
 

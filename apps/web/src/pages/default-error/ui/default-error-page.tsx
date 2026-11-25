@@ -10,35 +10,26 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "
 
 import { CenteredLayout } from "@/widgets/layouts";
 
-const loggedErrorKeys = new Set<string>();
+const lastLoggedAt = new WeakMap<Error, number>();
+const ERROR_LOG_INTERVAL_MS = 30_000;
 
 export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
   useEffect(() => {
-    const normalizedError = error instanceof Error ? error : new Error(String(error));
-    const errorKey = `${normalizedError.name}:${normalizedError.message}:${normalizedError.stack ?? ""}`;
-
-    if (loggedErrorKeys.has(errorKey)) {
-      return;
-    }
-
-    loggedErrorKeys.add(errorKey);
+    if (!(error instanceof Error)) return;
+    const now = Date.now();
+    const lastLog = lastLoggedAt.get(error);
+    if (lastLog !== undefined && now - lastLog < ERROR_LOG_INTERVAL_MS) return;
+    lastLoggedAt.set(error, now);
 
     log.error({
       event: "ui.error.caught",
-      error: {
-        message: normalizedError.message,
-        name: normalizedError.name,
-        stack: normalizedError.stack
-      }
+      error: { name: error.name }
     });
   }, [error]);
 
   const handleRefresh = () => {
     reset();
   };
-
-  // Could also send to external service
-  // sendErrorToService(error)
 
   return (
     <CenteredLayout>
