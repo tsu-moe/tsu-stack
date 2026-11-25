@@ -6,6 +6,8 @@ Use Vite+ (`vp` for packages and scripts, `vpx` for one-off CLIs). Run `vp run c
 
 Read the most specific guide first. Follow links when the task crosses domains.
 
+Use disposable local resources for validation. Confirm the effective target and get explicit user approval before changing an existing database, mutating remote infrastructure, deploying, or publishing. See [Human decisions](.agents/choice-flows.md).
+
 - Work and verification — [Workflow](.agents/workflow.md), [Vite+](.agents/vite-plus.md), [Testing](.agents/testing.md), [Human decisions](.agents/choice-flows.md).
 - Web — [UI](.agents/ui.md), [Routes and Query](.agents/data-flow.md), [API fetching](.agents/api-fetching-patterns.md), [Zustand](.agents/zustand.md), [i18n](.agents/i18n.md), [SEO](.agents/seo.md).
 - APIs and contracts — [oRPC](.agents/orpc.md), [Procedure tests](.agents/orpc-testing.md), [Auth](.agents/auth.md), [Core](.agents/core.md), [TypeScript](.agents/typescript.md).
