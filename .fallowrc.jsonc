@@ -7,6 +7,8 @@
     "packages/i18n/**/*.ts",
     "packages/auth/**/middleware.ts"
   ],
+  // The scaffold smoke script receives this verifier path from CI.
+  "supportEntry": [".github/scripts/scaffold/verify-generated-production.mjs"],
   "ignorePatterns": ["**/*.generated.ts", "**/*.d.ts", "**/*.gen.*"],
   "ignoreDependencies": [
     // Type definitions and other packages that are not directly imported, but used
