@@ -15,11 +15,13 @@ From the CLI package, run `vp check --fix`, `vp test`, and `vp run pack:check`. 
 
 ## Cloudflare D1 setup
 
-Remote work requires explicit Cloudflare setup selection. After files and dependencies are ready, use app-local `wrangler whoami --json`, let the user select an account, and persist its ID. Support logout/login and cancel without discarding the project. Preflight DB names, require explicit reuse consent, and recheck alternatives. Keep the `DB` binding and accept Wrangler’s already-written binding on success. Retry transient remote migrations after creation, then apply local migrations with the final binding. Local-only setup applies local migrations without Docker. On partial failure report the selected account, DB name and ID, failure, and app-local recovery command.
+For local validation use local-only setup or Wrangler fakes. Before invoking Cloudflare setup, get explicit approval for the provisioning and migration. After files and dependencies are ready, use app-local `wrangler whoami --json`, let the user select an account, and persist its ID. Confirm the effective account, Worker environment, and D1 target before creation or migration. Preflight names and get separate consent before reusing an existing database.
+
+Support logout/login and cancellation without discarding the project. Keep the `DB` binding and accept Wrangler’s already-written binding on success. Retry transient migrations on the approved target, then apply local migrations with the final binding. Local-only setup applies local migrations without Docker. On partial failure, report the account, DB name and ID, a credential-free failure summary, and the recovery command. Verify the target and approval before running recovery.
 
 ## Release
 
-Use `vp run release [version]` from clean, current `main` after npm bootstrap. It validates, selects the version with bumpp, checks local/remote/npm conflicts, and atomically pushes a Conventional Commit and annotated version tag to explicit `origin` refs. This changes remote state. Rerun after a push failure to resume the existing commit and tag. Earlier failures restore the version. The script verifies remote refs after ambiguous network failures.
+Get explicit approval for the release version or version selection and its publication before running `vp run release [version]`. Run it from clean, current `main` after npm bootstrap. It validates, selects the version with bumpp, checks local/remote/npm conflicts, and atomically pushes a Conventional Commit and annotated version tag to explicit `origin` refs. The tag triggers npm publication and a GitHub release. Rerun after a push failure to resume the approved commit and tag. Earlier failures restore the version. The script verifies remote refs after ambiguous network failures.
 
 The tag workflow verifies main ancestry and package/tag parity, rebuilds/tests, publishes stable to `latest` and prereleases to `next`, and creates the GitHub release. Rerun the same tag after publication or release failures. The workflow distinguishes registry errors from missing versions and retries only missing work.
 

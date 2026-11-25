@@ -4,7 +4,13 @@ Prefer text columns with a string-union type via Drizzle’s `$type<Type>()`. Ke
 
 ## Schema changes and local migrations
 
-Start local PostgreSQL with `vp run db:dev:start`. After a schema change, run `vp run db:generate` and inspect the migration. Before `vp run db:migrate`, verify the effective `DATABASE_URL` points to localhost or 127.0.0.1. Stop and tell the user if the destination is nonlocal. Use `vp run db:dev:stop` to stop Compose and `vp run db:studio` to inspect the database.
+After a schema change, run `vp run db:generate` and review the SQL. Use `vp run db:migrate` to validate it against a disposable PostgreSQL database. `vp run db:push` applies schema changes directly and is for disposable databases by default. Use reviewed migrations for existing databases.
+
+Before running a database command, resolve the target under the same environment as the command. For Drizzle, an exported `DATABASE_URL` normally takes precedence over `packages/env/.env` through dotenvx. Check any CLI or connection overrides too. Report only the effective host, port, and database name. Keep connection strings, credentials, and environment dumps out of output.
+
+Verify that the endpoint belongs to the intended local PostgreSQL instance. With `vp run db:dev:start`, check the active Docker context, project, and published port. A loopback address can reach a tunnel, proxy, or an unrelated local server. Compose state persists across stops, so use a fresh database for disposable validation. Verify the target before opening `vp run db:studio`, which permits writes.
+
+Get explicit user approval before migrating an existing or remote database, including through a loopback tunnel. Approval must cover the target and the actual operation, including schema push if requested. Follow [Human decisions](choice-flows.md).
 
 The Worker creates `createDb()` for the request and reads the server-only `DATABASE_URL`. Apply PostgreSQL migrations separately before deploying the Worker, since it cannot load migration files at startup.
 
