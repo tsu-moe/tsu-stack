@@ -9,6 +9,17 @@ Keep routine telemetry sparse. Use structured events for business outcomes and o
 - Temporary local debugging logs are allowed during investigation, but remove them before handoff.
 - Existing logging infrastructure, middleware, ingestion, sampling, redaction, or documentation work requested by the user is in scope.
 
+## Business-Critical Features
+
+When a feature implements a critical domain process such as order fulfillment, payment settlement, account provisioning, or a data export, include server-side logging in the implementation by default. Plan the logs alongside the workflow so an operator can tell what completed, what failed, and which business record was affected.
+
+1. At the code that owns the workflow, choose a stable operation name such as `order.fulfill` and attach the opaque order ID. Carry the request or workflow correlation ID across follow-up jobs and callbacks.
+2. Use `logger.set(...)` for facts learned along the way. Record one retained outcome such as `order.fulfilled` or `order.fulfillment.failed` after the result is known. Include safe structured context such as the resulting state, the attempt count, or a stable failure reason. Let the owner of an unexpected exception record its details once.
+3. For actions that need accountability, record `logger.audit(...)` with the server-verified actor, target, and outcome. Record authorization denials and wait until the state change commits before recording success.
+4. During verification, check that a representative success and actionable failure or denial tell the story in the emitted logs. Use a focused smoke test for a security or validation boundary.
+
+Treat one request or job as one wide event. Give independently committed work its own event when it needs a separate record. Routine reads, UI interactions, and retry steps can use existing request telemetry.
+
 ## When To Log
 
 Log after the operation has reached an outcome, not before it starts. `INFO` should describe what happened, not what might happen. `DEBUG` may describe implementation steps while diagnosing or developing, but should not become routine product noise.
@@ -59,7 +70,7 @@ const logger = createLogger({ operation: "database.migrate" });
 try {
   await migrateDatabase();
 } catch (error) {
-  logger.error(error instanceof Error ? error : String(error));
+  logger.error(error);
   logger.outcome("database.migration.failed");
   logger.emit();
   throw error;
@@ -137,7 +148,7 @@ Common causes:
 
 ## Error Handling
 
-Let the boundary that observes the failure record it once. The Hono adapter records thrown errors from `c.error`. `app.onError` translates them into safe responses and can log a fallback for an unexpected error outside the adapter. The TanStack Start request adapter records thrown request errors. For integrations that convert an exception into a response, use their error hook when the owning middleware would only see the status. Keep unexpected diagnostic details in the server log and return safe fields to clients.
+Let the boundary that observes the failure record it once. The Hono adapter records thrown errors from `c.error`. `app.onError` translates them into safe responses and can log a fallback for an unexpected error outside the adapter. The TanStack Start request adapter records thrown request errors. oRPC keeps expected 4xx codes as structured context. Its hooks record exceptions handled internally, and Hono handles errors rethrown by OpenAPI. Better Auth forwards provider warnings and errors as fixed events with no raw provider arguments. Keep unexpected diagnostic details in the server log and return safe fields to clients.
 
 Use structured errors for intentional failures that should produce helpful responses:
 
@@ -191,7 +202,7 @@ Request logging should be sampled and outcome-oriented.
 - Use the shared `REQUEST_LOG_SAMPLING` policy for web and API request loggers so services retain the same failures and slow requests.
 - Keep errors and slow requests.
 - Sample or drop routine successful requests.
-- Force-keep a non-request lifecycle event only when it is deliberately useful despite the request sampling policy.
+- Use `logger.outcome(...)` to retain deliberately named business and lifecycle results past request sampling.
 - Include `requestId`, method, route/path, status, duration, and approved coarse context. Accept only validated request IDs, generate one otherwise, and echo the effective `X-Request-Id` response header.
 - Browser API requests create a request ID when one is not already present. Treat it as correlation metadata, never as identity or authorization. Full OTEL tracing remains an optional deployment feature.
 - Do not derive client IP from forwarding headers unless the runtime also verifies the socket peer
@@ -206,7 +217,7 @@ Do not log in React render paths. If a client log is necessary, emit it from an 
 
 When browser transport is enabled, remember that client logs are sent to the server ingestion endpoint. Treat them as production logs, not just DevTools messages.
 
-Send a stable event name, a coarse error type, and a status if it is useful. Browser error messages and stacks stay in the browser. The transport caps batch size and ingestion accepts only bounded fields. Ingested events use `source: "client"` and carry the reported severity as `client.level`. Filter on server provenance for operational paging.
+Send a stable event name, a coarse error type, and a status if it is useful. Browser error messages and stacks stay in the browser. The browser transport accepts at most 25 events per batch and 2 KiB per serialized event. Ingested events use `source: "client"` and carry the reported severity as `client.level`. Filter on server provenance for operational paging.
 
 ## Operational Limits And Health Checks
 
