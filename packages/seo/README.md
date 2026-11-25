@@ -55,6 +55,8 @@ const site = {
 } satisfies TanStackStartSeoSite;
 ```
 
+For a site mounted under a path such as `/web`, set `basePath: "/web"` and use the site origin for `baseUrl`. Keep route `canonicalPath` values relative to the mount. The helper adds the mount before the locale prefix in canonical, alternate, and Open Graph page URLs.
+
 Then wrap the package in app-specific helpers if you want to inject locale defaults:
 
 ```ts
@@ -193,7 +195,7 @@ If you omit `title`, the package uses `site.defaultTitle`.
 - It does not add favicon, sitemap, stylesheet, preload, or other non-SEO links for you. Keep those in the app shell or route.
 - `includeDocumentMeta` should only be used where you truly want root document tags. TanStack Start does not have Next.js-style metadata inheritance.
 - JSON-LD support is pass-through only. You must provide the final serialized payload yourself.
-- Canonical and alternate links are generated from `canonicalPath`, `baseUrl`, and locale config. If those inputs are wrong, the output URLs will also be wrong.
+- Canonical and alternate links are generated from `canonicalPath`, `baseUrl`, optional `basePath`, and locale config.
 - The package assumes one site-level SEO config per consuming app. If you have multiple brands or hosts, build that branching in the app wrapper.
 
 ## Recommended Integration Pattern

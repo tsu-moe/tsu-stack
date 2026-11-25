@@ -1,40 +1,8 @@
-# Vite Plus (Vite+)
+# Vite+
 
-## What It Is
+Vite+ wraps the pinned pnpm workspace and runs Oxfmt, Oxlint, TypeScript, and Vitest. Use `vp install`, `vp add`, and `vp run <script>` for development. Use `vpx <package>` for one-off CLIs and `vp exec <command>` for an installed binary.
 
-Vite Plus is the all-in-one CLI that replaces pnpm/npm/yarn **and** bundles Oxlint, Oxfmt, Vitest, and staging hooks into a single `defineConfig` in the root `vite.config.ts`.
-
-## CLI Mapping
-
-| Instead of                     | Use                                   |
-| ------------------------------ | ------------------------------------- |
-| `pnpm` / `npm` / `yarn`        | `vp`                                  |
-| `pnpx` / `npx`                 | `vpx`                                 |
-| `pnpm run <script>`            | `vp run <script>`                     |
-| `pnpm run -w <script>`         | `vp run -w <script>` (workspace root) |
-| `pnpm --filter <pkg> <script>` | `vp run --filter <pkg> <script>`      |
-| `pnpm add <dep>`               | `vp add <dep>`                        |
-| `npx <pkg>`                    | `vpx <pkg>`                           |
-
-## Key Behaviors
-
-- `vp run -r <script>` — runs script recursively across all packages
-- `vp check` — lint + typecheck
-- `vp check --fix` — lint + typecheck + format (auto-runs on staged files via hooks)
-- `vp config` — sets up Vite Plus hooks (runs on `prepare`)
-- `vp env doctor` — checks the environment for potential issues, use when environment config seems wrong.
-
-Use `vp check --fix` as the normal cleanup and validation command after code or configuration edits. Prefer the package-local command for scoped work, and use the workspace command from [Workflow](./workflow.md) when changes span packages, generated artifacts, or root configuration. Use [Choice flows](./choice-flows.md) only when a human decision is needed, such as selecting a validation scope for broad work or approving a permission-sensitive command.
-
-## Root `vite.config.ts`
-
-Contains the unified config for:
-
-- **Staged hooks**: `"*": "vp check --fix"` — auto-formats + lints on commit
-- **Vitest**: test includes, global config
-- **Oxfmt**: ignore patterns, import sorting (by FSD layer), Tailwind class sorting
-- **Oxlint**: ESLint plugin integration (`eslint-plugin-fsd-lint`, `@tanstack/eslint-plugin-query`, `eslint-plugin-react-hooks`)
-
-## Mental Model
-
-Think of `vp` as the **only CLI you need** for this project. It wraps pnpm for package management and Vite's ecosystem for build/lint/format/test. Never install or invoke pnpm/npm/yarn directly for standard development.
+- `vp run -w <script>` runs a root script. Use `vp run --filter <package> <script>` for one workspace package and `vp run -r <script>` for all packages with that task.
+- `vp config` sets up hooks through `prepare`. The staged hook runs `vp run fix`. Use `vp env doctor` for toolchain issues.
+- The root [Vite config](../vite.config.ts) owns staging, formatting, lint behavior, and test defaults. The root `dev`, `check`, and `fix` scripts run an [i18n preflight](i18n.md).
+- See [Workflow](workflow.md) for fix scope and timing.

@@ -33,6 +33,7 @@ export function generateTanStackStartSeo({
   const links = alternates
     ? generateTanStackStartAlternateLinks({
         ...alternates,
+        basePath: site.basePath,
         baseUrl: site.baseUrl
       })
     : undefined;

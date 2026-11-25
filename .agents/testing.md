@@ -1,119 +1,19 @@
-# Testing Policy
+# Testing
 
-This document is the authoritative testing policy for contributors and AI agents in this repository.
+Keep starter coverage focused on trust boundaries, input validation, and critical workflows. Add a regression when failure could expose data, bypass protection, corrupt results, or break a supported starter path. Verify routine copy, defaults, and plumbing during implementation. Inspect nearby tests and cover each risk at the smallest meaningful layer.
 
-## Core Policy
+- Unit tests cover deterministic logic, contracts, and isolated UI. Put `<source>.test.ts` directly in the nearest `src/**/__tests__/`.
+- Use [direct oRPC calls](orpc-testing.md) for procedure behavior. Use an integration test for real module interactions that a direct call cannot prove. Keep it in the owning package’s unit lane unless it needs a browser.
+- Keep browser specs in `__e2e__/**/*.spec.ts`. Use [the home spec](../apps/web/__e2e__/home.spec.ts) for role-based locators, URLs relative to `baseURL`, and same-origin traffic against an isolated preview.
 
-- Keep the starter suite focused on smoke coverage for security, external input validation, and critical workflows. Add a regression test when a failure would expose data, bypass a protection, corrupt an important result, or make a supported starter path unusable.
-- Verify routine defaults, formatting, copy, and simple plumbing during implementation. Remove tests that merely repeat those checks or duplicate stronger boundary coverage.
-- Run the narrowest relevant test command after implementation and after the fix command from [Workflow](./workflow.md).
-- Inspect nearby tests before generating new ones.
-- Use Vite+ testing conventions, not standalone Vitest defaults.
+## Commands and setup
 
-## Choose the Test Layer
+Run `vp test` in the owning package after the applicable [fix command](workflow.md). Use `vp run test:unit:run` for cross-package coverage and `vp run test:e2e:run` from the root for browser coverage. Install Chromium once from the web app with `vp exec playwright install chromium`.
 
-Use the smallest layer that proves repository-owned behavior:
+When an existing test lane can prove the boundary, use it. When adding a unit lane to a package without one, configure `test.include` in that package’s `vite.config.ts` using `defineConfig` from `vite-plus` and expose `"test:unit": "vp test"`. Keep every advertised root test lane wired to at least one real task. Follow the [Vite+ test docs](https://viteplus.dev/guide/test).
 
-- **Unit:** deterministic domain logic, contracts, utilities, and isolated component behavior.
-- **oRPC procedure:** middleware, authorization, validation, handler output, and typed errors. Follow [oRPC testing](./orpc-testing.md).
-- **Integration:** interaction between owned modules or a real local boundary when a unit or direct procedure test cannot prove it. Keep it in the owning package's unit lane unless it requires a browser.
-- **E2E:** public browser workflows, routing, rendering, and integration paths that only a running application can prove.
+## Boundaries and fixtures
 
-Do not duplicate the same assertion across layers without a distinct risk. TanStack Query and oRPC client wrappers need focused tests only when they add owned behavior such as key construction, invalidation, or error mapping.
-
-## Test Commands
-
-Canonical commands:
-
-- `vp run test:unit:run`
-- `vp run test:e2e:run`
-
-Prefer package-local test commands when they exist and cover the touched surface. Use the repo wrappers when changes span packages or when package-local coverage is not available.
-
-Use `vp test` for package-local unit tests. For browser tests, run `vp exec playwright install chromium` from `apps/web` once, then run `vp run test:e2e:run` from the repository root.
-
-Every root test lane advertised by the repository or generated-project CI must select at least one workspace task. Do not hide an empty lane with `--pass-with-no-tests` or an equivalent fallback.
-
-## Test Locations
-
-Unit tests:
-
-- `src/**/__tests__/*.test.ts`
-- Name the test after the source basename: `src/example.ts` → `src/__tests__/example.test.ts`.
-- Keep test files directly inside `__tests__`; do not add another directory below it.
-
-End-to-end tests:
-
-- `__e2e__/**/*.spec.ts`
-- Name specs after the user-visible surface or workflow, for example `__e2e__/checkout.spec.ts`.
-
-Use [the home example](../apps/web/__e2e__/home.spec.ts) as a starting point. Navigate with URLs relative to `baseURL` so the configured subpath is preserved. Use role-based locators, keep traffic on the test origin, and use the isolated preview configured in `apps/web/playwright.config.ts`. Adapt the home assertion to the project's own entry point.
-
-## Vite+ / Vitest Setup Rule
-
-When adding tests to a package or app that does not already have Vite+ testing configured:
-
-1. Install and configure Vite+.
-2. Add a root `vite.config.ts` in the package or app being tested.
-3. Do not create `vitest.config.ts`.
-4. Put Vitest config inside `vite.config.ts` using Vite+ conventions.
-
-Default config:
-
-```ts
-import { defineConfig } from "vite-plus";
-
-export default defineConfig({
-  test: {
-    include: ["src/**/__tests__/*.test.ts"]
-  }
-});
-```
-
-Explicit rules:
-
-- The Vitest config belongs in `vite.config.ts`.
-- `vitest.config.ts` should not be used in this repository.
-- Add `"test:unit": "vp test"` to the owning workspace package so the root unit lane discovers it.
-- Follow the Vite+ test docs as the source of truth: https://viteplus.dev/guide/test
-
-## Test Design
-
-Generate behavior-driven tests that prioritize:
-
-- happy paths
-- edge cases and fallback precedence
-- pathological inputs
-- regression-prone cases
-- contract invariants
-
-Prefer:
-
-- table-driven tests
-- testing public contracts over internals
-- small, test-local typed fixtures and builders
-- adding regression tests for bug fixes
-- mirroring nearby test structure
-
-## Third-Party Integrations
-
-Default test commands must not call remote third-party services. They may use disposable repository-owned dependencies and provider fakes on localhost. Exercise owned integration behavior through the real application boundary with representative sanitized fixtures rather than mocking internal implementation details.
-
-A separately invoked sandbox suite may use a provider's official test environment only when local tests cannot prove authentication, SDK compatibility, hosted flows, webhook delivery, or provider configuration. Sandbox tests must use sandbox-only credentials and isolated resources, respect rate limits, clean up when supported, and stay outside routine pull-request checks unless demonstrably reliable.
-
-Test repository-owned calculations, external event validation, lifecycle transitions, idempotency, and user-visible states locally. Never commit secrets, payment details, or personal data in provider-derived fixtures.
-
-Avoid by default:
-
-- snapshots and repository-wide coverage targets
-- broad framework, router, auth, or oRPC mocks
-- remote services, shared development databases, and pre-existing dev servers
-- shared fixture frameworks before repeated, stable reuse justifies one
-
-Mock only nondeterministic or external I/O boundaries that the test does not own, such as a database adapter, clock, or third-party provider. Prefer local deterministic dependencies when their real behavior is part of the test.
-
-## Local Test Database
-
-- Use Wrangler's local D1 binding for integration and E2E tests. Do not introduce a PostgreSQL service or `DATABASE_URL` for this runtime.
-- Apply the checked-in migrations with `vp run db:migrate:local` before a test that needs the local database.
-- Keep tests isolated from the remote D1 database unless the user explicitly requests a remote integration check.
+- Test public contracts with small typed fixtures, using tables where they improve coverage. Cover meaningful success, invalid input, and regression cases. Mock nondeterministic or external I/O only. Avoid broad framework mocks, shared fixture frameworks, and routine snapshots.
+- Routine tests use disposable local services or sanitized provider fakes. Keep real provider sandboxes in a separately invoked lane, with sandbox credentials, isolated resources, rate limits, and cleanup. Use them only for behavior local tests cannot prove. Keep secrets and personal data out of fixtures.
+- For tests that need the database, apply the checked-in migrations with `vp run db:migrate:local` and use Wrangler’s local D1 binding. Keep routine tests isolated from remote D1.

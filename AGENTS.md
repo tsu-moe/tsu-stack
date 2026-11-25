@@ -1,31 +1,14 @@
 # tsu-stack
 
-Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizzle + Better Auth + Paraglide.js, powered by Vite Plus.
+TanStack Start and Hono run in one Cloudflare Worker with Cloudflare D1, oRPC, Drizzle, Better Auth, and Paraglide.js.
 
-## Always
+Use Vite+ (`vp` for packages and scripts, `vpx` for one-off CLIs). Run `vp run check` to validate and `vp run build` to build. Before substantial work, run `vpx @tanstack/intent@latest list` and load directly relevant installed skills.
 
-- Prefer direct solutions for current requirements. Add abstractions or helpers only when they improve readability, reuse, or testability.
-- Keep control flow and types simple and close to their owners. Trust established internal invariants, but validate input, auth, external APIs, and persistence boundaries.
-- Handle realistic edge cases in proportion to their impact. Comment only on non-obvious intent or constraints, explaining why.
-- When building a business-critical feature, instrument its meaningful outcomes in the same change. Follow [Logging](.agents/logging.md).
-- Update documentation only when the user asks or when a user-directed implementation change makes existing guidance inaccurate.
-- Use `vp` for package/scripts and `vpx` for one-off CLIs. Before substantial work, run `vpx @tanstack/intent@latest list` and load a matching local skill only when it directly fits.
+Read the most specific guide first. Follow links when the task crosses domains.
 
-Common commands:
-
-- `vp run dev` — start the development servers.
-- `vp run check` — generate Paraglide output when needed, then check the workspace.
-- `vp check --fix` — package-local formatting, lint fixes, and typecheck.
-- `vp run -w fix` — workspace fix after cross-package or root changes.
-- `vp run build` — build all packages.
-
-## Guidance
-
-Open the most specific guide first and follow its links only when the task crosses concerns.
-
-- Workflow and tooling: [Workflow](.agents/workflow.md), [Vite+](.agents/vite-plus.md), [Testing](.agents/testing.md), [Choice flows](.agents/choice-flows.md).
-- Web UI and data: [UI](.agents/ui.md), [Data flow](.agents/data-flow.md), [API fetching](.agents/api-fetching-patterns.md), [Zustand](.agents/zustand.md).
-- Server and contracts: [oRPC](.agents/orpc.md), [oRPC testing](.agents/orpc-testing.md), [Auth](.agents/auth.md), [Core](.agents/core.md), [TypeScript](.agents/typescript.md).
-- Platform concerns: [Database](.agents/database.md), [Environment variables and bindings](.agents/environment-variables.md), [Media storage](.agents/media-storage.md), [Logging](.agents/logging.md).
-- Product concerns: [i18n](.agents/i18n.md), [SEO](.agents/seo.md), [End-to-end features](.agents/end-to-end-features.md).
-- Scaffolding work: [CLI](.agents/cli.md).
+- Work and verification — [Workflow](.agents/workflow.md), [Vite+](.agents/vite-plus.md), [Testing](.agents/testing.md), [Human decisions](.agents/choice-flows.md).
+- Web — [UI](.agents/ui.md), [Routes and Query](.agents/data-flow.md), [API fetching](.agents/api-fetching-patterns.md), [Zustand](.agents/zustand.md), [i18n](.agents/i18n.md), [SEO](.agents/seo.md).
+- APIs and contracts — [oRPC](.agents/orpc.md), [Procedure tests](.agents/orpc-testing.md), [Auth](.agents/auth.md), [Core](.agents/core.md), [TypeScript](.agents/typescript.md).
+- Platform — [Database](.agents/database.md), [Environment and bindings](.agents/environment-variables.md), [Media uploads](.agents/media-storage.md), [Logging for business-critical features](.agents/logging.md).
+- [End-to-end features](.agents/end-to-end-features.md).
+- [Scaffolding CLI](.agents/cli.md).

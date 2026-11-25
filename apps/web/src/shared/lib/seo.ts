@@ -10,6 +10,7 @@ import { appConfig } from "@/config/app.config";
 
 const site = {
   applicationName: appConfig.site.longName,
+  basePath: appConfig.site.basePath,
   baseUrl: appConfig.site.baseUrl,
   defaultDescription: appConfig.site.description,
   defaultImages: [
