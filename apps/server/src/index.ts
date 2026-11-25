@@ -56,7 +56,7 @@ app.use(
 app.use(
   "/*",
   cors({
-    allowHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
+    allowHeaders: ["Content-Type", "Authorization", "X-Request-Id", "X-Evlog-Source"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
     exposeHeaders: [REQUEST_ID_HEADER],

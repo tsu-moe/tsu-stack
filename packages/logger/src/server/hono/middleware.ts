@@ -80,14 +80,17 @@ export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}):
   const evlogMiddleware = createEvlogHonoMiddleware(evlogOptions);
 
   return async (context, next) => {
-    const requestId = resolveRequestId(context.req.raw.headers, requestIdOptions);
+    const { raw } = context.req;
+    const requestId = resolveRequestId(raw.headers, requestIdOptions);
+    if (raw.headers.get(REQUEST_ID_HEADER) !== requestId) {
+      const headers = new Headers(raw.headers);
+      headers.set(REQUEST_ID_HEADER, requestId);
+      context.req.raw = new Request(raw, { headers });
+    }
     context.set("requestId", requestId);
     context.header(requestIdOptions.headerName ?? REQUEST_ID_HEADER, requestId);
 
-    return evlogMiddleware(context, async () => {
-      context.get("log")?.set({ requestId });
-      await next();
-    });
+    return evlogMiddleware(context, next);
   };
 }
 

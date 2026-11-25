@@ -224,3 +224,21 @@ describe("operational rate limits", () => {
     expect(limited.headers.get("retry-after")).toBeTruthy();
   });
 });
+
+it("allows the evlog browser transport to preflight log ingestion", async () => {
+  const { app } = await loadApp({ enableDocs: false });
+  const response = await app.request("/server/_logs/ingest", {
+    method: "OPTIONS",
+    headers: {
+      Origin: "http://localhost:3000",
+      "Access-Control-Request-Method": "POST",
+      "Access-Control-Request-Headers": "content-type,x-evlog-source"
+    }
+  });
+
+  expect(response.status).toBe(204);
+  expect(response.headers.get("access-control-allow-origin")).toBe("http://localhost:3000");
+  expect(response.headers.get("access-control-allow-headers")?.toLowerCase().split(/,\s*/)).toEqual(
+    expect.arrayContaining(["content-type", "x-evlog-source"])
+  );
+});
