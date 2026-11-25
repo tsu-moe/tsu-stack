@@ -2,11 +2,9 @@
 
 Use `evlog` through `@tsu-stack/logger` only. Do not install or import `evlog` directly from `apps/*` or feature packages; the logger package is the facade and adapter boundary.
 
-If logging is not part of the task, stop here and do not add new durable logs.
-
 ## Default Rule
 
-Do not add or retain application logs during normal implementation work unless the user explicitly asks for logging or the flow is clearly audit, security, or otherwise high-risk.
+Keep routine telemetry sparse. Use structured events for business outcomes and operational failures that warrant logs. Use evlog audit records for security-sensitive and accountability-relevant actions such as provisioning accounts, changing access, revoking credentials, exporting data, and deleting records.
 
 - Temporary local debugging logs are allowed during investigation, but remove them before handoff.
 - Existing logging infrastructure, middleware, ingestion, sampling, redaction, or documentation work requested by the user is in scope.
@@ -22,7 +20,7 @@ Good candidates:
 - Business outcomes the product owner would recognize.
 - Failed operations that need investigation.
 - Expected but actionable degraded outcomes.
-- Audit-worthy security or compliance events, with explicit approval.
+- Audit-worthy security or compliance events, including authorization denials for audited actions.
 - Lifecycle events that are rare and useful, such as server startup or migration completion.
 
 Poor candidates:
@@ -41,32 +39,32 @@ Poor candidates:
 
 A `WARN` or `ERROR` should be a call to action. If nobody should react, do not use those levels.
 
-## Structure
+## Event Names
 
 Keep messages stable and put data in fields.
 
+| Field          | Meaning                                                                                         | Example                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `operation`    | Work the request or job is doing. Use `noun.verb` with a present-tense verb.                    | `database.migrate`, `user.create`                                |
+| `event`        | A named occurrence or result. Use a past-tense verb or outcome as the final segment.            | `server.started`, `database.migration.completed`, `user.created` |
+| `audit.action` | Stable intent for an audited action. Use `noun.verb` and record its outcome in `audit.outcome`. | `user.create`, `invoice.refund`, `api-key.revoke`                |
+
+Use lowercase dot-separated names and hyphens for multiword segments. Keep names independent of route paths, handler names, IDs, labels, and localized copy. Treat them as stable identifiers once a query, alert, or UI depends on them. Request logs can rely on their HTTP fields when no named operation or event adds information. Use structured fields such as `profile.id`, `reason`, or `attempt` for details that vary by record.
+
+For request and workflow logging, prefer evlog wide events. A standalone job owns a single emit for each logger instance.
+
 ```ts
-// Avoid
-log.info("server", `Server running on ${url}`);
-
-// Prefer
-log.info({ event: "server_started", url });
-```
-
-For request and workflow logging, prefer evlog wide-event APIs.
-
-```ts
-const logger = createLogger({ operation: "server__database_migration" });
+const logger = createLogger({ operation: "database.migrate" });
 
 try {
   await migrateDatabase();
-  logger.emit({ event: "database_migration_completed" });
 } catch (error) {
-  logger.error(error instanceof Error ? error : String(error), {
-    event: "database_migration_failed"
-  });
-  logger.emit({ _forceKeep: true });
+  logger.error(error instanceof Error ? error : String(error));
+  logger.emit({ event: "database.migration.failed" });
+  throw error;
 }
+
+logger.emit({ event: "database.migration.completed" });
 ```
 
 For framework request handlers, use the request-scoped logger provided by middleware:
@@ -74,9 +72,51 @@ For framework request handlers, use the request-scoped logger provided by middle
 - Hono: `c.get("log")`
 - TanStack Start/oRPC context: pass and use the provided request logger
 
-Do not create a new standalone logger inside a request if a request logger is already available.
-TanStack request middleware covers SSR, server routes, and server functions; do not add a second
-server-function or outer-entry request logger around it.
+TanStack request middleware covers SSR, server routes, and server functions. Complete request log enrichment before handing back the response. Work that finishes during streaming or runs in the background needs its own logger and can carry the original request ID for correlation.
+
+## Audit Records
+
+Use evlog’s reserved `audit` envelope. With one audit action and an active request logger, call `logger.audit(...)` and let middleware emit. For standalone work, auth lifecycle hooks, and independent actions in a batch, call `audit(...)` from `@tsu-stack/logger/server` once per action with a shared `correlationId` when appropriate. A request wide event has room for one audit record. Repeated `logger.audit(...)` calls merge into the same envelope.
+
+```ts
+const auditSubject = {
+  action: "invoice.refund",
+  actor: { type: "user", id: user.id },
+  target: { type: "invoice", id: invoice.id }
+} as const;
+
+if (!canRefund(user, invoice)) {
+  logger.audit.deny("insufficient_permissions", auditSubject);
+  throw createError({ status: 403, message: "Forbidden" });
+}
+
+try {
+  await refundInvoice(invoice.id);
+} catch (error) {
+  logger.audit({ ...auditSubject, outcome: "failure", reason: "refund_failed" });
+  throw error;
+}
+
+logger.audit({ ...auditSubject, outcome: "success" });
+```
+
+- Record success after the change commits. Use `failure` when execution fails and `denied` when authorization rejects the action. An audit record can describe an attempt even when no change occurred.
+- Build the actor from server-owned identity. Use stable IDs and the appropriate evlog actor type (`user`, `system`, `api`, or `agent`). Capture `target.type` and `target.id` when known and safe to persist. For multi-tenant actions, include the verified tenant scope in the record.
+- Use stable reason codes and allowlisted change fields. Keep emails, credentials, raw exceptions, session data, and user-provided prose out of the audit payload. Keep diagnostic error details on the operational event.
+- evlog adds `audit.version` and `audit.idempotencyKey` and retains audit records past tail sampling. `requestId` on a request event and `audit.correlationId` on a standalone event can connect it to operational telemetry. Include IP addresses or user agents only when a deployment has a documented need and a trusted source.
+- The starter records `user.create` when Better Auth creates the account. The provisioning service is the actor and the persisted user is the target. A synthetic duplicate signup does not produce a creation record.
+
+### Frontend Consumption
+
+Query trusted server-side audit records through an authorized, scope-filtered, paginated endpoint. Project each wide event to a public row with an opaque row ID, `timestamp`, `audit.version`, `audit.action`, `audit.outcome`, and the actor, target, reason, and change fields the viewer may see. Browser telemetry stays under `client` and ingestion strips its `audit` field.
+
+Use the full action string as the lookup key for localized messages, icons, and specialized components. Use `outcome` for wording and status badges, and `target.type` for resource links. For example, a `user.create` renderer can show “Account created” for a successful outcome. Give unknown actions or newer versions a generic renderer. Keep timestamps and permission decisions on the data contract so the UI does not have to recover them from prose or parse segments of an action key.
+
+### Persistence
+
+The default server output is evlog’s console stream. A deployment that needs searchable history configures a drain for every process that emits audits. Use a scoped audit dataset or an append-only store, with explicit retention and access controls. Use evlog’s `auditOnly` and `signed` wrappers when tamper evidence is required, and verify flush and retry behavior for the deployment runtime. For changes that require atomic persistence with their audit record, use the same transaction or a transactional outbox. Before using evlog’s generated idempotency key as a unique store key, account for independent actions with identical actor, target, action, and outcome in the same second in evlog 2.36.
+
+[evlog audit schema](https://www.evlog.dev/use-cases/audit/schema) · [Recording audit events](https://www.evlog.dev/use-cases/audit/recording) · [Drains and integrity](https://www.evlog.dev/use-cases/audit/pipeline)
 
 ## Post-Emit Warnings
 
@@ -86,35 +126,13 @@ Common causes:
 
 - Wrapping a framework handler with a second request logger when request middleware already creates and emits one. In TanStack Start, rely on `tanstackStartRequestLoggerMiddleware` instead of adding another outer request logger around the same request.
 - Emitting inside a route or handler and then letting middleware emit again on that same logger.
-- Calling `emit()` in both a success path and a catch or finalizer for the same logger instance.
+- Emitting during a retry and then reusing the logger for the terminal outcome.
 
 `logger.error(...)` does not auto-emit. Add the error context you need, then make sure `emit()` still happens exactly once for that logger lifetime.
 
 ## Error Handling
 
-Prefer global error handling over per-catch logging in request code. In Hono, register one `app.onError` handler, log the thrown value with the request-scoped logger, parse it, then return a structured response.
-
-```ts
-import { parseError } from "@tsu-stack/logger/server";
-import type { ContentfulStatusCode } from "hono/utils/http-status";
-
-app.onError((error, c) => {
-  c.get("log").error(error);
-
-  const parsed = parseError(error);
-
-  return c.json(
-    {
-      message: parsed.message,
-      ...(parsed.code ? { code: parsed.code } : {}),
-      ...(parsed.why ? { why: parsed.why } : {}),
-      ...(parsed.fix ? { fix: parsed.fix } : {}),
-      ...(parsed.link ? { link: parsed.link } : {})
-    },
-    parsed.status as ContentfulStatusCode
-  );
-});
-```
+Let the boundary that observes the failure record it once. The Hono adapter records thrown errors from `c.error`. `app.onError` translates them into safe responses and can log a fallback for an unexpected error outside the adapter. The TanStack Start request adapter records thrown request errors. For integrations that convert an exception into a response, use their error hook when the owning middleware would only see the status. Keep unexpected diagnostic details in the server log and return safe fields to clients.
 
 Use structured errors for intentional failures that should produce helpful responses:
 
@@ -178,7 +196,7 @@ Request logging should be sampled and outcome-oriented.
 
 ## Client Logging
 
-Client logs should be rare. Prefer logging client errors, failed important user workflows, and explicitly approved audit/security events.
+Client logs should be rare. Prefer logging client errors and failed important user workflows. The server records authoritative audit events.
 
 Do not log in React render paths. If a client log is necessary, emit it from an effect or event handler and dedupe where needed.
 
@@ -189,7 +207,7 @@ When browser transport is enabled, remember that client logs are sent to the ser
 Keep the server boundaries and their intent aligned:
 
 - General Hono request bodies are capped at 1 MiB. Routes requiring larger uploads must use a deliberately designed streaming or upload path instead of raising the global limit casually.
-- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP. Malformed JSON returns `400`; schema-invalid or oversized batches return `422` and are rejected atomically.
+- Browser log ingestion accepts at most 64 KiB and 50 events per request, with 60 requests per minute per resolved client IP. Malformed JSON returns `400`, a body over the byte limit returns `413`, and schema-invalid or over-count batches return `422`. Rejected batches emit no events.
 - Database readiness checks allow 30 requests per minute per resolved client IP. Liveness checks are intentionally not rate limited.
 - The in-memory operational limits are per Node process or Worker isolate. Multi-replica deployments that need a global abuse boundary must also enforce one at the proxy/edge or use an atomic shared limiter.
 - A missing client address uses a shared `unknown` bucket. Fix production IP resolution rather than increasing limits to compensate.

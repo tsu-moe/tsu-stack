@@ -163,6 +163,26 @@ describe("request correlation", () => {
     expect(requestId).toBeTruthy();
     expect(requestId).not.toBe("invalid request id");
   });
+
+  it("passes the same validated request ID to Better Auth and the client", async () => {
+    const { app } = await loadApp({ enableDocs: false });
+    const { auth } = await import("@tsu-stack/auth/index");
+    const handler = vi.spyOn(auth, "handler").mockResolvedValue(new Response(null, { status: 204 }));
+
+    try {
+      const response = await app.request("/server/auth/get-session", {
+        headers: { "X-Request-Id": "invalid request id" }
+      });
+
+      const requestId = response.headers.get("X-Request-Id");
+      expect(response.status).toBe(204);
+      expect(requestId).toBeTruthy();
+      expect(requestId).not.toBe("invalid request id");
+      expect(handler.mock.calls[0]?.[0].headers.get("X-Request-Id")).toBe(requestId);
+    } finally {
+      handler.mockRestore();
+    }
+  });
 });
 
 describe("operational rate limits", () => {

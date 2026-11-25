@@ -3,6 +3,8 @@ import { BlockList, isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { createMiddleware } from "hono/factory";
 
+import { REQUEST_ID_HEADER } from "@tsu-stack/logger/request-id";
+
 const CLIENT_IP_HEADER = "x-tsu-client-ip";
 
 export type ClientIpVariables = {
@@ -25,9 +27,10 @@ export function clientIpMiddleware(trustedProxies: string[]) {
   });
 }
 
-export function withClientIp(request: Request, clientIp: string) {
+export function withAuthRequestContext(request: Request, clientIp: string, requestId: string) {
   const headers = new Headers(request.headers);
   headers.set(CLIENT_IP_HEADER, clientIp);
+  headers.set(REQUEST_ID_HEADER, requestId);
   return new Request(request, { headers });
 }
 

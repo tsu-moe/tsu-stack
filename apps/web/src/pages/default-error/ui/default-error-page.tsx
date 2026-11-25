@@ -24,7 +24,7 @@ export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
     loggedErrorKeys.add(errorKey);
 
     log.error({
-      action: "global_error_boundary",
+      event: "ui.error.caught",
       error: {
         message: normalizedError.message,
         name: normalizedError.name,

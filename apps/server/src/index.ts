@@ -35,7 +35,7 @@ import {
   type HonoLogVariables
 } from "@tsu-stack/logger/server/hono/middleware";
 
-import { type ClientIpVariables, clientIpMiddleware, withClientIp } from "#@/shared/lib/client-ip";
+import { type ClientIpVariables, clientIpMiddleware, withAuthRequestContext } from "#@/shared/lib/client-ip";
 import "#@/shared/lib/logger";
 import { fixedWindowRateLimit } from "#@/shared/lib/rate-limit";
 
@@ -102,13 +102,8 @@ app.use("/rpc/health/ready", readinessRateLimit);
 app.use("/*", bodyLimit({ maxSize: 1024 * 1024 }));
 
 app.onError((error, c) => {
-  if (!(error instanceof HTTPException && error.status < 500)) {
-    const requestLog = c.get("log");
-    if (requestLog) {
-      requestLog.error(error);
-    } else {
-      log.error({ event: "hono_global_error", error });
-    }
+  if (!c.get("log") && !(error instanceof HTTPException && error.status < 500)) {
+    log.error({ event: "http.request.failed", error });
   }
 
   if (!(error instanceof HTTPException) && !isEvlogError(error)) {
@@ -152,7 +147,9 @@ app.get("/auth/open-api/generate-schema", async (c) => {
   return c.json(schema);
 });
 
-app.on(["POST", "GET"], "/auth/*", async (c) => auth.handler(withClientIp(c.req.raw, c.get("clientIp"))));
+app.on(["POST", "GET"], "/auth/*", (c) =>
+  auth.handler(withAuthRequestContext(c.req.raw, c.get("clientIp"), c.get("requestId")))
+);
 
 const errorStatusMap = { ...COMMON_ERROR_STATUS_MAP, SERVICE_UNAVAILABLE: 503 };
 const openApiGenerator = new OpenAPIGenerator({
@@ -282,7 +279,7 @@ if (!ENV_SERVER.IS_BUILD) {
       },
       (info) => {
         createLogger({
-          event: "server_started",
+          event: "server.started",
           url: `http://localhost:${info.port}${new URL(ENV_SERVER.VITE_SERVER_URL).pathname}`
         }).emit({ _forceKeep: true });
       }

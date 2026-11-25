@@ -97,8 +97,7 @@ export { LOG_SERVICES };
  * ```ts
  * import { log } from "@tsu-stack/logger/client";
  *
- * log.info({ event: "page_view", path: location.pathname });
- * log.error({ event: "global_error_boundary", error });
+ * log.error({ event: "ui.error.caught", error });
  * ```
  */
 export const log = {

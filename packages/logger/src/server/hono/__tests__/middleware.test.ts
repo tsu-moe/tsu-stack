@@ -19,7 +19,14 @@ vi.mock("evlog", () => {
 const app = new Hono();
 app.post("/_logs/ingest", honoLogIngestionMiddleware());
 
-function payload(event: { note?: string; status?: number; user?: { id: string } } = {}) {
+function payload(
+  event: {
+    audit?: { action: string; actor: { type: string; id: string }; outcome: string };
+    note?: string;
+    status?: number;
+    user?: { id: string };
+  } = {}
+) {
   return {
     event: {
       environment: "test",
@@ -38,7 +45,13 @@ describe("honoLogIngestionMiddleware", () => {
     const response = await app.request("/_logs/ingest", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify([payload({ status: 200, user: { id: "forged" } })])
+      body: JSON.stringify([
+        payload({
+          audit: { action: "user.create", actor: { type: "user", id: "forged" }, outcome: "success" },
+          status: 200,
+          user: { id: "forged" }
+        })
+      ])
     });
 
     expect(response.status).toBe(204);
@@ -46,6 +59,7 @@ describe("honoLogIngestionMiddleware", () => {
       client: expect.objectContaining({ status: 200, user: { id: "forged" } }),
       source: "client"
     });
+    expect(infoLog.mock.calls[0]?.[0]?.client).not.toHaveProperty("audit");
   });
 
   it("rejects a chunked body larger than 64 KiB", async () => {

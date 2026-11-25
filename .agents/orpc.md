@@ -12,7 +12,7 @@ This guide is intentionally repo-specific. It documents the current preferred wa
 
 - Keep server procedure definitions explicit and typed.
 - Keep router handlers small, predictable, and easy to scan.
-- When logging is explicitly needed, use request-scoped, outcome-oriented logging without duplicating middleware or global error logs.
+- Use request-scoped, outcome-oriented logging and record audit-worthy actions with evlog’s audit API.
 - Prefer type-safe oRPC errors from procedure definition through client handling.
 - Keep TanStack Query wrapper structure in [API fetching patterns](./api-fetching-patterns.md), not in this file.
 
@@ -91,8 +91,8 @@ Equivalent `ORPCError` throws are fine when the code, status, and data match a d
 oRPC handlers receive the request-scoped logger as `context.logger`.
 
 - Follow [Logging patterns](./logging.md) for event shape, emit lifecycle, redaction, and global error handling.
-- Do not add durable procedure logs unless logging was explicitly requested or the flow is audit, security, or otherwise high-risk.
-- Reuse `context.logger`; do not create a standalone logger inside a procedure.
+- Use `context.logger.audit(...)` for audit-worthy actions and `logger.set(...)` for additional operational fields.
+- Reuse `context.logger` for request telemetry. Follow the audit guide for batches that record several independent actions.
 - If extra context is needed for an unexpected failure, attach it with `logger.set(...)` and let shared error handling record the failure once.
 - Do not log routine reads or duplicate middleware and global error logging.
 
@@ -104,7 +104,7 @@ middleware perform the single terminal emit:
   const logger = context.logger;
 
   logger.set({
-    procedure: "profile.edit",
+    operation: "profile.edit",
     profile: { id: context.session.user.id },
   });
 
@@ -115,7 +115,7 @@ middleware perform the single terminal emit:
   }
 
   logger.set({
-    event: "profile_edit_completed",
+    event: "profile.updated",
     profile: { id: row.id },
   });
 

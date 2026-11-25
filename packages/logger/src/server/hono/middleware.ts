@@ -42,7 +42,7 @@ const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
  * const app = new Hono<HonoLogVariables>();
  * ```
  */
-export type HonoLogVariables = EvlogVariables;
+export type HonoLogVariables = EvlogVariables & { Variables: { requestId: string } };
 
 type HonoLoggerMiddlewareOptions = EvlogHonoOptions & {
   requestIdOptions?: RequestIdOptions;
@@ -81,6 +81,7 @@ export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}):
 
   return async (context, next) => {
     const requestId = resolveRequestId(context.req.raw.headers, requestIdOptions);
+    context.set("requestId", requestId);
     context.header(requestIdOptions.headerName ?? REQUEST_ID_HEADER, requestId);
 
     return evlogMiddleware(context, async () => {
@@ -135,7 +136,7 @@ export function honoLogIngestionMiddleware(options: HonoLogIngestionOptions = {}
 }
 
 function emitClientLog(payload: ClientLogPayload) {
-  const { level: _level, timestamp, ...event } = payload.event;
+  const { audit: _audit, level: _level, timestamp, ...event } = payload.event;
   const normalizedEvent: NormalizedEvent = {
     ...(timestamp !== undefined && event.clientTimestamp === undefined ? { clientTimestamp: timestamp } : {}),
     ...event

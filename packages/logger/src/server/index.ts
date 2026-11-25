@@ -89,6 +89,8 @@ export function initLogger(config: ServerLoggerConfig = {}) {
  */
 export { LOG_SERVICES };
 
+export { audit, type AuditFields } from "evlog";
+
 /**
  * Create a standalone wide-event logger for jobs, scripts, or non-request work.
  *
@@ -96,9 +98,9 @@ export { LOG_SERVICES };
  * ```ts
  * import { createLogger } from "@tsu-stack/logger/server";
  *
- * const logger = createLogger({ operation: "sync_users" });
+ * const logger = createLogger({ operation: "user.sync" });
  * logger.set({ users: { processed: 42 } });
- * logger.emit();
+ * logger.emit({ event: "user.synced" });
  * ```
  */
 export const createLogger = createEvlogLogger;
@@ -123,8 +125,8 @@ export const createRequestLogger = createEvlogRequestLogger;
  * ```ts
  * import { log } from "@tsu-stack/logger/server";
  *
- * log.info({ event: "server_started", port: 5000 });
- * log.error({ event: "rpc_handler_error", error });
+ * log.info({ event: "server.started", port: 5000 });
+ * log.error({ event: "rpc.request.failed", error });
  * ```
  */
 export const log = evlog;

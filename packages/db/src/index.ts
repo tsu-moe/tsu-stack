@@ -42,10 +42,10 @@ const MIGRATION_RETRY_DELAY_MS = 3_000;
  * in the __drizzle_migrations table and skips anything already applied.
  */
 export async function migrateDatabase(): Promise<void> {
-  const log = createLogger({ operation: "server__database_migration" });
+  const log = createLogger({ operation: "database.migrate" });
 
   if (migrationFnCalled) {
-    log.emit({ event: "database_migration_skipped", reason: "already_called" });
+    log.emit({ event: "database.migration.skipped", reason: "already_called" });
     return;
   }
 
@@ -54,8 +54,7 @@ export async function migrateDatabase(): Promise<void> {
   if (ENV_SERVER.IS_BUILD) {
     log.emit({
       environment: ENV_SERVER.NODE_ENV,
-      event: "database_migration_skipped",
-
+      event: "database.migration.skipped",
       reason: "build_process"
     });
     return;
@@ -64,8 +63,7 @@ export async function migrateDatabase(): Promise<void> {
   if (ENV_SERVER.NODE_ENV !== "production") {
     log.emit({
       environment: ENV_SERVER.NODE_ENV,
-      event: "database_migration_skipped",
-
+      event: "database.migration.skipped",
       reason: "non_production"
     });
     return;
@@ -76,29 +74,24 @@ export async function migrateDatabase(): Promise<void> {
       await migrate(db, {
         migrationsFolder: join(import.meta.dirname, "migrations")
       });
-      log.emit({ attempt, event: "database_migration_completed" });
-      return;
     } catch (error) {
-      log.error(error instanceof Error ? error : String(error), {
-        attempt,
-        event: "database_migration_failed",
-        maxAttempts: MIGRATION_MAX_ATTEMPTS
-      });
-
       if (attempt === MIGRATION_MAX_ATTEMPTS) {
+        log.error(error instanceof Error ? error : String(error), {
+          attempt,
+          event: "database.migration.failed",
+          maxAttempts: MIGRATION_MAX_ATTEMPTS
+        });
         log.emit({ _forceKeep: true });
         throw error;
       }
 
-      log.emit({
-        attempt,
-        event: "database_migration_retrying",
-        maxAttempts: MIGRATION_MAX_ATTEMPTS,
-        retryDelayMs: MIGRATION_RETRY_DELAY_MS
-      });
       await new Promise((resolve) => {
         setTimeout(resolve, MIGRATION_RETRY_DELAY_MS);
       });
+      continue;
     }
+
+    log.emit({ attempt, event: "database.migration.completed", _forceKeep: true });
+    return;
   }
 }
