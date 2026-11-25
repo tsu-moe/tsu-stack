@@ -217,7 +217,12 @@ export async function transformTemplate(
   // escape it for the format of each file it lands in.
   const displayNameInJson = JSON.stringify(input.displayName).slice(1, -1);
   await replaceInFile(join(root, "AGENTS.md"), (content) =>
-    content.replace(/^# tsu-stack$/mu, () => `# ${input.displayName}`)
+    content
+      .replace(/^- (?:Scaffolding work: )?\[[^\]\r\n]+\]\(\.agents\/cli\.md\)\.?[ \t]*(?:\r?\n|$)/mu, "")
+      .replace(/^# tsu-stack$/mu, () => `# ${input.displayName}`)
+  );
+  await replaceInFile(join(root, ".github", "CONTRIBUTING.md"), (content) =>
+    content.replace(/^## Scaffolding CLI[ \t]*\r?\n[\s\S]*?(?=^#{1,2}[ \t]|(?![\s\S]))/mu, "")
   );
   await replaceInFile(join(root, "apps", "web", "src", "config", "app.config.ts"), (content) =>
     content

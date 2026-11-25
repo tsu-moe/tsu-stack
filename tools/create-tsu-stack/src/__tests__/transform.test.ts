@@ -30,11 +30,15 @@ const template: ResolvedTemplate = {
 async function fixture(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "create-tsu-stack-transform-"));
   const files: Record<string, string> = {
+    ".github/CONTRIBUTING.md":
+      "# Contributing\n\n## Commit Conventions\n\nUse Conventional Commits.\n\n" +
+      "## Scaffolding CLI\n\nSee [CLI](../.agents/cli.md).\n\n### Release\n\nRun the release from main.\n\n" +
+      "## Pull Request Process\n\nOpen a pull request.\n",
     ".github/README.md": '<a href="upstream">tsu!stack</a> alt="tsu!stack Logo"',
     ".github/workflows/ci.yml": "template maintainer CI",
     ".github/workflows/release.yml": "template package release",
     ".agents/cli.md": "Generator maintainer instructions",
-    "AGENTS.md": "# tsu-stack\nUse @tsu-stack/core.",
+    "AGENTS.md": "# tsu-stack\nUse @tsu-stack/core.\n\n- [Scaffolding CLI](.agents/cli.md).\n",
     "apps/web/src/config/app.config.ts": 'export const app = { longName: "The tsu!stack", shortName: "tsu!stack" }',
     "apps/web/wrangler.jsonc":
       '{\n  // Worker identity\n  "name": "tsu-stack",\n  "d1_databases": [{ "binding": "DB", "database_name": "tsu-stack-db", "database_id": "00000000-0000-0000-0000-000000000000" }]\n}\n',
@@ -63,6 +67,11 @@ describe("template identity transformation", () => {
 
     expect(await pathExists(join(root, "tools/create-tsu-stack"))).toBe(false);
     expect(await pathExists(join(root, ".agents/cli.md"))).toBe(false);
+    expect(await readFile(join(root, "AGENTS.md"), "utf8")).toBe("# Moon Garden\nUse @moon-garden/core.\n\n");
+    expect(await readFile(join(root, ".github/CONTRIBUTING.md"), "utf8")).toBe(
+      "# Contributing\n\n## Commit Conventions\n\nUse Conventional Commits.\n\n" +
+        "## Pull Request Process\n\nOpen a pull request.\n"
+    );
     expect(await pathExists(join(root, ".github/workflows/release.yml"))).toBe(false);
     expect(await pathExists(join(root, "pnpm-lock.yaml"))).toBe(false);
     const packageJsonContent = await readFile(join(root, "package.json"), "utf8");
@@ -102,6 +111,20 @@ describe("template identity transformation", () => {
     });
     expect(metadata.reproducibleCommand).toContain(`--ref '${"a".repeat(40)}'`);
     expect(await readFile(join(root, ".github/README.md"), "utf8")).toContain('href="upstream"');
+  });
+
+  it("removes the legacy CLI breadcrumb without dropping surrounding guidance", async () => {
+    const root = await fixture();
+    const agentsPath = join(root, "AGENTS.md");
+    await writeFile(
+      agentsPath,
+      "# tsu-stack\r\n\r\n- [Testing](.agents/testing.md).\r\n- Scaffolding work: [CLI](.agents/cli.md).\r\n",
+      "utf8"
+    );
+
+    await transformTemplate(root, input, template, "1.2.3");
+
+    expect(await readFile(agentsPath, "utf8")).toBe("# Moon Garden\r\n\r\n- [Testing](.agents/testing.md).\r\n");
   });
 
   it("quotes replay command arguments for a POSIX shell", () => {

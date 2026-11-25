@@ -1,38 +1,8 @@
-# Environment Variables
+# Environment variables
 
-## Single Source of Truth
+Start local development from [the env example](../packages/env/.env.example) in `packages/env/.env`. The env package validates settings with Zod and `@t3-oss/env-core`.
 
-All env vars live in `packages/env/.env` (copy from `.env.example`). Validated by Zod at import time via `@t3-oss/env-core`.
-
-## Three Scoped Objects
-
-| Object               | Scope                        |
-| -------------------- | ---------------------------- |
-| `ENV_SERVER`         | Server-only (`apps/server`)  |
-| `ENV_WEB_ISOMORPHIC` | Client + server (`apps/web`) |
-| `ENV_WEB_SERVER`     | Web server-only              |
-
-## Client Exposure Rule
-
-Only vars prefixed with `VITE_` are available on the client (`import.meta.env`). Server-only vars (`DATABASE_URL`, `BETTER_AUTH_SECRET`) must never be exposed to the client.
-
-## When Adding/Updating Env Vars
-
-Update in **six places**:
-
-1. `packages/env/src/` — add Zod validation to the appropriate scoped object
-2. `docker-compose.yaml` — add non-sensitive build inputs to `build.args`; add runtime values to `environment` for affected services
-3. `Dockerfile` — add matching `ARG` + `ENV` declarations only for non-sensitive build inputs. Keep `DATABASE_URL`, `BETTER_AUTH_SECRET`, and other credentials runtime-only; the Docker builder mounts `packages/env/.env.example` for tests and prerender validation. If a new build step requires sensitive input, use a BuildKit secret mount for that step
-4. `.env.example` — add with placeholder value for local development
-5. `.github/README.md` — update this file with the new var, its scope, and usage notes
-6. (optional) `apps/web/vite.config.ts` — if the var is used in the web app or if the environment is used in the server & is mounted on the web app, add to `define` for build-time injection
-
-Missing any of these causes build or runtime failures with no obvious error message. Do not put production credentials in Docker build arguments or image metadata.
-
-Env docs and templates must mirror the validated schema in `packages/env/src/`. Do not invent, retain, or document env vars that are not actually read there. If a setting is code-owned, document it as code-owned instead of adding a new env knob.
-
-## Gotchas
-
-- `z.stringbool()` is used for boolean env vars (parses "true"/"false" strings)
-- Dev defaults exist for most `VITE_*` vars; `DATABASE_URL` and `BETTER_AUTH_SECRET` are always required
-- Each env file logs loading with `console.debug` — check terminal output for validation errors
+- `ENV_SERVER` is API server-only. `ENV_WEB_SERVER` is web server-only. `ENV_WEB_ISOMORPHIC` is shared with the browser. Expose only non-sensitive values through the client’s `VITE_` surface. Use `z.stringbool()` for string booleans.
+- Change the owning schema, env example, and [environment docs](../.github/README.md) together. Keep documented variables aligned with schema consumers. Required secrets such as `DATABASE_URL` and `BETTER_AUTH_SECRET` stay server-side.
+- Propagate settings through the relevant Docker Compose services and app Dockerfiles. Pass only non-sensitive build inputs via build args and Vite injection. Supply credentials at runtime. Use BuildKit secret mounts for steps that actually need sensitive inputs. The Docker build uses the example env for validation and prerendering.
+- Check bootstrap diagnostics when env loading fails. Use [Auth](auth.md) for trusted proxies and [Database](database.md) for migration target checks.

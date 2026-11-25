@@ -1,107 +1,28 @@
 ---
 name: sync-template
-description: Compare or update a project derived from tsu-moe/tsu-stack while preserving application features, identity, configuration, and deployment behavior. Use when asked to sync tsu-stack, update the template foundation, or review upstream template changes.
+description: Compare or update a project derived from tsu-moe/tsu-stack while preserving application features, identity, configuration, and deployment behavior. Use for template syncs and upstream reviews.
 ---
 
 # Sync a project with tsu-stack
 
-Integrate relevant changes from `https://github.com/tsu-moe/tsu-stack` into the current project without replacing project-specific work.
+Use the canonical `https://github.com/tsu-moe/tsu-stack.git`. A comparison request is inspection only. For a sync, prepare a reviewable change on a dedicated branch or isolated worktree. Publishing, pushing, opening a PR, deploying, and production migrations require separate authorization.
 
-For a comparison request, inspect and report only. For a sync request, prepare a reviewable change on a dedicated branch or isolated worktree. A sync request does not by itself authorize pushing, opening a pull request, publishing packages, deploying, or running production migrations.
+## Verify the base and target
 
-## Establish local state
+- Read local `AGENTS.md`, relevant guides, scripts, env schema, and any `docs/upstream-sync.md`. Record branch, starting SHA, staged, unstaged, and untracked state. Protect local changes and secrets. Use a clean worktree when the current checkout is dirty unless the work depends on those changes. Identify existing merge, rebase, cherry-pick, or revert state first. Capture relevant baseline checks.
+- Start with `.tsu-stack.jsonc` and read `source.commit`, `source.repository`, `source.branch`, and `variant`. If removed, inspect revisions from `git log --all --format=%H -- .tsu-stack.jsonc` until `git show <rev>:.tsu-stack.jsonc` succeeds.
+- Without metadata, use a verified sync record or genuine merge base. Check for shallow history. For old or GitHub-template projects, identify the initial project commit with `git rev-list --max-parents=0 HEAD`, infer the variant from the tree, then bound the candidate upstream search by the initial commit date. Verify candidates using tree stats, diffs, and invariant files. Dates and dependency versions alone cannot prove ancestry. Ask the user to confirm if multiple candidates remain plausible.
+- CLI variants map `separate` to `main`, `merged` to `variant/merged`, `cloudflare` to `variant/merged-cloudflare`, and `cloudflare-d1` to `variant/merged-cloudflare-d1`.
+- Fetch the verified source branch or explicitly requested ref and pin the target SHA. Keep `origin` intact. Verify ancestry where expected and require an explicit rollback request for an older target. Label unverified remote state as cached.
 
-- Read the project `AGENTS.md`, relevant domain guidance, package scripts, environment schema, and any existing `docs/upstream-sync.md` record.
-- Record the starting commit, current branch, staged and unstaged changes, and untracked files. Do not silently stash, commit, discard, or copy secret-bearing files.
-- If the checkout is dirty, use an isolated worktree from the relevant committed state unless the requested update depends on uncommitted work. Preserve unrelated changes.
-- Stop and identify the purpose of any existing merge, rebase, cherry-pick, or revert before changing it.
-- Establish relevant baseline checks when practical so pre-existing failures are distinguishable from regressions.
+## Integrate by ownership
 
-## Resolve template provenance
+Review `git log --oneline <base>..<target>`, `git diff --stat <base> <target>`, and `git diff --name-status -M <base> <target>`. Preserve features, routes, product copy, branding, auth providers and access rules, data, applied migration history, deployment identity, and useful project guidance. Reconcile compatible dependencies, scripts, config, and lockfiles together. Apply upstream framework, runtime, and tooling fixes at the local project’s current paths.
 
-The CLI writes `.tsu-stack.jsonc` with immutable creation provenance:
+Use a reviewable normal merge when a true merge base exists. For unrelated histories, adapt only reviewed upstream changes. Avoid blanket copies/deletion, hard resets, unrelated-history merges, and automatic ours/theirs resolutions. Honor generated-project exclusions for generator sources, CLI guidance, release workflow, and maintainer CI. Keep immutable creation provenance intact.
 
-```json
-{
-  "source": {
-    "repository": "tsu-moe/tsu-stack",
-    "branch": "variant/merged-cloudflare",
-    "commit": "<40-character SHA>",
-    "requestedRef": "variant/merged-cloudflare"
-  },
-  "variant": "cloudflare"
-}
-```
+## Verify and record
 
-Resolve the comparison base in this order, keeping command output compact:
+Check conflicts and automatically merged files for changed identity, restored demo content, duplicates, and unintended generated files. Run the project’s relevant format, lint, type, unit, browser, and build checks with disposable local services. Run `git diff --check`, `git diff --cached --check`, and `git ls-files -u`.
 
-1. Read `.tsu-stack.jsonc` in the working tree. Treat `source.commit` as the creation base and `source.branch` as the default upstream branch.
-2. If the file was deleted, inspect its history rather than guessing:
-
-   ```sh
-   git log --all --format=%H -- .tsu-stack.jsonc
-   git show <newest-revision-that-still-contains-the-file>:.tsu-stack.jsonc
-   ```
-
-   Walk revisions from newest to oldest until `git show <revision>:.tsu-stack.jsonc` succeeds. Use the recovered `source.commit`, branch, repository, and variant.
-
-3. If no metadata revision exists, use a verified previous sync record or a real merge base. Check for shallow history before concluding that ancestry is absent.
-4. For GitHub-template projects or old projects that never committed metadata, identify the initial project commit with `git rev-list --max-parents=0 HEAD`. Infer the likely variant from the generated tree, then use the initial commit timestamp only to bound a small search of the matching upstream branch. Compare compact tree/diff statistics and representative invariant files to validate the candidate.
-
-Creation time is a search hint, not proof. If more than one branch or commit remains plausible, report each candidate, its SHA, and the evidence, then require user confirmation before applying upstream changes. Do not invent a base from dependency versions or a similar date.
-
-The supported CLI branch mapping is:
-
-| Variant         | Upstream branch                |
-| --------------- | ------------------------------ |
-| `separate`      | `main`                         |
-| `merged`        | `variant/merged`               |
-| `cloudflare`    | `variant/merged-cloudflare`    |
-| `cloudflare-d1` | `variant/merged-cloudflare-d1` |
-
-## Resolve the upstream target
-
-- Use `https://github.com/tsu-moe/tsu-stack.git` as the canonical source. Do not assume a remote named `upstream` is correct and do not repoint `origin`.
-- Fetch the metadata branch unless the user explicitly names another branch, tag, or commit. Resolve the fetched ref to an immutable SHA immediately; do not rely on a moving branch name.
-- Verify that the base is an ancestor of the selected target when they are expected to share history. If the target is older than the base, explain that it represents a rollback and require an explicit rollback request.
-- If the network or remote cannot be verified, label local revisions as cached and do not claim they are the latest upstream state.
-
-## Classify and integrate changes
-
-Inspect the upstream delta from the verified base to the target, including renames and deletions:
-
-```sh
-git log --oneline <BASE>..<TARGET>
-git diff --stat <BASE> <TARGET>
-git diff --name-status -M <BASE> <TARGET>
-```
-
-Treat ownership by intent, not directory name:
-
-| Area                                                    | Guidance                                                                                                                        |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Routes, features, content, branding, and assets         | Preserve the project's behavior and custom content.                                                                             |
-| Framework, routing, server boundaries, shared utilities | Integrate relevant upstream fixes at the project's current paths.                                                               |
-| Auth, database, migrations, and environment contracts   | Preserve providers, access rules, data, applied migration history, and deployment identities.                                   |
-| Dependencies, scripts, workspace config, and lockfiles  | Reconcile compatible changes together; retain project-specific requirements and regenerate lockfiles with the pinned toolchain. |
-| UI and styles                                           | Review local changes and preserve accessibility and design decisions.                                                           |
-| Instructions and documentation                          | Add useful upstream guidance without replacing project-specific instructions.                                                   |
-
-When histories share a real merge base, use a clean dedicated branch and prepare a reviewable normal merge. When histories are unrelated, apply only reviewed changes from the upstream delta and adapt them to the generated project. Never use `--allow-unrelated-histories`, a blanket copy, `rsync --delete`, a hard reset, or automatic `ours`/`theirs` conflict resolution.
-
-Generated projects intentionally omit template-maintainer files. Do not reintroduce `tools/create-tsu-stack`, `.agents/cli.md`, the package release workflow, or maintainer-only CI. Preserve `.tsu-stack.jsonc` as creation provenance; it should not be rewritten to pretend the project was created from the new target.
-
-## Validate and record
-
-- Review automatically merged files as well as conflicts; check for restored demo content, duplicate implementations, changed project identity, and unexpected generated files.
-- Run the destination project's current format, lint, type, unit, browser, and build checks appropriate to the changed areas. Use disposable local services and never expose secrets or run production migrations.
-- Check unresolved conflicts and whitespace:
-
-  ```sh
-  git diff --check
-  git diff --cached --check
-  git ls-files -u
-  ```
-
-- Update or create `docs/upstream-sync.md` with the canonical URL, target ref and SHA, date, project starting commit, comparison base and evidence, adopted changes, preserved adaptations, intentional omissions, validation results, and whether the sync is prepared or committed. Keep prior entries so omitted changes can be reconsidered later.
-- A recorded target is not proof that every upstream change was adopted. Do not claim completion before the validated merge or integration commit exists.
+Append to `docs/upstream-sync.md` with the canonical URL, date, starting commit, comparison base and evidence, target ref and SHA, adopted changes, local adaptations, omissions, validation results, and prepared/committed state. Keep past entries. A recorded SHA does not imply every change was adopted. Verify the merge or integration commit before claiming committed completion.
