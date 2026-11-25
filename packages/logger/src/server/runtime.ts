@@ -1,9 +1,10 @@
 import { type AuditInput as EvlogAuditInput, type AuditableLogger } from "evlog";
-import { isPlainObject } from "evlog/toolkit";
 
-type LogName = `${string}.${string}`;
-type LogValue = string | number | bigint | boolean | null | undefined | LogFields | readonly LogValue[];
-export type LogFields = { [key: string]: LogValue };
+import { LogNameSchema, type LogName } from "#@/types";
+
+type LogValue = string | number | bigint | boolean | null | undefined | LogObject | readonly LogValue[];
+type LogObject = { [key: string]: LogValue };
+export type LogFields = LogObject & { operation?: LogName };
 
 export type AuditInput = EvlogAuditInput & { action: LogName; outcome: NonNullable<EvlogAuditInput["outcome"]> };
 type AuditSubject = Omit<AuditInput, "outcome" | "reason">;
@@ -21,6 +22,7 @@ const reservedFields = new Set([
   "commitHash",
   "region",
   "requestId",
+  "hostname",
   "path",
   "method",
   "status",
@@ -60,14 +62,16 @@ function jsonValue(value: unknown, depth: number, budget: { remaining: number })
   if (Array.isArray(value)) {
     return value.slice(0, 32).map((item) => jsonValue(item, depth + 1, budget) ?? null);
   }
-  if (isPlainObject(value)) {
-    return Object.fromEntries(
-      Object.keys(value)
-        .slice(0, 64)
-        .filter((key) => !unsafeKeys.has(key))
-        .map((key) => [key, jsonValue(value[key], depth + 1, budget)])
-    );
-  }
+  if (typeof value !== "object") return;
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== null && prototype !== Object.prototype) return;
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .slice(0, 64)
+      .filter(([key]) => !unsafeKeys.has(key))
+      .map(([key, field]) => [key, jsonValue(field, depth + 1, budget)])
+  );
 }
 
 function logFields(fields: LogFields): JsonFields {
@@ -76,6 +80,7 @@ function logFields(fields: LogFields): JsonFields {
     Object.keys(fields)
       .slice(0, 64)
       .filter((key) => !reservedFields.has(key) && !unsafeKeys.has(key))
+      .filter((key) => key !== "operation" || LogNameSchema.safeParse(fields.operation).success)
       .map((key) => [key, jsonValue(fields[key], 0, budget)])
   );
 }
@@ -85,6 +90,7 @@ export function normalizeAudit(input: AuditInput): EvlogAuditInput {
   const budget = { remaining: 128 };
   return {
     ...input,
+    action: LogNameSchema.parse(input.action),
     ...(target && { target: { ...(jsonValue(target, 0, budget) as JsonFields), id: target.id, type: target.type } }),
     ...(changes && {
       changes: {
@@ -111,11 +117,15 @@ export function requestLogger(logger: AuditableLogger) {
     set(fields: LogFields) {
       logSafely(() => logger.set(logFields(fields)));
     },
-    error(error: Error | string, fields?: LogFields) {
-      logSafely(() => logger.error(error, fields && logFields(fields)));
+    error(error: unknown, fields?: LogFields) {
+      const diagnostic = error instanceof Error || typeof error === "string" ? error : "A non-Error value was thrown";
+      logSafely(() => {
+        if (fields) logger.error(diagnostic, logFields(fields));
+        else logger.error(diagnostic);
+      });
     },
     outcome(event: LogName, fields?: LogFields) {
-      logSafely(() => logger.set({ ...(fields && logFields(fields)), event }));
+      logSafely(() => logger.set({ ...(fields && logFields(fields)), event: LogNameSchema.parse(event) }));
     },
     audit: Object.assign(audit, {
       deny(reason: string, input: AuditSubject) {

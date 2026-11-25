@@ -1,9 +1,8 @@
 import { initLogger as initEvlogLogger, log as evlogLog, type LogLevel } from "evlog";
 import { createHttpLogDrain, type HttpLogDrainOptions } from "evlog/http";
-import { type z } from "zod";
 
-import { BROWSER_LOG_BATCH_SIZE, BrowserLogFieldsSchema, BrowserLogPayloadSchema } from "#@/browser-event";
 import { LOG_SERVICES } from "#@/constants/services";
+import { BrowserLogFieldsSchema, BrowserLogPayloadSchema, type BrowserLogInput } from "#@/types";
 
 type ClientLoggerConfig = {
   batchedTransport?: HttpLogDrainOptions;
@@ -14,8 +13,8 @@ type ClientLoggerConfig = {
   service?: string;
 };
 
-type BrowserLogInput = Omit<z.input<typeof BrowserLogFieldsSchema>, "user"> & { event: `${string}.${string}` };
-
+const BROWSER_LOG_BATCH_SIZE = 25;
+const BROWSER_LOG_MAX_EVENT_BYTES = 2048;
 const DEFAULT_CLIENT_LOGGER_CONFIG = {
   service: LOG_SERVICES.DEFAULT
 } satisfies ClientLoggerConfig;
@@ -61,19 +60,30 @@ export function initLog(config: ClientLoggerConfig = {}) {
   const transport = config.batchedTransport;
   const batch = transport?.pipeline?.batch;
   const service = BrowserLogPayloadSchema.shape.event.shape.service.safeParse(config.service);
-  initEvlogLogger({
-    drain: transport
-      ? createHttpLogDrain({
-          ...transport,
-          pipeline: {
-            ...transport.pipeline,
-            batch: {
-              intervalMs: batch?.intervalMs ?? 2000,
-              size: Math.max(1, Math.min(batch?.size ?? BROWSER_LOG_BATCH_SIZE, BROWSER_LOG_BATCH_SIZE))
-            }
+  const queue = transport
+    ? createHttpLogDrain({
+        ...transport,
+        pipeline: {
+          ...transport.pipeline,
+          batch: {
+            intervalMs: batch?.intervalMs ?? 2000,
+            size: Math.max(1, Math.min(batch?.size ?? BROWSER_LOG_BATCH_SIZE, BROWSER_LOG_BATCH_SIZE))
           }
-        })
-      : undefined,
+        }
+      })
+    : undefined;
+  const encoder = new TextEncoder();
+
+  initEvlogLogger({
+    drain:
+      queue &&
+      ((entry) => {
+        if (encoder.encode(JSON.stringify(entry)).byteLength <= BROWSER_LOG_MAX_EVENT_BYTES) {
+          queue(entry);
+        } else {
+          transport?.pipeline?.onDropped?.([entry]);
+        }
+      }),
     enabled: config.enabled,
     env: {
       service: service.data ?? DEFAULT_CLIENT_LOGGER_CONFIG.service

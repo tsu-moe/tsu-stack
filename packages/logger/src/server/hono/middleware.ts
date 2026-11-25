@@ -5,13 +5,14 @@ import { bodyLimit } from "hono/body-limit";
 import { every } from "hono/combine";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import { routePath } from "hono/route";
 import { z } from "zod";
 
-import { BROWSER_LOG_MAX_EVENTS, BrowserLogPayloadSchema } from "#@/browser-event";
 import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
 import { logSafely, reportLoggingFailure, requestLogger, type RequestLogger } from "#@/server/runtime";
+import { BrowserLogPayloadSchema, type BrowserLogPayload } from "#@/types";
 
-const ClientLogBatchSchema = z.array(BrowserLogPayloadSchema).max(BROWSER_LOG_MAX_EVENTS);
+const ClientLogBatchSchema = z.array(BrowserLogPayloadSchema).max(50);
 
 /**
  * Hono app variables added by `honoLoggerMiddleware()`.
@@ -72,9 +73,14 @@ export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}):
     let completed = false;
     try {
       return await evlogMiddleware(context, async () => {
-        context.set("log", requestLogger(context.get("log")));
+        const logger = context.get("log");
+        context.set("log", requestLogger(logger));
         await next();
         completed = true;
+        logSafely(() => {
+          const route = routePath(context);
+          if (route && !route.endsWith("/*")) logger.set({ route });
+        });
       });
     } catch (error) {
       if (!completed) throw error;
@@ -127,7 +133,7 @@ export function honoLogIngestionMiddleware(options: HonoLogIngestionOptions = {}
   );
 }
 
-function emitClientLog(payload: z.output<typeof BrowserLogPayloadSchema>) {
+function emitClientLog(payload: BrowserLogPayload) {
   const { timestamp, ...event } = payload.event;
   logSafely(() =>
     createLogger({

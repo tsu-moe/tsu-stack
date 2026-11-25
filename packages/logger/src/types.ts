@@ -5,14 +5,12 @@ const identifier = z
   .min(1)
   .max(128)
   .regex(/^[\w.-]+$/);
-export const BROWSER_LOG_BATCH_SIZE = 25;
-export const BROWSER_LOG_MAX_EVENTS = 50;
+export const LogNameSchema = z
+  .string()
+  .max(96)
+  .regex(/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/);
 export const BrowserLogFieldsSchema = z.object({
-  event: z
-    .string()
-    .max(96)
-    .regex(/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/)
-    .optional(),
+  event: LogNameSchema.optional(),
   error: z
     .object({
       name: z
@@ -46,3 +44,7 @@ export const BrowserLogPayloadSchema = z.object({
     })
     .optional()
 });
+
+export type LogName = `${string}.${string}`;
+export type BrowserLogInput = Omit<z.input<typeof BrowserLogFieldsSchema>, "user"> & { event: LogName };
+export type BrowserLogPayload = z.output<typeof BrowserLogPayloadSchema>;

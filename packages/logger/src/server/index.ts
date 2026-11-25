@@ -125,7 +125,7 @@ export function createLogger(fields?: LogFields) {
  * logger.emit();
  * ```
  */
-export function createRequestLogger(options: Parameters<typeof createEvlogRequestLogger>[0]) {
+export function createRequestLogger(options?: Parameters<typeof createEvlogRequestLogger>[0]) {
   return standaloneLogger(createEvlogRequestLogger(options));
 }
 

@@ -1,7 +1,6 @@
 import { createMiddleware, getGlobalStartContext } from "@tanstack/react-start";
 import { getResponseStatus, setResponseHeader } from "@tanstack/react-start/server";
 import { createRequestLogger } from "evlog";
-import { extractErrorStatus, shouldLog } from "evlog/toolkit";
 
 import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
 import { logSafely, requestLogger, type LogFields, type RequestLogger } from "#@/server/runtime";
@@ -36,6 +35,17 @@ const injectRequestMiddleware = createMiddleware().server(({ next, request }) =>
   });
 });
 
+function requestErrorStatus(error: unknown) {
+  if (error instanceof Response) return error.status;
+  const responseStatus = getResponseStatus();
+  if (responseStatus >= 400) return responseStatus;
+  if (typeof error !== "object" || error === null) return 500;
+
+  const code = ("status" in error ? error.status : undefined) ?? ("statusCode" in error ? error.statusCode : undefined);
+  const status = typeof code === "string" || typeof code === "number" ? Number(code) : 500;
+  return Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500;
+}
+
 /**
  * Add one evlog request logger to every TanStack Start request, including server functions.
  *
@@ -52,6 +62,10 @@ const injectRequestMiddleware = createMiddleware().server(({ next, request }) =>
  */
 export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOptions = {}) {
   const requestIdMiddleware = injectRequestIdMiddleware(options.requestIdOptions);
+  const exclusions = options.excludePaths?.map((pattern) => {
+    const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`^${escaped.replace(/\*\*|\*/g, (token) => (token === "**" ? ".*" : "[^/]*"))}$`);
+  });
 
   return createMiddleware({ type: "request" })
     .middleware([requestIdMiddleware, injectRequestMiddleware])
@@ -60,23 +74,18 @@ export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOp
       setResponseHeader(headerName, context.requestId);
       const { hostname, method, path } = context.request;
       const logger = createRequestLogger({ method, path, requestId: context.requestId });
-      const shouldEmit = shouldLog(path, undefined, options.excludePaths);
+      const scopedLogger = requestLogger(logger);
+      const shouldEmit = !exclusions?.some((pattern) => pattern.test(path));
       logSafely(() => logger.set({ hostname, ...options.context }));
 
       let result: Awaited<ReturnType<typeof next>>;
       try {
-        result = await next({ context: { logger: requestLogger(logger) } });
+        result = await next({ context: { logger: scopedLogger } });
       } catch (error) {
         if (shouldEmit) {
           logSafely(() => {
-            const responseStatus = getResponseStatus();
-            const status =
-              error instanceof Response
-                ? error.status
-                : responseStatus >= 400
-                  ? responseStatus
-                  : extractErrorStatus(error);
-            if (status >= 500) logger.error(error instanceof Error ? error : String(error));
+            const status = requestErrorStatus(error);
+            if (status >= 500) scopedLogger.error(error);
             logger.emit({ status });
           });
         }

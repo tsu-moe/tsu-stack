@@ -56,7 +56,7 @@ export async function migrateDatabase(): Promise<void> {
       });
     } catch (error) {
       if (attempt === MIGRATION_MAX_ATTEMPTS) {
-        log.error(error instanceof Error ? error : String(error));
+        log.error(error);
         log.outcome("database.migration.failed", {
           attempt,
           maxAttempts: MIGRATION_MAX_ATTEMPTS
