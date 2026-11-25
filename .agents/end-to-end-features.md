@@ -34,6 +34,7 @@ When a feature introduces shared contracts that should drive both API and fronte
 - Add or extend the router in `packages/api`.
 - Follow [oRPC patterns](./orpc.md) for procedure factories, explicit `input` and `output` schemas, and typed errors.
 - Prefer type-safe errors with `.errors(...)` and `errors.MY_ERROR(...)` for expected failure cases the client needs to handle.
+- Include structured outcome logs in the server workflow for business-critical features. Follow [Logging](./logging.md#business-critical-features).
 
 ## Step 4: Web Data Layer
 

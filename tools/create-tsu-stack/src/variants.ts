@@ -1,5 +1,5 @@
 import { type CloudflareAccountPrompt, type ExistingD1Prompt, provisionD1 } from "./cloudflare";
-import { type CommandRunner, type ProjectInput, type VariantName } from "./types";
+import { type CommandRunner, type ProjectInput, type SetupStep, type VariantName } from "./types";
 
 type VariantTransformHook = {
   d1Database: boolean;
@@ -13,24 +13,34 @@ type PostGenerationContext = {
   input: ProjectInput;
   projectRoot: string;
   runner: CommandRunner;
+  runStep: SetupStep;
 };
 
-async function setupPostgres({ projectRoot, runner }: PostGenerationContext): Promise<void> {
-  await runner.run("vp", ["run", "db:dev:start"], projectRoot);
-  await runner.run("vp", ["run", "db:migrate"], projectRoot);
+async function setupPostgres({ projectRoot, runner, runStep }: PostGenerationContext): Promise<void> {
+  await runStep("Start local PostgreSQL", ["vp run db:dev:start", "vp run db:migrate"], async () =>
+    runner.run("vp", ["run", "db:dev:start"], projectRoot)
+  );
+  await runStep("Apply PostgreSQL migrations", ["vp run db:migrate"], async () =>
+    runner.run("vp", ["run", "db:migrate"], projectRoot)
+  );
 }
 
-async function setupD1(context: PostGenerationContext): Promise<void> {
-  if (context.input.setup === "cloudflare") {
-    await provisionD1(
-      context.projectRoot,
-      context.input,
-      context.runner,
-      context.accountPrompt,
-      context.existingD1Prompt
+async function setupD1({
+  input,
+  projectRoot,
+  runner,
+  runStep,
+  accountPrompt,
+  existingD1Prompt
+}: PostGenerationContext): Promise<void> {
+  if (input.setup === "cloudflare") {
+    await runStep("Set up remote D1", [], async () =>
+      provisionD1(projectRoot, input, runner, accountPrompt, existingD1Prompt)
     );
   }
-  await context.runner.run("vp", ["run", "db:migrate:local"], context.projectRoot);
+  await runStep("Apply local D1 migrations", ["vp run db:migrate:local"], async () =>
+    runner.run("vp", ["run", "db:migrate:local"], projectRoot)
+  );
 }
 
 export type VariantDefinition = {

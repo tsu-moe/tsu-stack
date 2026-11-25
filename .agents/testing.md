@@ -4,9 +4,8 @@ This document is the authoritative testing policy for contributors and AI agents
 
 ## Core Policy
 
-- Treat tests as part of normal validation when code changes affect behavior, contracts, bug fixes, or existing tested surfaces.
-- Add or update focused tests for new behavior, changed behavior, shared contracts, and regression-prone bug fixes when the package or app has a practical test surface.
-- Keep test work proportional to risk. Prefer a small, high-signal suite, and add tests only when they protect meaningful behavior or reduce credible regression risk. Do not create broad, brittle, or low-signal tests for trivial, impractical, low-impact, markdown-only, copy-only, or purely mechanical changes.
+- Keep the starter suite focused on smoke coverage for security, external input validation, and critical workflows. Add a regression test when a failure would expose data, bypass a protection, corrupt an important result, or make a supported starter path unusable.
+- Verify routine defaults, formatting, copy, and simple plumbing during implementation. Remove tests that merely repeat those checks or duplicate stronger boundary coverage.
 - Run the narrowest relevant test command after implementation and after the fix command from [Workflow](./workflow.md).
 - Inspect nearby tests before generating new ones.
 - Use Vite+ testing conventions, not standalone Vitest defaults.

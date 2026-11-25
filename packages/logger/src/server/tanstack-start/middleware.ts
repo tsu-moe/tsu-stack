@@ -1,21 +1,12 @@
 import { createMiddleware, getGlobalStartContext } from "@tanstack/react-start";
-import { createRequestLogger, type RequestLogger } from "evlog";
+import { getResponseStatus, setResponseHeader } from "@tanstack/react-start/server";
+import { createRequestLogger } from "evlog";
 
 import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
-
-type LogContext = Parameters<RequestLogger["set"]>[0];
-
-type RequestContext = {
-  requestId: string;
-  request: {
-    hostname: string;
-    method: string;
-    path: string;
-  };
-};
+import { logSafely, requestLogger, type LogFields, type RequestLogger } from "#@/server/runtime";
 
 type LoggerMiddlewareOptions = {
-  context?: LogContext;
+  context?: LogFields;
   requestIdOptions?: RequestIdOptions;
   excludePaths?: string[];
 };
@@ -28,16 +19,6 @@ function injectRequestIdMiddleware(options: RequestIdOptions = {}) {
       }
     })
   );
-}
-
-function withRequestId(response: Response, requestId: string, headerName = REQUEST_ID_HEADER) {
-  const headers = new Headers(response.headers);
-  headers.set(headerName, requestId);
-  return new Response(response.body, {
-    headers,
-    status: response.status,
-    statusText: response.statusText
-  });
 }
 
 const injectRequestMiddleware = createMiddleware().server(({ next, request }) => {
@@ -54,61 +35,15 @@ const injectRequestMiddleware = createMiddleware().server(({ next, request }) =>
   });
 });
 
-function createSkipChecker(options: { excludePaths?: string[] }) {
-  const excludedPaths = options.excludePaths ?? [];
+function requestErrorStatus(error: unknown) {
+  if (error instanceof Response) return error.status;
+  const responseStatus = getResponseStatus();
+  if (responseStatus >= 400) return responseStatus;
+  if (typeof error !== "object" || error === null) return 500;
 
-  return (context: RequestContext) =>
-    excludedPaths.some((pattern) => matchesPathPattern(context.request.path, pattern));
-}
-
-function matchesPathPattern(path: string, pattern: string) {
-  if (!pattern.includes("*")) {
-    return path === pattern;
-  }
-
-  const regex = new RegExp(
-    `^${pattern
-      .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-      .replace(/\*\*/g, ".*")
-      .replace(/\*/g, "[^/]*")}$`
-  );
-
-  return regex.test(path);
-}
-
-async function withRequestLogging<T>(options: {
-  context: RequestContext;
-  loggerContext?: LogContext;
-  shouldSkip: boolean;
-  execute: (logger: RequestLogger) => Promise<T>;
-  getStatus?: (result: T) => number | undefined;
-}): Promise<T> {
-  const { context, execute, getStatus, loggerContext, shouldSkip } = options;
-  const logger = createRequestLogger({
-    method: context.request.method,
-    path: context.request.path,
-    requestId: context.requestId
-  });
-
-  logger.set({
-    ...context.request,
-    ...loggerContext
-  });
-
-  try {
-    const result = await execute(logger);
-    if (!shouldSkip) {
-      const status = getStatus?.(result);
-      logger.emit(status === undefined ? undefined : { status });
-    }
-    return result;
-  } catch (error) {
-    logger.error(error instanceof Error ? error : new Error(String(error)));
-    if (!shouldSkip) {
-      logger.emit();
-    }
-    throw error;
-  }
+  const code = ("status" in error ? error.status : undefined) ?? ("statusCode" in error ? error.statusCode : undefined);
+  const status = typeof code === "string" || typeof code === "number" ? Number(code) : 500;
+  return Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500;
 }
 
 /**
@@ -127,31 +62,54 @@ async function withRequestLogging<T>(options: {
  */
 export function tanstackStartRequestLoggerMiddleware(options: LoggerMiddlewareOptions = {}) {
   const requestIdMiddleware = injectRequestIdMiddleware(options.requestIdOptions);
-  const shouldSkip = createSkipChecker({
-    excludePaths: options.excludePaths
+  const exclusions = options.excludePaths?.map((pattern) => {
+    const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`^${escaped.replace(/\*\*|\*/g, (token) => (token === "**" ? ".*" : "[^/]*"))}$`);
   });
 
   return createMiddleware({ type: "request" })
     .middleware([requestIdMiddleware, injectRequestMiddleware])
-    .server(({ next, context }) =>
-      withRequestLogging({
-        context,
-        execute: async (logger) => {
-          const result = await next({
-            context: {
-              logger
-            }
+    .server(async ({ next, context }) => {
+      const headerName = options.requestIdOptions?.headerName ?? REQUEST_ID_HEADER;
+      setResponseHeader(headerName, context.requestId);
+      const { hostname, method, path } = context.request;
+      const logger = createRequestLogger({ method, path, requestId: context.requestId });
+      const scopedLogger = requestLogger(logger);
+      const shouldEmit = !exclusions?.some((pattern) => pattern.test(path));
+      logSafely(() => logger.set({ hostname, ...options.context }));
+
+      let result: Awaited<ReturnType<typeof next>>;
+      try {
+        result = await next({ context: { logger: scopedLogger } });
+      } catch (error) {
+        if (shouldEmit) {
+          logSafely(() => {
+            const status = requestErrorStatus(error);
+            if (status >= 500) scopedLogger.error(error);
+            logger.emit({ status });
           });
-          return {
-            ...result,
-            response: withRequestId(result.response, context.requestId, options.requestIdOptions?.headerName)
-          };
-        },
-        getStatus: (result) => result.response.status,
-        loggerContext: options.context,
-        shouldSkip: shouldSkip(context)
-      })
-    );
+        }
+        throw error;
+      }
+
+      if (shouldEmit) {
+        logSafely(() =>
+          logger.emit({
+            status: result.response.status,
+            _forceKeep: typeof logger.getContext().event === "string"
+          })
+        );
+      }
+      const { response } = result;
+      if (response.headers.get(headerName) === context.requestId) return result;
+
+      const headers = new Headers(response.headers);
+      headers.set(headerName, context.requestId);
+      return {
+        ...result,
+        response: new Response(response.body, { headers, status: response.status, statusText: response.statusText })
+      };
+    });
 }
 
 export function getTanstackStartRequestLogger() {

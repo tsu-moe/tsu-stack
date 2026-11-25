@@ -1,7 +1,10 @@
+import { resolve } from "node:path";
+
 import * as p from "@clack/prompts";
 
 import { commandRunner } from "./commands";
-import { defaultDisplayName, normalizeProjectName, normalizeScope, projectNameFromDirectory } from "./naming";
+import { assertDestinationAvailable, DestinationConflict } from "./generate";
+import { defaultDisplayName, normalizeScope, projectNameFromDirectory } from "./naming";
 import { projectInputSchema } from "./schema";
 import { type CliFlags, type CommandRunner, type ProjectInput, type SetupMode, type VariantName } from "./types";
 import { VARIANTS } from "./variants";
@@ -14,34 +17,47 @@ function unwrap<T>(value: T | typeof p.CANCEL_SYMBOL): T {
   return value;
 }
 
+async function chooseProjectDirectory(flags: CliFlags, cwd: string): Promise<string> {
+  const provided = flags.projectDirectory?.trim();
+  if (provided) {
+    try {
+      await assertDestinationAvailable(resolve(cwd, provided));
+      return provided;
+    } catch (error) {
+      if (flags.yes || !(error instanceof DestinationConflict)) throw error;
+      p.log.warn(error.message);
+    }
+  }
+  return unwrap(
+    await p.text({
+      message: "Where should the project be created?",
+      placeholder: "my-tsu-app",
+      validate: async (value) => {
+        const directory = value?.trim();
+        if (!directory) return "Enter a directory or use . for the current directory.";
+        try {
+          projectNameFromDirectory(directory, cwd);
+          await assertDestinationAvailable(resolve(cwd, directory));
+        } catch (error) {
+          return error instanceof Error ? error.message : String(error);
+        }
+      }
+    })
+  ).trim();
+}
+
 export async function collectProjectInput(
   flags: CliFlags,
   runner: CommandRunner = commandRunner,
   cwd = process.cwd()
 ): Promise<ProjectInput> {
-  if (flags.yes && !flags.projectDirectory) {
+  if (flags.yes && !flags.projectDirectory?.trim()) {
     throw new Error("A project directory is required when using --yes.");
   }
 
-  p.intro("create-tsu-stack");
-
-  const projectDirectory =
-    flags.projectDirectory ??
-    unwrap(
-      await p.text({
-        message: "Where should the project be created?",
-        placeholder: "my-tsu-app",
-        validate: (value) => {
-          try {
-            normalizeProjectName(value ?? "");
-          } catch (error) {
-            return error instanceof Error ? error.message : String(error);
-          }
-        }
-      })
-    );
-
-  const projectName = projectNameFromDirectory(projectDirectory);
+  if (!flags.yes) p.intro("create-tsu-stack");
+  const projectDirectory = await chooseProjectDirectory(flags, cwd);
+  const projectName = projectNameFromDirectory(projectDirectory, cwd);
   const suggestedDisplayName = defaultDisplayName(projectName);
 
   const displayName =
@@ -136,7 +152,7 @@ export async function collectProjectInput(
     : (flags.git ??
       (flags.yes ? true : unwrap(await p.confirm({ initialValue: true, message: "Initialize a Git repository?" }))));
 
-  return projectInputSchema.parse({
+  const result = projectInputSchema.safeParse({
     displayName,
     dryRun: flags.dryRun ?? false,
     git,
@@ -148,6 +164,10 @@ export async function collectProjectInput(
     setup,
     variant
   });
+  if (!result.success) {
+    throw new Error(result.error.issues.map(({ message, path }) => `${path.join(".")}: ${message}`).join("\n"));
+  }
+  return result.data;
 }
 
 export function finishPrompt(message: string): void {

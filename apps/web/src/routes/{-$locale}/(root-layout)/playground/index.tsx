@@ -11,7 +11,6 @@ import { Button } from "@tsu-stack/ui/components/button";
 import { useIsClient } from "@tsu-stack/ui/hooks/use-is-client.hook";
 
 import { generateAppSeo } from "@/shared/lib/seo";
-import { useLogger } from "@/shared/providers/logger-provider";
 import { Container } from "@/shared/ui/container";
 import { Image } from "@/shared/ui/image";
 
@@ -41,7 +40,6 @@ function PlaygroundPage() {
     enabled: isClient,
     retry: false
   });
-  const logger = useLogger();
   const backgroundImageSrc = resolvePublicAssetUrl(import.meta.env.BASE_URL, "/img/bg.jpg");
 
   return (
@@ -92,10 +90,7 @@ function PlaygroundPage() {
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => {
-              logger.debug("playground", "Throwing test error from playground page...");
               throw new Error("Test error");
-              // oxlint-disable-next-line no-unreachable
-              logger.debug("playground", "Error thrown!");
             }}
           >
             {m.playground_page__throw_error()}

@@ -42,66 +42,37 @@ const MIGRATION_RETRY_DELAY_MS = 3_000;
  * in the __drizzle_migrations table and skips anything already applied.
  */
 export async function migrateDatabase(): Promise<void> {
-  const log = createLogger({ operation: "server__database_migration" });
-
-  if (migrationFnCalled) {
-    log.emit({ event: "database_migration_skipped", reason: "already_called" });
+  if (migrationFnCalled || ENV_SERVER.IS_BUILD || ENV_SERVER.NODE_ENV !== "production") {
     return;
   }
 
   migrationFnCalled = true;
-
-  if (ENV_SERVER.IS_BUILD) {
-    log.emit({
-      environment: ENV_SERVER.NODE_ENV,
-      event: "database_migration_skipped",
-
-      reason: "build_process"
-    });
-    return;
-  }
-
-  if (ENV_SERVER.NODE_ENV !== "production") {
-    log.emit({
-      environment: ENV_SERVER.NODE_ENV,
-      event: "database_migration_skipped",
-
-      reason: "non_production"
-    });
-    return;
-  }
+  const log = createLogger({ operation: "database.migrate" });
 
   for (let attempt = 1; attempt <= MIGRATION_MAX_ATTEMPTS; attempt++) {
-    // An emitted wide event cannot be reused for the next retry.
-    const attemptLog = attempt === 1 ? log : createLogger({ operation: "server__database_migration" });
-
     try {
       await migrate(db, {
         migrationsFolder: join(import.meta.dirname, "migrations")
       });
-      attemptLog.emit({ attempt, event: "database_migration_completed" });
-      return;
     } catch (error) {
-      attemptLog.error(error instanceof Error ? error : String(error), {
-        attempt,
-        event: "database_migration_failed",
-        maxAttempts: MIGRATION_MAX_ATTEMPTS
-      });
-
       if (attempt === MIGRATION_MAX_ATTEMPTS) {
-        attemptLog.emit({ _forceKeep: true });
+        log.error(error);
+        log.outcome("database.migration.failed", {
+          attempt,
+          maxAttempts: MIGRATION_MAX_ATTEMPTS
+        });
+        log.emit();
         throw error;
       }
 
-      attemptLog.emit({
-        attempt,
-        event: "database_migration_retrying",
-        maxAttempts: MIGRATION_MAX_ATTEMPTS,
-        retryDelayMs: MIGRATION_RETRY_DELAY_MS
-      });
       await new Promise((resolve) => {
         setTimeout(resolve, MIGRATION_RETRY_DELAY_MS);
       });
+      continue;
     }
+
+    log.outcome("database.migration.completed", { attempt });
+    log.emit();
+    return;
   }
 }
