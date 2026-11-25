@@ -1,23 +1,15 @@
-# Database Conventions
+# Database
 
-## Typed Text over Native Enums
+Prefer text columns with a string-union type via Drizzle’s `$type<Type>()`. Keep persistence-only values with the schema and import shared domain values from [Core](core.md). Validate at I/O boundaries and enforce storage-critical invariants with database constraints. Document the reason for a native enum beside the schema.
 
-- Prefer database text columns with TypeScript string-union types over native database enums.
-- Put reusable database value types in the database schema boundary and apply them with Drizzle's `$type<Type>()`.
-- Introduce a native enum only for a concrete database-level requirement and document that requirement beside the schema.
-- Type-level constraints do not validate untrusted runtime values. Validate system boundaries and use database checks where the invariant must be enforced by storage.
+## Schema changes and local migrations
 
-```ts
-export type ProductVisibility = "draft" | "public" | "unlisted" | "archived";
+Start local PostgreSQL with `vp run db:dev:start`. After a schema change, run `vp run db:generate` and inspect the migration. Before `vp run db:migrate`, verify the effective `DATABASE_URL` points to localhost or 127.0.0.1. Stop and tell the user if the destination is nonlocal. Use `vp run db:dev:stop` to stop Compose and `vp run db:studio` to inspect the database.
 
-visibility: text().$type<ProductVisibility>().notNull().default("public");
-```
+The Worker creates `createDb()` for the request and reads the server-only `DATABASE_URL`. Apply PostgreSQL migrations separately before deploying the Worker, since it cannot load migration files at startup.
 
-## Generated Better Auth Schema
+## Better Auth tables
 
-- `packages/db/src/schema/auth.schema.ts` is generated through the owning branch's Better Auth CLI entrypoint by `vp run auth:generate`.
-- Do not edit the generated auth schema directly. Change Better Auth configuration, regenerate, and inspect the resulting diff.
-- Keep the generated schema and the branch's baseline migration synchronized so newly scaffolded projects start at the current schema.
-- PostgreSQL and Cloudflare D1 branches own dialect-specific generated schemas and migration baselines; do not copy one dialect's output into another.
-- If the generator leaves a JSON field as `unknown`, validate and narrow it at the first application read boundary rather than annotating the generated schema.
-- Keep constraints that Better Auth cannot express in a separate schema or enforce them in the relevant authenticated transaction.
+Change the [auth config](../packages/auth/src/index.ts), run `vp run auth:generate` through its [CLI-only entry point](../packages/auth/src/generate.ts), and inspect [the generated schema](../packages/db/src/schema/auth.schema.ts). Keep it generated and consistent with the branch’s migration history. PostgreSQL and D1 each own their dialect’s schema and migration output.
+
+Keep the main `defineRelations()` graph in the database package and merge Better Auth’s generated `defineRelationsPart()` after it. Narrow generated JSON fields at the application read boundary. Put constraints Better Auth cannot express in a separate schema or the owning authenticated transaction. See [Auth](auth.md) for client inference and session behavior.
