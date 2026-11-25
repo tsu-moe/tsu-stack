@@ -41,9 +41,8 @@ import { fixedWindowRateLimit } from "#@/shared/lib/rate-limit";
 const serverHostname = hostname();
 const OPERATIONAL_RATE_LIMIT_WINDOW_MS = 60_000;
 
-export const app = new Hono<HonoLogVariables & { Variables: ClientIpVariables }>().basePath(
-  new URL(ENV_SERVER.VITE_SERVER_URL).pathname
-);
+type AppEnv = HonoLogVariables & { Variables: ClientIpVariables };
+export const app: Hono<AppEnv> = new Hono<AppEnv>().basePath(new URL(ENV_SERVER.VITE_SERVER_URL).pathname);
 
 app.use(
   "/*",
