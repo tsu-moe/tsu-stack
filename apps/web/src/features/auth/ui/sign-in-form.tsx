@@ -1,11 +1,8 @@
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
@@ -19,6 +16,8 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { Container } from "@/shared/ui/container";
 import { LogoIcon } from "@/shared/ui/logo";
 
+import { useSignInMutation } from "@/features/auth/api/sign-in.mutation";
+
 import { appConfig } from "@/config/app.config";
 
 export function SignInForm({
@@ -27,34 +26,8 @@ export function SignInForm({
   ...props
 }: React.ComponentProps<"div"> & { redirectTo?: NavigateTo }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { isPending } = useAuth();
-
-  const signInMutation = useMutation({
-    mutationFn: async (values: { email: string; password: string }) => {
-      const result = await authClient.signIn.email({
-        email: values.email,
-        password: values.password
-      });
-
-      if (!result.data) {
-        throw new Error(result.error?.message ?? m.auth__sign_in_failed());
-      }
-
-      return result;
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || m.auth__sign_in_failed());
-    },
-    onSuccess: async () => {
-      // Invalidate auth cache to force refetch with new user data
-      await queryClient.invalidateQueries(getAuthUserQueryOptions());
-      await navigate({
-        to: redirectTo
-      });
-      toast.success(m.auth__sign_in_successful());
-    }
-  });
+  const signInMutation = useSignInMutation(() => navigate({ to: redirectTo }));
 
   const form = useForm({
     defaultValues: {
