@@ -44,6 +44,7 @@ export type TanStackStartSeoRobots = {
 
 export type TanStackStartSeoSite = {
   applicationName?: string;
+  basePath?: string;
   baseUrl: string;
   defaultDescription?: string;
   defaultImages?: TanStackStartSeoImage[];

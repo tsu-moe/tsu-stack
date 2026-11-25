@@ -8,9 +8,24 @@ test.beforeEach(async ({ page, baseURL }) => {
   );
 });
 
-test("renders the public home page", async ({ page }) => {
+test("renders the public home page", async ({ baseURL, page }) => {
   const response = await page.goto("./");
 
   expect(response?.ok()).toBe(true);
   await expect(page.getByRole("heading").first()).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new URL("./", baseURL).href);
+});
+
+test("preserves the deployment mount in localized home metadata", async ({ baseURL, page }) => {
+  const response = await page.goto("de");
+  const localizedUrl = new URL("de", baseURL).href;
+
+  expect(response?.ok()).toBe(true);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", localizedUrl);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", localizedUrl);
+  await expect(page.locator('link[rel="alternate"][hreflang="de"]')).toHaveAttribute("href", localizedUrl);
+  await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute(
+    "href",
+    new URL("./", baseURL).href
+  );
 });
