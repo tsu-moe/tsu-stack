@@ -4,7 +4,13 @@ Use SQLite text columns with a string-union type via Drizzle’s `$type<Type>()`
 
 ## Schema changes and local migrations
 
-After a schema change, run `vp run db:generate` and inspect the SQLite migration. Use `vp run db:migrate:local` to apply and test it against Wrangler’s local `DB` binding. Wrangler owns remote migrations. Confirm the target account and binding and obtain explicit authorization before `vp run db:migrate:remote` or `vp run deploy`, which applies remote migrations before deployment.
+After a schema change, run `vp run db:generate` and inspect the SQLite migration. Use `vp run db:migrate:local --persist-to <new-directory>` for disposable validation. Wrangler's default local state persists across runs, so it can contain existing data. Use the same local persistence directory when inspecting a test database.
+
+## Remote D1 migrations
+
+Before using `vp run db:migrate:remote`, verify the authenticated Cloudflare account, the effective Worker environment, and the `DB` binding's database name and ID. Check the app-local Wrangler config, inherited settings such as `CLOUDFLARE_ENV`, and any config or environment flags. Keep tokens and environment dumps out of output.
+
+Get explicit user approval for the migration and target before applying. `vp run deploy` applies remote migrations before uploading the Worker. Check both stages' effective targets and get approval that covers both operations. Follow [Human decisions](choice-flows.md).
 
 ## Better Auth tables
 

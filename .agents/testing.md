@@ -16,4 +16,4 @@ When an existing test lane can prove the boundary, use it. When adding a unit la
 
 - Test public contracts with small typed fixtures, using tables where they improve coverage. Cover meaningful success, invalid input, and regression cases. Mock nondeterministic or external I/O only. Avoid broad framework mocks, shared fixture frameworks, and routine snapshots.
 - Routine tests use disposable local services or sanitized provider fakes. Keep real provider sandboxes in a separately invoked lane, with sandbox credentials, isolated resources, rate limits, and cleanup. Use them only for behavior local tests cannot prove. Keep secrets and personal data out of fixtures.
-- For tests that need the database, apply the checked-in migrations with `vp run db:migrate:local` and use Wrangler’s local D1 binding. Keep routine tests isolated from remote D1.
+- For tests that need D1, apply the checked-in migrations with `vp run db:migrate:local --persist-to <new-directory>` and use the matching local binding and state. Keep routine tests isolated from remote D1.
