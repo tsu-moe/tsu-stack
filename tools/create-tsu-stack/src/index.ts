@@ -6,14 +6,19 @@ import * as p from "@clack/prompts";
 
 import { HELP_TEXT, parseCliFlags } from "./args";
 import { commandRunner } from "./commands";
-import { assertDestinationAvailable, generateProject } from "./generate";
+import { generateProject } from "./generate";
 import { resolveTemplate } from "./github";
-import { buildNextSteps } from "./next-steps";
+import { buildNextSteps, changeDirectoryCommand } from "./next-steps";
 import { collectProjectInput, finishPrompt } from "./prompts";
-import { assertSetupPrerequisites, runPostGeneration } from "./setup";
+import { assertSetupPrerequisites, runPostGeneration, SetupFailure } from "./setup";
+import { buildReproducibleCommand } from "./transform";
 import { getCliVersion } from "./version";
 
-async function withSpinner<T>(start: string, done: string, task: () => Promise<T>): Promise<T> {
+async function withSpinner<T>(interactive: boolean, start: string, done: string, task: () => Promise<T>): Promise<T> {
+  if (!interactive) {
+    process.stdout.write(`${start}...\n`);
+    return task();
+  }
   const spinner = p.spinner();
   spinner.start(start);
   try {
@@ -21,9 +26,14 @@ async function withSpinner<T>(start: string, done: string, task: () => Promise<T
     spinner.stop(done);
     return result;
   } catch (error) {
-    spinner.stop(`${start} failed`);
+    spinner.error();
     throw error;
   }
+}
+
+function showNote(interactive: boolean, title: string, body: string): void {
+  if (interactive) p.note(body, title);
+  else process.stdout.write(`\n${title}\n${body}\n`);
 }
 
 async function main(): Promise<void> {
@@ -40,15 +50,32 @@ async function main(): Promise<void> {
   }
 
   const cwd = process.cwd();
+  const hasTerminal = Boolean(process.stdin.isTTY && process.stdout.isTTY);
+  if (!hasTerminal && !flags.yes) {
+    throw new Error("Without an interactive terminal, provide a project directory and --yes. See --help for options.");
+  }
+  const interactive = hasTerminal && !flags.yes;
   const input = await collectProjectInput(flags);
-  const template = await withSpinner(`Resolving ${input.variant} template`, "Template resolved", async () =>
-    resolveTemplate(input)
+  if (!input.dryRun) {
+    if (input.setup === "cloudflare" && !hasTerminal) {
+      throw new Error(
+        "Cloudflare setup needs a terminal to choose the account. Use --setup local or --setup none in scripts."
+      );
+    }
+    await assertSetupPrerequisites(input, commandRunner, cwd);
+  }
+  const template = await withSpinner(
+    interactive,
+    `Resolving ${input.variant} template`,
+    "Template resolved",
+    async () => resolveTemplate(input)
   );
   const target = resolve(cwd, input.projectDirectory);
-  await assertDestinationAvailable(target);
 
   if (input.dryRun) {
-    p.note(
+    showNote(
+      interactive,
+      "Dry run",
       [
         `Destination: ${target}`,
         `Variant: ${input.variant} (${template.branch})`,
@@ -56,25 +83,57 @@ async function main(): Promise<void> {
         `Scope: ${input.scope}`,
         `Install: ${input.install ? "yes" : "no"}`,
         `Setup: ${input.setup}`,
-        `Git: ${input.git ? "yes" : "no"}`
-      ].join("\n"),
-      "Dry run"
+        `Git: ${input.git ? "yes" : "no"}`,
+        "",
+        "Replay command (POSIX shell):",
+        buildReproducibleCommand(input, template, cliVersion)
+      ].join("\n")
     );
-    finishPrompt("No files or external resources were changed.");
+    if (interactive) finishPrompt("No files or external resources were changed.");
     return;
   }
 
-  await assertSetupPrerequisites(input, commandRunner, cwd);
   const generatedRoot = await withSpinner(
+    interactive,
     "Downloading and transforming the template",
     "Project files generated",
     async () => generateProject({ cliVersion, cwd, input, template })
   );
 
-  await runPostGeneration(generatedRoot, input, commandRunner);
+  try {
+    await runPostGeneration(generatedRoot, input, commandRunner, undefined, undefined, (label) => {
+      if (interactive) p.log.step(label);
+      else process.stdout.write(`${label}...\n`);
+    });
+  } catch (error) {
+    if (!(error instanceof SetupFailure)) {
+      if (error instanceof Error && error.message === "CANCELLED") {
+        showNote(interactive, "Project files are ready", `${generatedRoot}\nSee .github/README.md to continue setup.`);
+      }
+      throw error;
+    }
+    process.stderr.write(
+      [
+        `Error: ${error.message}`,
+        `Project files were kept at ${generatedRoot}.`,
+        "",
+        "Continue in the generated project:",
+        changeDirectoryCommand(generatedRoot),
+        ...error.recovery,
+        "See .github/README.md for the remaining setup steps.",
+        ""
+      ].join("\n")
+    );
+    process.exitCode = 1;
+    return;
+  }
 
-  p.note(buildNextSteps(input), "Next steps");
-  finishPrompt(`${input.displayName} is ready.`);
+  showNote(interactive, "Next steps", buildNextSteps(input));
+  const success = input.install
+    ? `${input.displayName} was created.`
+    : `Created ${input.displayName}. Install dependencies to get started.`;
+  if (interactive) finishPrompt(success);
+  else process.stdout.write(`\n${success}\n`);
 }
 
 try {
@@ -82,7 +141,7 @@ try {
 } catch (error) {
   if (error instanceof Error && error.message === "CANCELLED") process.exitCode = 0;
   else {
-    p.log.error(error instanceof Error ? error.message : String(error));
+    process.stderr.write(`Error: ${error instanceof Error ? error.message : String(error)}\n`);
     process.exitCode = 1;
   }
 }

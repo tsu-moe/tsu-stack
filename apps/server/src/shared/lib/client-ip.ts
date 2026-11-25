@@ -1,6 +1,8 @@
 import { createMiddleware } from "hono/factory";
 import { z } from "zod";
 
+import { REQUEST_ID_HEADER } from "@tsu-stack/logger/request-id";
+
 const CLIENT_IP_HEADER = "x-tsu-client-ip";
 
 export type ClientIpVariables = {
@@ -14,8 +16,10 @@ export function clientIpMiddleware() {
   });
 }
 
-export function withClientIp(request: Request, clientIp: string) {
-  return new Request(request, { headers: withClientIpHeaders(request.headers, clientIp) });
+export function withAuthRequestContext(request: Request, clientIp: string, requestId: string) {
+  const headers = withClientIpHeaders(request.headers, clientIp);
+  headers.set(REQUEST_ID_HEADER, requestId);
+  return new Request(request, { headers });
 }
 
 export function withClientIpHeaders(headers: HeadersInit, clientIp: string) {

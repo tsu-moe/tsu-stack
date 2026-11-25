@@ -95,6 +95,10 @@ export default defineConfig({
       {
         files: ["apps/web/src/**/*.ts", "apps/web/src/**/*.tsx"],
         ...tanstackStartFsdLint
+      },
+      {
+        files: ["packages/logger/**/*"],
+        rules: { "eslint/no-restricted-imports": "off" }
       }
     ],
     // #endregion
@@ -149,6 +153,10 @@ export default defineConfig({
 
       // You can add more rules from: https://oxc.rs/docs/guide/usage/linter/rules.html?sort=fix&dir=asc&has_fix=true
       "eslint/arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true }],
+      "eslint/no-restricted-imports": [
+        "error",
+        { patterns: [{ group: ["evlog", "evlog/**"], message: "Use @tsu-stack/logger." }] }
+      ],
       "typescript/ban-ts-comment": "error",
       "typescript/consistent-indexed-object-style": ["error", "record"],
       "jest/consistent-test-it": ["error", { fn: "it" }],

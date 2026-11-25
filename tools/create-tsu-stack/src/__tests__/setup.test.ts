@@ -62,7 +62,7 @@ describe("guided setup", () => {
     await expect(assertSetupPrerequisites(input, runner, ".")).rejects.toThrow("Docker is required");
   });
 
-  it("leaves git uninitialized when a setup command fails", async () => {
+  it("reports the failed setup step and leaves Git uninitialized", async () => {
     const calls: string[] = [];
     const runner: CommandRunner = {
       async capture() {
@@ -77,11 +77,14 @@ describe("guided setup", () => {
         return true;
       }
     };
-    await expect(runPostGeneration(await projectFixture(), input, runner)).rejects.toThrow("migration failed");
+    await expect(runPostGeneration(await projectFixture(), input, runner)).rejects.toMatchObject({
+      message: "Apply PostgreSQL migrations failed. migration failed",
+      recovery: ["vp run db:migrate"]
+    });
     expect(calls).not.toContain("git init");
   });
 
-  it("creates an ignored local env with generated values", async () => {
+  it("creates a local env with generated values and keeps them on retry", async () => {
     const root = await projectFixture();
     const envDirectory = join(root, "packages", "env");
 
@@ -90,6 +93,8 @@ describe("guided setup", () => {
     expect(env).toContain('VITE_SERVER_URL="http://localhost:5000/server"');
     expect(env).toContain('VITE_WEB_URL="http://localhost:3000/web"');
     expect(env).toMatch(/BETTER_AUTH_SECRET="[A-Za-z0-9_-]{43}"/u);
+    await createLocalEnvironment(root, input);
+    expect(await readFile(join(envDirectory, ".env"), "utf8")).toBe(env);
   });
 
   it.skipIf(process.platform === "win32")("keeps the local env private to its owner", async () => {

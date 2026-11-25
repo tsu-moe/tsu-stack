@@ -7,9 +7,6 @@
  * - `server`: standalone Hono server logs
  * - `default`: fallback when a service is not explicitly selected
  *
- * Future feature-specific services should append segments, for example
- * `web__server__todo`.
- *
  * Import these from the relevant logger facade:
  * `@tsu-stack/logger/client` or `@tsu-stack/logger/server`.
  */

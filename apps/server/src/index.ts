@@ -26,14 +26,25 @@ import { appRouter } from "@tsu-stack/api/routers/index";
 import { createAuth, generateAuthOpenApiSchema } from "@tsu-stack/auth/index";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
 import { REQUEST_ID_HEADER } from "@tsu-stack/logger/request-id";
-import { createRequestLogger, isEvlogError, log, parseError } from "@tsu-stack/logger/server";
+import {
+  createLogger,
+  createRequestLogger,
+  isEvlogError,
+  parseError,
+  type RequestLogger
+} from "@tsu-stack/logger/server";
 import {
   honoLogIngestionMiddleware,
   honoLoggerMiddleware,
   type HonoLogVariables
 } from "@tsu-stack/logger/server/hono/middleware";
 
-import { type ClientIpVariables, clientIpMiddleware, withClientIp, withClientIpHeaders } from "#@/shared/lib/client-ip";
+import {
+  type ClientIpVariables,
+  clientIpMiddleware,
+  withAuthRequestContext,
+  withClientIpHeaders
+} from "#@/shared/lib/client-ip";
 import "#@/shared/lib/logger";
 import { fixedWindowRateLimit } from "#@/shared/lib/rate-limit";
 
@@ -54,7 +65,7 @@ app.use(
 app.use(
   "/*",
   cors({
-    allowHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
+    allowHeaders: ["Content-Type", "Authorization", "X-Request-Id", "X-Evlog-Source"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
     exposeHeaders: [REQUEST_ID_HEADER],
@@ -100,13 +111,11 @@ app.use("/rpc/health/ready", readinessRateLimit);
 app.use("/*", bodyLimit({ maxSize: 1024 * 1024 }));
 
 app.onError((error, c) => {
-  if (!(error instanceof HTTPException && error.status < 500)) {
-    const requestLog = c.get("log");
-    if (requestLog) {
-      requestLog.error(error);
-    } else {
-      log.error({ event: "hono_global_error", error });
-    }
+  if (!c.get("log") && !(error instanceof HTTPException && error.status < 500)) {
+    const logger = createLogger();
+    logger.error(error);
+    logger.outcome("http.request.failed");
+    logger.emit();
   }
 
   if (!(error instanceof HTTPException) && !isEvlogError(error)) {
@@ -150,9 +159,25 @@ app.get("/auth/open-api/generate-schema", async (c) => {
   return c.json(schema);
 });
 
-app.on(["POST", "GET"], "/auth/*", (c) => createAuth().handler(withClientIp(c.req.raw, c.get("clientIp"))));
+app.on(["POST", "GET"], "/auth/*", (c) =>
+  createAuth().handler(withAuthRequestContext(c.req.raw, c.get("clientIp"), c.get("requestId")))
+);
 
-const errorStatusMap = { ...COMMON_ERROR_STATUS_MAP, SERVICE_UNAVAILABLE: 503 };
+const errorStatusMap: Record<string, number> = { ...COMMON_ERROR_STATUS_MAP, SERVICE_UNAVAILABLE: 503 };
+
+function recordProcedureError(logger: RequestLogger, handler: "openapi" | "rpc", error: unknown) {
+  logger.set({ handler });
+  if (error instanceof ORPCError) {
+    const status = Object.hasOwn(errorStatusMap, error.code) ? (errorStatusMap[error.code] ?? 400) : 400;
+    if (status < 500) {
+      logger.set({ error: { code: error.code } });
+      return;
+    }
+  }
+
+  logger.error(error);
+}
+
 const openApiGenerator = new OpenAPIGenerator({
   converters: [new ZodToJsonSchemaConverter()]
 });
@@ -161,8 +186,7 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
   errorStatusMap,
   interceptors: [
     onError((error, { context }) => {
-      context.logger.set({ handler: "openapi" });
-      context.logger.error(error instanceof Error ? error : String(error));
+      if (error instanceof ORPCError) recordProcedureError(context.logger, "openapi", error);
     })
   ],
   plugins: [
@@ -231,12 +255,7 @@ export const openApiHandler = new OpenAPIHandler(appRouter, {
 
 export const rpcHandler = new RPCHandler(appRouter, {
   errorStatusMap,
-  interceptors: [
-    onError((error, { context }) => {
-      context.logger.set({ handler: "rpc" });
-      context.logger.error(error instanceof Error ? error : String(error));
-    })
-  ],
+  interceptors: [onError((error, { context }) => recordProcedureError(context.logger, "rpc", error))],
   plugins: [new GetMethodCsrfProtectionHandlerPlugin(), new ResponseHeadersHandlerPlugin()]
 });
 
