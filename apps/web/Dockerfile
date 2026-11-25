@@ -24,7 +24,6 @@ COPY --chown=vp:vp . .
 
 ARG SOURCE_COMMIT VITE_SERVER_URL VITE_WEB_URL VITE_IMGPROXY_URL VITE_IMGPROXY_SIGNATURE
 
-# Use the example environment for tests and build-time validation.
 RUN --mount=type=bind,source=packages/env/.env.example,target=/app/packages/env/.env \
     vp run test:unit:run \
     && vp run -v --filter web build
