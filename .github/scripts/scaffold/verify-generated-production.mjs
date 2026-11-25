@@ -54,7 +54,7 @@ try {
     const type = new URL(url).pathname.endsWith(".css") ? /text\/css/ : /javascript/;
     assert.match(asset.headers()["content-type"] ?? "", type);
   }
-  const menu = page.getByRole("button", { name: "Toggle menu" });
+  const menu = page.getByRole("button").and(page.locator('[aria-controls="mobile-menu"]'));
   await menu.click();
   await expect(menu).toHaveAttribute("aria-expanded", "true");
 
@@ -88,14 +88,20 @@ try {
   await form.locator('[type="submit"]').click();
   await expect(page).toHaveURL((url) => url.pathname === dashboardUrl.pathname);
   await expect(page.getByRole("heading", { name: new RegExp(name) })).toBeVisible();
-  await expect(page.getByText("This is private", { exact: false }).first()).toBeVisible();
+  const rpcPayload = page.locator("main pre");
+  await expect(rpcPayload).toContainText(JSON.stringify(name));
 
   const privateResponse = await context.request.get(privateUrl.href);
   await expect(privateResponse).toBeOK();
   assert.equal(privateResponse.headers()["cache-control"], "private, no-store");
-  assert.equal((await privateResponse.json()).user.email, email);
+  const privateData = await privateResponse.json();
+  assert.equal(typeof privateData.message, "string");
+  assert.equal(typeof privateData.user.id, "string");
+  assert(privateData.user.id.length > 0);
+  assert.deepEqual(privateData, { message: privateData.message, user: { id: privateData.user.id, name } });
+  assert.deepEqual(JSON.parse(await rpcPayload.textContent()), privateData);
   await menu.click();
-  await page.getByRole("button", { name: "Logout", exact: true }).click();
+  await page.locator("#mobile-menu").getByRole("button").click();
   await expect(page).toHaveURL((url) => url.pathname.endsWith("/sign-in"));
   assert.equal((await context.request.get(privateUrl.href)).status(), 401);
 } finally {

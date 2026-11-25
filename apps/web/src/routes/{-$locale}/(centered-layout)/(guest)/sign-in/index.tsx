@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { m } from "@tsu-stack/i18n/messages";
+
 import { generateAppSeo } from "@/shared/lib/seo";
 
 import { SignInForm } from "@/features/auth";
@@ -13,12 +15,12 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/sign
         canonicalPath: "/sign-in",
         locale: params.locale
       },
-      description: `Sign in to access your ${appConfig.site.shortName} account and manage your saved application data.`,
+      description: m.auth__sign_in__seo_description({ siteName: appConfig.site.shortName }),
       robots: {
         follow: false,
         index: false
       },
-      title: "Sign In"
+      title: m.auth__sign_in__seo_title()
     }),
   component: RouteComponent
 });

@@ -1,10 +1,6 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import { FileText, BarChart2, Lock, LogOut, UserSquare } from "lucide-react";
 
-import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
@@ -18,25 +14,13 @@ import {
   DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
 
+import { useSignOutMutation } from "@/features/navbar/api/sign-out.mutation";
 import { NavbarAvatar } from "@/features/navbar/ui/navbar-avatar";
 import { NavbarUnauthenticatedButtons } from "@/features/navbar/ui/navbar-unauthenticated-buttons";
 
 export function UserDropdown() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
   const { user } = useAuthSuspense();
-
-  const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onResponse: async () => {
-          // Invalidate to sync across all tabs
-          await queryClient.invalidateQueries(getAuthUserQueryOptions());
-          await router.invalidate();
-        }
-      }
-    });
-  };
+  const signOut = useSignOutMutation();
 
   if (!user) {
     return <NavbarUnauthenticatedButtons />;
@@ -45,7 +29,7 @@ export function UserDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-label="Open account menu" size="icon" variant="ghost">
+        <Button aria-label={m.user_dropdown__open_menu()} size="icon" variant="ghost">
           <UserSquare aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
@@ -78,9 +62,9 @@ export function UserDropdown() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" variant="destructive" onClick={handleSignOut}>
+        <DropdownMenuItem className="cursor-pointer" variant="destructive" onSelect={() => signOut.mutate()}>
           <LogOut aria-hidden="true" className="opacity-60" />
-          <button onClick={handleSignOut}>{m.user_dropdown__logout()}</button>
+          {m.user_dropdown__logout()}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { m } from "@tsu-stack/i18n/messages";
+
 import { generateAppSeo } from "@/shared/lib/seo";
 
 import { TermsOfServicePage } from "@/pages/terms-of-service";
@@ -13,8 +15,8 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/terms-of-service
         canonicalPath: "/terms-of-service",
         locale: params.locale
       },
-      description: `Review the rules, responsibilities, and terms for using ${appConfig.site.shortName}.`,
-      title: "Terms of Service"
+      description: m.terms_of_service_page__seo_description({ siteName: appConfig.site.shortName }),
+      title: m.terms_of_service_page__seo_title()
     }),
   component: TermsOfServicePage
 });

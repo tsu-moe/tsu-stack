@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { m } from "@tsu-stack/i18n/messages";
+
 import { generateAppSeo } from "@/shared/lib/seo";
 
 import { HomePage } from "@/pages/home";
@@ -13,7 +15,8 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/")({
         canonicalPath: "/",
         locale: params.locale
       },
-      description: appConfig.site.description
+      description: m.home_page__hero_description(),
+      title: appConfig.site.longName
     }),
   component: HomePage
 });
