@@ -1,35 +1,18 @@
-import { log } from "evlog";
-import { evlog as createEvlogHonoMiddleware, type EvlogHonoOptions, type EvlogVariables } from "evlog/hono";
+import { createLogger } from "evlog";
+import { evlog as createEvlogHonoMiddleware, type EvlogHonoOptions } from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { every } from "hono/combine";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import { routePath } from "hono/route";
 import { z } from "zod";
 
 import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
+import { logSafely, reportLoggingFailure, requestLogger, type RequestLogger } from "#@/server/runtime";
+import { BrowserLogPayloadSchema, type BrowserLogPayload } from "#@/types";
 
-const NormalizedLogLevelSchema = z.enum(["info", "error", "warn", "debug"]).catch("info");
-
-const ClientLogPayloadSchema = z.object({
-  event: z
-    .object({
-      environment: z.string(),
-      level: z.string(),
-      service: z.string(),
-      timestamp: z.string()
-    })
-    .catchall(z.json()),
-  request: z
-    .object({
-      method: z.string().optional(),
-      path: z.string().optional(),
-      requestId: z.string().optional()
-    })
-    .optional()
-});
-
-const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
+const ClientLogBatchSchema = z.array(BrowserLogPayloadSchema).max(50);
 
 /**
  * Hono app variables added by `honoLoggerMiddleware()`.
@@ -42,7 +25,7 @@ const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
  * const app = new Hono<HonoLogVariables>();
  * ```
  */
-export type HonoLogVariables = EvlogVariables;
+export type HonoLogVariables = { Variables: { log: RequestLogger; requestId: string } };
 
 type HonoLoggerMiddlewareOptions = EvlogHonoOptions & {
   requestIdOptions?: RequestIdOptions;
@@ -50,15 +33,6 @@ type HonoLoggerMiddlewareOptions = EvlogHonoOptions & {
 
 type HonoLogIngestionOptions = {
   maxPayloadBytes?: number;
-};
-
-type ClientLogPayload = z.infer<typeof ClientLogPayloadSchema>;
-
-type NormalizedEvent = Omit<ClientLogPayload["event"], "level" | "timestamp"> & {
-  clientTimestamp?: string;
-  method?: string;
-  path?: string;
-  requestId?: string;
 };
 
 /**
@@ -77,16 +51,41 @@ type NormalizedEvent = Omit<ClientLogPayload["event"], "level" | "timestamp"> & 
  */
 export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}): MiddlewareHandler {
   const { requestIdOptions = {}, ...evlogOptions } = options;
-  const evlogMiddleware = createEvlogHonoMiddleware(evlogOptions);
+  const evlogMiddleware = createEvlogHonoMiddleware({
+    ...evlogOptions,
+    async keep(ctx) {
+      await evlogOptions.keep?.(ctx);
+      if (typeof ctx.context?.event === "string") ctx.shouldKeep = true;
+    }
+  });
 
   return async (context, next) => {
-    const requestId = resolveRequestId(context.req.raw.headers, requestIdOptions);
+    const { raw } = context.req;
+    const requestId = resolveRequestId(raw.headers, requestIdOptions);
+    if (raw.headers.get(REQUEST_ID_HEADER) !== requestId) {
+      const headers = new Headers(raw.headers);
+      headers.set(REQUEST_ID_HEADER, requestId);
+      context.req.raw = new Request(raw, { headers });
+    }
+    context.set("requestId", requestId);
     context.header(requestIdOptions.headerName ?? REQUEST_ID_HEADER, requestId);
 
-    return evlogMiddleware(context, async () => {
-      context.get("log")?.set({ requestId });
-      await next();
-    });
+    let completed = false;
+    try {
+      return await evlogMiddleware(context, async () => {
+        const logger = context.get("log");
+        context.set("log", requestLogger(logger));
+        await next();
+        completed = true;
+        logSafely(() => {
+          const route = routePath(context);
+          if (route && !route.endsWith("/*")) logger.set({ route });
+        });
+      });
+    } catch (error) {
+      if (!completed) throw error;
+      reportLoggingFailure();
+    }
   };
 }
 
@@ -134,40 +133,12 @@ export function honoLogIngestionMiddleware(options: HonoLogIngestionOptions = {}
   );
 }
 
-function emitClientLog(payload: ClientLogPayload) {
-  const { level: _level, timestamp, ...event } = payload.event;
-  const normalizedEvent: NormalizedEvent = {
-    ...(timestamp !== undefined && event.clientTimestamp === undefined ? { clientTimestamp: timestamp } : {}),
-    ...event
-  };
-
-  if (payload.request?.method && normalizedEvent.method === undefined) {
-    normalizedEvent.method = payload.request.method;
-  }
-
-  if (payload.request?.path && normalizedEvent.path === undefined) {
-    normalizedEvent.path = payload.request.path;
-  }
-
-  if (payload.request?.requestId && normalizedEvent.requestId === undefined) {
-    normalizedEvent.requestId = payload.request.requestId;
-  }
-
-  // Keep browser-controlled fields separate from authoritative server log fields.
-  const clientEvent = { client: normalizedEvent, source: "client" };
-
-  switch (NormalizedLogLevelSchema.parse(payload.event.level)) {
-    case "debug":
-      log.debug(clientEvent);
-      return;
-    case "error":
-      log.error(clientEvent);
-      return;
-    case "warn":
-      log.warn(clientEvent);
-      return;
-    case "info":
-      log.info(clientEvent);
-      return;
-  }
+function emitClientLog(payload: BrowserLogPayload) {
+  const { timestamp, ...event } = payload.event;
+  logSafely(() =>
+    createLogger({
+      client: { ...event, clientTimestamp: timestamp, requestId: payload.request?.requestId },
+      source: "client"
+    }).emit({ _forceKeep: true })
+  );
 }

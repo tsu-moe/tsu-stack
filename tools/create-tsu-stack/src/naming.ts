@@ -40,7 +40,7 @@ export function normalizeScope(value: string): string {
   return `@${slug}`;
 }
 
-export function projectNameFromDirectory(directory: string): string {
-  const absolute = resolve(directory);
+export function projectNameFromDirectory(directory: string, cwd = process.cwd()): string {
+  const absolute = resolve(cwd, directory);
   return normalizeProjectName(basename(absolute));
 }

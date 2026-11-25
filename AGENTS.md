@@ -7,6 +7,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Hono + oRPC + Drizz
 - Prefer direct solutions for current requirements. Add abstractions or helpers only when they improve readability, reuse, or testability.
 - Keep control flow and types simple and close to their owners. Trust established internal invariants, but validate input, auth, external APIs, and persistence boundaries.
 - Handle realistic edge cases in proportion to their impact. Comment only on non-obvious intent or constraints, explaining why.
+- When building a business-critical feature, instrument its meaningful outcomes in the same change. Follow [Logging](.agents/logging.md).
 - Update documentation only when the user asks or when a user-directed implementation change makes existing guidance inaccurate.
 - Use `vp` for package/scripts and `vpx` for one-off CLIs. Before substantial work, run `vpx @tanstack/intent@latest list` and load a matching local skill only when it directly fits.
 

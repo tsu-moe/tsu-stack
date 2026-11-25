@@ -8,6 +8,9 @@ import { openAPI } from "better-auth/plugins";
 import { createDb } from "@tsu-stack/db";
 import * as schema from "@tsu-stack/db/schema";
 import { ENV_SERVER } from "@tsu-stack/env/server/env";
+import { log } from "@tsu-stack/logger/server";
+
+import { authAuditHooks } from "#@/audit";
 
 export function createAuth() {
   const db = createDb();
@@ -17,6 +20,14 @@ export function createAuth() {
     basePath: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "auth"),
     trustedOrigins: [new URL(ENV_SERVER.VITE_WEB_URL).origin],
     secret: ENV_SERVER.BETTER_AUTH_SECRET,
+    databaseHooks: authAuditHooks,
+    logger: {
+      level: "warn",
+      log(level) {
+        if (level === "warn") log.warn({ event: "auth.provider.warned" });
+        if (level === "error") log.error({ event: "auth.provider.failed" });
+      }
+    },
     database: drizzleAdapter(db, {
       provider: "pg",
       schema

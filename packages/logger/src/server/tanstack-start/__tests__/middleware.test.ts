@@ -1,3 +1,4 @@
+import { createServerEntry } from "@tanstack/react-start/server";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 import { tanstackStartRequestLoggerMiddleware } from "#@/server/tanstack-start/middleware";
@@ -6,6 +7,9 @@ const requestLogger = vi.hoisted(() => {
   return {
     emit: vi.fn(),
     error: vi.fn(),
+    getContext: vi.fn(() => {
+      return {};
+    }),
     set: vi.fn()
   };
 });
@@ -47,7 +51,7 @@ async function runMiddleware(options: {
   middleware: ReturnType<typeof tanstackStartRequestLoggerMiddleware>;
   request: Request;
   response?: Response;
-  throwError?: Error;
+  throwError?: Error | Response;
 }) {
   const middleware = options.middleware as unknown as Middleware;
   const chain = [...(middleware.options.middleware ?? []), middleware];
@@ -78,7 +82,7 @@ async function runMiddleware(options: {
     });
   };
 
-  return next();
+  return createServerEntry({ fetch: async () => (await next()).response }).fetch(options.request);
 }
 
 describe("tanstackStartRequestLoggerMiddleware", () => {
@@ -92,7 +96,7 @@ describe("tanstackStartRequestLoggerMiddleware", () => {
       }
     });
 
-    const result = await runMiddleware({
+    const response = await runMiddleware({
       middleware: tanstackStartRequestLoggerMiddleware(),
       request,
       response: new Response(null, { status: 418 })
@@ -105,34 +109,55 @@ describe("tanstackStartRequestLoggerMiddleware", () => {
       requestId: "request-123"
     });
     expect(requestLogger.set).toHaveBeenCalledWith({
-      hostname: "example.com",
-      method: "GET",
-      path: "/web/dashboard"
+      hostname: "example.com"
     });
     expect(requestLogger.emit).toHaveBeenCalledOnce();
-    expect(requestLogger.emit).toHaveBeenCalledWith({ status: 418 });
-    expect(result.response.headers.get("x-request-id")).toBe("request-123");
+    expect(requestLogger.emit).toHaveBeenCalledWith({ status: 418, _forceKeep: false });
+    expect(response.headers.get("x-request-id")).toBe("request-123");
   });
 
-  it("replaces an invalid request ID and records an error once", async () => {
-    const error = new Error("boom");
-    const request = new Request("https://example.com/web/dashboard", {
-      headers: { "x-request-id": "invalid request id" }
+  it("keeps the status and validates the correlation header on a thrown response", async () => {
+    const response = await runMiddleware({
+      middleware: tanstackStartRequestLoggerMiddleware({
+        requestIdOptions: { generator: () => "denial-1" }
+      }),
+      request: new Request("https://example.com/web/dashboard", { headers: { "X-Request-Id": "invalid request id" } }),
+      throwError: new Response(null, { status: 403 })
     });
 
-    await expect(
-      runMiddleware({
-        middleware: tanstackStartRequestLoggerMiddleware({
-          requestIdOptions: { generator: () => "generated-request-id" }
-        }),
-        request,
-        throwError: error
-      })
-    ).rejects.toThrow(error);
+    expect(response.status).toBe(403);
+    expect(response.headers.get("x-request-id")).toBe("denial-1");
+    expect(requestLogger.error).not.toHaveBeenCalled();
+    expect(requestLogger.emit).toHaveBeenCalledExactlyOnceWith({ status: 403 });
+  });
 
-    expect(createRequestLogger).toHaveBeenCalledWith(expect.objectContaining({ requestId: "generated-request-id" }));
-    expect(requestLogger.error).toHaveBeenCalledOnce();
-    expect(requestLogger.error).toHaveBeenCalledWith(error);
-    expect(requestLogger.emit).toHaveBeenCalledOnce();
+  it("excludes root and prefixed health checks", async () => {
+    for (const path of ["/_api/health/live", "/web/_api/health/live", "/prefix/web/_api/health/live"]) {
+      const response = await runMiddleware({
+        middleware: tanstackStartRequestLoggerMiddleware({ excludePaths: ["**/_api/health/**"] }),
+        request: new Request(`https://example.com${path}`)
+      });
+      expect(response.status).toBe(204);
+    }
+    expect(requestLogger.emit).not.toHaveBeenCalled();
+  });
+
+  it("keeps a successful response when emission fails", async () => {
+    const report = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      requestLogger.emit.mockImplementationOnce(() => {
+        throw new Error("logging failed");
+      });
+      const response = await runMiddleware({
+        middleware: tanstackStartRequestLoggerMiddleware(),
+        request: new Request("https://example.com/web/dashboard")
+      });
+      expect(response.status).toBe(204);
+      expect(requestLogger.error).not.toHaveBeenCalled();
+      expect(requestLogger.emit).toHaveBeenCalledOnce();
+      expect(report).toHaveBeenCalledWith("[tsu-stack/logger] Failed to record telemetry");
+    } finally {
+      report.mockRestore();
+    }
   });
 });
