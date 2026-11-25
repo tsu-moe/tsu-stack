@@ -1,5 +1,6 @@
 import { defu } from "defu";
 import {
+  audit as recordAudit,
   auditRedactPreset,
   createError as createEvlogError,
   createLogger as createEvlogLogger,
@@ -9,11 +10,11 @@ import {
   log as evlog,
   parseError as parseEvlogError,
   type LoggerConfig as EvlogLoggerConfig,
-  type ParsedError as EvlogParsedError,
-  type RequestLogger as EvlogRequestLogger
+  type ParsedError as EvlogParsedError
 } from "evlog";
 
 import { LOG_SERVICES } from "#@/constants/services";
+import { logSafely, normalizeAudit, standaloneLogger, type AuditInput, type LogFields } from "#@/server/runtime";
 
 type ServerLoggerConfig = EvlogLoggerConfig;
 
@@ -89,7 +90,12 @@ export function initLogger(config: ServerLoggerConfig = {}) {
  */
 export { LOG_SERVICES };
 
-export { audit, type AuditFields } from "evlog";
+export { type AuditFields } from "evlog";
+export type { RequestLogger } from "#@/server/runtime";
+
+export function audit(input: AuditInput) {
+  return logSafely(() => recordAudit(normalizeAudit(input))) ?? null;
+}
 
 /**
  * Create a standalone wide-event logger for jobs, scripts, or non-request work.
@@ -99,11 +105,13 @@ export { audit, type AuditFields } from "evlog";
  * import { createLogger } from "@tsu-stack/logger/server";
  *
  * const logger = createLogger({ operation: "user.sync" });
- * logger.set({ users: { processed: 42 } });
- * logger.emit({ event: "user.synced" });
+ * logger.outcome("user.synced", { users: { processed: 42 } });
+ * logger.emit();
  * ```
  */
-export const createLogger = createEvlogLogger;
+export function createLogger(fields?: LogFields) {
+  return standaloneLogger(createEvlogLogger(), fields);
+}
 
 /**
  * Create a request-scoped wide-event logger when framework middleware is not in play.
@@ -112,11 +120,14 @@ export const createLogger = createEvlogLogger;
  * ```ts
  * import { createRequestLogger } from "@tsu-stack/logger/server";
  *
- * const logger = createRequestLogger({ method: "GET", path: "/health" });
- * logger.emit({ status: 200 });
+ * const logger = createRequestLogger({ method: "GET", path: "/jobs" });
+ * logger.outcome("job.listed");
+ * logger.emit();
  * ```
  */
-export const createRequestLogger = createEvlogRequestLogger;
+export function createRequestLogger(options: Parameters<typeof createEvlogRequestLogger>[0]) {
+  return standaloneLogger(createEvlogRequestLogger(options));
+}
 
 /**
  * Simple server-side logging API for one-off structured events.
@@ -125,7 +136,6 @@ export const createRequestLogger = createEvlogRequestLogger;
  * ```ts
  * import { log } from "@tsu-stack/logger/server";
  *
- * log.info({ event: "server.started", port: 5000 });
  * log.error({ event: "rpc.request.failed", error });
  * ```
  */
@@ -166,20 +176,6 @@ export const isEvlogError = (error: unknown): error is EvlogError => EvlogError.
  * ```
  */
 export const parseError = parseEvlogError;
-
-/**
- * Request-scoped evlog logger provided by the framework middleware.
- *
- * @example
- * ```ts
- * import type { RequestLogger } from "@tsu-stack/logger/server";
- *
- * function addUserContext(logger: RequestLogger, userId: string) {
- *   logger.set({ user: { id: userId } });
- * }
- * ```
- */
-export type RequestLogger = EvlogRequestLogger;
 
 /**
  * Parsed structured error returned by `parseError`.

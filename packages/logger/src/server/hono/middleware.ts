@@ -1,5 +1,5 @@
 import { log } from "evlog";
-import { evlog as createEvlogHonoMiddleware, type EvlogHonoOptions, type EvlogVariables } from "evlog/hono";
+import { evlog as createEvlogHonoMiddleware, type EvlogHonoOptions } from "evlog/hono";
 import { type MiddlewareHandler } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { every } from "hono/combine";
@@ -8,6 +8,7 @@ import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
 import { REQUEST_ID_HEADER, resolveRequestId, type RequestIdOptions } from "#@/request-id";
+import { reportLoggingFailure, requestLogger, type RequestLogger } from "#@/server/runtime";
 
 const NormalizedLogLevelSchema = z.enum(["info", "error", "warn", "debug"]).catch("info");
 
@@ -42,7 +43,7 @@ const ClientLogBatchSchema = z.array(ClientLogPayloadSchema).max(50);
  * const app = new Hono<HonoLogVariables>();
  * ```
  */
-export type HonoLogVariables = EvlogVariables & { Variables: { requestId: string } };
+export type HonoLogVariables = { Variables: { log: RequestLogger; requestId: string } };
 
 type HonoLoggerMiddlewareOptions = EvlogHonoOptions & {
   requestIdOptions?: RequestIdOptions;
@@ -77,7 +78,13 @@ type NormalizedEvent = Omit<ClientLogPayload["event"], "level" | "timestamp"> & 
  */
 export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}): MiddlewareHandler {
   const { requestIdOptions = {}, ...evlogOptions } = options;
-  const evlogMiddleware = createEvlogHonoMiddleware(evlogOptions);
+  const evlogMiddleware = createEvlogHonoMiddleware({
+    ...evlogOptions,
+    async keep(ctx) {
+      await evlogOptions.keep?.(ctx);
+      if (typeof ctx.context?.event === "string") ctx.shouldKeep = true;
+    }
+  });
 
   return async (context, next) => {
     const { raw } = context.req;
@@ -90,7 +97,17 @@ export function honoLoggerMiddleware(options: HonoLoggerMiddlewareOptions = {}):
     context.set("requestId", requestId);
     context.header(requestIdOptions.headerName ?? REQUEST_ID_HEADER, requestId);
 
-    return evlogMiddleware(context, next);
+    let completed = false;
+    try {
+      return await evlogMiddleware(context, async () => {
+        context.set("log", requestLogger(context.get("log")));
+        await next();
+        completed = true;
+      });
+    } catch (error) {
+      if (!completed) throw error;
+      reportLoggingFailure();
+    }
   };
 }
 

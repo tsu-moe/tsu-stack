@@ -42,32 +42,12 @@ const MIGRATION_RETRY_DELAY_MS = 3_000;
  * in the __drizzle_migrations table and skips anything already applied.
  */
 export async function migrateDatabase(): Promise<void> {
-  const log = createLogger({ operation: "database.migrate" });
-
-  if (migrationFnCalled) {
-    log.emit({ event: "database.migration.skipped", reason: "already_called" });
+  if (migrationFnCalled || ENV_SERVER.IS_BUILD || ENV_SERVER.NODE_ENV !== "production") {
     return;
   }
 
   migrationFnCalled = true;
-
-  if (ENV_SERVER.IS_BUILD) {
-    log.emit({
-      environment: ENV_SERVER.NODE_ENV,
-      event: "database.migration.skipped",
-      reason: "build_process"
-    });
-    return;
-  }
-
-  if (ENV_SERVER.NODE_ENV !== "production") {
-    log.emit({
-      environment: ENV_SERVER.NODE_ENV,
-      event: "database.migration.skipped",
-      reason: "non_production"
-    });
-    return;
-  }
+  const log = createLogger({ operation: "database.migrate" });
 
   for (let attempt = 1; attempt <= MIGRATION_MAX_ATTEMPTS; attempt++) {
     try {
@@ -76,12 +56,12 @@ export async function migrateDatabase(): Promise<void> {
       });
     } catch (error) {
       if (attempt === MIGRATION_MAX_ATTEMPTS) {
-        log.error(error instanceof Error ? error : String(error), {
+        log.error(error instanceof Error ? error : String(error));
+        log.outcome("database.migration.failed", {
           attempt,
-          event: "database.migration.failed",
           maxAttempts: MIGRATION_MAX_ATTEMPTS
         });
-        log.emit({ _forceKeep: true });
+        log.emit();
         throw error;
       }
 
@@ -91,7 +71,8 @@ export async function migrateDatabase(): Promise<void> {
       continue;
     }
 
-    log.emit({ attempt, event: "database.migration.completed", _forceKeep: true });
+    log.outcome("database.migration.completed", { attempt });
+    log.emit();
     return;
   }
 }

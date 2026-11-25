@@ -114,8 +114,7 @@ middleware perform the single terminal emit:
     throw errors.PROFILE_NOT_FOUND();
   }
 
-  logger.set({
-    event: "profile.updated",
+  logger.outcome("profile.updated", {
     profile: { id: row.id },
   });
 

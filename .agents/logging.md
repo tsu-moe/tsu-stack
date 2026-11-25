@@ -51,7 +51,7 @@ Keep messages stable and put data in fields.
 
 Use lowercase dot-separated names and hyphens for multiword segments. Keep names independent of route paths, handler names, IDs, labels, and localized copy. Treat them as stable identifiers once a query, alert, or UI depends on them. Request logs can rely on their HTTP fields when no named operation or event adds information. Use structured fields such as `profile.id`, `reason`, or `attempt` for details that vary by record.
 
-For request and workflow logging, prefer evlog wide events. A standalone job owns a single emit for each logger instance.
+Use `logger.set(fields)` for sampled context and `logger.outcome("noun.completed", fields)` for a named result that should survive request sampling. Ordinary `log.info()` is sampled out under the default server policy. Pass small plain objects and arrays. The logger bounds payload depth and size and serializes big integers as strings. A standalone job also owns a single emit for each logger instance.
 
 ```ts
 const logger = createLogger({ operation: "database.migrate" });
@@ -60,11 +60,13 @@ try {
   await migrateDatabase();
 } catch (error) {
   logger.error(error instanceof Error ? error : String(error));
-  logger.emit({ event: "database.migration.failed" });
+  logger.outcome("database.migration.failed");
+  logger.emit();
   throw error;
 }
 
-logger.emit({ event: "database.migration.completed" });
+logger.outcome("database.migration.completed");
+logger.emit();
 ```
 
 For framework request handlers, use the request-scoped logger provided by middleware:
@@ -73,6 +75,8 @@ For framework request handlers, use the request-scoped logger provided by middle
 - TanStack Start/oRPC context: pass and use the provided request logger
 
 TanStack request middleware covers SSR, server routes, and server functions. Complete request log enrichment before handing back the response. Work that finishes during streaming or runs in the background needs its own logger and can carry the original request ID for correlation.
+
+Request loggers expose `set`, `outcome`, `error`, and `audit`. The adapter owns `emit()`, HTTP fields, timing, and request IDs. Logger initialization owns `service` and the deployment version. Use `operation` and `event` to identify features. The ingestion boundary sets `source` for browser telemetry. Use a stable route template when you need to group parameterized paths.
 
 ## Audit Records
 
@@ -101,9 +105,10 @@ logger.audit({ ...auditSubject, outcome: "success" });
 ```
 
 - Record success after the change commits. Use `failure` when execution fails and `denied` when authorization rejects the action. An audit record can describe an attempt even when no change occurred.
-- Build the actor from server-owned identity. Use stable IDs and the appropriate evlog actor type (`user`, `system`, `api`, or `agent`). Capture `target.type` and `target.id` when known and safe to persist. For multi-tenant actions, include the verified tenant scope in the record.
+- Build the actor from server-owned identity. Use stable IDs and the appropriate evlog actor type (`user`, `system`, `api`, or `agent`). Capture `target.type` and `target.id` when known and safe to persist. For tenant-scoped actions, pass the verified tenant ID as `target.tenantId`.
 - Use stable reason codes and allowlisted change fields. Keep emails, credentials, raw exceptions, session data, and user-provided prose out of the audit payload. Keep diagnostic error details on the operational event.
-- evlog adds `audit.version` and `audit.idempotencyKey` and retains audit records past tail sampling. `requestId` on a request event and `audit.correlationId` on a standalone event can connect it to operational telemetry. Include IP addresses or user agents only when a deployment has a documented need and a trusted source.
+- evlog assigns `audit.version` for the record format and `audit.idempotencyKey` for drain retry deduplication. It retains audit records past tail sampling. Use the request's `requestId` for request correlation and `audit.correlationId` for a standalone record or group of actions. Use `audit.causationId` when one record directly caused another. These IDs carry no authorization. Include IP addresses or user agents only when a deployment has a documented need and a trusted source.
+- Share a feature-owned action constant when an audit producer and a UI renderer or alert use the same identifier.
 - The starter records `user.create` when Better Auth creates the account. The provisioning service is the actor and the persisted user is the target. A synthetic duplicate signup does not produce a creation record.
 
 ### Frontend Consumption

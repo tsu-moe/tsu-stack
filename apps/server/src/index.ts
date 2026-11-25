@@ -278,10 +278,11 @@ if (!ENV_SERVER.IS_BUILD) {
         port: 5000
       },
       (info) => {
-        createLogger({
-          event: "server.started",
+        const logger = createLogger();
+        logger.outcome("server.started", {
           url: `http://localhost:${info.port}${new URL(ENV_SERVER.VITE_SERVER_URL).pathname}`
-        }).emit({ _forceKeep: true });
+        });
+        logger.emit();
       }
     );
   })();
