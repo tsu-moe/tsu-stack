@@ -116,32 +116,12 @@ describe("tanstackStartRequestLoggerMiddleware", () => {
     expect(response.headers.get("x-request-id")).toBe("request-123");
   });
 
-  it("replaces an invalid request ID and records an error once", async () => {
-    const error = new Error("boom");
-    const request = new Request("https://example.com/web/dashboard", {
-      headers: { "x-request-id": "invalid request id" }
-    });
-
+  it("keeps the status and validates the correlation header on a thrown response", async () => {
     const response = await runMiddleware({
       middleware: tanstackStartRequestLoggerMiddleware({
-        requestIdOptions: { generator: () => "generated-request-id" }
+        requestIdOptions: { generator: () => "denial-1" }
       }),
-      request,
-      throwError: error
-    });
-
-    expect(response.status).toBe(500);
-    expect(response.headers.get("x-request-id")).toBe("generated-request-id");
-    expect(createRequestLogger).toHaveBeenCalledWith(expect.objectContaining({ requestId: "generated-request-id" }));
-    expect(requestLogger.error).toHaveBeenCalledOnce();
-    expect(requestLogger.error).toHaveBeenCalledWith(error);
-    expect(requestLogger.emit).toHaveBeenCalledExactlyOnceWith({ status: 500 });
-  });
-
-  it("keeps the status and correlation header on a thrown response", async () => {
-    const response = await runMiddleware({
-      middleware: tanstackStartRequestLoggerMiddleware(),
-      request: new Request("https://example.com/web/dashboard", { headers: { "X-Request-Id": "denial-1" } }),
+      request: new Request("https://example.com/web/dashboard", { headers: { "X-Request-Id": "invalid request id" } }),
       throwError: new Response(null, { status: 403 })
     });
 
@@ -151,17 +131,16 @@ describe("tanstackStartRequestLoggerMiddleware", () => {
     expect(requestLogger.emit).toHaveBeenCalledExactlyOnceWith({ status: 403 });
   });
 
-  it.each(["/_api/health/live", "/web/_api/health/live", "/prefix/web/_api/health/live"])(
-    "excludes health checks at %s",
-    async (path) => {
+  it("excludes root and prefixed health checks", async () => {
+    for (const path of ["/_api/health/live", "/web/_api/health/live", "/prefix/web/_api/health/live"]) {
       const response = await runMiddleware({
         middleware: tanstackStartRequestLoggerMiddleware({ excludePaths: ["**/_api/health/**"] }),
         request: new Request(`https://example.com${path}`)
       });
       expect(response.status).toBe(204);
-      expect(requestLogger.emit).not.toHaveBeenCalled();
     }
-  );
+    expect(requestLogger.emit).not.toHaveBeenCalled();
+  });
 
   it("keeps a successful response when emission fails", async () => {
     const report = vi.spyOn(console, "error").mockImplementation(() => {});

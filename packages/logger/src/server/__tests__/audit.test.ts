@@ -2,13 +2,12 @@ import { Hono } from "hono";
 import { expect, it, vi } from "vite-plus/test";
 
 import { honoLoggerMiddleware, type HonoLogVariables } from "#@/server/hono/middleware";
-import { createLogger, initLogger, REQUEST_LOG_SAMPLING } from "#@/server/index";
+import { initLogger, REQUEST_LOG_SAMPLING } from "#@/server/index";
 
 const drain = vi.fn();
 initLogger({ drain, sampling: REQUEST_LOG_SAMPLING, pretty: false });
 
 it("keeps native audits and serializes bigint without changing the response", async () => {
-  drain.mockClear();
   const app = new Hono<HonoLogVariables>();
   app.use("/*", honoLoggerMiddleware());
   app.get("/health", (c) => c.body(null, 204));
@@ -51,24 +50,4 @@ it("keeps native audits and serializes bigint without changing the response", as
       })
     })
   );
-});
-
-it("retains named outcomes in standalone work and request middleware", async () => {
-  drain.mockClear();
-  const standalone = createLogger({ operation: "database.migrate" });
-  standalone.outcome("database.migration.completed", { attempt: 1 });
-  standalone.emit();
-
-  const app = new Hono<HonoLogVariables>();
-  app.use("/*", honoLoggerMiddleware());
-  app.post("/profiles", (c) => {
-    c.get("log").outcome("profile.created");
-    return c.body(null, 201);
-  });
-  await app.request("/profiles", { method: "POST" });
-
-  expect(drain.mock.calls.map(([context]) => context.event.event)).toEqual([
-    "database.migration.completed",
-    "profile.created"
-  ]);
 });

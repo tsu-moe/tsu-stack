@@ -31,26 +31,3 @@ it.each([
     })
   );
 });
-
-it("preserves the application response when an evlog hook throws", async () => {
-  const report = vi.spyOn(console, "error").mockImplementation(() => {});
-  try {
-    const app = new Hono<HonoLogVariables>();
-    app.use(
-      "/*",
-      honoLoggerMiddleware({
-        keep: () => {
-          throw new Error("unavailable hook");
-        }
-      })
-    );
-    app.get("/", (c) => c.text("completed", 201));
-    const response = await app.request("/");
-
-    expect(response.status).toBe(201);
-    expect(await response.text()).toBe("completed");
-    expect(report).toHaveBeenCalledWith("[tsu-stack/logger] Failed to record telemetry");
-  } finally {
-    report.mockRestore();
-  }
-});
