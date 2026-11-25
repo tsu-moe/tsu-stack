@@ -1,11 +1,8 @@
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
@@ -19,6 +16,8 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { Container } from "@/shared/ui/container";
 import { LogoIcon } from "@/shared/ui/logo";
 
+import { useSignUpMutation } from "@/features/auth/api/sign-up.mutation";
+
 import { appConfig } from "@/config/app.config";
 
 export function CreateAnAccountForm({
@@ -27,35 +26,8 @@ export function CreateAnAccountForm({
   ...props
 }: React.ComponentProps<"div"> & { redirectTo?: NavigateTo }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { isPending } = useAuth();
-
-  const signUpMutation = useMutation({
-    mutationFn: async (values: { email: string; name: string; password: string }) => {
-      const result = await authClient.signUp.email({
-        email: values.email,
-        name: values.name,
-        password: values.password
-      });
-
-      if (!result.data) {
-        throw new Error(result.error?.message ?? m.auth__sign_up_failed());
-      }
-
-      return result;
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || m.auth__sign_up_failed());
-    },
-    onSuccess: async () => {
-      // Invalidate auth cache to force refetch with new user data
-      await queryClient.invalidateQueries(getAuthUserQueryOptions());
-      await navigate({
-        to: redirectTo
-      });
-      toast.success(m.auth__sign_up_successful());
-    }
-  });
+  const signUpMutation = useSignUpMutation(() => navigate({ to: redirectTo }));
 
   const form = useForm({
     defaultValues: {

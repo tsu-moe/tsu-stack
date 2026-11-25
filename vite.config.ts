@@ -3,6 +3,8 @@ import { defineConfig } from "vite-plus";
 import { getBaseFormatOptions } from "@tsu-stack/vite-plus/base-config.fmt";
 import { tanstackStartFsdLint } from "@tsu-stack/vite-plus/tanstack-start-fsd.lint";
 
+const loggingImportRestriction = { group: ["evlog", "evlog/**"], message: "Use @tsu-stack/logger." };
+
 /**
  * Defines top-level Vite+ configurations for the different tools in its ecosystem.
  * @see {@link https://viteplus.dev/config}
@@ -97,6 +99,23 @@ export default defineConfig({
         ...tanstackStartFsdLint
       },
       {
+        files: ["apps/web/src/routes/**", "apps/web/src/**/ui/**"],
+        rules: {
+          "eslint/no-restricted-imports": [
+            "error",
+            {
+              patterns: [
+                loggingImportRestriction,
+                {
+                  group: ["@tsu-stack/api/client/**", "@tsu-stack/auth/react/auth-client"],
+                  message: "Use the owning slice's API module."
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
         files: ["packages/logger/**/*"],
         rules: { "eslint/no-restricted-imports": "off" }
       }
@@ -121,6 +140,7 @@ export default defineConfig({
 
       // Recommended rules (from LintRulePreset.Recommended)
       // ref: https://github.com/TheAlexLichter/oxlint-react-compiler-rules/issues/1
+      "react-hooks-js/rules-of-hooks": "error",
       "react-hooks-js/component-hook-factories": "error",
       "react-hooks-js/config": "error",
       "react-hooks-js/error-boundaries": "error",
@@ -153,10 +173,7 @@ export default defineConfig({
 
       // You can add more rules from: https://oxc.rs/docs/guide/usage/linter/rules.html?sort=fix&dir=asc&has_fix=true
       "eslint/arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true }],
-      "eslint/no-restricted-imports": [
-        "error",
-        { patterns: [{ group: ["evlog", "evlog/**"], message: "Use @tsu-stack/logger." }] }
-      ],
+      "eslint/no-restricted-imports": ["error", { patterns: [loggingImportRestriction] }],
       "typescript/ban-ts-comment": "error",
       "typescript/consistent-indexed-object-style": ["error", "record"],
       "jest/consistent-test-it": ["error", { fn: "it" }],

@@ -1,11 +1,9 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import { LogOut, Menu, X } from "lucide-react";
 import React, { Suspense } from "react";
 
-import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { useAuthSuspense } from "@tsu-stack/auth/react/tanstack-start/hooks";
-import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
+import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Portal, PortalBackdrop } from "@tsu-stack/ui/components/portal";
@@ -14,6 +12,7 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
+import { useSignOutMutation } from "@/features/navbar/api/sign-out.mutation";
 import { navLinks } from "@/features/navbar/config/nav-links.config";
 import { NavbarAvatar } from "@/features/navbar/ui/navbar-avatar";
 export function MobileNav() {
@@ -59,7 +58,7 @@ export function MobileNav() {
       <Button
         aria-controls="mobile-menu"
         aria-expanded={open}
-        aria-label="Toggle menu"
+        aria-label={m.navbar__toggle_menu()}
         className="md:hidden"
         id="mobile-menu-toggle"
         onClick={toggleMenu}
@@ -105,36 +104,23 @@ export function MobileNav() {
 }
 
 function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
-  const queryClient = useQueryClient();
-  const router = useRouter();
   const routerState = useRouterState();
   const { user } = useAuthSuspense();
+  const signOut = useSignOutMutation(onNavigate);
 
   const redirect = routerState.location.search?.redirect;
-
-  const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onResponse: async () => {
-          await queryClient.invalidateQueries(getAuthUserQueryOptions());
-          await router.invalidate();
-          onNavigate();
-        }
-      }
-    });
-  };
 
   if (!user) {
     return (
       <div className="mt-12 flex flex-col gap-2">
         <Button onClick={onNavigate} asChild className="w-full" variant="outline">
           <Link to="/sign-in" search={redirect ? { redirect } : undefined}>
-            Sign In
+            {m.navbar__sign_in()}
           </Link>
         </Button>
         <Button onClick={onNavigate} className="w-full" light="skeuomorphic" asChild>
           <Link to="/create-an-account" search={redirect ? { redirect } : undefined}>
-            Get Started
+            {m.navbar__get_started()}
           </Link>
         </Button>
       </div>
@@ -147,9 +133,9 @@ function MobileNavAuth({ onNavigate }: { onNavigate: () => void }) {
       <div className="flex items-center gap-3 px-2">
         <NavbarAvatar avatarImgSrc={user.image} name={user.name} email={user.email} />
       </div>
-      <Button className="w-full" variant="destructive" onClick={handleSignOut}>
+      <Button className="w-full" variant="destructive" onClick={() => signOut.mutate()}>
         <LogOut aria-hidden="true" size={16} />
-        Logout
+        {m.user_dropdown__logout()}
       </Button>
     </div>
   );

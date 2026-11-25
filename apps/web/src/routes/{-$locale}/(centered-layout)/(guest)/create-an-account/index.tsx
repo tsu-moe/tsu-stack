@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { m } from "@tsu-stack/i18n/messages";
+
 import { generateAppSeo } from "@/shared/lib/seo";
 
 import { CreateAnAccountForm } from "@/features/auth";
@@ -13,12 +15,12 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/crea
         canonicalPath: "/create-an-account",
         locale: params.locale
       },
-      description: `Create a ${appConfig.site.shortName} account to save your progress and access personalized features.`,
+      description: m.auth__create_account__seo_description({ siteName: appConfig.site.shortName }),
       robots: {
         follow: false,
         index: false
       },
-      title: "Create an Account"
+      title: m.auth__create_account__seo_title()
     }),
   component: RouteComponent
 });
