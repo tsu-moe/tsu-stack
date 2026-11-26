@@ -47,32 +47,15 @@ jobs:
           test ! -e "$TARGET"
 
   scaffold:
-    if: >-
-      github.repository == 'tsu-moe/tsu-stack' &&
-      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    if: github.repository == 'tsu-moe/tsu-stack'
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            variant: separate
-            source-branch: main
-          - os: ubuntu-latest
-            variant: merged
-            source-branch: variant/merged
-          - os: ubuntu-latest
-            variant: cloudflare
-            source-branch: variant/merged-cloudflare
-          - os: ubuntu-latest
-            variant: cloudflare-d1
-            source-branch: variant/merged-cloudflare-d1
-          - os: windows-latest
-            variant: separate
-            source-branch: main
-          - os: macos-latest
-            variant: separate
-            source-branch: main
+        # Build the CLI and smoke-test its template from the same revision.
+        source-branch: ["${{ github.base_ref || github.ref_name }}"]
+        variant:
+          - ${{ fromJSON('{"main":"separate","variant/merged":"merged","variant/merged-cloudflare":"cloudflare","variant/merged-cloudflare-d1":"cloudflare-d1"}')[github.base_ref || github.ref_name] }}
+        os: ${{ fromJSON((github.base_ref || github.ref_name) == 'main' && '["ubuntu-latest","windows-latest","macos-latest"]' || '["ubuntu-latest"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
@@ -89,17 +72,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           VARIANT: ${{ matrix.variant }}
-          SOURCE_BRANCH: ${{ matrix.source-branch }}
         shell: bash
         run: |
-          if [[ "$VARIANT" == separate ]]; then
-            ref="$GITHUB_SHA"
-          else
-            ref="$(git ls-remote --exit-code https://github.com/tsu-moe/tsu-stack.git "refs/heads/$SOURCE_BRANCH" | cut -f1)"
-          fi
-          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
-          echo "TEMPLATE_SHA=$ref" >> "$GITHUB_ENV"
-          node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/tsu-$VARIANT" --yes --variant "$VARIANT" --no-install --no-git --setup none --ref "$ref"
+          node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/tsu-$VARIANT" --yes --variant "$VARIANT" --no-install --no-git --setup none --ref "$GITHUB_SHA"
       - name: Verify generated project
         env:
           VARIANT: ${{ matrix.variant }}
@@ -110,11 +85,11 @@ jobs:
           const assert = require("node:assert/strict");
           const { existsSync, readFileSync } = require("node:fs");
           const root = process.argv[2];
-          const { VARIANT, SOURCE_BRANCH, TEMPLATE_SHA } = process.env;
+          const { VARIANT, SOURCE_BRANCH, GITHUB_SHA } = process.env;
           const metadata = JSON.parse(readFileSync(root + "/.tsu-stack.jsonc", "utf8"));
           assert.equal(metadata.variant, VARIANT);
           assert.equal(metadata.source.branch, SOURCE_BRANCH);
-          assert.equal(metadata.source.commit, TEMPLATE_SHA);
+          assert.equal(metadata.source.commit, GITHUB_SHA);
           const api = JSON.parse(readFileSync(root + "/apps/server/package.json", "utf8"));
           assert.equal(Boolean(api.scripts.build && api.scripts.start), VARIANT === "separate");
           assert.equal(existsSync(root + "/apps/web/src/routes/server"), VARIANT !== "separate");
