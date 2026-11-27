@@ -8,7 +8,7 @@ import { log } from "@tsu-stack/logger/client";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@tsu-stack/ui/components/empty";
 
-import { CenteredLayout } from "@/widgets/layouts";
+import { CenteredLayout } from "@/shared/ui/centered-layout";
 
 const lastLoggedAt = new WeakMap<Error, number>();
 const ERROR_LOG_INTERVAL_MS = 30_000;

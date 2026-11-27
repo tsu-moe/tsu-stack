@@ -91,8 +91,7 @@ export default defineConfig({
   envDir: resolve(import.meta.dirname, "../../packages/env"),
   resolve: {
     alias: {
-      "@": resolve(import.meta.dirname, "./src"),
-      "@web-components": resolve(import.meta.dirname, "./components")
+      "@": resolve(import.meta.dirname, "./src")
     },
     tsconfigPaths: true
   },

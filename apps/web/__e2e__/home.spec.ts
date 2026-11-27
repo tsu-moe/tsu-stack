@@ -114,6 +114,14 @@ test("pauses the homepage marquees on hover and shows the logos with reduced mot
   const logos = stack.getByRole("list");
   await logos.scrollIntoViewIfNeeded();
   await expect(logos.getByRole("img", { name: "Better Auth" })).toBeInViewport();
+
+  const postgresql = logos.getByRole("img", { name: "PostgreSQL" });
+  await expect(postgresql).toBeInViewport();
+  const { displayedRatio, intrinsicRatio } = await postgresql.evaluate((element: HTMLImageElement) => {
+    const { width, height } = element.getBoundingClientRect();
+    return { displayedRatio: width / height, intrinsicRatio: element.naturalWidth / element.naturalHeight };
+  });
+  expect(displayedRatio).toBeCloseTo(intrinsicRatio, 1);
 });
 
 test("opens FAQ answers before the start-building section", async ({ page }) => {

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@web-components/*": ["./components/*"],
 
       // for shadcn CLI to resolve @tsu-stack/ui paths to the /packages/ui directory
       "@tsu-stack/ui/*": ["../../packages/ui/*"]

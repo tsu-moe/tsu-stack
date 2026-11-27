@@ -4,8 +4,8 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 
+import { repositoryUrl } from "@/shared/config/project-links";
 import { DashboardPreview } from "@/shared/ui/dashboard-preview";
-import { repositoryUrl } from "@/shared/ui/nav-links";
 
 export function HeroSection() {
   return (

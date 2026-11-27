@@ -4,8 +4,8 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 
-import { LogoIcon } from "@/shared/ui/logo";
-import { scaffoldingUrl } from "@/shared/ui/nav-links";
+import { LogoIcon } from "@/shared/assets/brand/logo-icon";
+import { scaffoldingUrl } from "@/shared/config/project-links";
 
 export function StartSection() {
   return (

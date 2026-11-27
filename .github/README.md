@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  Vite Plus (Vite+) TanStack Start monorepo with shadcn/ui, Paraglide.js (i18n), Hono, oRPC, drizzle-orm, better-auth, Feature-Sliced Design (FSD), and more. 🐋 Dockerized and opinionated. Compatible with the ⛅ Cloudflare Workers workerd runtime with a few tweaks.
+  Vite Plus (Vite+) TanStack Start monorepo with shadcn/ui, Paraglide.js (i18n), Hono, oRPC, drizzle-orm, and Better Auth. 🐋 Dockerized and opinionated. Compatible with the ⛅ Cloudflare Workers workerd runtime with a few tweaks.
 </p>
 
 <p align="center">
@@ -380,6 +380,8 @@ Last verified on November 10, 2026.
 - If the web app runs under a subpath such as `/web` and you want search engines to discover `robots.txt`, expose it at the [domain root](https://developers.google.com/search/docs/crawling-indexing/robots/intro) through a redirect or root route. For multiple subpath apps, add a root sitemap index and point `__root.tsx` at it if you want the app to advertise that index.
 
 ## Contributing
+
+See the [project organization guide](../.agents/organization.md) for where to put new web code and when to extract shared pieces.
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If there are any bugs, please open an issue.
 

@@ -1,18 +1,13 @@
-import { ArrowUpRightIcon, DatabaseIcon, PanelsTopLeftIcon, RouteIcon, WorkflowIcon } from "lucide-react";
+import { ArrowUpRightIcon, RouteIcon } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@tsu-stack/ui/components/card";
 
-import { repositoryUrl } from "@/shared/ui/nav-links";
+import { repositoryUrl } from "@/shared/config/project-links";
 
-const requestSteps = [
-  { path: "apps/web", description: m.home_page__workflow_web, icon: PanelsTopLeftIcon },
-  { path: "packages/api", description: m.home_page__workflow_api, icon: RouteIcon },
-  { path: "packages/core", description: m.home_page__workflow_service, icon: WorkflowIcon },
-  { path: "packages/db", description: m.home_page__workflow_data, icon: DatabaseIcon }
-];
+import { requestSteps } from "@/pages/home/config/request-path.config";
 
 export function RequestPathSection() {
   return (

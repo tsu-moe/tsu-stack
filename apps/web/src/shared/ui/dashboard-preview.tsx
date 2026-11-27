@@ -1,10 +1,7 @@
 import { Card, CardContent } from "@tsu-stack/ui/components/card";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-const dashboardPreviews = {
-  light: "https://storage.efferd.com/screen/dashboard-light.webp",
-  dark: "https://storage.efferd.com/screen/dashboard-dark.webp"
-};
+import { dashboardPreviews } from "@/shared/assets/dashboard-preview";
 
 export function DashboardPreview({
   alt,

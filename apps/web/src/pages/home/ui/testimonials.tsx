@@ -2,56 +2,7 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
 import { Marquee } from "@tsu-stack/ui/components/marquee";
 
-import appAvatar from "./testimonial-avatars/app.webp";
-import frontendAvatar from "./testimonial-avatars/frontend.webp";
-import fullStackAvatar from "./testimonial-avatars/full-stack.webp";
-import maintainerAvatar from "./testimonial-avatars/maintainer.webp";
-import platformAvatar from "./testimonial-avatars/platform.webp";
-import uiAvatar from "./testimonial-avatars/ui.webp";
-
-const sampleRows = [
-  {
-    direction: "left",
-    testimonials: [
-      {
-        initials: "FE",
-        avatar: frontendAvatar,
-        role: m.home_page__testimonial_frontend_role,
-        quote: m.home_page__testimonial_frontend
-      },
-      {
-        initials: "FS",
-        avatar: fullStackAvatar,
-        role: m.home_page__testimonial_full_stack_role,
-        quote: m.home_page__testimonial_full_stack
-      },
-      {
-        initials: "PE",
-        avatar: platformAvatar,
-        role: m.home_page__testimonial_platform_role,
-        quote: m.home_page__testimonial_platform
-      }
-    ]
-  },
-  {
-    direction: "right",
-    testimonials: [
-      {
-        initials: "MT",
-        avatar: maintainerAvatar,
-        role: m.home_page__testimonial_maintainer_role,
-        quote: m.home_page__testimonial_maintainer
-      },
-      {
-        initials: "AD",
-        avatar: appAvatar,
-        role: m.home_page__testimonial_app_role,
-        quote: m.home_page__testimonial_app
-      },
-      { initials: "UE", avatar: uiAvatar, role: m.home_page__testimonial_ui_role, quote: m.home_page__testimonial_ui }
-    ]
-  }
-] as const;
+import { sampleRows } from "@/pages/home/config/testimonials.config";
 
 export function TestimonialsSection() {
   return (

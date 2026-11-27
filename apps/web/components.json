@@ -27,7 +27,6 @@
       "headers": {
         "Authorization": "Bearer ${EFFERD_REGISTRY_TOKEN}"
       }
-    },
-    "@iandefined": "https://ui.iandefined.com/r/{name}.json"
+    }
   }
 }

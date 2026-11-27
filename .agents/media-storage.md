@@ -4,7 +4,7 @@ The starter has no object-storage implementation. Use these defaults when adding
 
 ## Ownership and contracts
 
-- Prefer `files-sdk` with its MinIO adapter for S3-compatible storage. Keep the configured client and lifecycle I/O in the API infrastructure and call it from the owning slice router. Keep web UI and upload mutations in their owning slice.
+- Prefer `files-sdk` with its MinIO adapter for S3-compatible storage. Keep the configured client and lifecycle I/O in the API infrastructure and call it from the domain router.
 - Use one generic `media_asset` row with ID, owner, purpose, opaque key, content type, size, status, and lifecycle timestamps. Set states for `pending_upload`, `uploaded_orphaned`, and `linked`. Keep alt text, labels, and other business metadata on the owner, linked by `mediaAssetId`.
 - Keep Zod contracts, enums, limits, MIME allowlists, prefixes, and expiry defaults in [Core](core.md). Validate bounded file name, positive size, MIME, and purpose on the server. A signed contract includes the media ID, object key, enforced limits, and a discriminated `PUT` URL with headers or `POST` URL with form fields.
 - Persist the key. Resolve public or CDN delivery through the storage adapter and mint short-lived signed downloads for private assets. Derive URLs at read time.

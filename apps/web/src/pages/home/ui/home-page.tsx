@@ -1,4 +1,4 @@
-import { SiteLayout } from "@/widgets/layouts";
+import { SiteLayout } from "@/widgets/site-layout";
 
 import { FaqSection } from "./faq";
 import { HeroSection } from "./hero";

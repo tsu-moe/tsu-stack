@@ -1,38 +1,19 @@
-import { useForm } from "@tanstack/react-form";
-import { z } from "zod";
-
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
-import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
 import { type NavigateTo } from "@tsu-stack/i18n/tanstack-start/types";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Field, FieldError, FieldLabel } from "@tsu-stack/ui/components/field";
 import { Input } from "@tsu-stack/ui/components/input";
 import { Separator, SeparatorContent } from "@tsu-stack/ui/components/separator";
 
-import { useSignInMutation } from "@/features/auth/api/sign-in.mutation";
-import { AuthPanel } from "@/features/auth/ui/auth-panel";
-import { SocialSignInButtons } from "@/features/auth/ui/social-sign-in-buttons";
+import { useSignInForm } from "@/features/auth/hooks/use-sign-in-form.hook";
+
+import { AuthPanel } from "./auth-panel";
+import { SocialSignInButtons } from "./social-sign-in-buttons";
 
 export function SignInForm({ redirectTo }: { redirectTo: NavigateTo }) {
-  const navigate = useNavigate();
-  const signInMutation = useSignInMutation(() => navigate({ to: redirectTo }));
+  const { form, signInMutation } = useSignInForm(redirectTo);
 
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: ""
-    },
-    onSubmit: async ({ value }) => {
-      signInMutation.mutate(value);
-    },
-    validators: {
-      onSubmit: z.object({
-        email: z.email({ error: () => m.auth__invalid_email() }),
-        password: z.string().min(8, { error: () => m.auth__password_min_length() })
-      })
-    }
-  });
   return (
     <AuthPanel title={m.auth__sign_in_title()}>
       <SocialSignInButtons />

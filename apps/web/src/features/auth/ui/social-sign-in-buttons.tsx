@@ -2,9 +2,10 @@ import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
 import { toast } from "@tsu-stack/ui/components/toast";
 
-import { AppleIcon } from "@/shared/ui/apple-icon";
-import { GithubIcon } from "@/shared/ui/github-icon";
-import { GoogleIcon } from "@/shared/ui/google-icon";
+import { GithubIcon } from "@/shared/assets/icons/github-icon";
+
+import { AppleIcon } from "@/features/auth/assets/apple-icon";
+import { GoogleIcon } from "@/features/auth/assets/google-icon";
 
 function showProviderToast() {
   toast.info({ title: m.auth__not_yet_implemented() });

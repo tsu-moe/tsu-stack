@@ -9,7 +9,6 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@tsu-stack/ui/components/input-group";
 import { ScrollArea, ScrollAreaContent } from "@tsu-stack/ui/components/scroll-area";
 
-// Adapted from https://ui.iandefined.com/r/command.json (see ../LICENSE.iandefined).
 const commandSurface =
   "rounded-xl border-none bg-popover bg-clip-padding text-popover-foreground shadow-2xl ring-4 ring-border";
 

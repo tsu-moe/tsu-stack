@@ -1,46 +1,17 @@
-import { useForm } from "@tanstack/react-form";
-import { z } from "zod";
-
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
-import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
 import { type NavigateTo } from "@tsu-stack/i18n/tanstack-start/types";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Field, FieldError, FieldLabel } from "@tsu-stack/ui/components/field";
 import { Input } from "@tsu-stack/ui/components/input";
 
-import { useSignUpMutation } from "@/features/auth/api/sign-up.mutation";
-import { AuthPanel } from "@/features/auth/ui/auth-panel";
+import { useCreateAnAccountForm } from "@/features/auth/hooks/use-create-an-account-form.hook";
+
+import { AuthPanel } from "./auth-panel";
 
 export function CreateAnAccountForm({ redirectTo }: { redirectTo: NavigateTo }) {
-  const navigate = useNavigate();
-  const signUpMutation = useSignUpMutation(() => navigate({ to: redirectTo }));
+  const { form, signUpMutation } = useCreateAnAccountForm(redirectTo);
 
-  const form = useForm({
-    defaultValues: {
-      confirmPassword: "",
-      email: "",
-      name: "",
-      password: ""
-    },
-    onSubmit: async ({ value }) => {
-      const { email, name, password } = value;
-      signUpMutation.mutate({ email, name, password });
-    },
-    validators: {
-      onSubmit: z
-        .object({
-          confirmPassword: z.string(),
-          email: z.email({ error: () => m.auth__invalid_email() }),
-          name: z.string().min(2, { error: () => m.auth__name_min_length() }),
-          password: z.string().min(8, { error: () => m.auth__password_min_length() })
-        })
-        .refine((data) => data.password === data.confirmPassword, {
-          error: () => m.auth__passwords_no_match(),
-          path: ["confirmPassword"]
-        })
-    }
-  });
   return (
     <AuthPanel title={m.auth__create_account_title()}>
       <form

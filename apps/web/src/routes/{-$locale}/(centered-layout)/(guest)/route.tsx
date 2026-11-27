@@ -1,12 +1,13 @@
 import { noop } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
-import { AuthPage } from "@web-components/auth-page";
 import { z } from "zod";
 
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { redirect } from "@tsu-stack/i18n/tanstack-start/lib/redirect";
 import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/lib/validate-navigate-to";
+
+import { AuthLayout } from "@/widgets/auth-layout";
 
 import { routeTree } from "@/routeTree.gen";
 
@@ -54,8 +55,8 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
 
 function GuestAuthLayout() {
   return (
-    <AuthPage>
+    <AuthLayout>
       <Outlet />
-    </AuthPage>
+    </AuthLayout>
   );
 }
