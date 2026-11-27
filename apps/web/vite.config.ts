@@ -23,10 +23,7 @@ import { type FileRouteTypes } from "@/routeTree.gen";
  */
 const ROUTES_TO_PRERENDER: FileRouteTypes["fullPaths"][] = [
   "/{-$locale}/",
-  "/{-$locale}/playground/",
   "/{-$locale}/privacy-policy/",
-  "/{-$locale}/sign-in/",
-  "/{-$locale}/create-an-account/",
   "/sitemap.xml",
   "/robots.txt"
 ];
@@ -94,7 +91,8 @@ export default defineConfig({
   envDir: resolve(import.meta.dirname, "../../packages/env"),
   resolve: {
     alias: {
-      "@": resolve(import.meta.dirname, "./src")
+      "@": resolve(import.meta.dirname, "./src"),
+      "@web-components": resolve(import.meta.dirname, "./components")
     },
     tsconfigPaths: true
   },

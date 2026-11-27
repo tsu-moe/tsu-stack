@@ -15,6 +15,7 @@ import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 // oxfmt-ignore
 import { LocaleProvider, useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
 import { Toaster } from "@tsu-stack/ui/components/sonner";
+import { TooltipProvider } from "@tsu-stack/ui/components/tooltip";
 
 import { generateAppSeo } from "@/shared/lib/seo";
 import { ProgressProvider } from "@/shared/providers/progress.provider";
@@ -101,7 +102,9 @@ function RootDocumentInner({ children }: { children: React.ReactNode }) {
         {/* We place the progress provider here otherwise we will get "Cannot render a <style> outside the main document" error */}
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>
-            <Fragment key={locale}>{children}</Fragment>
+            <TooltipProvider>
+              <Fragment key={locale}>{children}</Fragment>
+            </TooltipProvider>
             <Toaster richColors />
             <TanStackDevtools
               plugins={[

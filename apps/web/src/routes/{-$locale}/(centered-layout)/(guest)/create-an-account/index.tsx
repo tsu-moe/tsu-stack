@@ -6,6 +6,8 @@ import { generateAppSeo } from "@/shared/lib/seo";
 
 import { CreateAnAccountForm } from "@/features/auth";
 
+import { CenteredLayout } from "@/widgets/layouts";
+
 import { appConfig } from "@/config/app.config";
 
 export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/create-an-account/")({
@@ -28,5 +30,9 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/crea
 function RouteComponent() {
   const { redirect } = Route.useSearch();
 
-  return <CreateAnAccountForm redirectTo={redirect} />;
+  return (
+    <CenteredLayout>
+      <CreateAnAccountForm redirectTo={redirect} />
+    </CenteredLayout>
+  );
 }

@@ -1,7 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { type ComponentProps } from "react";
 
-import { type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Button } from "@tsu-stack/ui/components/button";
 export { ThemeProvider } from "next-themes";
 
@@ -21,7 +21,7 @@ export function ThemeInitializer() {
 
 type ThemeSwitcherProps = {
   className?: string;
-} & ButtonProps;
+} & ComponentProps<typeof Button>;
 
 export function ThemeSwitcher({ variant = "ghost", size = "icon", className }: ThemeSwitcherProps) {
   const { theme, setTheme } = useTheme();

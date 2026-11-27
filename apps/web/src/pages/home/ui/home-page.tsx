@@ -1,13 +1,15 @@
-import { CallToAction } from "@/pages/home/ui/call-to-action";
-import { HeroSection } from "@/pages/home/ui/hero-section";
-import { IntegrationsSection } from "@/pages/home/ui/integrations-section";
+import { Header } from "@/shared/ui/header";
+import { HeroSection } from "@/shared/ui/hero";
+import { LogosSection } from "@/shared/ui/logos-section";
 
 export function HomePage() {
   return (
     <>
-      <HeroSection />
-      <IntegrationsSection />
-      <CallToAction />
+      <Header />
+      <main>
+        <HeroSection />
+        <LogosSection />
+      </main>
     </>
   );
 }

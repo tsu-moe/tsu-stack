@@ -48,9 +48,7 @@ export function getRouter() {
       throw error;
     }) satisfies ErrorRouteComponent,
     defaultNotFoundComponent: DefaultNotFoundPage,
-    defaultPendingComponent: () => (
-      <Spinner className="fixed inset-0 -top-(--navbar-height) m-auto flex items-center justify-center" />
-    ),
+    defaultPendingComponent: () => <Spinner className="fixed inset-0 m-auto flex items-center justify-center" />,
     // Prefetch <Link> on hover and touch
     defaultPreload: "intent",
     // IMPORTANT: Let TanStack Query handle data fetching & caching instead of TanStack Router, default options are found in createQueryClient()

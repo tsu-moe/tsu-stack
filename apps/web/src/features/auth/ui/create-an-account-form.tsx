@@ -78,7 +78,7 @@ export function CreateAnAccountForm({
             <h1 className="text-xl font-bold">{m.auth__create_account_title()}</h1>
             <FieldDescription>
               {m.auth__already_have_account()}{" "}
-              <Link to="/sign-in" search={{ redirect: redirectTo }}>
+              <Link to="/sign-in/password" search={{ redirect: redirectTo }}>
                 {m.auth__sign_in_link()}
               </Link>
             </FieldDescription>
@@ -178,7 +178,7 @@ export function CreateAnAccountForm({
           </form.Field>
 
           <Field>
-            <Button light="skeuomorphic" type="submit" disabled={signUpMutation.isPending || signUpMutation.isSuccess}>
+            <Button type="submit" disabled={signUpMutation.isPending || signUpMutation.isSuccess}>
               {signUpMutation.isPending ? m.auth__creating_account() : m.auth__create_account()}
             </Button>
           </Field>

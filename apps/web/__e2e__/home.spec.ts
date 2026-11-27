@@ -29,3 +29,27 @@ test("preserves the deployment mount in localized home metadata", async ({ baseU
     new URL("./", baseURL).href
   );
 });
+
+test("keeps the stock social buttons clickable and shows a toast for each provider", async ({ page }) => {
+  await page.goto("sign-in");
+  await expect(page.getByRole("heading", { name: "login or create your account." })).toBeVisible();
+
+  const providers = ["Google", "Vercel", "GitHub"];
+  const notifications = page.getByText("Not yet implemented.", { exact: true });
+  for (const [index, provider] of providers.entries()) {
+    const providerButton = page.getByRole("button", { name: `Continue with ${provider}` });
+    await expect(providerButton).toBeEnabled();
+    await providerButton.click();
+    await expect(notifications).toHaveCount(index + 1);
+  }
+});
+
+test("continues with email to the existing password form inside the deployment mount", async ({ baseURL, page }) => {
+  await page.goto("sign-in");
+  await page.getByRole("textbox", { name: "Email" }).fill("starter@example.com");
+  await page.getByRole("button", { name: "Continue With Email" }).click();
+
+  await expect(page).toHaveURL(new RegExp(new URL("sign-in/password", baseURL).pathname + "(?:\\?|$)"));
+  await expect(page.getByLabel("Email")).toHaveValue("starter@example.com");
+  await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+});

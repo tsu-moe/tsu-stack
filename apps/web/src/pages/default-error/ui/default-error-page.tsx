@@ -45,11 +45,9 @@ export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button light="skeuomorphic" asChild>
-              <Link to="/">
-                <Home data-icon="inline-start" />
-                {m.error_500__go_home()}
-              </Link>
+            <Button render={<Link to="/" />} nativeButton={false}>
+              <Home data-icon="inline-start" />
+              {m.error_500__go_home()}
             </Button>
 
             <Button onClick={handleRefresh} variant="outline">

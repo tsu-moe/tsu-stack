@@ -11,8 +11,10 @@
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
     "@lonik/oh-image": "catalog:",
     "class-variance-authority": "catalog:",
+    "cmdk": "catalog:",
     "cn": "catalog:",
     "lucide-react": "catalog:",
     "next-themes": "catalog:",

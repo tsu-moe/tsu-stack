@@ -16,10 +16,11 @@ const guestSearchSchema = z.object({
     .catch(undefined)
     .transform((val) =>
       validateNavigateTo({
-        fallbackTo: "/",
+        fallbackTo: "/dashboard",
         routeTree,
-        shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: val
+        shouldIncludeRoute: (route) =>
+          !route.id.includes("(guest)") && !route.path.startsWith("/_api") && !route.path.includes("."),
+        to: val?.startsWith("/") && !val.startsWith("//") && !val.includes("\\") ? val : undefined
       })
     )
 });

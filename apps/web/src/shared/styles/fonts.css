@@ -97,6 +97,7 @@
 
 @theme inline {
   --font-sans: "Geist Variable", "Inter Variable", Inter, Helvetica, sans-serif;
+  --font-heading: "Geist Variable", Inter, Helvetica, sans-serif;
   --font-display: "Instrument Serif", "Times New Roman", Times, serif;
   --font-serif: Palatino, "Palatino Linotype", "Big Caslon", "Times New Roman", Times, serif;
   --font-mono:

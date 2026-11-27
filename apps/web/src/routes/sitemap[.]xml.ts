@@ -8,7 +8,7 @@ import { appConfig } from "@/config/app.config";
 import { routeTree } from "@/routeTree.gen";
 
 // TODO: Add routes you don't want included in the sitemap to this blacklist. Useful for routes that don't represent actual pages (e.g. redirect routes) or that you want to exclude for any reason.
-const ROUTE_BLACKLIST = ["/error"] as const satisfies ReadonlyArray<NavigateTo>;
+const ROUTE_BLACKLIST = [] as const satisfies ReadonlyArray<NavigateTo>;
 const ROUTE_BLACKLIST_SET = new Set<string>(ROUTE_BLACKLIST);
 
 /**

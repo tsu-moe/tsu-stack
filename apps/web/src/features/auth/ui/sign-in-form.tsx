@@ -22,16 +22,17 @@ import { appConfig } from "@/config/app.config";
 
 export function SignInForm({
   redirectTo = "/",
+  initialEmail = "",
   className,
   ...props
-}: React.ComponentProps<"div"> & { redirectTo?: NavigateTo }) {
+}: React.ComponentProps<"div"> & { redirectTo?: NavigateTo; initialEmail?: string }) {
   const navigate = useNavigate();
   const { isPending } = useAuth();
   const signInMutation = useSignInMutation(() => navigate({ to: redirectTo }));
 
   const form = useForm({
     defaultValues: {
-      email: "",
+      email: initialEmail,
       password: ""
     },
     onSubmit: async ({ value }) => {
@@ -122,7 +123,7 @@ export function SignInForm({
           </form.Field>
 
           <Field>
-            <Button light="skeuomorphic" type="submit" disabled={signInMutation.isPending || signInMutation.isSuccess}>
+            <Button type="submit" disabled={signInMutation.isPending || signInMutation.isSuccess}>
               {signInMutation.isPending ? m.auth__signing_in() : m.auth__sign_in()}
             </Button>
           </Field>
