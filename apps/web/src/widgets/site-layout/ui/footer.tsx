@@ -24,19 +24,17 @@ export function Footer({ className, ...props }: ComponentProps<"footer">) {
 
   return (
     <footer className={cn("border-t bg-background", className)} {...props}>
-      <div className="home-container pt-12 pb-7 lg:pt-16">
-        <div className="grid gap-9 lg:grid-cols-[1fr_2fr] lg:gap-12">
+      <div className="home-container pt-14">
+        <div className="grid gap-10 pb-12 md:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)] md:gap-12 lg:gap-20 lg:pb-16">
           <div>
             <Link to="/" className="inline-flex rounded-sm focus-visible:outline-2 focus-visible:outline-ring">
               <Logo className="h-6 text-xl" />
             </Link>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              {m.home_page__footer_tagline()}
-            </p>
+            <p className="mt-5 max-w-56 text-sm leading-6 text-muted-foreground">{m.home_page__footer_tagline()}</p>
           </div>
-          <nav aria-label={m.footer__navigation()} className="grid grid-cols-2 gap-7 sm:grid-cols-3">
+          <nav aria-label={m.footer__navigation()} className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             <div>
-              <h2 className="text-sm font-semibold">{m.navbar__stack()}</h2>
+              <h2 className="text-sm font-medium">{m.navbar__stack()}</h2>
               <ul className="mt-4 grid gap-2.5">
                 <li>
                   <HomeNavigationLink className={footerLinkClass} href="#stack">
@@ -51,7 +49,7 @@ export function Footer({ className, ...props }: ComponentProps<"footer">) {
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold">{m.navbar__resources()}</h2>
+              <h2 className="text-sm font-medium">{m.navbar__resources()}</h2>
               <ul className="mt-4 grid gap-2.5">
                 {resources.map(({ label, href }) => (
                   <li key={href}>
@@ -63,7 +61,7 @@ export function Footer({ className, ...props }: ComponentProps<"footer">) {
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold">{m.footer__legal()}</h2>
+              <h2 className="text-sm font-medium">{m.footer__legal()}</h2>
               <ul className="mt-4 grid gap-2.5">
                 <li>
                   <Link className={footerLinkClass} to="/privacy-policy">
@@ -79,9 +77,9 @@ export function Footer({ className, ...props }: ComponentProps<"footer">) {
             </div>
           </nav>
         </div>
-        <Separator className="mt-9 lg:mt-12" aria-hidden="true" />
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
+        <Separator aria-hidden="true" />
+        <div className="flex flex-wrap items-center justify-between gap-4 py-5">
+          <p className="text-[13px] text-muted-foreground">
             {m.footer__built_by()}{" "}
             <Link
               className="rounded-sm font-medium text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-ring"

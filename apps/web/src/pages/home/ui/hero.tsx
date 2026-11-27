@@ -1,4 +1,4 @@
-import { ArrowRightIcon, ZapIcon } from "lucide-react";
+import { ArrowRightIcon, WandSparklesIcon } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
@@ -6,44 +6,54 @@ import { Button } from "@tsu-stack/ui/components/button";
 
 import { repositoryUrl } from "@/shared/config/project-links";
 import { DashboardPreview } from "@/shared/ui/dashboard-preview";
+import { OglBackground } from "@/shared/ui/ogl-background";
 
 export function HeroSection() {
   return (
-    <section aria-labelledby="home-hero-title" className="pt-14 sm:pt-20">
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center">
+    <section aria-labelledby="home-hero-title" className="pt-14 sm:pt-22">
+      <div className="mx-auto flex w-full max-w-2xl flex-col items-start px-2.5 text-left sm:items-center sm:text-center">
         <Button
+          className="mb-8"
           radius="full"
           size="sm"
           variant="outline"
           nativeLink
           render={
             <a href="#stack">
-              <ZapIcon data-icon="inline-start" aria-hidden="true" />
+              <WandSparklesIcon className="size-3.5" data-icon="inline-start" aria-hidden="true" />
               {m.home_page__hero_badge()}
             </a>
           }
         />
         <h1
           id="home-hero-title"
-          className="font-heading max-w-2xl text-4xl font-semibold tracking-tighter text-balance sm:text-5xl md:text-6xl lg:text-7xl"
+          className="text-[clamp(2.25rem,5.5vw,3.75rem)] leading-[1.04] font-medium tracking-tighter text-balance"
         >
           {m.home_page__hero_title()}
         </h1>
-        <p className="max-w-xl text-base leading-7 text-pretty text-muted-foreground sm:text-lg">
+        <p className="mt-5 max-w-md text-base leading-7 text-pretty text-muted-foreground">
           {m.home_page__hero_description()}
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <Button radius="full" size="lg" nativeLink render={<Link to="/sign-in" />}>
+        <div className="mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <Button className="w-full sm:w-auto" size="xl" radius="full" nativeLink render={<Link to="/sign-in" />}>
             {m.navbar__get_started()}
             <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
           </Button>
-          <Button radius="full" size="lg" variant="outline" nativeLink render={<Link href={repositoryUrl} />}>
+          <Button
+            className="w-full sm:w-auto"
+            size="xl"
+            radius="full"
+            variant="outline"
+            nativeLink
+            render={<Link href={repositoryUrl} />}
+          >
             {m.home_page__hero_cta()}
           </Button>
         </div>
       </div>
 
-      <div className="home-color-panel mt-12 rounded-3xl p-3 sm:mt-14 sm:p-7 lg:p-10">
+      <div className="relative isolate mt-11 overflow-hidden rounded-2xl p-3 sm:mt-14 sm:p-7 lg:p-10">
+        <OglBackground />
         <DashboardPreview alt={m.home_page__hero_dashboard_preview()} priority />
       </div>
     </section>

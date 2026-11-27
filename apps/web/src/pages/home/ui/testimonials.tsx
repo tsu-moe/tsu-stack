@@ -4,42 +4,45 @@ import { Marquee } from "@tsu-stack/ui/components/marquee";
 
 import { sampleRows } from "@/pages/home/config/testimonials.config";
 
+import { SectionHeading } from "./section-heading";
+
 export function TestimonialsSection() {
   return (
-    <section id="testimonials" aria-labelledby="home-testimonials-title" className="scroll-mt-24 py-12 lg:py-16">
-      <div className="mx-auto mb-8 flex max-w-2xl flex-col items-center gap-2 text-center sm:mb-10">
-        <h2 id="home-testimonials-title" className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-          {m.home_page__testimonials_title()}
-        </h2>
-        <p className="text-muted-foreground">{m.home_page__testimonials_samples()}</p>
+    <section id="testimonials" aria-labelledby="home-testimonials-title" className="scroll-mt-20">
+      <div className="mx-auto mb-9 max-w-2xl text-center sm:mb-12">
+        <SectionHeading
+          id="home-testimonials-title"
+          primary={m.home_page__testimonials_title()}
+          secondary={m.home_page__testimonials_subtitle()}
+        />
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-7 sm:gap-9">
         {sampleRows.map(({ direction, testimonials }) => (
           <Marquee
             key={direction}
             data-home-marquee=""
             direction={direction}
-            gap={12}
+            gap={24}
             onlyOnOverflow={false}
             pauseOnHover
             speed={34}
           >
-            <div className="flex gap-3 motion-reduce:grid motion-reduce:w-full sm:motion-reduce:grid-cols-2 lg:motion-reduce:grid-cols-3">
+            <div className="flex gap-6 motion-reduce:grid motion-reduce:w-full sm:motion-reduce:grid-cols-2 lg:motion-reduce:grid-cols-3">
               {testimonials.map(({ initials, avatar, role, quote }) => (
                 <figure
                   key={initials}
-                  className="flex w-[min(19rem,calc(100vw-3rem))] shrink-0 flex-col justify-between gap-5 rounded-xl px-4 py-4 whitespace-normal hover:bg-muted/60 motion-reduce:w-full sm:px-6"
+                  className="flex w-[min(20rem,calc(100vw-3rem))] shrink-0 flex-col gap-4 px-3 py-2 whitespace-normal motion-reduce:w-full sm:px-4"
                 >
-                  <blockquote className="text-sm leading-relaxed tracking-tight">
-                    <p>{quote()}</p>
-                  </blockquote>
-                  <figcaption className="flex items-center gap-2.5">
+                  <figcaption className="flex min-w-0 items-center gap-2.5">
                     <Avatar className="size-9" aria-hidden="true">
                       <AvatarImage src={avatar} alt="" />
                       <AvatarFallback>{initials}</AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-medium">{role()}</span>
+                    <span className="truncate text-sm font-medium tracking-tight">{role()}</span>
                   </figcaption>
+                  <blockquote className="mt-auto line-clamp-3 text-[15px] leading-6 text-muted-foreground">
+                    {quote()}
+                  </blockquote>
                 </figure>
               ))}
             </div>

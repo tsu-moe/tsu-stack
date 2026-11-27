@@ -19,27 +19,24 @@ import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
 
 export function Navbar() {
-  const scrolled = useScroll(10);
+  const scrolled = useScroll(0);
   const { data: user } = useNavbarUserQuery();
 
   return (
-    <header className="sticky top-0 z-50 pt-4 sm:pt-6">
-      <div
-        className={cn(
-          "home-container flex h-14 items-center justify-between gap-2 rounded-full border bg-background/85 px-3 backdrop-blur-md motion-safe:transition-shadow sm:px-4 lg:grid lg:grid-cols-[1fr_auto_1fr]",
-          scrolled && "shadow-sm"
-        )}
-      >
-        <Button
-          size="sm"
-          radius="full"
-          variant="ghost"
-          nativeLink
-          render={<Link to="/" />}
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-transparent bg-background/85 backdrop-blur-xl motion-safe:transition-[border-color,box-shadow]",
+        scrolled && "border-border/70 shadow-sm"
+      )}
+    >
+      <div className="home-container flex h-14 items-center justify-between gap-2 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+        <Link
+          to="/"
+          className="inline-flex shrink-0 justify-self-start rounded-sm transition-opacity hover:opacity-75 focus-visible:outline-2 focus-visible:outline-ring"
           aria-label={m.navbar__home({ siteName: appConfig.site.shortName })}
         >
           <Logo className="h-5 text-base" />
-        </Button>
+        </Link>
         <DesktopNav />
         <div className="flex items-center justify-end gap-1.5">
           <ThemeSwitcher size="icon-sm" radius="full" />

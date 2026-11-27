@@ -6,30 +6,24 @@
 }
 
 @utility home-container {
-  @apply mx-auto max-w-5xl;
-  width: calc(100% - --spacing(8));
-
-  @variant sm {
-    width: calc(100% - --spacing(16));
-  }
+  @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
 }
 
 @layer components {
-  .home-color-panel {
-    --panel-light: #acb8ff;
-    --panel-mid: #5776f7;
-    --panel-deep: #394aca;
-    background-color: var(--panel-mid);
+  .ogl-background:not(:has(> canvas)) {
+    background-color: #a34e35;
     background-image:
-      radial-gradient(ellipse at 0% 0%, var(--panel-light), transparent 54%),
-      radial-gradient(ellipse at 100% 100%, var(--panel-deep), transparent 64%),
-      linear-gradient(125deg, var(--panel-mid) 20%, var(--panel-light) 140%);
+      radial-gradient(ellipse at 14% 2%, #f2b596, transparent 67%),
+      linear-gradient(135deg, #d88a68, #a34e35 51%, #170d09);
   }
 
-  .home-color-panel[data-tone="sky"] {
-    --panel-light: #c1deff;
-    --panel-mid: #669aea;
-    --panel-deep: #2e5db2;
+  @keyframes setup-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
   }
 }
 

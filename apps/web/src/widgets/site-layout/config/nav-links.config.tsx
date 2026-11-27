@@ -54,5 +54,12 @@ export function getHomeNavigation() {
     { label: m.navbar__pull_requests(), href: `${repositoryUrl}/pulls`, icon: <GitPullRequestIcon /> }
   ];
 
-  return { stack, resources, moreResources };
+  const setup = {
+    label: m.home_page__setup_link(),
+    description: m.home_page__setup_link_description(),
+    href: "#request-path",
+    icon: <TerminalIcon aria-hidden="true" />
+  };
+
+  return { stack, resources, moreResources, setup };
 }

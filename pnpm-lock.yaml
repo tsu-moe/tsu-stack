@@ -344,6 +344,9 @@ catalogs:
     nitro:
       specifier: 3.0.260903-beta
       version: 3.0.260903-beta
+    ogl:
+      specifier: 1.0.11
+      version: 1.0.11
     oxc-transform-react:
       specifier: 0.158.0
       version: 0.158.0
@@ -594,6 +597,9 @@ importers:
       next-themes:
         specifier: 'catalog:'
         version: 0.4.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      ogl:
+        specifier: 'catalog:'
+        version: 1.0.11
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -6410,6 +6416,9 @@ packages:
   ofetch@1.5.1:
     resolution: {integrity: sha512-2W4oUZlVaqAPAil6FUg/difl6YhqhUR7x2eZY4bQCko22UXg3hptq9KLQdqFClV+Wu85UX7hNtdGTngi/1BxcA==}
 
+  ogl@1.0.11:
+    resolution: {integrity: sha512-kUpC154AFfxi16pmZUK4jk3J+8zxwTWGPo03EoYA8QPbzikHoaC82n6pNTbd+oEaJonaE8aPWBlX7ad9zrqLsA==}
+
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
 
@@ -12057,6 +12066,8 @@ snapshots:
       destr: 2.0.5
       node-fetch-native: 1.6.7
       ufo: 1.6.4
+
+  ogl@1.0.11: {}
 
   ohash@2.0.11: {}
 

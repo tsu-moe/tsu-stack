@@ -17,9 +17,9 @@ import { NavLinkItem } from "./nav-link-item";
 
 export function MobileNav({ showGuestActions }: { showGuestActions: boolean }) {
   const [open, setOpen] = useState(false);
-  const { stack, resources, moreResources } = getHomeNavigation();
+  const { stack, resources, moreResources, setup } = getHomeNavigation();
   const sections = [
-    { id: "stack", title: m.navbar__stack(), items: stack },
+    { id: "stack", title: m.navbar__stack(), items: [...stack, setup] },
     { id: "resources", title: m.navbar__resources(), items: resources },
     { id: "project", title: m.home_page__nav_project(), items: moreResources }
   ];
@@ -37,7 +37,7 @@ export function MobileNav({ showGuestActions }: { showGuestActions: boolean }) {
         side="top"
         variant="floating"
         showCloseButton={false}
-        className="top-20 max-h-[calc(100dvh-6rem)] lg:hidden"
+        className="top-14 max-h-[calc(100dvh-4rem)] lg:hidden"
       >
         <div className="flex items-center justify-between px-4 pt-3">
           <SheetTitle className="text-sm font-medium">{m.home_page__nav_menu()}</SheetTitle>

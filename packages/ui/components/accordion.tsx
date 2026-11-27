@@ -1,10 +1,9 @@
 "use client";
 
 import { Accordion as BaseAccordion } from "@base-ui/react/accordion";
+import { cn } from "cn";
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
-
-import { cn } from "@tsu-stack/ui/lib/utils";
 
 export type AccordionVariant =
   | "default"
@@ -34,8 +33,8 @@ function Accordion({ className, multiple = false, variant = "default", ...props 
         className={cn(
           "group/accordion flex w-full flex-col",
           variant === "split" && "space-y-2",
-          variant === "outline" && "overflow-hidden rounded-lg border border-border bg-card",
-          isInset && "rounded-xl border border-border bg-muted p-1 dark:bg-card",
+          variant === "outline" && "overflow-hidden rounded-lg border border-border bg-muted/55",
+          isInset && "rounded-xl border border-border bg-muted/55 p-1 dark:bg-muted/55",
           className
         )}
         {...props}
@@ -60,9 +59,9 @@ function AccordionItem({ className, ...props }: AccordionItemProps) {
         variant === "isolated-bordered" &&
           "relative overflow-hidden border border-border bg-card not-first:not-data-open:not-[[data-open]+&]:-mt-px first:rounded-t-lg last:rounded-b-lg data-open:mt-2 data-open:mb-2 data-open:rounded-lg data-open:first:mt-0 data-open:last:mb-0 [&:has(+_[data-open])]:rounded-b-lg [[data-open]+&]:rounded-t-lg",
         variant === "isolated-filled" &&
-          "overflow-hidden bg-muted first:rounded-t-lg last:rounded-b-lg data-open:my-2 data-open:rounded-lg data-open:first:mt-0 data-open:last:mb-0 [&:has(+_[data-open])]:rounded-b-lg [[data-open]+&]:rounded-t-lg",
+          "overflow-hidden bg-muted/55 first:rounded-t-lg last:rounded-b-lg data-open:my-2 data-open:rounded-lg data-open:first:mt-0 data-open:last:mb-0 [&:has(+_[data-open])]:rounded-b-lg [[data-open]+&]:rounded-t-lg",
         variant === "isolated-filled-bordered" &&
-          "overflow-hidden bg-muted not-last:border-b not-last:border-border first:rounded-t-lg last:rounded-b-lg data-open:my-2 data-open:rounded-lg data-open:border-transparent data-open:first:mt-0 data-open:last:mb-0 [&:has(+_[data-open])]:rounded-b-lg [&:has(+_[data-open])]:border-transparent [[data-open]+&]:rounded-t-lg",
+          "overflow-hidden bg-muted/55 not-last:border-b not-last:border-border first:rounded-t-lg last:rounded-b-lg data-open:my-2 data-open:rounded-lg data-open:border-transparent data-open:first:mt-0 data-open:last:mb-0 [&:has(+_[data-open])]:rounded-b-lg [&:has(+_[data-open])]:border-transparent [[data-open]+&]:rounded-t-lg",
         className
       )}
       {...props}
@@ -132,7 +131,7 @@ function AccordionTrigger({
           variant === "default" && "px-0",
           variant === "split" && "rounded-t-lg",
           (variant === "nested" || variant === "inset") &&
-            "rounded-lg px-3.5 py-2.5 hover:bg-card/60 dark:hover:bg-muted/60",
+            "rounded-lg px-3.5 py-2.5 hover:bg-card/55 dark:hover:bg-muted/35",
           // Indicator animations
           indicatorType === "chevron" && "[&[data-panel-open]_[data-slot=accordion-indicator]]:rotate-180",
           indicatorType === "plus" && "[&[data-panel-open]_[data-slot=accordion-indicator]]:rotate-90",
@@ -174,6 +173,7 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
       <div
         className={cn(
           "p-3.5 text-muted-foreground",
+          variant === "default" && "px-0",
           (variant === "default" ||
             variant === "split" ||
             variant === "outline" ||
@@ -182,7 +182,7 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
             variant === "isolated-filled-bordered") &&
             "pt-0",
           (variant === "nested" || variant === "inset") &&
-            "mx-px my-1 rounded-lg bg-card p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_1px_1px_-0.5px_rgb(0_0_0/0.06),0_3px_3px_-1.5px_rgb(0_0_0/0.05)] dark:bg-muted dark:shadow-[0_0_0_1px_rgb(0_0_0/0.12),0_1px_1px_-0.5px_rgb(0_0_0/0.18),0_3px_3px_-1.5px_rgb(0_0_0/0.16),inset_0_1px_0_0_rgb(255_255_255/0.02),inset_0_0_0_1px_rgb(255_255_255/0.02)] [[data-slot=accordion-item]:last-child_&]:mb-0",
+            "mx-px my-1 rounded-lg bg-card p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_1px_1px_-0.5px_rgb(0_0_0/0.06),0_3px_3px_-1.5px_rgb(0_0_0/0.05)] dark:bg-muted/55 dark:shadow-[0_0_0_1px_rgb(0_0_0/0.12),0_1px_1px_-0.5px_rgb(0_0_0/0.18),0_3px_3px_-1.5px_rgb(0_0_0/0.16),inset_0_1px_0_0_rgb(255_255_255/0.02),inset_0_0_0_1px_rgb(255_255_255/0.02)] [[data-slot=accordion-item]:last-child_&]:mb-0",
           // Icon alignment - add left padding when parent item contains a trigger with icon
           "[[data-slot=accordion-item]:has([data-has-icon])_&]:pl-[calc(1rem+0.75rem)]",
           variant === "default" && "[[data-slot=accordion-item]:has([data-has-icon])_&]:pl-[calc(1rem+0.75rem)]",

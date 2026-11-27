@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, LayersIcon, PackageIcon } from "lucide-react";
+import { ArrowUpRightIcon, PackageIcon } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
@@ -23,7 +23,7 @@ const topLinkClass =
   "h-9 rounded-full bg-transparent px-3 py-0 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground focus:text-foreground";
 
 export function DesktopNav() {
-  const { stack, resources, moreResources } = getHomeNavigation();
+  const { stack, resources, moreResources, setup } = getHomeNavigation();
   const releasesUrl = `${repositoryUrl}/releases`;
 
   return (
@@ -37,12 +37,7 @@ export function DesktopNav() {
             <div className="grid w-[32rem] grid-cols-3 gap-2">
               <NavColumn title={m.home_page__nav_app()} items={stack.slice(0, 2)} />
               <NavColumn title={m.home_page__nav_foundations()} items={stack.slice(2)} />
-              <NavCallout
-                href="#request-path"
-                icon={<LayersIcon aria-hidden="true" />}
-                title={m.home_page__workflow_link()}
-                description={m.home_page__nav_workflow_description()}
-              />
+              <NavCallout href={setup.href} icon={setup.icon} title={setup.label} description={setup.description} />
             </div>
           </NavigationMenuContent>
         </NavigationMenuItem>

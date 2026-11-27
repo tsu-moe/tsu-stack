@@ -5,6 +5,7 @@ import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 
 import { DashboardPreview } from "@/shared/ui/dashboard-preview";
 import { Logo } from "@/shared/ui/logo";
+import { OglBackground } from "@/shared/ui/ogl-background";
 
 import { appConfig } from "@/config/app.config";
 
@@ -36,8 +37,9 @@ export function AuthLayout({ children }: { children: ReactNode }) {
       </div>
       <div
         aria-hidden="true"
-        className="home-color-panel my-3 me-3 hidden min-w-0 items-center overflow-hidden rounded-3xl ps-16 lg:flex xl:ps-26"
+        className="relative isolate my-3 me-3 hidden min-w-0 items-center overflow-hidden rounded-2xl ps-16 lg:flex xl:ps-26"
       >
+        <OglBackground />
         <DashboardPreview alt="" className="w-[max(100%,min(80vw,135dvh))] shrink-0" />
       </div>
     </main>
