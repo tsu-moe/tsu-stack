@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
+import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 
 import { GithubIcon } from "@/shared/ui/github-icon";
 
@@ -22,6 +23,23 @@ export type LinkItemType = {
 };
 
 export const repositoryUrl = "https://github.com/tsu-moe/tsu-stack";
+export const scaffoldingUrl = `${repositoryUrl}/blob/main/tools/create-tsu-stack/README.md`;
+
+export function HomeNavigationLink({ children, href, ...props }: React.ComponentProps<"a"> & { href: string }) {
+  if (href.startsWith("#")) {
+    return (
+      <Link {...props} to="/" hash={href.slice(1)} activeOptions={{ exact: true, includeHash: true }}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <a {...props} href={href}>
+      {children}
+    </a>
+  );
+}
 
 export function getHomeNavigation() {
   const stack: LinkItemType[] = [
@@ -53,7 +71,7 @@ export function getHomeNavigation() {
   const moreResources: LinkItemType[] = [
     {
       label: m.navbar__cli(),
-      href: `${repositoryUrl}/blob/main/tools/create-tsu-stack/README.md`,
+      href: scaffoldingUrl,
       icon: <TerminalIcon />
     },
     { label: m.navbar__license(), href: `${repositoryUrl}/blob/main/LICENSE`, icon: <ScaleIcon /> },

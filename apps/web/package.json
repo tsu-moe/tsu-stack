@@ -17,6 +17,7 @@
     "@fontsource-variable/geist-mono": "catalog:",
     "@lonik/oh-image": "catalog:",
     "@tanstack/react-form": "catalog:",
+    "@tanstack/react-hotkeys": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-ssr-query": "catalog:",

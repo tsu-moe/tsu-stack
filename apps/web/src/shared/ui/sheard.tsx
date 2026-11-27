@@ -2,7 +2,7 @@ import { ChevronRightIcon } from "lucide-react";
 
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { type LinkItemType } from "@/shared/ui/nav-links";
+import { HomeNavigationLink, type LinkItemType } from "@/shared/ui/nav-links";
 
 export function LinkItem({
   label,
@@ -13,7 +13,7 @@ export function LinkItem({
   ...props
 }: React.ComponentProps<"a"> & LinkItemType) {
   return (
-    <a className={cn("flex items-center gap-2", className)} href={href} {...props}>
+    <HomeNavigationLink className={cn("flex items-center gap-2", className)} href={href} {...props}>
       {icon && (
         <div className="flex aspect-square size-9 items-center justify-center rounded-2xl border bg-card shadow-xs outline outline-offset-2 outline-border/60 [&_svg]:size-4 [&_svg]:text-foreground">
           {icon}
@@ -23,7 +23,7 @@ export function LinkItem({
         <span className="text-xs font-medium">{label}</span>
         <span className="line-clamp-1 text-[10px] text-muted-foreground">{description}</span>
       </div>
-    </a>
+    </HomeNavigationLink>
   );
 }
 

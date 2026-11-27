@@ -8,9 +8,11 @@ import { type NavigateTo } from "@tsu-stack/i18n/tanstack-start/types";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Field, FieldError, FieldLabel } from "@tsu-stack/ui/components/field";
 import { Input } from "@tsu-stack/ui/components/input";
+import { Separator, SeparatorContent } from "@tsu-stack/ui/components/separator";
 
 import { useSignInMutation } from "@/features/auth/api/sign-in.mutation";
 import { AuthPanel } from "@/features/auth/ui/auth-panel";
+import { SocialSignInButtons } from "@/features/auth/ui/social-sign-in-buttons";
 
 export function SignInForm({ redirectTo }: { redirectTo: NavigateTo }) {
   const navigate = useNavigate();
@@ -32,24 +34,14 @@ export function SignInForm({ redirectTo }: { redirectTo: NavigateTo }) {
     }
   });
   return (
-    <AuthPanel
-      title={m.auth__sign_in_title()}
-      description={
-        <>
-          {m.auth__sign_in_no_account()}{" "}
-          <Link
-            className="underline underline-offset-4 hover:text-primary"
-            to="/create-an-account"
-            search={{ redirect: redirectTo }}
-          >
-            {m.auth__sign_in_create_account()}
-          </Link>
-        </>
-      }
-    >
+    <AuthPanel title={m.auth__sign_in_title()}>
+      <SocialSignInButtons />
+      <Separator>
+        <SeparatorContent className="text-xs text-muted-foreground">{m.auth__or()}</SeparatorContent>
+      </Separator>
       <form
         aria-busy={signInMutation.isPending}
-        className="flex flex-col gap-4"
+        className="-mt-2 flex flex-col gap-2"
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
@@ -102,9 +94,19 @@ export function SignInForm({ redirectTo }: { redirectTo: NavigateTo }) {
             </Field>
           )}
         </form.Field>
-        <Button type="submit" className="w-full" disabled={signInMutation.isPending || signInMutation.isSuccess}>
+        <Button type="submit" className="mt-4 w-full" disabled={signInMutation.isPending || signInMutation.isSuccess}>
           {signInMutation.isPending ? m.auth__signing_in() : m.auth__sign_in()}
         </Button>
+        <p className="text-center text-sm text-muted-foreground">
+          {m.auth__sign_in_no_account()}{" "}
+          <Link
+            className="font-medium text-foreground underline underline-offset-4"
+            to="/create-an-account"
+            search={{ redirect: redirectTo }}
+          >
+            {m.auth__sign_in_create_account()}
+          </Link>
+        </p>
       </form>
     </AuthPanel>
   );

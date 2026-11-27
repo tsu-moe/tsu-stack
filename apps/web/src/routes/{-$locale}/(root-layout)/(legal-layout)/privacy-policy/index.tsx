@@ -8,7 +8,7 @@ import { PrivacyPolicyPage } from "@/pages/privacy-policy";
 
 import { appConfig } from "@/config/app.config";
 
-export const Route = createFileRoute("/{-$locale}/(root-layout)/privacy-policy/")({
+export const Route = createFileRoute("/{-$locale}/(root-layout)/(legal-layout)/privacy-policy/")({
   head: ({ params }) =>
     generateAppSeo({
       alternates: {

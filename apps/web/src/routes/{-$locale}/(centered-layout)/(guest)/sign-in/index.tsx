@@ -4,7 +4,7 @@ import { m } from "@tsu-stack/i18n/messages";
 
 import { generateAppSeo } from "@/shared/lib/seo";
 
-import { AuthOptions } from "@/features/auth";
+import { SignInForm } from "@/features/auth";
 
 import { appConfig } from "@/config/app.config";
 
@@ -27,5 +27,5 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/sign
 
 function RouteComponent() {
   const { redirectTo } = Route.useRouteContext();
-  return <AuthOptions redirectTo={redirectTo} />;
+  return <SignInForm redirectTo={redirectTo} />;
 }

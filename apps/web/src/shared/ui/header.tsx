@@ -10,6 +10,7 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 
 import { Logo } from "@/shared/ui/logo";
 import { MobileNav } from "@/shared/ui/mobile-nav";
+import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
 import { appConfig } from "@/config/app.config";
 
@@ -17,33 +18,42 @@ export function Header() {
   const scrolled = useScroll(10);
 
   return (
-    <header
-      className={cn("sticky top-0 z-50 mx-auto w-full max-w-5xl border-b border-transparent", {
-        "border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/50": scrolled
-      })}
-    >
-      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <Link
-            className="rounded-md p-2 hover:bg-muted dark:hover:bg-muted/50"
-            to="/"
-            aria-label={m.navbar__home({ siteName: appConfig.site.shortName })}
+    <header className="sticky top-0 z-50 pt-4 sm:pt-6">
+      <div
+        className={cn(
+          "home-container flex h-14 items-center justify-between gap-2 rounded-full border bg-background/85 px-3 backdrop-blur-md motion-safe:transition-shadow sm:px-4 lg:grid lg:grid-cols-[1fr_auto_1fr]",
+          scrolled && "shadow-sm"
+        )}
+      >
+        <Button
+          size="sm"
+          radius="full"
+          variant="ghost"
+          nativeLink
+          render={<Link to="/" />}
+          aria-label={m.navbar__home({ siteName: appConfig.site.shortName })}
+        >
+          <Logo className="h-5 text-base" />
+        </Button>
+        <DesktopNav />
+        <div className="flex items-center justify-end gap-1.5">
+          <ThemeSwitcher size="icon-sm" className="rounded-full" />
+          <Button
+            className="hidden lg:inline-flex"
+            size="sm"
+            radius="full"
+            variant="ghost"
+            nativeLink
+            render={<Link to="/sign-in" />}
           >
-            <Logo className="h-4" />
-          </Link>
-          <div className="hidden h-5 w-px bg-border md:block" />
-          <DesktopNav />
-        </div>
-        <div className="hidden items-center gap-2 md:flex">
-          <Button size="sm" variant="outline" render={<Link to="/sign-in" />} nativeButton={false}>
             {m.auth__sign_in_link()}
           </Button>
-          <Button size="sm" render={<Link to="/sign-in" />} nativeButton={false}>
+          <Button className="hidden sm:inline-flex" size="sm" radius="full" nativeLink render={<Link to="/sign-in" />}>
             {m.navbar__get_started()}
           </Button>
+          <MobileNav />
         </div>
-        <MobileNav />
-      </nav>
+      </div>
     </header>
   );
 }

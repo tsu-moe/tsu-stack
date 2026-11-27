@@ -6,3 +6,42 @@
 @theme inline {
   --font-heading: var(--font-sans);
 }
+
+@utility home-container {
+  @apply mx-auto max-w-5xl;
+  width: calc(100% - --spacing(8));
+
+  @variant sm {
+    width: calc(100% - --spacing(16));
+  }
+}
+
+@layer components {
+  .home-color-panel {
+    --panel-light: #acb8ff;
+    --panel-mid: #5776f7;
+    --panel-deep: #394aca;
+    background-color: var(--panel-mid);
+    background-image:
+      radial-gradient(ellipse at 0% 0%, var(--panel-light), transparent 54%),
+      radial-gradient(ellipse at 100% 100%, var(--panel-deep), transparent 64%),
+      linear-gradient(125deg, var(--panel-mid) 20%, var(--panel-light) 140%);
+  }
+
+  .home-color-panel[data-tone="sky"] {
+    --panel-light: #c1deff;
+    --panel-mid: #669aea;
+    --panel-deep: #2e5db2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-home-marquee] > [data-slot="marquee-track"] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  [data-home-marquee] [data-slot="marquee-group"]:not([data-copy]) {
+    width: 100%;
+  }
+}

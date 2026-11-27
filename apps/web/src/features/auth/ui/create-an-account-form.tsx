@@ -42,24 +42,10 @@ export function CreateAnAccountForm({ redirectTo }: { redirectTo: NavigateTo }) 
     }
   });
   return (
-    <AuthPanel
-      title={m.auth__create_account_title()}
-      description={
-        <>
-          {m.auth__already_have_account()}{" "}
-          <Link
-            className="underline underline-offset-4 hover:text-primary"
-            to="/sign-in/password"
-            search={{ redirect: redirectTo }}
-          >
-            {m.auth__sign_in_link()}
-          </Link>
-        </>
-      }
-    >
+    <AuthPanel title={m.auth__create_account_title()}>
       <form
         aria-busy={signUpMutation.isPending}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-2"
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
@@ -158,9 +144,19 @@ export function CreateAnAccountForm({ redirectTo }: { redirectTo: NavigateTo }) 
             </Field>
           )}
         </form.Field>
-        <Button type="submit" className="w-full" disabled={signUpMutation.isPending || signUpMutation.isSuccess}>
+        <Button type="submit" className="mt-4 w-full" disabled={signUpMutation.isPending || signUpMutation.isSuccess}>
           {signUpMutation.isPending ? m.auth__creating_account() : m.auth__create_account()}
         </Button>
+        <p className="text-center text-sm text-muted-foreground">
+          {m.auth__already_have_account()}{" "}
+          <Link
+            className="font-medium text-foreground underline underline-offset-4"
+            to="/sign-in"
+            search={{ redirect: redirectTo }}
+          >
+            {m.auth__sign_in_link()}
+          </Link>
+        </p>
       </form>
     </AuthPanel>
   );

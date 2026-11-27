@@ -92,6 +92,8 @@ type ButtonStyle = CSSProperties & {
 };
 
 type SharedButtonProps = Omit<BaseButtonProps, "color" | "style"> & {
+  /** Preserves link semantics when `render` supplies an anchor. */
+  nativeLink?: boolean;
   leftSection?: ReactNode;
   radius?: "none" | "sm" | "default" | "lg" | "xl" | "full";
   rightSection?: ReactNode;
@@ -123,6 +125,7 @@ function Button({
   className,
   color,
   leftSection,
+  nativeLink = false,
   radius = "default",
   rightSection,
   size = "default",
@@ -139,6 +142,22 @@ function Button({
       }
     : undefined;
 
+  // Base UI treats Space as activation for non-native buttons. Links use Enter.
+  const linkBehavior: Pick<BaseButtonProps, "nativeButton" | "role" | "onKeyDown" | "onKeyUp"> | undefined = nativeLink
+    ? {
+        nativeButton: false,
+        role: "link",
+        onKeyDown(event) {
+          props.onKeyDown?.(event);
+          if (event.key === " ") event.preventBaseUIHandler();
+        },
+        onKeyUp(event) {
+          props.onKeyUp?.(event);
+          if (event.key === " ") event.preventBaseUIHandler();
+        }
+      }
+    : undefined;
+
   return (
     <BaseButton
       className={cn(buttonVariants({ customColor: hasCustomColor, radius, size, variant }), className)}
@@ -148,6 +167,7 @@ function Button({
       data-variant={variant}
       style={{ ...colorStyle, ...style }}
       {...props}
+      {...linkBehavior}
     >
       {leftSection != null && <span data-slot="button-section">{leftSection}</span>}
       {children}

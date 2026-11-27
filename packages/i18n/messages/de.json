@@ -163,7 +163,6 @@
   "ui__toggle_theme": "Farbschema wechseln",
   "auth__sign_in__seo_description": "Melden Sie sich bei Ihrem Konto für {siteName} an, um das Dashboard zu öffnen.",
   "auth__create_account__seo_description": "Erstellen Sie ein Konto für {siteName}, um die integrierte Authentifizierung auszuprobieren.",
-  "home_page__hero_tag": "Vorlage",
   "home_page__hero_dashboard_preview": "Dashboard-Vorschau",
   "footer__author_profile": "GitHub-Profil von {author}",
   "footer__navigation": "Fußnavigation",

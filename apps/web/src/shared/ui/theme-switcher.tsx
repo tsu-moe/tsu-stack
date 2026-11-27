@@ -1,3 +1,4 @@
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type ComponentProps } from "react";
@@ -25,31 +26,32 @@ type ThemeSwitcherProps = {
 } & ComponentProps<typeof Button>;
 
 export function ThemeSwitcher({ variant = "ghost", size = "icon", className }: ThemeSwitcherProps) {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const toggleTheme = () => setTheme(resolvedTheme === "light" ? "dark" : "light");
+  const shortcut = "D";
+  const label = m.ui__toggle_theme();
 
-  const changeThemeValue =
-    theme === "dark"
-      ? "light"
-      : theme === "light"
-        ? "dark"
-        : typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "light"
-          : "dark";
+  useHotkey(shortcut, toggleTheme, { ignoreInputs: true, requireReset: true, meta: { name: label } });
 
   return (
     <Button
+      type="button"
       variant={variant}
       size={size}
-      onClick={() => setTheme(changeThemeValue)}
-      aria-label={m.ui__toggle_theme()}
+      onClick={toggleTheme}
+      aria-label={label}
+      aria-keyshortcuts={shortcut}
+      title={`${label} (${shortcut})`}
       className={className}
     >
       <Sun
+        aria-hidden="true"
         className="absolute scale-100 rotate-0 transition-all duration-50 dark:scale-0 dark:rotate-90"
         size={18}
         strokeWidth={2}
       />
       <Moon
+        aria-hidden="true"
         className="absolute scale-0 rotate-90 transition-all duration-50 dark:scale-100 dark:rotate-0"
         size={18}
         strokeWidth={2}

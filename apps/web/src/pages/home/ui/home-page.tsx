@@ -1,18 +1,21 @@
-import { Header } from "@/shared/ui/header";
-import { HeroSection } from "@/shared/ui/hero";
-import { LogosSection } from "@/shared/ui/logos-section";
+import { SiteLayout } from "@/widgets/layouts";
 
-import { Footer } from "@/features/footer";
+import { FaqSection } from "./faq";
+import { HeroSection } from "./hero";
+import { RequestPathSection } from "./request-path";
+import { StackLogosSection } from "./stack-logos";
+import { StartSection } from "./start";
+import { TestimonialsSection } from "./testimonials";
 
 export function HomePage() {
   return (
-    <>
-      <Header />
-      <main className="mx-auto w-full max-w-5xl overflow-x-clip border-x">
-        <HeroSection />
-        <LogosSection />
-      </main>
-      <Footer className="lg:mt-12" />
-    </>
+    <SiteLayout>
+      <HeroSection />
+      <StackLogosSection />
+      <RequestPathSection />
+      <TestimonialsSection />
+      <FaqSection />
+      <StartSection />
+    </SiteLayout>
   );
 }

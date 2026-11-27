@@ -1,79 +1,108 @@
-import { UserRoundIcon } from "lucide-react";
-import { useState } from "react";
+import { type ComponentProps } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
-import { buttonVariants } from "@tsu-stack/ui/components/button";
+import { Button } from "@tsu-stack/ui/components/button";
+import { Separator } from "@tsu-stack/ui/components/separator";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
 import { GithubIcon } from "@/shared/ui/github-icon";
-import { Image } from "@/shared/ui/image";
 import { Logo } from "@/shared/ui/logo";
-import { repositoryUrl } from "@/shared/ui/nav-links";
+import { HomeNavigationLink, repositoryUrl, scaffoldingUrl } from "@/shared/ui/nav-links";
 
 import { appConfig } from "@/config/app.config";
 
 const authorProfileUrl = "https://github.com/tsu-moe";
+const footerLinkClass =
+  "w-fit rounded-sm text-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring";
 
-const footerRoutes = [
-  { label: m.footer__dashboard, to: "/dashboard" },
-  { label: m.footer__privacy_policy, to: "/privacy-policy" },
-  { label: m.footer__terms_of_service, to: "/terms-of-service" }
-] as const;
-
-export function Footer({ className, ...props }: React.ComponentProps<"footer">) {
-  const [year] = useState(() => new Date().getFullYear());
-  const author = appConfig.site.author;
-  const authorProfileLabel = m.footer__author_profile({ author });
-  const socialLinkClass = buttonVariants({ size: "icon-sm", variant: "ghost" });
+export function Footer({ className, ...props }: ComponentProps<"footer">) {
+  const resources = [
+    { label: m.navbar__source(), href: repositoryUrl },
+    { label: m.navbar__cli(), href: scaffoldingUrl },
+    { label: m.navbar__issues(), href: `${repositoryUrl}/issues` },
+    { label: m.navbar__releases(), href: `${repositoryUrl}/releases` }
+  ];
 
   return (
-    <footer className={cn("border-t", className)} {...props}>
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6">
-        <div className="flex items-center justify-between">
-          <Logo className="h-4.5 text-lg" />
-          <div className="flex items-center gap-1">
-            <Link aria-label={authorProfileLabel} className={socialLinkClass} href={authorProfileUrl}>
-              <UserRoundIcon aria-hidden="true" />
+    <footer className={cn("border-t bg-background", className)} {...props}>
+      <div className="home-container pt-12 pb-7 lg:pt-16">
+        <div className="grid gap-9 lg:grid-cols-[1fr_2fr] lg:gap-12">
+          <div>
+            <Link to="/" className="inline-flex rounded-sm focus-visible:outline-2 focus-visible:outline-ring">
+              <Logo className="h-6 text-xl" />
             </Link>
-            <Link aria-label={m.footer__github()} className={socialLinkClass} href={repositoryUrl}>
-              <GithubIcon aria-hidden="true" />
-            </Link>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              {m.home_page__footer_tagline()}
+            </p>
           </div>
+          <nav aria-label={m.footer__navigation()} className="grid grid-cols-2 gap-7 sm:grid-cols-3">
+            <div>
+              <h2 className="text-sm font-semibold">{m.navbar__stack()}</h2>
+              <ul className="mt-4 grid gap-2.5">
+                <li>
+                  <HomeNavigationLink className={footerLinkClass} href="#stack">
+                    {m.home_page__stack_heading()}
+                  </HomeNavigationLink>
+                </li>
+                <li>
+                  <Link className={footerLinkClass} to="/dashboard">
+                    {m.footer__dashboard()}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold">{m.navbar__resources()}</h2>
+              <ul className="mt-4 grid gap-2.5">
+                {resources.map(({ label, href }) => (
+                  <li key={href}>
+                    <Link className={footerLinkClass} href={href}>
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold">{m.footer__legal()}</h2>
+              <ul className="mt-4 grid gap-2.5">
+                <li>
+                  <Link className={footerLinkClass} to="/privacy-policy">
+                    {m.footer__privacy_policy()}
+                  </Link>
+                </li>
+                <li>
+                  <Link className={footerLinkClass} to="/terms-of-service">
+                    {m.footer__terms_of_service()}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </nav>
         </div>
-
-        <nav aria-label={m.footer__navigation()}>
-          <ul className="flex flex-wrap gap-4 text-sm font-medium text-muted-foreground md:gap-6">
-            <li>
-              <Link className="hover:text-foreground" href={repositoryUrl}>
-                {m.navbar__source()}
-              </Link>
-            </li>
-            {footerRoutes.map(({ label, to }) => (
-              <li key={to}>
-                <Link className="hover:text-foreground" to={to}>
-                  {label()}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 border-t px-4 py-6 text-sm text-muted-foreground">
-        <p>
-          &copy; {year} {author}
-        </p>
-        <p className="inline-flex items-center gap-1">
-          <span>{m.footer__built_by()}</span>
-          <Link
-            className="inline-flex items-center gap-1 text-foreground/80 hover:text-foreground hover:underline"
-            href={authorProfileUrl}
+        <Separator className="mt-9 lg:mt-12" aria-hidden="true" />
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground">
+            {m.footer__built_by()}{" "}
+            <Link
+              className="rounded-sm font-medium text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-ring"
+              href={authorProfileUrl}
+            >
+              {appConfig.site.author}
+            </Link>
+          </p>
+          <Button
+            aria-label={m.footer__github()}
+            radius="full"
+            size="icon-sm"
+            variant="ghost"
+            nativeLink
+            render={<Link href={repositoryUrl} />}
           >
-            <Image width={32} height={32} alt="" className="size-4 rounded-full" src={`${authorProfileUrl}.png`} />
-            {author}
-          </Link>
-        </p>
+            <GithubIcon aria-hidden="true" />
+          </Button>
+        </div>
       </div>
     </footer>
   );
