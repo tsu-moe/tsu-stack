@@ -1,133 +1,160 @@
-import { Command as CommandPrimitive } from "cmdk";
+"use client";
+
+import { Autocomplete } from "@base-ui/react/autocomplete";
 import { cn } from "cn";
-import { SearchIcon, CheckIcon } from "lucide-react";
-import * as React from "react";
+import { SearchIcon } from "lucide-react";
+import { type ComponentProps, type ReactNode } from "react";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@tsu-stack/ui/components/dialog";
-import { InputGroup, InputGroupAddon } from "@tsu-stack/ui/components/input-group";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@tsu-stack/ui/components/dialog";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@tsu-stack/ui/components/input-group";
+import { ScrollArea, ScrollAreaContent } from "@tsu-stack/ui/components/scroll-area";
 
-function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
+// Adapted from https://ui.iandefined.com/r/command.json (see ../LICENSE.iandefined).
+const commandSurface =
+  "rounded-xl border-none bg-popover bg-clip-padding text-popover-foreground shadow-2xl ring-4 ring-border";
+
+type CommandProps<ItemValue> = Omit<Autocomplete.Root.Props<ItemValue>, "defaultOpen" | "inline" | "items"> & {
+  className?: string;
+  items: NonNullable<Autocomplete.Root.Props<ItemValue>["items"]>;
+};
+
+function Command<ItemValue>({
+  autoHighlight = "always",
+  className,
+  items,
+  keepHighlight = true,
+  open = true,
+  ...props
+}: CommandProps<ItemValue>) {
   return (
-    <CommandPrimitive
-      data-slot="command"
+    <div
       className={cn(
-        "flex size-full flex-col overflow-hidden rounded-4xl bg-popover p-1 text-popover-foreground",
+        "flex max-h-[min(28rem,calc(100dvh-3rem))] min-h-0 w-full min-w-0 flex-col overflow-hidden",
+        commandSurface,
+        "in-data-[slot=command-dialog-popup]:rounded-none in-data-[slot=command-dialog-popup]:bg-transparent in-data-[slot=command-dialog-popup]:shadow-none in-data-[slot=command-dialog-popup]:ring-0",
         className
       )}
-      {...props}
-    />
-  );
-}
-
-function CommandDialog({
-  title = "Command Palette",
-  description = "Search for a command to run...",
-  children,
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof Dialog>, "children"> & {
-  title?: string;
-  description?: string;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Dialog {...props}>
-      <DialogContent className={cn("top-1/3 translate-y-0 overflow-hidden rounded-4xl! p-0", className)}>
-        <DialogHeader className="sr-only">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        {children}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
-  return (
-    <div data-slot="command-input-wrapper" className="p-1 pb-0">
-      <InputGroup className="flex h-9 w-full bg-input/30">
-        <CommandPrimitive.Input
-          data-slot="command-input"
-          className={cn("w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50", className)}
-          {...props}
-        />
-        <InputGroupAddon>
-          <SearchIcon className="size-4 shrink-0 opacity-50" />
-        </InputGroupAddon>
-      </InputGroup>
+      data-slot="command"
+    >
+      <Autocomplete.Root
+        {...props}
+        autoHighlight={autoHighlight}
+        inline
+        // Base UI accepts flat or grouped items through separate overloads.
+        items={items as readonly ItemValue[]}
+        keepHighlight={keepHighlight}
+        open={open}
+      />
     </div>
   );
 }
 
-function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
-  return (
-    <CommandPrimitive.List
-      data-slot="command-list"
-      className={cn("no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none", className)}
-      {...props}
-    />
-  );
+const CommandDialog = Dialog;
+
+function CommandDialogTrigger<Payload>(props: ComponentProps<typeof DialogTrigger<Payload>>) {
+  return <DialogTrigger data-slot="command-dialog-trigger" {...props} />;
 }
 
-function CommandEmpty({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+function CommandDialogPopup({
+  children,
+  className,
+  description,
+  title = "Command palette",
+  ...props
+}: Omit<ComponentProps<typeof DialogContent>, "showCloseButton"> & { description?: string }) {
   return (
-    <CommandPrimitive.Empty
-      data-slot="command-empty"
-      className={cn("py-6 text-center text-sm", className)}
+    <DialogContent
+      className={cn(commandSurface, className)}
+      data-slot="command-dialog-popup"
+      portalClassName="relative z-50"
       {...props}
-    />
-  );
-}
-
-function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
-  return (
-    <CommandPrimitive.Group
-      data-slot="command-group"
-      className={cn(
-        "overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-2 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
-        className
-      )}
-      {...props}
-    />
-  );
-}
-
-function CommandSeparator({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return (
-    <CommandPrimitive.Separator
-      data-slot="command-separator"
-      className={cn("my-1 h-px bg-border/50", className)}
-      {...props}
-    />
-  );
-}
-
-function CommandItem({ className, children, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
-  return (
-    <CommandPrimitive.Item
-      data-slot="command-item"
-      className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-2xl data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
-        className
-      )}
-      {...props}
+      showCloseButton={false}
     >
+      <DialogTitle className="sr-only">{title}</DialogTitle>
+      {description && <DialogDescription className="sr-only">{description}</DialogDescription>}
       {children}
-      <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
-    </CommandPrimitive.Item>
+    </DialogContent>
   );
 }
 
-function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
+function CommandInput(props: ComponentProps<typeof Autocomplete.Input>) {
   return (
-    <span
-      data-slot="command-shortcut"
+    <InputGroup className="mx-2 mt-2 h-9 shrink-0 rounded-md bg-input/50 shadow-none" data-slot="command-input">
+      <Autocomplete.Input render={<InputGroupInput className="h-full py-0" />} {...props} />
+      <InputGroupAddon className="text-muted-foreground/75">
+        <SearchIcon aria-hidden="true" />
+      </InputGroupAddon>
+    </InputGroup>
+  );
+}
+
+function CommandContent({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground group-data-selected/command-item:text-foreground",
+        "flex min-h-0 flex-1 flex-col in-data-[slot=command-dialog-popup]:min-h-[min(22.75rem,60dvh)]",
         className
       )}
+      data-slot="command-content"
+      {...props}
+    />
+  );
+}
+
+function CommandList({
+  emptyMessage = "No results found.",
+  ...props
+}: ComponentProps<typeof Autocomplete.List> & { emptyMessage?: ReactNode }) {
+  return (
+    <>
+      <Autocomplete.Empty
+        className="px-2 py-12 text-center text-sm text-muted-foreground empty:m-0 empty:p-0"
+        data-slot="command-empty"
+      >
+        {emptyMessage}
+      </Autocomplete.Empty>
+      <ScrollArea
+        className="min-h-0 flex-1 overflow-hidden has-[[data-slot=command-list][data-empty]]:hidden"
+        hideScrollbar
+        scrollShadow="vertical"
+        viewportClassName="overflow-x-hidden scroll-pt-2 scroll-pb-1.5"
+      >
+        <ScrollAreaContent>
+          <Autocomplete.List className="px-2 py-1.5 data-empty:hidden" data-slot="command-list" {...props} />
+        </ScrollAreaContent>
+      </ScrollArea>
+    </>
+  );
+}
+
+function CommandGroup(props: Autocomplete.Group.Props) {
+  return <Autocomplete.Group className="block text-foreground" data-slot="command-group" {...props} />;
+}
+
+function CommandGroupLabel(props: Autocomplete.GroupLabel.Props) {
+  return (
+    <Autocomplete.GroupLabel
+      className="w-full px-3 py-1.5 text-xs font-medium text-muted-foreground"
+      data-slot="command-group-label"
+      {...props}
+    />
+  );
+}
+
+function CommandCollection(props: Autocomplete.Collection.Props) {
+  return <Autocomplete.Collection data-slot="command-collection" {...props} />;
+}
+
+function CommandItem(props: Autocomplete.Item.Props) {
+  return (
+    <Autocomplete.Item
+      className={cn(
+        "relative flex h-9 w-full min-w-0 cursor-default items-center gap-2 rounded-md border border-transparent px-3 text-sm font-medium outline-hidden select-none",
+        "data-highlighted:border-input data-highlighted:bg-input/50 data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        "forced-colors:data-highlighted:outline-2 forced-colors:data-highlighted:-outline-offset-2 forced-colors:data-highlighted:outline-[Highlight]",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+      )}
+      data-slot="command-item"
       {...props}
     />
   );
@@ -135,12 +162,14 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) 
 
 export {
   Command,
+  CommandCollection,
+  CommandContent,
   CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
+  CommandDialogPopup,
+  CommandDialogTrigger,
   CommandGroup,
+  CommandGroupLabel,
+  CommandInput,
   CommandItem,
-  CommandShortcut,
-  CommandSeparator
+  CommandList
 };

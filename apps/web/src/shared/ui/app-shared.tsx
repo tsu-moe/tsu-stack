@@ -36,6 +36,7 @@ export function CustomMenuButton({ className, ...props }: React.ComponentProps<t
   return (
     <SidebarMenuButton
       className={cn(
+        "h-8 px-2 transition-[width]",
         "[&>span]:text-nowrap [&>span:last-child]:text-clip",
         "[&>span]:transition-opacity [&>span]:duration-(--sidebar-animation-duration) [&>span]:ease-(--sidebar-animation-ease) [&>span]:group-data-[collapsible=icon]:opacity-0",
         "text-muted-foreground data-active:text-sidebar-accent-foreground data-active:[&>span]:font-medium",

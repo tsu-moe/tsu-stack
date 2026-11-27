@@ -1,21 +1,25 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
   Command,
+  CommandCollection,
+  CommandContent,
   CommandDialog,
-  CommandEmpty,
+  CommandDialogPopup,
+  CommandDialogTrigger,
   CommandGroup,
+  CommandGroupLabel,
   CommandInput,
   CommandItem,
   CommandList
 } from "@tsu-stack/ui/components/command";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@tsu-stack/ui/components/empty";
-import { Kbd, KbdGroup } from "@tsu-stack/ui/components/kbd";
+import { Kbd } from "@tsu-stack/ui/components/kbd";
 import { useSidebar } from "@tsu-stack/ui/components/sidebar";
 import { useKeypress } from "@tsu-stack/ui/hooks/use-keypress";
 
@@ -31,63 +35,73 @@ function linksForSearchGroup(group: SidebarNavGroup): SidebarNavItem[] {
 
 export function AppSearch() {
   const [open, setOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const { isMobile } = useSidebar();
   const { navGroups } = getDashboardNavigation();
+  const searchGroups = navGroups.map((group) => {
+    return { label: group.label, items: linksForSearchGroup(group) };
+  });
 
   useKeypress({
-    combo: ["/"],
+    combo: "/",
     callback: () => setOpen(true)
   });
 
   return (
-    <>
-      <Button
+    <CommandDialog onOpenChange={setOpen} open={open}>
+      <CommandDialogTrigger
         aria-label={m.dashboard_search__open()}
+        aria-keyshortcuts="/"
         className="md:gap-3 md:pe-1"
-        onClick={() => setOpen(true)}
-        size={isMobile ? "icon-sm" : "sm"}
-        variant="outline"
+        ref={triggerRef}
+        render={<Button size={isMobile ? "icon-sm" : "sm"} variant="outline" />}
       >
         <SearchIcon data-icon="inline-start" />
-        <KbdGroup className="hidden md:flex">
-          <Kbd>⌘</Kbd>
-          <Kbd>K</Kbd>
-        </KbdGroup>
-      </Button>
+        <Kbd className="hidden md:inline-flex">/</Kbd>
+      </CommandDialogTrigger>
 
-      <CommandDialog
+      <CommandDialogPopup
         description={m.dashboard_search__description()}
-        onOpenChange={setOpen}
-        open={open}
+        finalFocus={triggerRef}
+        initialFocus={inputRef}
         title={m.dashboard_search__title()}
       >
-        <Command className="bg-background p-0" loop>
-          <div className="px-1 pt-1 pb-2">
-            <CommandInput placeholder={m.dashboard_search__placeholder()} />
-          </div>
-          <CommandList className="border-t">
-            <CommandEmpty>
-              <Empty>
-                <EmptyMedia variant="icon">
-                  <SearchIcon />
-                </EmptyMedia>
-                <EmptyHeader>{m.dashboard_search__no_results()}</EmptyHeader>
-                <EmptyDescription>{m.dashboard_search__try_again()}</EmptyDescription>
-              </Empty>
-            </CommandEmpty>
-            {navGroups.map((group) => (
-              <CommandGroup heading={group.label} key={group.label}>
-                {linksForSearchGroup(group).map((link) => (
-                  <CommandItem key={link.title} onSelect={() => setOpen(false)} value={link.title}>
-                    {link.icon}
-                    <span>{link.title}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            ))}
-          </CommandList>
+        <Command items={searchGroups} itemToStringValue={(item: SidebarNavItem) => item.title}>
+          <CommandContent>
+            <CommandInput
+              aria-label={m.dashboard_search__title()}
+              placeholder={m.dashboard_search__placeholder()}
+              ref={inputRef}
+            />
+            <CommandList
+              emptyMessage={
+                <Empty>
+                  <EmptyMedia variant="icon">
+                    <SearchIcon />
+                  </EmptyMedia>
+                  <EmptyHeader>{m.dashboard_search__no_results()}</EmptyHeader>
+                  <EmptyDescription>{m.dashboard_search__try_again()}</EmptyDescription>
+                </Empty>
+              }
+            >
+              {(group: (typeof searchGroups)[number]) => (
+                <CommandGroup items={group.items} key={group.label}>
+                  <CommandGroupLabel>{group.label}</CommandGroupLabel>
+                  <CommandCollection>
+                    {(item: SidebarNavItem) => (
+                      <CommandItem key={item.title} onClick={() => setOpen(false)} value={item}>
+                        {item.icon}
+                        <span>{item.title}</span>
+                      </CommandItem>
+                    )}
+                  </CommandCollection>
+                </CommandGroup>
+              )}
+            </CommandList>
+          </CommandContent>
         </Command>
-      </CommandDialog>
-    </>
+      </CommandDialogPopup>
+    </CommandDialog>
   );
 }

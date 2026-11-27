@@ -80,7 +80,6 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@8.3.8001
   vite-plus: 1.8.0
   zod: 4.6.7
-  cmdk: ^1.1.1
   motion: ^14.14.0
   react-use-measure: ^2.1.7
   tailwind-variants: ^4.0.2

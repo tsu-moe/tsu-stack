@@ -24,7 +24,7 @@ export function NavUser({ onSignOut }: { onSignOut?: () => void }) {
       <DropdownMenuTrigger
         aria-label={m.user_dropdown__open_menu()}
         nativeButton={false}
-        render={<Avatar className="size-8" />}
+        render={<Avatar className="size-8 cursor-pointer" />}
       >
         {user?.image && <AvatarImage src={user.image} alt="" />}
         <AvatarFallback>{initial}</AvatarFallback>
