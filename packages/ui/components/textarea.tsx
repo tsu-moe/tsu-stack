@@ -2,8 +2,9 @@
 
 import { Field as FieldPrimitive } from "@base-ui/react/field";
 import { mergeProps } from "@base-ui/react/merge-props";
-import { cn } from "cn";
 import * as React from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 // Styles for invalid animation shake
 const invalidShakeStyles = `

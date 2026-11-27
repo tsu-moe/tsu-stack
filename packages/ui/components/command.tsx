@@ -1,13 +1,13 @@
 "use client";
 
 import { Autocomplete } from "@base-ui/react/autocomplete";
-import { cn } from "cn";
 import { SearchIcon } from "lucide-react";
 import { type ComponentProps, type ReactNode } from "react";
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@tsu-stack/ui/components/dialog";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@tsu-stack/ui/components/input-group";
 import { ScrollArea, ScrollAreaContent } from "@tsu-stack/ui/components/scroll-area";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 const commandSurface =
   "rounded-xl border-none bg-popover bg-clip-padding text-popover-foreground shadow-2xl ring-4 ring-border";

@@ -1,4 +1,4 @@
-import { cn } from "cn";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type KbdProps = React.ComponentProps<"kbd">;
 type KbdGroupProps = React.ComponentProps<"kbd">;

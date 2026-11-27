@@ -24,6 +24,22 @@ it.each([
   expect(head.meta).toContainEqual({ content: localizedPage, property: "og:url" });
 });
 
+it.each([
+  ["/img/preview.png", "https://example.test/products/web/img/preview.png"],
+  ["img/preview.png", "https://example.test/products/web/img/preview.png"],
+  ["https://cdn.example.test/preview.png", "https://cdn.example.test/preview.png"],
+  ["//cdn.example.test/preview.png", "https://cdn.example.test/preview.png"]
+])("resolves social image %s for a subpath deployment", (url, expectedUrl) => {
+  const head = generateTanStackStartSeo({
+    alternates: { baseLocale: "en", canonicalPath: "/help", locale: "de" },
+    images: [{ url }],
+    site: { basePath: "/products/web/", baseUrl: "https://example.test", defaultTitle: "Example" }
+  });
+
+  expect(head.meta).toContainEqual({ content: expectedUrl, property: "og:image" });
+  expect(head.meta).toContainEqual({ content: expectedUrl, name: "twitter:image" });
+});
+
 it("preserves a route's explicit crawler restrictions", () => {
   const head = generateTanStackStartSeo({
     robots: { index: false, follow: false, noarchive: true },

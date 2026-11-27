@@ -1,7 +1,8 @@
 "use client";
 
-import { cn } from "cn";
 import * as React from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type MarqueeProps = React.ComponentPropsWithoutRef<"div"> & {
   /**

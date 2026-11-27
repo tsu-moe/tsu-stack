@@ -21,28 +21,35 @@ export function ThemeInitializer() {
   return <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />;
 }
 
-type ThemeSwitcherProps = {
-  className?: string;
-} & ComponentProps<typeof Button>;
+type ThemeSwitcherProps = Pick<
+  ComponentProps<typeof Button>,
+  "className" | "disabled" | "radius" | "ref" | "size" | "variant"
+>;
 
-export function ThemeSwitcher({ variant = "ghost", size = "icon", className }: ThemeSwitcherProps) {
+export function ThemeSwitcher({ variant = "ghost", size = "icon", disabled, ...props }: ThemeSwitcherProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const toggleTheme = () => setTheme(resolvedTheme === "light" ? "dark" : "light");
   const shortcut = "D";
   const label = m.ui__toggle_theme();
 
-  useHotkey(shortcut, toggleTheme, { ignoreInputs: true, requireReset: true, meta: { name: label } });
+  useHotkey(shortcut, toggleTheme, {
+    enabled: !disabled,
+    ignoreInputs: true,
+    requireReset: true,
+    meta: { name: label }
+  });
 
   return (
     <Button
+      {...props}
       type="button"
+      disabled={disabled}
       variant={variant}
       size={size}
       onClick={toggleTheme}
       aria-label={label}
       aria-keyshortcuts={shortcut}
       title={`${label} (${shortcut})`}
-      className={className}
     >
       <Sun
         aria-hidden="true"

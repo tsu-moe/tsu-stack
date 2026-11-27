@@ -1,4 +1,4 @@
-import { cn } from "cn";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 function Label({ className, htmlFor, ...props }: React.ComponentProps<"label">) {
   return (

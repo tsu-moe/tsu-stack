@@ -1,8 +1,9 @@
 "use client";
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
-import { cn } from "cn";
 import { createContext, useCallback, useContext, useMemo } from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type PopoverAnimationPreset = "none" | "scale" | "fade" | "slideOutside" | "slideInside" | "motion" | "motionBlur";
 

@@ -13,13 +13,13 @@ export function useSignUpMutation(onSuccess: () => Promise<void>) {
       const result = await authClient.signUp.email(values);
 
       if (!result.data) {
-        throw new Error(result.error?.message ?? m.auth__sign_up_failed());
+        throw new Error("Email sign-up failed");
       }
 
       return result;
     },
-    onError: (error: Error) => {
-      toast.error({ title: error.message || m.auth__sign_up_failed() });
+    onError: () => {
+      toast.error({ title: m.auth__sign_up_failed() });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries(getAuthUserQueryOptions());

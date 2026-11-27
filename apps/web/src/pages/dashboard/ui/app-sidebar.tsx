@@ -22,7 +22,7 @@ import { appConfig } from "@/config/app.config";
 import { DashboardMenuButton } from "./dashboard-menu-button";
 import { NavGroup } from "./nav-group";
 
-export function AppSidebar({ pathname }: { pathname?: string }) {
+export function AppSidebar({ activeHash }: { activeHash: string }) {
   const { setOpen } = useSidebar();
   const { footerNavLinks, navGroups } = getDashboardNavigation();
   return (
@@ -50,7 +50,7 @@ export function AppSidebar({ pathname }: { pathname?: string }) {
       </SidebarHeader>
       <SidebarContent>
         {navGroups.map((group, index) => (
-          <NavGroup key={`sidebar-group-${index}`} {...group} pathname={pathname} />
+          <NavGroup key={`sidebar-group-${index}`} {...group} activeHash={activeHash} />
         ))}
       </SidebarContent>
       <SidebarFooter className="border-t">
@@ -59,8 +59,15 @@ export function AppSidebar({ pathname }: { pathname?: string }) {
             <SidebarMenuItem key={item.title}>
               <DashboardMenuButton
                 className="text-xs text-muted-foreground [&>svg]:size-3.5"
-                isActive={item.path === pathname}
-                render={<a href={item.path} aria-label={item.title} />}
+                isActive={item.hash === activeHash}
+                render={
+                  <Link
+                    to="/dashboard"
+                    hash={item.hash}
+                    activeOptions={{ exact: true, includeHash: true }}
+                    aria-label={item.title}
+                  />
+                }
               >
                 {item.icon}
                 <span>{item.title}</span>

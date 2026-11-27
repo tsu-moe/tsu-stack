@@ -11,6 +11,7 @@ import { Fragment } from "react";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
+import { m } from "@tsu-stack/i18n/messages";
 // oxfmt-ignore
 import { LocaleProvider, useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
 import { ToastProvider } from "@tsu-stack/ui/components/toast";
@@ -95,7 +96,7 @@ function RootDocumentInner({ children }: { children: React.ReactNode }) {
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>
             <TooltipProvider>
-              <ToastProvider>
+              <ToastProvider closeLabel={m.ui__dismiss_notification()}>
                 <Fragment key={locale}>{children}</Fragment>
               </ToastProvider>
             </TooltipProvider>

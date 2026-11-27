@@ -1,9 +1,10 @@
 "use client";
 
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "@base-ui/react/button";
-import { cn } from "cn";
 import { type CSSProperties, type ReactNode } from "react";
 import { tv } from "tailwind-variants";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 const buttonMix =
   "[--button-fg:currentColor] [--button-mix-amount:0%] [background-color:color-mix(in_oklch,var(--button-bg),var(--button-fg)_var(--button-mix-amount))] hover:[--button-mix-amount:10%] active:[--button-mix-amount:20%] data-pressed:[--button-mix-amount:20%]";
@@ -176,5 +177,5 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button };
 export type { ButtonProps, ButtonRadius, ButtonSize, ButtonVariant };

@@ -3,7 +3,7 @@
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
-import { useScroll } from "@tsu-stack/ui/hooks/use-scroll";
+import { useScroll } from "@tsu-stack/ui/hooks/use-scroll.hook";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
 import { Logo } from "@/shared/ui/logo";
@@ -42,7 +42,7 @@ export function Navbar() {
         </Button>
         <DesktopNav />
         <div className="flex items-center justify-end gap-1.5">
-          <ThemeSwitcher size="icon-sm" className="rounded-full" />
+          <ThemeSwitcher size="icon-sm" radius="full" />
           {user ? (
             <AccountMenu user={user} />
           ) : (

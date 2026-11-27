@@ -1,8 +1,9 @@
 "use client";
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
-import { cn } from "cn";
 import { useMemo, type ComponentProps } from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type TooltipAnimationPreset = "none" | "scale" | "fade" | "slideOutside" | "slideInside" | "motion" | "motionBlur";
 

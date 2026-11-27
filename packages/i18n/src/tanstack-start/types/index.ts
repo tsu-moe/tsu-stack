@@ -1,12 +1,19 @@
-import { type LinkComponentProps, type NavigateOptions, type RegisteredRouter } from "@tanstack/react-router";
+import {
+  type FileRoutesByPath,
+  type LinkComponentProps,
+  type NavigateOptions,
+  type RegisteredRouter
+} from "@tanstack/react-router";
 import type React from "react";
 
 import { type LOCALE_ROUTE_PREFIX } from "#@/tanstack-start/constants/index";
 
 export type StripLocalePrefix<T> = T extends string ? RemoveLocaleFromString<T> : T;
 
-type To = StripLocalePrefix<LinkComponentProps["to"]>;
-type NavigateTo = Exclude<StripLocalePrefix<NavigateOptions["to"]>, undefined>;
+type FileRouteEntry = FileRoutesByPath[keyof FileRoutesByPath];
+type TrimTrailingSlash<T extends string> = T extends `${infer Path}/` ? Path : T;
+type To = [FileRouteEntry] extends [never] ? string : StripLocalePrefix<TrimTrailingSlash<FileRouteEntry["fullPath"]>>;
+type NavigateTo = To;
 
 type CollapseDoubleSlashes<TString extends string> = TString extends `${infer H}//${infer T}`
   ? CollapseDoubleSlashes<`${H}/${T}`>
@@ -51,8 +58,8 @@ export type { NavigateTo, To };
 // TDefaultFrom is inferred from useNavigate({ from: '...' }) so relative
 // search/params are validated against the correct starting route.
 export type LocalizedNavigate<TDefaultFrom extends string = string> = <
+  TTo extends NavigateTo,
   TRouter extends RegisteredRouter = RegisteredRouter,
-  TTo extends string | undefined = undefined,
   TFrom extends string = TDefaultFrom
 >(
   opts: Omit<

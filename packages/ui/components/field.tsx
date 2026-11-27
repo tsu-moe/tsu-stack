@@ -1,10 +1,10 @@
 "use client";
 
 import { Field as FieldPrimitive } from "@base-ui/react/field";
-import { cn } from "cn";
 import { type ComponentProps } from "react";
 
 import { Input } from "@tsu-stack/ui/components/input";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 function Field({ className, ...props }: FieldPrimitive.Root.Props) {
   return <FieldPrimitive.Root className={cn("space-y-2", className)} data-slot="field" {...props} />;

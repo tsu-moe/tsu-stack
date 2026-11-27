@@ -220,6 +220,7 @@
   "dashboard_nav__secrets": "Secrets",
   "dashboard_nav__support": "Support",
   "dashboard_nav__settings": "Settings",
+  "ui__dismiss_notification": "Close notification",
   "ui__toggle_theme": "Toggle theme",
   "home_page__hero_dashboard_preview": "Dashboard preview",
   "footer__author_profile": "GitHub profile for {author}",

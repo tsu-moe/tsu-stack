@@ -1,9 +1,10 @@
 "use client";
 
 import { Menu as DropdownMenuPrimitive } from "@base-ui/react/menu";
-import { cn } from "cn";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import { createContext, useContext, useMemo, type ReactNode } from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type DropdownMenuAnimationPreset = "none" | "scale" | "fade" | "slideOutside" | "slideInside" | "motion" | "motionBlur";
 

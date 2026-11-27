@@ -1,9 +1,10 @@
 "use client";
 
 import { Accordion as BaseAccordion } from "@base-ui/react/accordion";
-import { cn } from "cn";
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 export type AccordionVariant =
   | "default"

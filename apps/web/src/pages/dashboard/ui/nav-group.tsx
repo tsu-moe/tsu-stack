@@ -1,5 +1,6 @@
 import { ChevronRightIcon } from "lucide-react";
 
+import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@tsu-stack/ui/components/collapsible";
 import {
   SidebarGroup,
@@ -14,7 +15,7 @@ import { type SidebarNavGroup } from "@/pages/dashboard/types";
 
 import { DashboardMenuButton } from "./dashboard-menu-button";
 
-export function NavGroup({ items, pathname }: SidebarNavGroup & { pathname?: string }) {
+export function NavGroup({ items, activeHash }: SidebarNavGroup & { activeHash: string }) {
   return (
     <SidebarGroup>
       {/* <SidebarGroupLabel className="duration-[calc(var(--sidebar-animation-duration)*0.8)] ease-(--sidebar-animation-ease)">
@@ -25,13 +26,13 @@ export function NavGroup({ items, pathname }: SidebarNavGroup & { pathname?: str
         {items.map((item) => (
           <Collapsible
             className="group/collapsible"
-            defaultOpen={item.path === pathname || item.subItems?.some((i) => i.path === pathname)}
+            defaultOpen={item.hash === activeHash || item.subItems?.some((i) => i.hash === activeHash)}
             key={item.title}
             render={<SidebarMenuItem />}
           >
             {item.subItems?.length ? (
               <>
-                <CollapsibleTrigger render={<DashboardMenuButton isActive={item.path === pathname} />}>
+                <CollapsibleTrigger render={<DashboardMenuButton isActive={item.hash === activeHash} />}>
                   {item.icon}
                   <span>{item.title}</span>
                   <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -42,8 +43,15 @@ export function NavGroup({ items, pathname }: SidebarNavGroup & { pathname?: str
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton
                           className="text-muted-foreground data-active:text-sidebar-accent-foreground!"
-                          isActive={subItem.path === pathname}
-                          render={<a href={subItem.path} aria-label={subItem.title} />}
+                          isActive={subItem.hash === activeHash}
+                          render={
+                            <Link
+                              to="/dashboard"
+                              hash={subItem.hash}
+                              activeOptions={{ exact: true, includeHash: true }}
+                              aria-label={subItem.title}
+                            />
+                          }
                         >
                           {subItem.icon}
                           <span>{subItem.title}</span>
@@ -55,8 +63,15 @@ export function NavGroup({ items, pathname }: SidebarNavGroup & { pathname?: str
               </>
             ) : (
               <DashboardMenuButton
-                isActive={item.path === pathname}
-                render={<a href={item.path} aria-label={item.title} />}
+                isActive={item.hash === activeHash}
+                render={
+                  <Link
+                    to="/dashboard"
+                    hash={item.hash}
+                    activeOptions={{ exact: true, includeHash: true }}
+                    aria-label={item.title}
+                  />
+                }
               >
                 {item.icon}
                 <span>{item.title}</span>

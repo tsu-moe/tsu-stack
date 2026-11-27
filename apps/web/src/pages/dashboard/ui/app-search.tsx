@@ -4,6 +4,7 @@ import { SearchIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
+import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
   Command,
@@ -91,7 +92,12 @@ export function AppSearch() {
                   <CommandGroupLabel>{group.label}</CommandGroupLabel>
                   <CommandCollection>
                     {(item: SidebarNavItem) => (
-                      <CommandItem key={item.title} onClick={() => setOpen(false)} value={item}>
+                      <CommandItem
+                        key={item.hash}
+                        onClick={() => setOpen(false)}
+                        render={<Link to="/dashboard" hash={item.hash} />}
+                        value={item}
+                      >
                         {item.icon}
                         <span>{item.title}</span>
                       </CommandItem>

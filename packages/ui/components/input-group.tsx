@@ -1,12 +1,12 @@
 "use client";
 
-import { cn } from "cn";
 import * as React from "react";
 import { tv } from "tailwind-variants";
 
 import { Button, type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Input } from "@tsu-stack/ui/components/input";
 import { Textarea } from "@tsu-stack/ui/components/textarea";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 // Styles for invalid animation shake
 const invalidShakeStyles = `

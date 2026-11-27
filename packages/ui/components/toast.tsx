@@ -5,12 +5,12 @@ import {
   type ToastManager as BaseToastManager,
   type ToastObject as BaseToastObject
 } from "@base-ui/react/toast";
-import { cn } from "cn";
 import { AlertCircle, CheckCircle2, Info, LoaderCircle, TriangleAlert, X } from "lucide-react";
 import { useAnimate, useReducedMotion } from "motion/react";
 import * as React from "react";
 
 import { Button } from "@tsu-stack/ui/components/button";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 const toastManager = ToastPrimitive.createToastManager<ToastDataPayload>();
 const anchoredToastManager = ToastPrimitive.createToastManager<ToastDataPayload>();
@@ -75,6 +75,7 @@ export type ToastProviderProps = {
   limit?: number;
   timeout?: number;
   container?: ToastPrimitive.Portal.Props["container"];
+  closeLabel?: string;
 };
 
 export type AnchoredToastProviderProps = {
@@ -82,6 +83,7 @@ export type AnchoredToastProviderProps = {
   limit?: number;
   timeout?: number;
   container?: ToastPrimitive.Portal.Props["container"];
+  closeLabel?: string;
 };
 
 type ToastDataPayload = {
@@ -415,11 +417,13 @@ function useToastMicrointeraction(toast: ToastData) {
 function StackedToastItem({
   toast: toastItem,
   position,
-  swipeDirection
+  swipeDirection,
+  closeLabel
 }: {
   toast: ToastData;
   position: ToastPosition;
   swipeDirection: SwipeDirection[];
+  closeLabel: string;
 }) {
   const type = (toastItem.type ?? "default") as ToastType;
   const microinteractionRef = useToastMicrointeraction(toastItem);
@@ -460,10 +464,9 @@ function StackedToastItem({
                     <ToastPrimitive.Close
                       data-slot="toast-close"
                       className="hitbox-4 -mt-1 -mr-1 flex size-6 shrink-0 cursor-pointer touch-manipulation items-center justify-center rounded-md border-none bg-transparent text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring/50 forced-colors:focus-visible:outline-[Highlight]"
-                      aria-label="Close notification"
+                      aria-label={closeLabel}
                     >
                       <X aria-hidden="true" className="size-4" />
-                      <span className="sr-only">Close notification</span>
                     </ToastPrimitive.Close>
                   ) : null}
                 </div>
@@ -488,7 +491,7 @@ function StackedToastItem({
   );
 }
 
-function StackedToasts({ position }: { position: ToastPosition }) {
+function StackedToasts({ position, closeLabel }: { position: ToastPosition; closeLabel: string }) {
   const { toasts } = ToastPrimitive.useToastManager();
   const swipeDirection = getSwipeDirection(position);
 
@@ -500,6 +503,7 @@ function StackedToasts({ position }: { position: ToastPosition }) {
           toast={toastItem as ToastData}
           position={position}
           swipeDirection={swipeDirection}
+          closeLabel={closeLabel}
         />
       ))}
     </>
@@ -521,7 +525,7 @@ function ToastArrowSvg() {
   );
 }
 
-function AnchoredToastItem({ toast: toastItem }: { toast: ToastData }) {
+function AnchoredToastItem({ toast: toastItem, closeLabel }: { toast: ToastData; closeLabel: string }) {
   const microinteractionRef = useToastMicrointeraction(toastItem);
   const data = toastItem.data;
   const showArrow = data?.arrow === true;
@@ -571,12 +575,11 @@ function AnchoredToastItem({ toast: toastItem }: { toast: ToastData }) {
           {showCloseButton ? (
             <ToastPrimitive.Close
               data-slot="toast-close"
-              aria-label="Close notification"
+              aria-label={closeLabel}
               className="absolute end-2 top-2 text-muted-foreground"
               render={<Button size="icon-sm" variant="ghost" />}
             >
               <X aria-hidden="true" className="size-4" />
-              <span className="sr-only">Close notification</span>
             </ToastPrimitive.Close>
           ) : null}
         </div>
@@ -585,7 +588,7 @@ function AnchoredToastItem({ toast: toastItem }: { toast: ToastData }) {
   );
 }
 
-function AnchoredToasts() {
+function AnchoredToasts({ closeLabel }: { closeLabel: string }) {
   const { toasts } = ToastPrimitive.useToastManager();
 
   return (
@@ -593,7 +596,7 @@ function AnchoredToasts() {
       {toasts.map((toastItem) => {
         const toastData = toastItem as ToastData;
         if (!toastData.positionerProps?.anchor) return null;
-        return <AnchoredToastItem key={toastItem.id} toast={toastData} />;
+        return <AnchoredToastItem key={toastItem.id} toast={toastData} closeLabel={closeLabel} />;
       })}
     </>
   );
@@ -604,7 +607,8 @@ export function ToastProvider({
   position = "bottom-right",
   limit = 3,
   timeout = 5000,
-  container
+  container,
+  closeLabel = "Close notification"
 }: ToastProviderProps) {
   return (
     <ToastPrimitive.Provider limit={limit} timeout={timeout} toastManager={toastManager}>
@@ -621,14 +625,20 @@ export function ToastProvider({
             "data-[position*=center]:left-1/2 data-[position*=center]:-translate-x-1/2"
           )}
         >
-          <StackedToasts position={position} />
+          <StackedToasts position={position} closeLabel={closeLabel} />
         </ToastPrimitive.Viewport>
       </ToastPrimitive.Portal>
     </ToastPrimitive.Provider>
   );
 }
 
-export function AnchoredToastProvider({ children, limit = 5, timeout = 2000, container }: AnchoredToastProviderProps) {
+export function AnchoredToastProvider({
+  children,
+  limit = 5,
+  timeout = 2000,
+  container,
+  closeLabel = "Close notification"
+}: AnchoredToastProviderProps) {
   return (
     <ToastPrimitive.Provider limit={limit} timeout={timeout} toastManager={anchoredToastManager}>
       {children}
@@ -637,7 +647,7 @@ export function AnchoredToastProvider({ children, limit = 5, timeout = 2000, con
           data-slot="toast-viewport"
           className="outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring/50 forced-colors:focus-visible:outline-[Highlight]"
         >
-          <AnchoredToasts />
+          <AnchoredToasts closeLabel={closeLabel} />
         </ToastPrimitive.Viewport>
       </ToastPrimitive.Portal>
     </ToastPrimitive.Provider>

@@ -4,7 +4,7 @@ TanStack Router owns params, validated search, guards, and navigation. TanStack 
 
 ## Routes
 
-- Place public app pages under the current optional locale and root layout, like the [terms route](<../apps/web/src/routes/{-$locale}/(root-layout)/(legal-layout)/terms-of-service/index.tsx>). Pathless layout groups retain the public URL. Follow [Auth](auth.md) for protected and guest routes, [i18n](i18n.md) for navigation and copy, and [SEO](seo.md) for route metadata.
+- Place public app pages under the current optional locale and root layout. Pathless layout groups retain the public URL. Follow [Auth](auth.md) for protected and guest routes, [i18n](i18n.md) for navigation and copy, and [SEO](seo.md) for route metadata.
 - Regenerate the tracked route tree with the app’s TanStack Router generation when adding or moving routes. Check base and localized URLs. Keep existing prerender policy unless the route needs an explicit change.
 
 ## Reads

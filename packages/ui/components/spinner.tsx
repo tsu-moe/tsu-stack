@@ -1,6 +1,7 @@
-import { cn } from "cn";
 import { type ComponentProps, type SVGProps } from "react";
 import { tv } from "tailwind-variants";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type SpinnerPrimitiveProps = SVGProps<SVGSVGElement>;
 
@@ -55,5 +56,5 @@ function Spinner({ className, size = "md", ...props }: SpinnerProps) {
   );
 }
 
-export { Spinner, SpinnerPrimitive, spinnerVariants };
+export { Spinner, SpinnerPrimitive };
 export type { SpinnerProps };

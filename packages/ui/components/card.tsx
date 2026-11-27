@@ -1,6 +1,7 @@
-import { cn } from "cn";
 import * as React from "react";
 import { tv } from "tailwind-variants";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 const cardVariants = tv({
   base: "flex flex-col rounded-xl border border-border bg-card text-card-foreground",
@@ -106,5 +107,5 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardVariants };
+export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
 export type { CardProps, CardVariant };

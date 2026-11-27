@@ -31,6 +31,16 @@ const DEFAULT_REDACT_PATHS = [
   "DATABASE_URL",
   "confirmPassword",
   "cookies",
+  "error.cause",
+  "error.data",
+  "error.fix",
+  "error.internal",
+  "error.link",
+  "error.message",
+  "error.stack",
+  "error.statusMessage",
+  "error.statusText",
+  "error.why",
   "idToken"
   // TODO: Add more if you plan to use more sensitive paths
 ];

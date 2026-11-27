@@ -1,7 +1,8 @@
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 import { cva } from "class-variance-authority";
-import { cn } from "cn";
 import { type ComponentProps, type ReactNode } from "react";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 const separatorVariants = cva(
   "shrink-0 data-[orientation=horizontal]:w-full data-[orientation=vertical]:not-[[class^='h-']]:not-[[class*='_h-']]:self-stretch",
@@ -159,5 +160,5 @@ const SeparatorWithParts = Object.assign(Separator, {
   Root: Separator
 });
 
-export { SeparatorWithParts as Separator, SeparatorContent, separatorVariants };
+export { SeparatorWithParts as Separator, SeparatorContent };
 export type { SeparatorContentProps, SeparatorLightSource, SeparatorProps, SeparatorVariant };

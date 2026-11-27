@@ -26,22 +26,22 @@ export function getDashboardNavigation() {
       items: [
         {
           title: m.dashboard_nav__overview(),
-          path: "#/overview",
+          hash: "/overview",
           icon: <LayoutGridIcon />
         },
         {
           title: m.dashboard_nav__sales(),
-          path: "#/sales",
+          hash: "/sales",
           icon: <TrendingUpIcon />
         },
         {
           title: m.dashboard_nav__analytics(),
-          path: "#/analytics",
+          hash: "/analytics",
           icon: <BarChart3Icon />
         },
         {
           title: m.dashboard_nav__storage(),
-          path: "#/storage",
+          hash: "/storage",
           icon: <DatabaseIcon />
         }
       ]
@@ -51,22 +51,22 @@ export function getDashboardNavigation() {
       items: [
         {
           title: m.dashboard_nav__orders(),
-          path: "#/orders",
+          hash: "/orders",
           icon: <ShoppingCartIcon />
         },
         {
           title: m.dashboard_nav__products(),
-          path: "#/products",
+          hash: "/products",
           icon: <FileTextIcon />
         },
         {
           title: m.dashboard_nav__customers(),
-          path: "#/customers",
+          hash: "/customers",
           icon: <UsersIcon />
         },
         {
           title: m.dashboard_nav__marketing(),
-          path: "#/marketing",
+          hash: "/marketing",
           icon: <MegaphoneIcon />
         }
       ]
@@ -76,17 +76,17 @@ export function getDashboardNavigation() {
       items: [
         {
           title: m.dashboard_nav__integrations(),
-          path: "#/integrations",
+          hash: "/integrations",
           icon: <PlugIcon />
         },
         {
           title: m.dashboard_nav__activity(),
-          path: "#/activity",
+          hash: "/activity",
           icon: <ActivityIcon />
         },
         {
           title: m.dashboard_nav__logs(),
-          path: "#/logs",
+          hash: "/logs",
           icon: <TerminalIcon />
         }
       ]
@@ -96,17 +96,17 @@ export function getDashboardNavigation() {
       items: [
         {
           title: m.dashboard_nav__resources(),
-          path: "#/resources",
+          hash: "/resources",
           icon: <LayersIcon />,
           subItems: [
             {
               title: m.dashboard_nav__compute(),
-              path: "#/resources/compute"
+              hash: "/resources/compute"
             },
-            { title: m.dashboard_nav__databases(), path: "#/resources/databases" },
-            { title: m.dashboard_nav__queues(), path: "#/resources/queues" },
-            { title: m.dashboard_nav__cron_jobs(), path: "#/resources/cron-jobs" },
-            { title: m.dashboard_nav__secrets(), path: "#/resources/secrets" }
+            { title: m.dashboard_nav__databases(), hash: "/resources/databases" },
+            { title: m.dashboard_nav__queues(), hash: "/resources/queues" },
+            { title: m.dashboard_nav__cron_jobs(), hash: "/resources/cron-jobs" },
+            { title: m.dashboard_nav__secrets(), hash: "/resources/secrets" }
           ]
         }
       ]
@@ -116,12 +116,12 @@ export function getDashboardNavigation() {
   const footerNavLinks: SidebarNavItem[] = [
     {
       title: m.dashboard_nav__support(),
-      path: "#/support",
+      hash: "/support",
       icon: <HelpCircleIcon />
     },
     {
       title: m.dashboard_nav__settings(),
-      path: "#/settings",
+      hash: "/settings",
       icon: <SettingsIcon />
     }
   ];

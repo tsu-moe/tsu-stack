@@ -14,11 +14,11 @@ import { AppBreadcrumbs } from "./app-breadcrumbs";
 import { AppSearch } from "./app-search";
 import { NotificationsPopover } from "./notifications-popover";
 
-export function AppHeader({ pathname }: { pathname?: string }) {
+export function AppHeader({ activeHash }: { activeHash: string }) {
   const { user } = useAuth();
   const { navGroups, footerNavLinks } = getDashboardNavigation();
   const items = [...navGroups.flatMap((group) => group.items), ...footerNavLinks];
-  const activeItem = items.flatMap((item) => [item, ...(item.subItems ?? [])]).find((item) => item.path === pathname);
+  const activeItem = items.flatMap((item) => [item, ...(item.subItems ?? [])]).find((item) => item.hash === activeHash);
   return (
     <header
       className={cn(

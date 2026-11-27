@@ -27,7 +27,7 @@ export function DesktopNav() {
   const releasesUrl = `${repositoryUrl}/releases`;
 
   return (
-    <NavigationMenu align="center" className="hidden lg:flex">
+    <NavigationMenu align="center" positionMethod="fixed" className="hidden lg:flex">
       <NavigationMenuList className="gap-1">
         <NavigationMenuItem>
           <NavigationMenuTrigger className={topLinkClass} render={<Button radius="full" variant="ghost" />}>

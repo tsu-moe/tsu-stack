@@ -2,12 +2,12 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { cva } from "class-variance-authority";
-import { cn } from "cn";
 import { XIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@tsu-stack/ui/components/button";
 import { ScrollArea, ScrollAreaContent } from "@tsu-stack/ui/components/scroll-area";
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 type SheetSide = "right" | "left" | "top" | "bottom";
 type SheetVariant = "default" | "floating";

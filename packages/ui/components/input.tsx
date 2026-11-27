@@ -1,6 +1,7 @@
 import { Input as InputPrimitive } from "@base-ui/react/input";
-import { cn } from "cn";
 import { tv } from "tailwind-variants";
+
+import { cn } from "@tsu-stack/ui/lib/utils";
 
 // Styles for invalid animation shake
 const invalidShakeStyles = `
@@ -71,4 +72,4 @@ function Input({ className, size = "default", ...props }: InputProps) {
   );
 }
 
-export { Input, inputVariants };
+export { Input };

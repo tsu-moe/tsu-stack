@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 
 export type SidebarNavItem = {
   title: string;
-  path?: string;
+  hash: string;
   icon?: ReactNode;
   subItems?: SidebarNavItem[];
 };
