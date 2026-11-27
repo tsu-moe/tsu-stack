@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
+import { toast } from "@tsu-stack/ui/components/toast";
 
 export function useSignUpMutation(onSuccess: () => Promise<void>) {
   const queryClient = useQueryClient();
@@ -19,12 +19,12 @@ export function useSignUpMutation(onSuccess: () => Promise<void>) {
       return result;
     },
     onError: (error: Error) => {
-      toast.error(error.message || m.auth__sign_up_failed());
+      toast.error({ title: error.message || m.auth__sign_up_failed() });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries(getAuthUserQueryOptions());
       await onSuccess();
-      toast.success(m.auth__sign_up_successful());
+      toast.success({ title: m.auth__sign_up_successful() });
     }
   });
 }

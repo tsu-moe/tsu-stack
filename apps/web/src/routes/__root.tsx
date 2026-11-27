@@ -14,7 +14,7 @@ import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 // oxfmt-ignore
 import { LocaleProvider, useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
-import { Toaster } from "@tsu-stack/ui/components/sonner";
+import { ToastProvider } from "@tsu-stack/ui/components/toast";
 import { TooltipProvider } from "@tsu-stack/ui/components/tooltip";
 
 import { generateAppSeo } from "@/shared/lib/seo";
@@ -103,9 +103,10 @@ function RootDocumentInner({ children }: { children: React.ReactNode }) {
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>
             <TooltipProvider>
-              <Fragment key={locale}>{children}</Fragment>
+              <ToastProvider>
+                <Fragment key={locale}>{children}</Fragment>
+              </ToastProvider>
             </TooltipProvider>
-            <Toaster richColors />
             <TanStackDevtools
               plugins={[
                 {

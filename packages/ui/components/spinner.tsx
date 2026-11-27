@@ -1,77 +1,59 @@
-import { type VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
-import { Slot } from "radix-ui";
-import * as React from "react";
+import { cn } from "cn";
+import { type ComponentProps, type SVGProps } from "react";
+import { tv } from "tailwind-variants";
 
-import { cn } from "@tsu-stack/ui/lib/utils";
+type SpinnerPrimitiveProps = SVGProps<SVGSVGElement>;
 
-const DARK_CLASS_REGEX = /(?:dark:bg-|bg-)[a-zA-Z0-9-]+/g;
+function SpinnerPrimitive({ className, ...props }: SpinnerPrimitiveProps) {
+  return (
+    <svg className={cn("size-full", className)} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path
+        d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+        fill="currentColor"
+        opacity=".25"
+      />
+      <path
+        d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"
+        fill="currentColor"
+      >
+        <animateTransform
+          attributeName="transform"
+          dur="7s"
+          repeatCount="indefinite"
+          type="rotate"
+          values="0 12 12;360 12 12"
+        />
+      </path>
+    </svg>
+  );
+}
 
-const spinnerVariants = cva("relative block opacity-[0.65]", {
-  defaultVariants: {
-    size: "sm"
-  },
+const spinnerVariants = tv({
+  base: "pointer-events-none relative inline-block animate-spin [animation-duration:0.75s] text-current motion-reduce:animate-none",
   variants: {
     size: {
-      lg: "size-8",
-      md: "size-6",
       sm: "size-4",
-      xs: "size-3"
+      md: "size-6",
+      lg: "size-8",
+      xl: "size-10"
     }
+  },
+  defaultVariants: {
+    size: "md"
   }
 });
 
-export type SpinnerProps = {
-  loading?: boolean;
-  asChild?: boolean;
-  block?: boolean;
-} & React.HTMLAttributes<HTMLSpanElement> &
-  VariantProps<typeof spinnerVariants>;
+type SpinnerProps = {
+  size?: "sm" | "md" | "lg" | "xl";
+} & Omit<ComponentProps<"svg">, "color" | "display" | "opacity">;
 
-const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
-  ({ className, size, loading = true, block = false, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot.Root : "span";
+function Spinner({ className, size = "md", ...props }: SpinnerProps) {
+  return (
+    <output aria-label="Loading" className={cn(spinnerVariants({ size }), className)} data-slot="spinner">
+      <SpinnerPrimitive aria-hidden="true" {...props} />
+    </output>
+  );
+}
 
-    const classNameInput = cn("bg-current", className);
-
-    const [bgColorClass, filteredClassName] = React.useMemo(() => {
-      const bgClass = classNameInput?.match(DARK_CLASS_REGEX) ?? [];
-      const filteredClasses = classNameInput?.replace(DARK_CLASS_REGEX, "").trim();
-
-      return [bgClass, filteredClasses];
-    }, [classNameInput]);
-
-    if (!loading) return null;
-
-    const spinner = (
-      <Comp
-        className={cn("relative -left-0.25", spinnerVariants({ className: filteredClassName, size }))}
-        ref={ref}
-        {...props}
-      >
-        {Array.from({ length: 8 }).map((_, i) => (
-          <span
-            className="animate-spinner-leaf-fade absolute top-0 left-1/2 h-full w-[12.5%]"
-            key={i}
-            style={{
-              animationDelay: `${-(7 - i) * 100}ms`,
-              transform: `rotate(${i * 45}deg)`
-            }}
-          >
-            <span className={cn("block h-[30%] w-full rounded-full", bgColorClass)}></span>
-          </span>
-        ))}
-      </Comp>
-    );
-
-    if (block) {
-      return <div className="grid h-96 w-full place-items-center">{spinner}</div>;
-    }
-
-    return spinner;
-  }
-);
-
-Spinner.displayName = "Spinner";
-
-export { Spinner };
+export { Spinner, SpinnerPrimitive, spinnerVariants };
+export type { SpinnerProps };

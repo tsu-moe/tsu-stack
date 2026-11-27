@@ -40,7 +40,6 @@
     "react-icons": "catalog:",
     "react-use-measure": "catalog:",
     "sharp": "catalog:",
-    "sonner": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

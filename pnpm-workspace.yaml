@@ -73,7 +73,6 @@ catalog:
   react-dom: 19.3.1
   react-icons: 5.7.0
   sharp: 0.35.5
-  sonner: 2.0.8
   std-env: 4.3.0
   tailwindcss: 4.3.3
   tsx: 4.23.15
@@ -85,6 +84,7 @@ catalog:
   cmdk: ^1.1.1
   motion: ^14.14.0
   react-use-measure: ^2.1.7
+  tailwind-variants: ^4.0.2
 
 catalogMode: prefer
 

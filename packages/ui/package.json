@@ -17,10 +17,10 @@
     "cmdk": "catalog:",
     "cn": "catalog:",
     "lucide-react": "catalog:",
-    "next-themes": "catalog:",
+    "motion": "catalog:",
     "radix-ui": "catalog:",
-    "sonner": "catalog:",
     "std-env": "catalog:",
+    "tailwind-variants": "catalog:",
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {

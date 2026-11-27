@@ -22,7 +22,7 @@ const user = {
 export function NavUser({ onSignOut }: { onSignOut?: () => void }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Avatar className="size-8" />}>
+      <DropdownMenuTrigger aria-label="Open account menu" nativeButton={false} render={<Avatar className="size-8" />}>
         <AvatarImage src={user.avatar} />
         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
       </DropdownMenuTrigger>

@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@tsu-stack/ui/components/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@tsu-stack/ui/components/breadcrumbs";
 
 /** Current page segment shown in the header — pass a nav item or `{ title, icon? }`. */
 export type AppBreadcrumbPage = {

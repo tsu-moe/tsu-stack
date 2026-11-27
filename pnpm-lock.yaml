@@ -371,12 +371,12 @@ catalogs:
     sharp:
       specifier: 0.35.5
       version: 0.35.5
-    sonner:
-      specifier: 2.0.8
-      version: 2.0.8
     std-env:
       specifier: 4.3.0
       version: 4.3.0
+    tailwind-variants:
+      specifier: ^4.0.2
+      version: 4.0.2
     tailwindcss:
       specifier: 4.3.3
       version: 4.3.3
@@ -612,9 +612,6 @@ importers:
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.6)
-      sonner:
-        specifier: 'catalog:'
-        version: 2.0.8(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -956,9 +953,9 @@ importers:
       lucide-react:
         specifier: 'catalog:'
         version: 1.75.0(@types/react@19.3.0)(react@19.3.1)
-      next-themes:
+      motion:
         specifier: 'catalog:'
-        version: 0.4.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        version: 14.14.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       radix-ui:
         specifier: 'catalog:'
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -968,12 +965,12 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)
-      sonner:
-        specifier: 'catalog:'
-        version: 2.0.8(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       std-env:
         specifier: 'catalog:'
         version: 4.3.0
+      tailwind-variants:
+        specifier: 'catalog:'
+        version: 4.0.2
       tw-animate-css:
         specifier: 'catalog:'
         version: 1.4.0
@@ -6816,16 +6813,6 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  sonner@2.0.8:
-    resolution: {integrity: sha512-UM/ByIoFra8yzV75n1o0Puu0bw5U/9UNnDacrJNspekBewIfsQ3D6ez1nvlWpt7aTsO6rujQtifBpycwIivqlg==}
-    peerDependencies:
-      '@types/react': ^18.0.0 || ^19.0.0
-      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
@@ -6880,6 +6867,10 @@ packages:
   tagged-tag@1.0.0:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
     engines: {node: '>=20'}
+
+  tailwind-variants@4.0.2:
+    resolution: {integrity: sha512-sZvOFkfe5LlYG/crRX5IvP3oUHmJPu+7WmrLQFvF0kCRq51C+lurlzFMm/jURG/5keT7VOJ/it0N3jkzYux85w==}
+    engines: {node: '>=16.9.x', pnpm: '>=7.x'}
 
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
@@ -12663,13 +12654,6 @@ snapshots:
       '@solid-primitives/transition-group': 1.1.2(solid-js@1.9.15)
       solid-js: 1.9.15
 
-  sonner@2.0.8(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
-    dependencies:
-      react: 19.3.1
-      react-dom: 19.3.1(react@19.3.1)
-    optionalDependencies:
-      '@types/react': 19.3.0
-
   source-map-js@1.2.2: {}
 
   source-map@0.7.6: {}
@@ -12714,6 +12698,8 @@ snapshots:
       copy-anything: 4.1.0
 
   tagged-tag@1.0.0: {}
+
+  tailwind-variants@4.0.2: {}
 
   tailwindcss@4.3.3: {}
 

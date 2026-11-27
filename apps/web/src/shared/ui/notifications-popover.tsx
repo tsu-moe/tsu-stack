@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@tsu-stack/ui/components/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@tsu-stack/ui/components/empty";
-import { Popover, PopoverContent, PopoverTrigger } from "@tsu-stack/ui/components/popover";
+import { Popover, PopoverPopup, PopoverTrigger } from "@tsu-stack/ui/components/popover";
 import { ScrollArea } from "@tsu-stack/ui/components/scroll-area";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
@@ -117,7 +117,7 @@ export function NotificationsPopover() {
         <BellIcon />
         {unreadCount > 0 && <Dot className="absolute -top-0.5 -right-0.5 size-2" />}
       </PopoverTrigger>
-      <PopoverContent align="end" className="relative gap-0 overflow-hidden p-0 md:w-sm" side="bottom">
+      <PopoverPopup align="end" className="relative gap-0 overflow-hidden p-0 md:w-sm" side="bottom">
         <div className="flex h-12 items-center justify-between gap-4 border-b px-4 py-2">
           <div className="text-sm font-medium">Notifications</div>
           {unreadCount > 0 && (
@@ -149,7 +149,7 @@ export function NotificationsPopover() {
             </Empty>
           )}
         </ScrollArea>
-      </PopoverContent>
+      </PopoverPopup>
     </Popover>
   );
 }

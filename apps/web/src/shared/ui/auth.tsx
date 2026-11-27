@@ -2,22 +2,22 @@
 
 import { AtSignIcon } from "lucide-react";
 import { type FormEvent } from "react";
-import { toast } from "sonner";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@tsu-stack/ui/components/input-group";
+import { Separator, SeparatorContent } from "@tsu-stack/ui/components/separator";
+import { toast } from "@tsu-stack/ui/components/toast";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { AuthDivider } from "@/shared/ui/auth-divider";
 import { GithubIcon } from "@/shared/ui/github-icon";
 import { GoogleIcon } from "@/shared/ui/google-icon";
 import { Logo } from "@/shared/ui/logo";
 import { VercelIcon } from "@/shared/ui/vercel-icon";
 
 function showComingSoon() {
-  toast.info(m.auth__not_yet_implemented());
+  toast.info({ title: m.auth__not_yet_implemented() });
 }
 
 export function Auth({ onContinueEmail }: { onContinueEmail: (email: string) => void }) {
@@ -53,9 +53,11 @@ export function Auth({ onContinueEmail }: { onContinueEmail: (email: string) => 
           Continue with GitHub
         </Button>
       </div>
-      <AuthDivider>OR</AuthDivider>
+      <Separator className="w-full">
+        <SeparatorContent>OR</SeparatorContent>
+      </Separator>
       <form className="w-full space-y-3" onSubmit={handleSubmit}>
-        <InputGroup>
+        <InputGroup className="flex w-full">
           <InputGroupInput
             placeholder="Enter your email address"
             aria-label="Email"

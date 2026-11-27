@@ -5,12 +5,12 @@ import { cn } from "cn";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
-import { Button } from "@tsu-stack/ui/components/button";
+import { Button, type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Input } from "@tsu-stack/ui/components/input";
 import { Separator } from "@tsu-stack/ui/components/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@tsu-stack/ui/components/sheet";
 import { Skeleton } from "@tsu-stack/ui/components/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@tsu-stack/ui/components/tooltip";
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@tsu-stack/ui/components/tooltip";
 import { useIsMobile } from "@tsu-stack/ui/hooks/use-mobile";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -230,7 +230,7 @@ function Sidebar({
   );
 }
 
-function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
+function SidebarTrigger({ className, onClick, ...props }: ButtonProps<"color">) {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -473,7 +473,7 @@ function SidebarMenuButton({
 }: useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
     isActive?: boolean;
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+    tooltip?: string | React.ComponentProps<typeof TooltipPopup>;
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
   const comp = useRender({
@@ -506,7 +506,7 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       {comp}
-      <TooltipContent side="right" align="center" hidden={state !== "collapsed" || isMobile} {...tooltip} />
+      <TooltipPopup side="right" align="center" hidden={state !== "collapsed" || isMobile} {...tooltip} />
     </Tooltip>
   );
 }
