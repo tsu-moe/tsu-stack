@@ -75,6 +75,7 @@ test("switches from sign-in options to the password and account forms", async ({
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("sign-in");
   const panel = page.getByRole("main");
+  const back = panel.getByRole("button", { name: "Back", exact: true });
   const legalText = panel.getByText(/^By continuing, you agree to our/);
   const animatedPanel = legalText.locator("..");
   await expect(animatedPanel).toHaveCSS("animation-name", "enter");
@@ -99,12 +100,23 @@ test("switches from sign-in options to the password and account forms", async ({
   await expect(animatedPanel).toHaveCSS("animation-name", "none");
   await panel.getByRole("link", { name: "Sign in", exact: true }).click();
   await expect(panel.getByRole("heading", { name: "Sign in to your account" })).toBeVisible();
+
+  await back.click();
+  await expect(panel.getByRole("heading", { name: "Create an account" })).toBeVisible();
+  await back.click();
+  await expect(panel.getByRole("heading", { name: "Sign in to your account" })).toBeVisible();
+  await back.click();
+  await expect(panel.getByRole("heading", { name: "Sign in or create an account" })).toBeVisible();
+  await back.click();
+  await expect(page).toHaveURL(new URL("./", baseURL).href);
 });
 
-test("renders localized auth copy and provider feedback", async ({ page }) => {
+test("renders localized auth copy and provider feedback", async ({ baseURL, page }) => {
   await page.goto("de/sign-in");
   await expect(page.getByRole("heading", { name: "Anmelden oder Konto erstellen" })).toBeVisible();
   await expect(page.getByText("E-Mail", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Mit GitHub fortfahren" }).click();
   await expect(page.getByText("Noch nicht implementiert.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Zurück", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(new URL("de", baseURL).pathname + "/?$"));
 });

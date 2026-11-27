@@ -1,8 +1,9 @@
+import { useCanGoBack, useRouter } from "@tanstack/react-router";
 import { ChevronLeftIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
-import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
+import { useNavigate } from "@tsu-stack/i18n/tanstack-start/hooks/use-navigate";
 import { Button } from "@tsu-stack/ui/components/button";
 
 import { FloatingPaths } from "@/shared/ui/floating-paths";
@@ -11,6 +12,18 @@ import { Logo } from "@/shared/ui/logo";
 import { appConfig } from "@/config/app.config";
 
 export function AuthPage({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
+  const navigate = useNavigate();
+
+  function handleBack() {
+    if (canGoBack) {
+      router.history.back();
+    } else {
+      void navigate({ to: "/", replace: true });
+    }
+  }
+
   return (
     <main className="relative min-h-dvh lg:grid lg:grid-cols-2">
       <div className="relative hidden min-h-dvh flex-col overflow-hidden border-r bg-secondary p-10 lg:flex dark:bg-secondary/20">
@@ -35,9 +48,9 @@ export function AuthPage({ children }: { children: ReactNode }) {
           <div className="absolute top-0 right-0 h-320 w-60 [translate:5%_-50%] rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-foreground/.04)_0,--theme(--color-foreground/.01)_80%,transparent_100%)]" />
           <div className="absolute top-0 right-0 h-320 w-60 -translate-y-87.5 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-foreground/.04)_0,--theme(--color-foreground/.01)_80%,transparent_100%)]" />
         </div>
-        <Button className="absolute top-7 left-5" variant="ghost" render={<Link to="/" />} nativeButton={false}>
+        <Button type="button" className="absolute top-7 left-5" variant="ghost" onClick={handleBack}>
           <ChevronLeftIcon data-icon="inline-start" aria-hidden="true" />
-          {m.auth__back_home()}
+          {m.auth__back()}
         </Button>
 
         <div className="mx-auto flex w-full max-w-sm flex-col gap-4">

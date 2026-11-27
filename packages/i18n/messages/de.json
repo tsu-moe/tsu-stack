@@ -168,6 +168,6 @@
   "footer__author_profile": "GitHub-Profil von {author}",
   "footer__navigation": "Fußnavigation",
   "auth__choose_method": "Wählen Sie eine Anmeldemethode, um fortzufahren.",
-  "auth__back_home": "Startseite",
+  "auth__back": "Zurück",
   "auth__terms_agreement_end": " zu."
 }

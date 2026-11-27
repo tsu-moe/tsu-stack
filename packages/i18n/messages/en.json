@@ -179,6 +179,6 @@
   "footer__author_profile": "GitHub profile for {author}",
   "footer__navigation": "Footer",
   "auth__choose_method": "Choose a sign-in method to continue.",
-  "auth__back_home": "Home",
+  "auth__back": "Back",
   "auth__terms_agreement_end": "."
 }
