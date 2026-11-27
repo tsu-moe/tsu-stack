@@ -1,4 +1,3 @@
-import { useLocation } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { m } from "@tsu-stack/i18n/messages";
@@ -6,8 +5,6 @@ import { m } from "@tsu-stack/i18n/messages";
 import { generateAppSeo } from "@/shared/lib/seo";
 
 import { SignInForm } from "@/features/auth";
-
-import { CenteredLayout } from "@/widgets/layouts";
 
 import { appConfig } from "@/config/app.config";
 
@@ -29,14 +26,6 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/sign
 });
 
 function RouteComponent() {
-  const { redirect } = Route.useSearch();
-
-  const state = useLocation({ select: (location) => location.state });
-  const email = "signInEmail" in state && typeof state.signInEmail === "string" ? state.signInEmail : "";
-
-  return (
-    <CenteredLayout>
-      <SignInForm initialEmail={email} redirectTo={redirect} />
-    </CenteredLayout>
-  );
+  const { redirectTo } = Route.useRouteContext();
+  return <SignInForm redirectTo={redirectTo} />;
 }

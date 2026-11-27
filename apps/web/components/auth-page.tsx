@@ -1,90 +1,61 @@
-import { m } from "@tsu-stack/i18n/messages";
-import { Avatar } from "@tsu-stack/ui/components/avatar";
-import { cn } from "@tsu-stack/ui/lib/utils";
+import { ChevronLeftIcon } from "lucide-react";
+import { type ReactNode } from "react";
 
-import { Auth } from "@/shared/ui/auth";
-import { Logo, LogoIcon } from "@/shared/ui/logo";
+import { m } from "@tsu-stack/i18n/messages";
+import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
+import { Button } from "@tsu-stack/ui/components/button";
+
+import { FloatingPaths } from "@/shared/ui/floating-paths";
+import { Logo } from "@/shared/ui/logo";
 
 import { appConfig } from "@/config/app.config";
 
-type GridCell = { h: number; dim?: true };
-
-const GRID: (GridCell | "promo")[][] = [
-  [{ h: 44 }, { h: 50, dim: true }, { h: 44 }, { h: 50, dim: true }, { h: 44 }, { h: 44 }],
-  [{ h: 30 }, "promo", { h: 44 }, { h: 60 }, { h: 36 }, { h: 36 }, { h: 36 }],
-  [{ h: 50 }, { h: 44, dim: true }, { h: 60 }, { h: 44, dim: true }, { h: 44, dim: true }, { h: 44 }]
-];
-
-export function AuthPage({ onContinueEmail }: { onContinueEmail: (email: string) => void }) {
+export function AuthPage({ children }: { children: ReactNode }) {
   return (
-    <div className="h-dvh overflow-hidden">
-      <div className="relative grid h-full md:grid-cols-2 lg:grid-cols-[1fr_0.55fr]">
-        <div className="h-full place-content-center p-8">
-          <Auth onContinueEmail={onContinueEmail} />
-        </div>
-        <div className="hidden size-full flex-col overflow-hidden border-l md:flex">
-          <div className="px-10 pt-16 pb-8 text-center">
-            <h2 className="font-heading text-3xl font-bold text-balance">
-              {m.auth__promo_title({ siteName: appConfig.site.shortName })}
-            </h2>
-            <p className="mt-4 text-pretty text-muted-foreground">{m.auth__promo_description()}</p>
-          </div>
-          <div className="relative size-full border mask-t-from-90% mask-x-from-92% mask-b-from-95%">
-            <div
-              className={cn(
-                "absolute inset-x-[-50%] grid grid-cols-3 gap-4 overflow-hidden",
-                "*:size-full *:space-y-4"
-              )}
-            >
-              {GRID.map((col, i) => (
-                <div
-                  className="animate-in duration-700 fill-mode-backwards fade-in slide-in-from-bottom-12"
-                  key={i}
-                  style={{ animationDelay: `${100 + i * 120}ms` }}
-                >
-                  {col.map((cell, j) =>
-                    cell === "promo" ? (
-                      <PromoCard key={j} />
-                    ) : (
-                      <div
-                        className={cn("rounded-xl", cell.dim ? "bg-foreground/2" : "bg-foreground/4")}
-                        key={j}
-                        style={{ height: `calc(var(--spacing) * ${cell.h})` }}
-                      />
-                    )
-                  )}
-                </div>
-              ))}
-            </div>
+    <main className="relative min-h-dvh lg:grid lg:grid-cols-2">
+      <div className="relative hidden min-h-dvh flex-col overflow-hidden border-r bg-secondary p-10 lg:flex dark:bg-secondary/20">
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background" />
+        <Logo className="relative z-10 mr-auto h-4.5" />
+
+        <div className="z-10 mt-auto">
+          <div className="space-y-2">
+            <p className="text-xl">{m.auth__promo_note()}</p>
+            <p className="font-mono text-sm font-semibold">{appConfig.site.shortName}</p>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function PromoCard() {
-  return (
-    <figure
-      className={cn(
-        "break-inside-avoid rounded-xl border bg-background px-6 py-8 shadow-xs",
-        "dark:bg-[radial-gradient(50%_80%_at_5%_0%,--theme(--color-foreground/.08),transparent)]",
-        "bg-clip-border before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] before:shadow-[0_-1px_--theme(--color-foreground/8%)]"
-      )}
-    >
-      <div className="mb-8">
-        <Logo className="h-4.5" />
-      </div>
-      <p className="text-xl leading-tight">{m.auth__promo_note()}</p>
-      <figcaption className="mt-6 flex items-center gap-3">
-        <Avatar className="rounded-full border object-cover">
-          <LogoIcon aria-hidden="true" className="m-auto size-3.5" />
-        </Avatar>
-        <div className="space-y-0.5">
-          <div className="text-sm font-medium text-foreground">{appConfig.site.shortName}</div>
-          <div className="text-xs text-muted-foreground">{m.auth__promo_caption()}</div>
+        <div aria-hidden="true" className="absolute inset-0">
+          <FloatingPaths position={1} />
+          <FloatingPaths position={-1} />
         </div>
-      </figcaption>
-    </figure>
+      </div>
+      <div className="relative flex min-h-dvh flex-col justify-center px-6 py-20 sm:px-8">
+        {/* Top Shades */}
+        <div aria-hidden className="absolute inset-0 isolate -z-10 opacity-60 contain-strict">
+          <div className="absolute top-0 right-0 h-320 w-140 -translate-y-87.5 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,--theme(--color-foreground/.06)_0,hsla(0,0%,55%,.02)_50%,--theme(--color-foreground/.01)_80%)]" />
+          <div className="absolute top-0 right-0 h-320 w-60 [translate:5%_-50%] rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-foreground/.04)_0,--theme(--color-foreground/.01)_80%,transparent_100%)]" />
+          <div className="absolute top-0 right-0 h-320 w-60 -translate-y-87.5 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-foreground/.04)_0,--theme(--color-foreground/.01)_80%,transparent_100%)]" />
+        </div>
+        <Button className="absolute top-7 left-5" variant="ghost" render={<Link to="/" />} nativeButton={false}>
+          <ChevronLeftIcon data-icon="inline-start" aria-hidden="true" />
+          {m.auth__back_home()}
+        </Button>
+
+        <div className="mx-auto flex w-full max-w-sm flex-col gap-4">
+          <Logo className="h-4.5 lg:hidden" />
+          {children}
+          <p className="mt-4 text-sm text-muted-foreground">
+            {m.auth__terms_agreement()}{" "}
+            <Link className="underline underline-offset-4 hover:text-primary" to="/terms-of-service">
+              {m.auth__terms_of_service()}
+            </Link>{" "}
+            {m.auth__and()}{" "}
+            <Link className="underline underline-offset-4 hover:text-primary" to="/privacy-policy">
+              {m.auth__privacy_policy()}
+            </Link>
+            {m.auth__terms_agreement_end()}
+          </p>
+        </div>
+      </div>
+    </main>
   );
 }

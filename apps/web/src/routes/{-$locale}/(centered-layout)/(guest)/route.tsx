@@ -1,6 +1,7 @@
 import { noop } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
+import { AuthPage } from "@web-components/auth-page";
 import { z } from "zod";
 
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
@@ -27,7 +28,7 @@ const guestSearchSchema = z.object({
 
 export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
   validateSearch: zodValidator(guestSearchSchema),
-  component: Outlet,
+  component: GuestAuthLayout,
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.query({
       ...getAuthUserQueryOptions(),
@@ -50,3 +51,11 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
     };
   }
 });
+
+function GuestAuthLayout() {
+  return (
+    <AuthPage>
+      <Outlet />
+    </AuthPage>
+  );
+}
