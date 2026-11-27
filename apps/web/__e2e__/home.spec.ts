@@ -13,7 +13,7 @@ test("renders the public home page", async ({ baseURL, page }) => {
 
   expect(response?.ok()).toBe(true);
   const heroTitle = page.getByRole("heading", { level: 1 });
-  await expect(heroTitle).toHaveText("Plan and navigate from idea to launch");
+  await expect(heroTitle).toHaveText("A full-stack starter for TypeScript apps");
   await expect(heroTitle).toHaveCSS("text-shadow", "none");
   const header = page.getByRole("banner");
   const main = page.getByRole("main");
@@ -30,6 +30,7 @@ test("preserves the deployment mount in localized home metadata", async ({ baseU
   const localizedUrl = new URL("de", baseURL).href;
 
   expect(response?.ok()).toBe(true);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Eine Full-Stack-Vorlage für TypeScript-Apps");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", localizedUrl);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", localizedUrl);
   await expect(page.locator('link[rel="alternate"][hreflang="de"]')).toHaveAttribute("href", localizedUrl);
@@ -41,7 +42,7 @@ test("preserves the deployment mount in localized home metadata", async ({ baseU
 
 test("keeps the stock social buttons clickable and shows a toast for each provider", async ({ page }) => {
   await page.goto("sign-in");
-  await expect(page.getByRole("heading", { name: "login or create your account." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sign in or create an account" })).toBeVisible();
 
   const providers = ["Google", "Vercel", "GitHub"];
   const notifications = page.getByText("Not yet implemented.", { exact: true });
@@ -56,9 +57,17 @@ test("keeps the stock social buttons clickable and shows a toast for each provid
 test("continues with email to the existing password form inside the deployment mount", async ({ baseURL, page }) => {
   await page.goto("sign-in");
   await page.getByRole("textbox", { name: "Email" }).fill("starter@example.com");
-  await page.getByRole("button", { name: "Continue With Email" }).click();
+  await page.getByRole("button", { name: "Continue with email" }).click();
 
   await expect(page).toHaveURL(new RegExp(new URL("sign-in/password", baseURL).pathname + "(?:\\?|$)"));
   await expect(page.getByLabel("Email")).toHaveValue("starter@example.com");
   await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+});
+
+test("renders localized auth copy and provider feedback", async ({ page }) => {
+  await page.goto("de/sign-in");
+  await expect(page.getByRole("heading", { name: "Anmelden oder Konto erstellen" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "E-Mail" })).toBeVisible();
+  await page.getByRole("button", { name: "Mit GitHub fortfahren" }).click();
+  await expect(page.getByText("Noch nicht implementiert.", { exact: true })).toBeVisible();
 });

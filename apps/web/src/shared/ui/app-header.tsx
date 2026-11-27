@@ -1,17 +1,20 @@
 "use client";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Separator } from "@tsu-stack/ui/components/separator";
 import { SidebarTrigger } from "@tsu-stack/ui/components/sidebar";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
 import { AppBreadcrumbs } from "@/shared/ui/app-breadcrumbs";
 import { AppSearch } from "@/shared/ui/app-search";
-import { navLinkItems } from "@/shared/ui/app-shared";
+import { getDashboardNavigation } from "@/shared/ui/app-shared";
 import { NavUser } from "@/shared/ui/nav-user";
 import { NotificationsPopover } from "@/shared/ui/notifications-popover";
 
 export function AppHeader({ pathname, onSignOut }: { pathname?: string; onSignOut?: () => void }) {
-  const activeItem = navLinkItems.find((item) => item.path === pathname);
+  const { navGroups, footerNavLinks } = getDashboardNavigation();
+  const items = [...navGroups.flatMap((group) => group.items), ...footerNavLinks];
+  const activeItem = items.flatMap((item) => [item, ...(item.subItems ?? [])]).find((item) => item.path === pathname);
   return (
     <header
       className={cn(
@@ -20,7 +23,7 @@ export function AppHeader({ pathname, onSignOut }: { pathname?: string; onSignOu
       )}
     >
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="md:hidden" />
+        <SidebarTrigger aria-label={m.dashboard_page__toggle_sidebar()} className="md:hidden" />
         <Separator className="mr-2 h-4 data-[orientation=vertical]:self-center md:hidden" orientation="vertical" />
         <AppBreadcrumbs page={activeItem} />
       </div>

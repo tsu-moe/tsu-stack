@@ -1,3 +1,4 @@
+import { m } from "@tsu-stack/i18n/messages";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,49 +9,54 @@ import {
 } from "@tsu-stack/ui/components/navigation-menu";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { companyLinks, companyLinks2, featuresLinks } from "@/shared/ui/nav-links";
+import { getHomeNavigation, repositoryUrl } from "@/shared/ui/nav-links";
 import { DepthBox, LinkItem, NavSmallItem } from "@/shared/ui/sheard";
 
 export function DesktopNav() {
+  const { stack, resources, moreResources } = getHomeNavigation();
+
   return (
     <NavigationMenu className={cn("hidden md:block")}>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent">Features</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent">{m.navbar__stack()}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <DepthBox className="w-64 gap-2">
-              {featuresLinks.map((item, i) => (
+              {stack.map((item, i) => (
                 <NavigationMenuLink key={`${item.label}-${i}`} render={<LinkItem {...item} />} />
               ))}
             </DepthBox>
             <div className="p-2">
               <p className="text-xs text-muted-foreground">
-                Are you interested?{" "}
-                <a className="font-medium text-foreground hover:underline" href="#">
-                  Schedule a demo
+                {m.navbar__source_prompt()}{" "}
+                <a className="font-medium text-foreground hover:underline" href={repositoryUrl}>
+                  {m.home_page__hero_cta()}
                 </a>
               </p>
             </div>
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent">Company</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent">{m.navbar__resources()}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="grid w-sm grid-cols-2 gap-2">
               <DepthBox>
-                {companyLinks.map((item, i) => (
+                {resources.map((item, i) => (
                   <NavigationMenuLink key={`${item.label}-${i}`} render={<LinkItem {...item} />} />
                 ))}
               </DepthBox>
               <div className="p-2 *:mb-1">
-                {companyLinks2.map((item, i) => (
+                {moreResources.map((item, i) => (
                   <NavigationMenuLink key={`${item.label}-${i}`} render={<NavSmallItem {...item} />} />
                 ))}
               </div>
             </div>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuLink className="bg-transparent font-medium" render={<a href="#">Pricing</a>} />
+        <NavigationMenuLink
+          className="bg-transparent font-medium"
+          render={<a href={repositoryUrl}>{m.navbar__source()}</a>}
+        />
       </NavigationMenuList>
     </NavigationMenu>
   );

@@ -3,6 +3,7 @@ import { DesktopNav } from "@web-components/desktop-nav";
 import { ArrowUpRightIcon } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { useScroll } from "@tsu-stack/ui/hooks/use-scroll";
@@ -10,6 +11,8 @@ import { cn } from "@tsu-stack/ui/lib/utils";
 
 import { Logo } from "@/shared/ui/logo";
 import { MobileNav } from "@/shared/ui/mobile-nav";
+
+import { appConfig } from "@/config/app.config";
 
 const ANIMATION_CONFIG = {
   scrolled: {
@@ -64,12 +67,11 @@ export function Header() {
       {/* Logo and Navigation Section */}
       <div className="flex h-9 items-center gap-2">
         <Link
-          aria-label="Efferd logo"
+          aria-label={m.navbar__home({ siteName: appConfig.site.shortName })}
           className="flex h-9 cursor-pointer items-center justify-center rounded-full px-4 hover:bg-muted dark:hover:bg-muted/50"
           to="/"
         >
           <Logo className="h-4" />
-          <span className="sr-only">Efferd logo</span>
         </Link>
 
         {/* Divider - visible on desktop */}
@@ -84,10 +86,10 @@ export function Header() {
       {/* CTA Buttons - visible on desktop */}
       <div className="hidden items-center gap-2 md:flex">
         <Button className="rounded-full" variant="outline" render={<Link to="/sign-in" />} nativeButton={false}>
-          Login
+          {m.auth__sign_in_link()}
         </Button>
         <Button className="group rounded-full" render={<Link to="/sign-in" />} nativeButton={false}>
-          Get Started
+          {m.navbar__get_started()}
           <ArrowUpRightIcon
             aria-hidden="true"
             className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-px"

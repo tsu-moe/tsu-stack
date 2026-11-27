@@ -1,13 +1,17 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
+import { m } from "@tsu-stack/i18n/messages";
+import { Avatar } from "@tsu-stack/ui/components/avatar";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
 import { Auth } from "@/shared/ui/auth";
+import { Logo, LogoIcon } from "@/shared/ui/logo";
+
+import { appConfig } from "@/config/app.config";
 
 type GridCell = { h: number; dim?: true };
 
-const GRID: (GridCell | "testimonial")[][] = [
+const GRID: (GridCell | "promo")[][] = [
   [{ h: 44 }, { h: 50, dim: true }, { h: 44 }, { h: 50, dim: true }, { h: 44 }, { h: 44 }],
-  [{ h: 30 }, "testimonial", { h: 44 }, { h: 60 }, { h: 36 }, { h: 36 }, { h: 36 }],
+  [{ h: 30 }, "promo", { h: 44 }, { h: 60 }, { h: 36 }, { h: 36 }, { h: 36 }],
   [{ h: 50 }, { h: 44, dim: true }, { h: 60 }, { h: 44, dim: true }, { h: 44, dim: true }, { h: 44 }]
 ];
 
@@ -20,10 +24,10 @@ export function AuthPage({ onContinueEmail }: { onContinueEmail: (email: string)
         </div>
         <div className="hidden size-full flex-col overflow-hidden border-l md:flex">
           <div className="px-10 pt-16 pb-8 text-center">
-            <h2 className="font-heading text-3xl font-bold text-balance">Ready to join Efferd?</h2>
-            <p className="mt-4 text-pretty text-muted-foreground">
-              Join thousands of teams shipping beautiful, production-ready interfaces in record time.
-            </p>
+            <h2 className="font-heading text-3xl font-bold text-balance">
+              {m.auth__promo_title({ siteName: appConfig.site.shortName })}
+            </h2>
+            <p className="mt-4 text-pretty text-muted-foreground">{m.auth__promo_description()}</p>
           </div>
           <div className="relative size-full border mask-t-from-90% mask-x-from-92% mask-b-from-95%">
             <div
@@ -39,8 +43,8 @@ export function AuthPage({ onContinueEmail }: { onContinueEmail: (email: string)
                   style={{ animationDelay: `${100 + i * 120}ms` }}
                 >
                   {col.map((cell, j) =>
-                    cell === "testimonial" ? (
-                      <TestimonialCard key={j} />
+                    cell === "promo" ? (
+                      <PromoCard key={j} />
                     ) : (
                       <div
                         className={cn("rounded-xl", cell.dim ? "bg-foreground/2" : "bg-foreground/4")}
@@ -59,7 +63,7 @@ export function AuthPage({ onContinueEmail }: { onContinueEmail: (email: string)
   );
 }
 
-function TestimonialCard() {
+function PromoCard() {
   return (
     <figure
       className={cn(
@@ -69,27 +73,16 @@ function TestimonialCard() {
       )}
     >
       <div className="mb-8">
-        <img
-          alt="Vercel Logo"
-          className="pointer-events-none h-4.5 w-fit select-none dark:brightness-0 dark:invert"
-          height="auto"
-          loading="lazy"
-          src="https://storage.efferd.com/logo/vercel-wordmark.svg"
-          width="auto"
-        />
+        <Logo className="h-4.5" />
       </div>
-      <blockquote className="text-xl leading-tight">
-        &quot;<span className="font-medium">Efferd</span> is why I still have hair. No more worrying about UI
-        blocks.&quot;
-      </blockquote>
+      <p className="text-xl leading-tight">{m.auth__promo_note()}</p>
       <figcaption className="mt-6 flex items-center gap-3">
         <Avatar className="rounded-full border object-cover">
-          <AvatarImage alt="Guillermo Rauch's profile picture" src="https://github.com/rauchg.png" />
-          <AvatarFallback>GR</AvatarFallback>
+          <LogoIcon aria-hidden="true" className="m-auto size-3.5" />
         </Avatar>
         <div className="space-y-0.5">
-          <cite className="text-sm font-medium text-foreground not-italic">Guillermo Rauch</cite>
-          <div className="text-xs text-muted-foreground">CEO, Vercel</div>
+          <div className="text-sm font-medium text-foreground">{appConfig.site.shortName}</div>
+          <div className="text-xs text-muted-foreground">{m.auth__promo_caption()}</div>
         </div>
       </figcaption>
     </figure>

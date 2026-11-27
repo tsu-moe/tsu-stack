@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@tsu-stack/ui/components/breadcrumbs";
 
 /** Current page segment shown in the header — pass a nav item or `{ title, icon? }`. */
@@ -14,7 +15,7 @@ export function AppBreadcrumbs({ page }: { page?: AppBreadcrumbPage | null }) {
   }
 
   return (
-    <Breadcrumb>
+    <Breadcrumb aria-label={m.dashboard_page__breadcrumb_label()}>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbPage className="flex items-center gap-2 [&>svg]:size-3.5">

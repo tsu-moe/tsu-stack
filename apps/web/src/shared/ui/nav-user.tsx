@@ -2,6 +2,8 @@
 
 import { UserIcon, SettingsIcon, CreditCardIcon, LogOutIcon } from "lucide-react";
 
+import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
+import { m } from "@tsu-stack/i18n/messages";
 import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
 import {
   DropdownMenu,
@@ -13,30 +15,31 @@ import {
   DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
 
-const user = {
-  name: "Shaban Haider",
-  email: "shaban@efferd.com",
-  avatar: "https://github.com/shabanwtf.png"
-};
-
 export function NavUser({ onSignOut }: { onSignOut?: () => void }) {
+  const { user } = useAuth();
+  const initial = (user?.name.trim().at(0) ?? user?.email.at(0))?.toUpperCase();
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label="Open account menu" nativeButton={false} render={<Avatar className="size-8" />}>
-        <AvatarImage src={user.avatar} />
-        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+      <DropdownMenuTrigger
+        aria-label={m.user_dropdown__open_menu()}
+        nativeButton={false}
+        render={<Avatar className="size-8" />}
+      >
+        {user?.image && <AvatarImage src={user.image} alt="" />}
+        <AvatarFallback>{initial}</AvatarFallback>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="pointer-events-none flex items-center gap-2">
             <Avatar className="isolate size-8">
-              <AvatarImage src={user.avatar} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+              {user?.image && <AvatarImage src={user.image} alt="" />}
+              <AvatarFallback>{initial}</AvatarFallback>
             </Avatar>
             <div>
-              <span className="font-medium text-foreground">{user.name}</span> <br />
+              <span className="font-medium text-foreground">{user?.name}</span> <br />
               <div className="max-w-full overflow-hidden text-xs text-ellipsis whitespace-nowrap text-muted-foreground">
-                {user.email}
+                {user?.email}
               </div>
             </div>
           </DropdownMenuLabel>
@@ -45,25 +48,25 @@ export function NavUser({ onSignOut }: { onSignOut?: () => void }) {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <UserIcon />
-            Account
+            {m.user_dropdown__account()}
           </DropdownMenuItem>
           <DropdownMenuItem>
             <SettingsIcon />
-            Settings
+            {m.dashboard_nav__settings()}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <CreditCardIcon />
-            Plan & Billing
+            {m.user_dropdown__billing()}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem variant="destructive" onClick={onSignOut}>
             <LogOutIcon />
-            Log out
+            {m.user_dropdown__logout()}
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

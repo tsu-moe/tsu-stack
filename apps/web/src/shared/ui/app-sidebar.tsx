@@ -1,5 +1,7 @@
 "use client";
 
+import { m } from "@tsu-stack/i18n/messages";
+import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import {
   Sidebar,
   SidebarContent,
@@ -11,12 +13,15 @@ import {
 } from "@tsu-stack/ui/components/sidebar";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { CustomMenuButton, footerNavLinks, navGroups } from "@/shared/ui/app-shared";
+import { CustomMenuButton, getDashboardNavigation } from "@/shared/ui/app-shared";
 import { LogoIcon } from "@/shared/ui/logo";
 import { NavGroup } from "@/shared/ui/nav-group";
 
+import { appConfig } from "@/config/app.config";
+
 export function AppSidebar({ pathname }: { pathname?: string }) {
   const { setOpen } = useSidebar();
+  const { footerNavLinks, navGroups } = getDashboardNavigation();
   return (
     <Sidebar
       className={cn(
@@ -28,11 +33,16 @@ export function AppSidebar({ pathname }: { pathname?: string }) {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       variant="sidebar"
+      mobileTitle={m.dashboard_page__navigation_label()}
+      mobileDescription={m.dashboard_page__navigation_description()}
     >
       <SidebarHeader className="h-14 justify-center border-b">
-        <CustomMenuButton className="text-foreground" render={<a href="#link" aria-label="Efferd" />}>
+        <CustomMenuButton
+          className="text-foreground"
+          render={<Link to="/" aria-label={m.navbar__home({ siteName: appConfig.site.shortName })} />}
+        >
           <LogoIcon />
-          <span className="font-medium">Efferd</span>
+          <span className="font-medium">{appConfig.site.shortName}</span>
         </CustomMenuButton>
       </SidebarHeader>
       <SidebarContent>

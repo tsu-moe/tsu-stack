@@ -1,8 +1,12 @@
-import { SparklesIcon, ArrowRightIcon, PlayIcon } from "lucide-react";
+import { SparklesIcon, ArrowRightIcon } from "lucide-react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { cn } from "@tsu-stack/ui/lib/utils";
+
+import { GithubIcon } from "@/shared/ui/github-icon";
+import { repositoryUrl } from "@/shared/ui/nav-links";
 
 export function HeroSection() {
   return (
@@ -13,28 +17,34 @@ export function HeroSection() {
           className={cn(
             "group flex w-fit items-center gap-2 rounded-full border bg-card px-3 py-1.5 shadow-xs active:scale-98"
           )}
-          href="#link"
+          href="#stack"
         >
           <SparklesIcon className="size-3" />
           <span className="block h-4 border-l" />
 
-          <span className="text-xs">Now Support AI</span>
+          <span className="text-xs">{m.home_page__hero_badge()}</span>
           <span className="block h-4 border-l" />
 
           <ArrowRightIcon className="size-3 transition-transform group-hover:translate-x-0.5" />
         </a>
 
         <h1 className="font-heading text-center text-4xl tracking-tight text-balance md:text-5xl lg:text-6xl">
-          Plan and navigate from idea to launch
+          {m.home_page__hero_title()}
         </h1>
 
         <p className={cn("mx-auto max-w-lg text-center text-sm tracking-wider text-foreground/80 sm:text-lg")}>
-          Create roadmap, track progress, and guide your project from idea to successful launch.
+          {m.home_page__hero_description()}
         </p>
 
         <div className={cn("flex flex-row flex-wrap items-center justify-center gap-3 pt-2")}>
-          <Button className="rounded-full border bg-card shadow-xs active:scale-98" size="lg" variant="ghost">
-            <PlayIcon data-icon="inline-start" /> Watch Demo
+          <Button
+            className="rounded-full border bg-card shadow-xs active:scale-98"
+            size="lg"
+            variant="ghost"
+            render={<a href={repositoryUrl} />}
+            nativeButton={false}
+          >
+            <GithubIcon data-icon="inline-start" /> {m.home_page__hero_cta()}
           </Button>
           <Button
             className="rounded-full active:scale-98"
@@ -42,7 +52,7 @@ export function HeroSection() {
             render={<Link to="/sign-in" />}
             nativeButton={false}
           >
-            Get Started <ArrowRightIcon data-icon="inline-end" />
+            {m.navbar__get_started()} <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
       </div>

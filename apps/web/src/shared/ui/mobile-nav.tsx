@@ -3,23 +3,25 @@
 import { ArrowUpRightIcon } from "lucide-react";
 import React from "react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { cn } from "@tsu-stack/ui/lib/utils";
 
-import { companyLinks, companyLinks2, featuresLinks } from "@/shared/ui/nav-links";
+import { getHomeNavigation, repositoryUrl } from "@/shared/ui/nav-links";
 import { Portal, PortalBackdrop } from "@/shared/ui/portal";
 import { LinkItem } from "@/shared/ui/sheard";
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
+  const { stack, resources, moreResources } = getHomeNavigation();
 
   return (
     <div className="md:hidden">
       <Button
         aria-controls="mobile-menu"
         aria-expanded={open}
-        aria-label="Toggle menu"
+        aria-label={m.navbar__toggle_menu()}
         className="rounded-full"
         onClick={() => setOpen(!open)}
         size="icon"
@@ -39,7 +41,6 @@ export function MobileNav() {
             )}
           />
         </div>
-        <span className="sr-only">Toggle Menu</span>
       </Button>
       {open && (
         <Portal className="top-14 flex flex-col">
@@ -54,48 +55,43 @@ export function MobileNav() {
           >
             <LinkItem
               className="rounded-2xl px-4 py-3 active:bg-muted dark:active:bg-muted/50"
-              href="#"
-              label="Pricing"
+              href={repositoryUrl}
+              label={m.navbar__source()}
             />
 
-            <span className="text-sm">Features</span>
-            {featuresLinks.map((link) => (
+            <span className="text-sm">{m.navbar__stack()}</span>
+            {stack.map((link) => (
               <LinkItem
                 className="rounded-2xl p-2 active:bg-muted dark:active:bg-muted/50"
                 key={link.label}
+                onClick={() => setOpen(false)}
                 {...link}
               />
             ))}
-            <span className="text-sm">Company</span>
-            {companyLinks.map((link) => (
+            <span className="text-sm">{m.navbar__resources()}</span>
+            {resources.map((link) => (
               <LinkItem
                 className="rounded-2xl p-2 active:bg-muted dark:active:bg-muted/50"
                 key={link.label}
+                onClick={() => setOpen(false)}
                 {...link}
               />
             ))}
-            <span className="text-sm">Company</span>
-            {companyLinks.map((link) => (
+            {moreResources.map((link) => (
               <LinkItem
                 className="rounded-2xl p-2 active:bg-muted dark:active:bg-muted/50"
                 key={link.label}
-                {...link}
-              />
-            ))}
-            {companyLinks2.map((link) => (
-              <LinkItem
-                className="rounded-2xl p-2 active:bg-muted dark:active:bg-muted/50"
-                key={link.label}
+                onClick={() => setOpen(false)}
                 {...link}
               />
             ))}
           </div>
           <div className="z-50 mt-auto grid grid-cols-2 gap-2 border-t bg-background px-4 py-2">
             <Button variant="outline" render={<Link to="/sign-in" />} nativeButton={false}>
-              Login
+              {m.auth__sign_in_link()}
             </Button>
             <Button render={<Link to="/sign-in" />} nativeButton={false}>
-              Get Started
+              {m.navbar__get_started()}
               <ArrowUpRightIcon data-icon="inline-end" />
             </Button>
           </div>

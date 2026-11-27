@@ -2,6 +2,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type ComponentProps } from "react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
 export { ThemeProvider } from "next-themes";
 
@@ -40,7 +41,7 @@ export function ThemeSwitcher({ variant = "ghost", size = "icon", className }: T
       variant={variant}
       size={size}
       onClick={() => setTheme(changeThemeValue)}
-      aria-label="Toggle theme"
+      aria-label={m.ui__toggle_theme()}
       className={className}
     >
       <Sun

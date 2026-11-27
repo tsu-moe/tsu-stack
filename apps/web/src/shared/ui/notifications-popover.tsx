@@ -4,6 +4,7 @@ import { BellIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon } 
 import type React from "react";
 import { useState } from "react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@tsu-stack/ui/components/empty";
 import { Popover, PopoverPopup, PopoverTrigger } from "@tsu-stack/ui/components/popover";
@@ -15,77 +16,13 @@ type NotificationVariant = "info" | "success" | "warning" | "error";
 type Notification = {
   id: number;
   variant: NotificationVariant;
-  target: string;
-  message: string;
-  timestamp: string;
+  message: () => string;
   unread: boolean;
 };
 
 const notificationsData: Notification[] = [
-  {
-    id: 1,
-    variant: "error",
-    target: "Deployments",
-    message: "build failed on production - container exited with code 137",
-    timestamp: "8 minutes ago",
-    unread: true
-  },
-  {
-    id: 2,
-    variant: "warning",
-    target: "Compute",
-    message: "CPU usage on worker-03 exceeded 90% for the last 15 minutes",
-    timestamp: "34 minutes ago",
-    unread: true
-  },
-  {
-    id: 3,
-    variant: "success",
-    target: "Deployments",
-    message: "v2.4.1 rolled out to staging with all health checks passed",
-    timestamp: "1 hour ago",
-    unread: false
-  },
-  {
-    id: 4,
-    variant: "error",
-    target: "API Keys",
-    message: "production key sk_live_***f3a expires in 48 hours",
-    timestamp: "3 hours ago",
-    unread: false
-  },
-  {
-    id: 5,
-    variant: "info",
-    target: "Integrations",
-    message: "Datadog connected successfully and is now receiving metrics",
-    timestamp: "Yesterday",
-    unread: false
-  },
-  {
-    id: 6,
-    variant: "warning",
-    target: "Storage",
-    message: "database primary is at 87% disk capacity - consider scaling up",
-    timestamp: "Yesterday",
-    unread: false
-  },
-  {
-    id: 7,
-    variant: "success",
-    target: "Cron Jobs",
-    message: "nightly-backup completed in 4m 12s with 0 errors",
-    timestamp: "2 days ago",
-    unread: false
-  },
-  {
-    id: 8,
-    variant: "info",
-    target: "Activity",
-    message: "Alex Kim rotated 3 secrets in the production environment",
-    timestamp: "3 days ago",
-    unread: false
-  }
+  { id: 1, variant: "info", message: m.dashboard_notifications__start, unread: true },
+  { id: 2, variant: "info", message: m.dashboard_notifications__validate, unread: true }
 ];
 
 export function NotificationsPopover() {
@@ -112,17 +49,24 @@ export function NotificationsPopover() {
   return (
     <Popover>
       <PopoverTrigger
-        render={<Button aria-label="Open notifications" className="relative" size="icon-sm" variant="outline" />}
+        render={
+          <Button
+            aria-label={m.dashboard_notifications__open()}
+            className="relative"
+            size="icon-sm"
+            variant="outline"
+          />
+        }
       >
         <BellIcon />
         {unreadCount > 0 && <Dot className="absolute -top-0.5 -right-0.5 size-2" />}
       </PopoverTrigger>
       <PopoverPopup align="end" className="relative gap-0 overflow-hidden p-0 md:w-sm" side="bottom">
         <div className="flex h-12 items-center justify-between gap-4 border-b px-4 py-2">
-          <div className="text-sm font-medium">Notifications</div>
+          <div className="text-sm font-medium">{m.dashboard_notifications__title()}</div>
           {unreadCount > 0 && (
             <Button className="text-xs font-medium" onClick={handleMarkAllAsRead} size="sm" variant="ghost">
-              Mark all as read
+              {m.dashboard_notifications__mark_all_read()}
             </Button>
           )}
         </div>
@@ -143,8 +87,8 @@ export function NotificationsPopover() {
                 <EmptyMedia variant="icon">
                   <BellIcon />
                 </EmptyMedia>
-                <EmptyTitle>No Notifications Yet</EmptyTitle>
-                <EmptyDescription>You are all caught up. New alerts will appear here.</EmptyDescription>
+                <EmptyTitle>{m.dashboard_notifications__empty()}</EmptyTitle>
+                <EmptyDescription>{m.dashboard_notifications__empty_description()}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -176,11 +120,8 @@ function NotificationItem({
         <NotificationItemIcon variant={notification.variant} />
       </div>
       <div className="flex-1 space-y-0.5 ps-1 pe-6">
-        <p className="text-start font-mono text-[10px] text-muted-foreground">{notification.timestamp}</p>
-        <p className="line-clamp-2 text-left text-xs font-medium text-muted-foreground">
-          <span className="text-foreground hover:underline">{notification.target}</span>{" "}
-          <span>{notification.message}</span>.
-        </p>
+        <p className="text-start font-mono text-[10px] text-muted-foreground">{m.dashboard_notifications__starter()}</p>
+        <p className="line-clamp-2 text-left text-xs font-medium text-muted-foreground">{notification.message()}</p>
       </div>
     </button>
   );

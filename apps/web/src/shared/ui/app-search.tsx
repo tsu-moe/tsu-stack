@@ -3,6 +3,7 @@
 import { SearchIcon } from "lucide-react";
 import { useState } from "react";
 
+import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
   Command,
@@ -18,7 +19,7 @@ import { Kbd, KbdGroup } from "@tsu-stack/ui/components/kbd";
 import { useSidebar } from "@tsu-stack/ui/components/sidebar";
 import { useKeypress } from "@tsu-stack/ui/hooks/use-keypress";
 
-import { navGroups, type SidebarNavGroup, type SidebarNavItem } from "@/shared/ui/app-shared";
+import { getDashboardNavigation, type SidebarNavGroup, type SidebarNavItem } from "@/shared/ui/app-shared";
 
 function linksForSearchGroup(group: SidebarNavGroup): SidebarNavItem[] {
   const only = group.items[0];
@@ -28,16 +29,10 @@ function linksForSearchGroup(group: SidebarNavGroup): SidebarNavItem[] {
   return group.items;
 }
 
-const groups: { heading: string; links: SidebarNavItem[] }[] = navGroups.map((group) => {
-  return {
-    heading: group.label,
-    links: linksForSearchGroup(group)
-  };
-});
-
 export function AppSearch() {
   const [open, setOpen] = useState(false);
   const { isMobile } = useSidebar();
+  const { navGroups } = getDashboardNavigation();
 
   useKeypress({
     combo: ["/"],
@@ -47,7 +42,7 @@ export function AppSearch() {
   return (
     <>
       <Button
-        aria-label="Open search"
+        aria-label={m.dashboard_search__open()}
         className="md:gap-3 md:pe-1"
         onClick={() => setOpen(true)}
         size={isMobile ? "icon-sm" : "sm"}
@@ -61,14 +56,14 @@ export function AppSearch() {
       </Button>
 
       <CommandDialog
-        description="Search for pages, resources, and navigation"
+        description={m.dashboard_search__description()}
         onOpenChange={setOpen}
         open={open}
-        title="Search"
+        title={m.dashboard_search__title()}
       >
         <Command className="bg-background p-0" loop>
           <div className="px-1 pt-1 pb-2">
-            <CommandInput placeholder="Search..." />
+            <CommandInput placeholder={m.dashboard_search__placeholder()} />
           </div>
           <CommandList className="border-t">
             <CommandEmpty>
@@ -76,13 +71,13 @@ export function AppSearch() {
                 <EmptyMedia variant="icon">
                   <SearchIcon />
                 </EmptyMedia>
-                <EmptyHeader>No results found.</EmptyHeader>
-                <EmptyDescription>Try searching for something else.</EmptyDescription>
+                <EmptyHeader>{m.dashboard_search__no_results()}</EmptyHeader>
+                <EmptyDescription>{m.dashboard_search__try_again()}</EmptyDescription>
               </Empty>
             </CommandEmpty>
-            {groups.map((group) => (
-              <CommandGroup heading={group.heading} key={group.heading}>
-                {group.links.map((link) => (
+            {navGroups.map((group) => (
+              <CommandGroup heading={group.label} key={group.label}>
+                {linksForSearchGroup(group).map((link) => (
                   <CommandItem key={link.title} onSelect={() => setOpen(false)} value={link.title}>
                     {link.icon}
                     <span>{link.title}</span>
