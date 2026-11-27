@@ -72,14 +72,19 @@ test("keeps the stock social buttons clickable and shows a toast for each provid
 });
 
 test("switches from sign-in options to the password and account forms", async ({ baseURL, page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("sign-in");
   const panel = page.getByRole("main");
+  const legalText = panel.getByText(/^By continuing, you agree to our/);
+  const animatedPanel = legalText.locator("..");
+  await expect(animatedPanel).toHaveCSS("animation-name", "enter");
   await expect(panel.getByText("Email", { exact: true })).toBeVisible();
   await expect(panel.getByRole("textbox", { name: "Email" })).toHaveCount(0);
   await panel.getByRole("button", { name: "Continue with email" }).click();
 
   await expect(page).toHaveURL(new RegExp(new URL("sign-in/password", baseURL).pathname + "(?:\\?|$)"));
   await expect(panel.getByRole("heading", { name: "Sign in to your account" })).toBeVisible();
+  await expect(animatedPanel).toHaveCSS("animation-name", "enter");
   await expect(panel.getByLabel("Email")).toBeVisible();
   await expect(panel.getByLabel("Password", { exact: true })).toBeVisible();
   await panel.getByRole("link", { name: "Create a new account" }).click();
@@ -89,6 +94,9 @@ test("switches from sign-in options to the password and account forms", async ({
   for (const name of ["Name", "Email", "Password", "Confirm Password"]) {
     await expect(panel.getByLabel(name, { exact: true })).toBeVisible();
   }
+  await expect(animatedPanel).toHaveCSS("animation-name", "enter");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(animatedPanel).toHaveCSS("animation-name", "none");
   await panel.getByRole("link", { name: "Sign in", exact: true }).click();
   await expect(panel.getByRole("heading", { name: "Sign in to your account" })).toBeVisible();
 });

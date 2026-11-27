@@ -43,17 +43,6 @@ export function AuthPage({ children }: { children: ReactNode }) {
         <div className="mx-auto flex w-full max-w-sm flex-col gap-4">
           <Logo className="h-4.5 lg:hidden" />
           {children}
-          <p className="mt-4 text-sm text-muted-foreground">
-            {m.auth__terms_agreement()}{" "}
-            <Link className="underline underline-offset-4 hover:text-primary" to="/terms-of-service">
-              {m.auth__terms_of_service()}
-            </Link>{" "}
-            {m.auth__and()}{" "}
-            <Link className="underline underline-offset-4 hover:text-primary" to="/privacy-policy">
-              {m.auth__privacy_policy()}
-            </Link>
-            {m.auth__terms_agreement_end()}
-          </p>
         </div>
       </div>
     </main>

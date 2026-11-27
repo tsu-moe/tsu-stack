@@ -1,5 +1,8 @@
 import { type ReactNode } from "react";
 
+import { m } from "@tsu-stack/i18n/messages";
+import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
+
 export function AuthPanel({
   title,
   description,
@@ -16,6 +19,17 @@ export function AuthPanel({
         {description && <p className="text-base text-muted-foreground">{description}</p>}
       </div>
       {children}
+      <p className="mt-4 text-sm text-muted-foreground">
+        {m.auth__terms_agreement()}{" "}
+        <Link className="underline underline-offset-4 hover:text-primary" to="/terms-of-service">
+          {m.auth__terms_of_service()}
+        </Link>{" "}
+        {m.auth__and()}{" "}
+        <Link className="underline underline-offset-4 hover:text-primary" to="/privacy-policy">
+          {m.auth__privacy_policy()}
+        </Link>
+        {m.auth__terms_agreement_end()}
+      </p>
     </div>
   );
 }
