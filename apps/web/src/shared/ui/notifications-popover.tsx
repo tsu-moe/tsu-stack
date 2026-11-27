@@ -70,7 +70,7 @@ export function NotificationsPopover() {
             </Button>
           )}
         </div>
-        <ScrollArea className="no-scrollbar scroll-fade h-full max-h-100 min-h-80 overflow-y-auto bg-background">
+        <ScrollArea className="scroll-fade no-scrollbar h-full max-h-100 min-h-80 overflow-y-auto bg-background">
           {notifications.length > 0 ? (
             <div className="flex flex-col gap-px bg-border">
               {notifications.map((notification) => (

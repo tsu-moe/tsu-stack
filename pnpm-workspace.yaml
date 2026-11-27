@@ -16,7 +16,6 @@ catalog:
   "@dotenvx/dotenvx": 2.38.2
   "@fontsource-variable/geist": 5.3.0
   "@fontsource-variable/geist-mono": 5.3.0
-  "@fontsource/instrument-serif": 5.3.0
   "@hono/node-server": 2.1.9
   "@inlang/cli": 3.6.0
   "@inlang/paraglide-js": 3.2.2

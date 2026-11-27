@@ -1,5 +1,4 @@
 import geistVariableLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
-import instrumentSerifLatin400 from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
 import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
@@ -59,13 +58,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
           href: sitemapHref,
           rel: "sitemap",
           type: "application/xml"
-        },
-        {
-          rel: "preload",
-          as: "font",
-          type: "font/woff2",
-          href: instrumentSerifLatin400,
-          crossOrigin: "anonymous"
         },
         {
           rel: "preload",

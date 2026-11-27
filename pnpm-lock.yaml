@@ -197,9 +197,6 @@ catalogs:
     '@fontsource-variable/geist-mono':
       specifier: 5.3.0
       version: 5.3.0
-    '@fontsource/instrument-serif':
-      specifier: 5.3.0
-      version: 5.3.0
     '@hono/node-server':
       specifier: 2.1.9
       version: 2.1.9
@@ -535,9 +532,6 @@ importers:
         specifier: 'catalog:'
         version: 5.3.0
       '@fontsource-variable/geist-mono':
-        specifier: 'catalog:'
-        version: 5.3.0
-      '@fontsource/instrument-serif':
         specifier: 'catalog:'
         version: 5.3.0
       '@lonik/oh-image':
@@ -1817,9 +1811,6 @@ packages:
 
   '@fontsource-variable/geist@5.3.0':
     resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
-
-  '@fontsource/instrument-serif@5.3.0':
-    resolution: {integrity: sha512-mDiaIg0u67sYV59fie92Wz4sM8UiVlbL7fLxnFPCKkX15DMASEnQTREbaP5S5/3DCcsoAOcQ0sV9E4AeY4QqYQ==}
 
   '@hono/node-server@2.1.9':
     resolution: {integrity: sha512-Sk4NQd3GFY0WZWCzndwFMPwJhtD0y9qjsQ+pjID0/03nK9pxyBCUoUHCho8QYBLBVhi0ssL8UkNPHqbgSOFPIQ==}
@@ -7950,8 +7941,6 @@ snapshots:
   '@fontsource-variable/geist-mono@5.3.0': {}
 
   '@fontsource-variable/geist@5.3.0': {}
-
-  '@fontsource/instrument-serif@5.3.0': {}
 
   '@hono/node-server@2.1.9(hono@4.13.19)':
     dependencies:

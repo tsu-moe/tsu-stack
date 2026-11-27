@@ -1,7 +1,8 @@
 @import "@tsu-stack/ui/styles/globals.css";
-@source "./";
-
 @import "./fonts.css";
-@import "./theme.css";
 
 @source "../../components";
+
+@theme inline {
+  --font-heading: var(--font-sans);
+}

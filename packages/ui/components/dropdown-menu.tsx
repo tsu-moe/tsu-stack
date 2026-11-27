@@ -266,7 +266,7 @@ function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       className={cn(
         dropdownMenuItemState,
-        "data-[variant=destructive]:text-destructive relative flex cursor-pointer items-center gap-2 rounded-[10px] border-[0.5px] border-transparent px-(--item-inline-padding) py-(--item-block-padding) text-sm outline-hidden select-none data-highlighted:z-0 data-highlighted:border-border/30 data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex cursor-pointer items-center gap-2 rounded-[10px] border-[0.5px] border-transparent px-(--item-inline-padding) py-(--item-block-padding) text-sm outline-hidden select-none data-highlighted:z-0 data-highlighted:border-border/30 data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[variant=destructive]:text-destructive data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       data-slot="dropdown-menu-item"
