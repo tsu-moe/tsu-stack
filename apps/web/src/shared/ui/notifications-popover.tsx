@@ -5,7 +5,7 @@ import type React from "react";
 import { useState } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
-import { Button } from "@tsu-stack/ui/components/button";
+import { Button, type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@tsu-stack/ui/components/empty";
 import { Popover, PopoverPopup, PopoverTrigger } from "@tsu-stack/ui/components/popover";
 import { ScrollArea } from "@tsu-stack/ui/components/scroll-area";
@@ -102,11 +102,13 @@ function NotificationItem({
   notification,
   className,
   ...props
-}: React.ComponentProps<"button"> & { notification: Notification }) {
+}: ButtonProps<"color" | "variant"> & { notification: Notification }) {
   return (
-    <button
+    <Button
+      type="button"
+      variant="ghost"
       className={cn(
-        "relative flex size-full h-16 items-center justify-start bg-background outline-none",
+        "relative h-16 w-full justify-start gap-0 rounded-none bg-background p-0 outline-none",
         "hover:bg-muted dark:hover:bg-muted/75",
         "focus-visible:ring-3 focus-visible:ring-border",
         "transition-[margin] duration-100",
@@ -116,14 +118,18 @@ function NotificationItem({
       data-state={notification.unread ? "unread" : "read"}
       {...props}
     >
-      <div className="flex h-full w-12 items-center justify-center">
+      <span className="flex h-full w-12 items-center justify-center">
         <NotificationItemIcon variant={notification.variant} />
-      </div>
-      <div className="flex-1 space-y-0.5 ps-1 pe-6">
-        <p className="text-start font-mono text-[10px] text-muted-foreground">{m.dashboard_notifications__starter()}</p>
-        <p className="line-clamp-2 text-left text-xs font-medium text-muted-foreground">{notification.message()}</p>
-      </div>
-    </button>
+      </span>
+      <span className="flex flex-1 flex-col gap-0.5 ps-1 pe-6 whitespace-normal">
+        <span className="text-start font-mono text-[10px] text-muted-foreground">
+          {m.dashboard_notifications__starter()}
+        </span>
+        <span className="line-clamp-2 text-start text-xs font-medium text-muted-foreground">
+          {notification.message()}
+        </span>
+      </span>
+    </Button>
   );
 }
 

@@ -22,7 +22,7 @@ export function DefaultNotFoundPage() {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button size="lg" render={<Link to="/" />} nativeButton={false}>
+            <Button size="lg" nativeLink render={<Link to="/" />}>
               <Home data-icon="inline-start" />
               {m.error_404__go_home()}
             </Button>

@@ -6,6 +6,8 @@ Use Vite+ (`vp` for packages and scripts, `vpx` for one-off CLIs). Run `vp run c
 
 Read the most specific guide first. Follow links when the task crosses domains.
 
+When composing interactive UI, use the installed primitive’s element composition API and preserve native button or link semantics. See [UI](.agents/ui.md).
+
 Use disposable local resources for validation. Confirm the effective target and get explicit user approval before changing an existing database, mutating remote infrastructure, deploying, or publishing. See [Human decisions](.agents/choice-flows.md).
 
 - Work and verification — [Workflow](.agents/workflow.md), [Vite+](.agents/vite-plus.md), [Testing](.agents/testing.md), [Human decisions](.agents/choice-flows.md).

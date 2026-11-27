@@ -1,6 +1,7 @@
 import { ArrowUpRightIcon, LayersIcon, PackageIcon } from "lucide-react";
 
 import { m } from "@tsu-stack/i18n/messages";
+import { Button } from "@tsu-stack/ui/components/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,7 +25,9 @@ export function DesktopNav() {
     <NavigationMenu align="center" className="hidden lg:flex">
       <NavigationMenuList className="gap-1">
         <NavigationMenuItem>
-          <NavigationMenuTrigger className={topLinkClass}>{m.navbar__stack()}</NavigationMenuTrigger>
+          <NavigationMenuTrigger className={topLinkClass} render={<Button radius="full" variant="ghost" />}>
+            {m.navbar__stack()}
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="grid w-[32rem] grid-cols-3 gap-2">
               <NavColumn title={m.home_page__nav_app()} items={stack.slice(0, 2)} />
@@ -39,7 +42,9 @@ export function DesktopNav() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className={topLinkClass}>{m.navbar__resources()}</NavigationMenuTrigger>
+          <NavigationMenuTrigger className={topLinkClass} render={<Button radius="full" variant="ghost" />}>
+            {m.navbar__resources()}
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="grid w-96 grid-cols-2 gap-2">
               <NavCallout
@@ -56,7 +61,17 @@ export function DesktopNav() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={topLinkClass} render={<a href={repositoryUrl}>{m.navbar__source()}</a>} />
+          <NavigationMenuLink
+            className={topLinkClass}
+            render={
+              <Button
+                radius="full"
+                variant="ghost"
+                nativeLink
+                render={<a href={repositoryUrl}>{m.navbar__source()}</a>}
+              />
+            }
+          />
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

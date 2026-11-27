@@ -45,7 +45,7 @@ export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button render={<Link to="/" />} nativeButton={false}>
+            <Button nativeLink render={<Link to="/" />}>
               <Home data-icon="inline-start" />
               {m.error_500__go_home()}
             </Button>
