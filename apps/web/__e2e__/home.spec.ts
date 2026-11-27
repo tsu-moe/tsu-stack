@@ -12,7 +12,16 @@ test("renders the public home page", async ({ baseURL, page }) => {
   const response = await page.goto("./");
 
   expect(response?.ok()).toBe(true);
-  await expect(page.getByRole("heading").first()).toBeVisible();
+  const heroTitle = page.getByRole("heading", { level: 1 });
+  await expect(heroTitle).toHaveText("Plan and navigate from idea to launch");
+  await expect(heroTitle).toHaveCSS("text-shadow", "none");
+  const header = page.getByRole("banner");
+  const main = page.getByRole("main");
+  await expect(main).toHaveCSS("border-left-width", "1px");
+  await expect(main).toHaveCSS("border-right-width", "1px");
+  const headerWidth = (await header.boundingBox())?.width;
+  expect(headerWidth).toBeDefined();
+  expect((await main.boundingBox())?.width).toBe(headerWidth);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new URL("./", baseURL).href);
 });
 

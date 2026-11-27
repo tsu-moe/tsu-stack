@@ -6,7 +6,7 @@ export function HomePage() {
   return (
     <>
       <Header />
-      <main>
+      <main className="mx-auto w-full max-w-5xl border-x">
         <HeroSection />
         <LogosSection />
       </main>

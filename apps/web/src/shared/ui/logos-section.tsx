@@ -8,9 +8,9 @@ export function LogosSection() {
         Used & Trusted by <span className="text-foreground">Legends</span>
       </h2>
       <div className="relative *:border-0">
-        <FullWidthDivider className="-top-px" />
+        <FullWidthDivider contained className="-top-px" />
         <LogoCloud />
-        <FullWidthDivider className="-bottom-px" />
+        <FullWidthDivider contained className="-bottom-px" />
       </div>
     </section>
   );
