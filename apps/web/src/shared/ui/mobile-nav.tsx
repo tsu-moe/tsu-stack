@@ -12,7 +12,7 @@ import { Sheet, SheetCloseTrigger, SheetContent, SheetTitle, SheetTrigger } from
 import { getHomeNavigation, repositoryUrl } from "@/shared/ui/nav-links";
 import { LinkItem } from "@/shared/ui/sheard";
 
-export function MobileNav() {
+export function MobileNav({ showGuestActions }: { showGuestActions: boolean }) {
   const [open, setOpen] = useState(false);
   const { stack, resources, moreResources } = getHomeNavigation();
   const sections = [
@@ -76,27 +76,29 @@ export function MobileNav() {
             onClick={close}
             className="w-full rounded-lg px-2 py-3 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring [&_span:first-child]:text-base"
           />
-          <div className="mt-3 grid grid-cols-2 gap-2 border-t pt-4">
-            <Button
-              className="w-full"
-              radius="full"
-              size="sm"
-              variant="outline"
-              nativeLink
-              render={<Link to="/sign-in" onClick={close} />}
-            >
-              {m.auth__sign_in_link()}
-            </Button>
-            <Button
-              className="w-full"
-              radius="full"
-              size="sm"
-              nativeLink
-              render={<Link to="/sign-in" onClick={close} />}
-            >
-              {m.navbar__get_started()}
-            </Button>
-          </div>
+          {showGuestActions && (
+            <div className="mt-3 grid grid-cols-2 gap-2 border-t pt-4">
+              <Button
+                className="w-full"
+                radius="full"
+                size="sm"
+                variant="outline"
+                nativeLink
+                render={<Link to="/sign-in" onClick={close} />}
+              >
+                {m.auth__sign_in_link()}
+              </Button>
+              <Button
+                className="w-full"
+                radius="full"
+                size="sm"
+                nativeLink
+                render={<Link to="/sign-in" onClick={close} />}
+              >
+                {m.navbar__get_started()}
+              </Button>
+            </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>

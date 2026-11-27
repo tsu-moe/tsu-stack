@@ -177,6 +177,62 @@ test("keeps the theme switcher before Sign in and renders Sign in as a keyboard-
   await expect(page).toHaveURL((url) => url.pathname === new URL("sign-in", baseURL).pathname);
 });
 
+test("shows a native avatar menu for signed-in visitors and restores guest actions after sign-out", async ({
+  baseURL,
+  page
+}) => {
+  const origin = new URL("./", baseURL).origin;
+  const user = {
+    id: "test-user",
+    name: "Test User",
+    email: "test@example.com",
+    image: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><path d="M0 0h32v32H0z" fill="orange"/></svg>')}`
+  };
+  let signedIn = true;
+  await page.route("**/_serverFn/**", (route) => route.fulfill({ json: { result: signedIn ? user : null } }));
+  await page.route("**/auth/sign-out", (route) => {
+    const headers = {
+      "access-control-allow-origin": origin,
+      "access-control-allow-credentials": "true",
+      "access-control-allow-methods": "POST",
+      "access-control-allow-headers": "content-type"
+    };
+    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers });
+    signedIn = false;
+    return route.fulfill({ json: { success: true }, headers });
+  });
+
+  await page.goto("./");
+  const header = page.getByRole("banner");
+  const account = header.getByRole("button", { name: "Open account menu" });
+  await expect(account).toHaveJSProperty("tagName", "BUTTON");
+  await expect(account).toHaveAttribute("data-variant", "ghost");
+  await expect(account.locator('[data-slot="avatar-image"]')).toHaveAttribute("src", user.image);
+  await expect(header.getByRole("link", { name: /^(Sign in|Get Started)$/ })).toHaveCount(0);
+
+  await account.focus();
+  await page.keyboard.press("Enter");
+  const accountMenu = page.getByRole("menu");
+  await expect(accountMenu.getByText(user.name)).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(account).toBeFocused();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(account).toBeVisible();
+  await header.getByRole("button", { name: "Toggle menu" }).click();
+  const mobileMenu = page.getByRole("dialog", { name: "Navigation" });
+  await expect(mobileMenu).toBeVisible();
+  await expect(mobileMenu.getByRole("link", { name: /^(Sign in|Get Started)$/ })).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(mobileMenu).toBeHidden();
+
+  await account.click();
+  await accountMenu.getByRole("menuitem", { name: "Sign out" }).click();
+  await expect(account).toHaveCount(0);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(header.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+});
+
 test("matches desktop navigation heights and opens the mobile accordion menu", async ({ baseURL, page }) => {
   await page.goto("./");
   const header = page.getByRole("banner");

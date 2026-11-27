@@ -2,9 +2,10 @@
 
 import { UserIcon, SettingsIcon, CreditCardIcon, LogOutIcon } from "lucide-react";
 
-import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
+import { type AuthQueryResult } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
 import { Avatar, AvatarFallback, AvatarImage } from "@tsu-stack/ui/components/avatar";
+import { Button } from "@tsu-stack/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,31 +16,31 @@ import {
   DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
 
-export function NavUser({ onSignOut }: { onSignOut?: () => void }) {
-  const { user } = useAuth();
-  const initial = (user?.name.trim().at(0) ?? user?.email.at(0))?.toUpperCase();
+export function NavUser({ user, onSignOut }: { user: NonNullable<AuthQueryResult>; onSignOut?: () => void }) {
+  const initial = (user.name.trim().at(0) ?? user.email.at(0))?.toUpperCase();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={m.user_dropdown__open_menu()}
-        nativeButton={false}
-        render={<Avatar className="size-8 cursor-pointer" />}
+        render={<Button type="button" size="icon-sm" radius="full" variant="ghost" />}
       >
-        {user?.image && <AvatarImage src={user.image} alt="" />}
-        <AvatarFallback>{initial}</AvatarFallback>
+        <Avatar aria-hidden="true">
+          {user.image && <AvatarImage src={user.image} alt="" />}
+          <AvatarFallback>{initial}</AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="pointer-events-none flex items-center gap-2">
             <Avatar className="isolate size-8">
-              {user?.image && <AvatarImage src={user.image} alt="" />}
+              {user.image && <AvatarImage src={user.image} alt="" />}
               <AvatarFallback>{initial}</AvatarFallback>
             </Avatar>
             <div>
-              <span className="font-medium text-foreground">{user?.name}</span> <br />
+              <span className="font-medium text-foreground">{user.name}</span> <br />
               <div className="max-w-full overflow-hidden text-xs text-ellipsis whitespace-nowrap text-muted-foreground">
-                {user?.email}
+                {user.email}
               </div>
             </div>
           </DropdownMenuLabel>

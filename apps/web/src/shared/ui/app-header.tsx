@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
 import { m } from "@tsu-stack/i18n/messages";
 import { Separator } from "@tsu-stack/ui/components/separator";
 import { SidebarTrigger } from "@tsu-stack/ui/components/sidebar";
@@ -12,6 +13,7 @@ import { NavUser } from "@/shared/ui/nav-user";
 import { NotificationsPopover } from "@/shared/ui/notifications-popover";
 
 export function AppHeader({ pathname, onSignOut }: { pathname?: string; onSignOut?: () => void }) {
+  const { user } = useAuth();
   const { navGroups, footerNavLinks } = getDashboardNavigation();
   const items = [...navGroups.flatMap((group) => group.items), ...footerNavLinks];
   const activeItem = items.flatMap((item) => [item, ...(item.subItems ?? [])]).find((item) => item.path === pathname);
@@ -31,7 +33,7 @@ export function AppHeader({ pathname, onSignOut }: { pathname?: string; onSignOu
         <AppSearch />
         <NotificationsPopover />
         <Separator className="h-4 data-[orientation=vertical]:self-center" orientation="vertical" />
-        <NavUser onSignOut={onSignOut} />
+        {user && <NavUser user={user} onSignOut={onSignOut} />}
       </div>
     </header>
   );
