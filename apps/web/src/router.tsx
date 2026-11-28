@@ -3,6 +3,7 @@ import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
+import { m } from "@tsu-stack/i18n/messages";
 import { LOG_SERVICES, initLog } from "@tsu-stack/logger/client";
 import { Spinner } from "@tsu-stack/ui/components/spinner";
 
@@ -49,7 +50,7 @@ export function getRouter() {
     }) satisfies ErrorRouteComponent,
     defaultNotFoundComponent: DefaultNotFoundPage,
     defaultPendingComponent: () => (
-      <Spinner className="fixed inset-0 -top-(--navbar-height) m-auto flex items-center justify-center" />
+      <Spinner className="fixed inset-0 m-auto flex items-center justify-center" label={m.ui__loading()} />
     ),
     // Prefetch <Link> on hover and touch
     defaultPreload: "intent",
@@ -83,8 +84,8 @@ export function getRouter() {
 }
 
 declare module "@tanstack/react-router" {
-  // @ts-expect-error - module augmentation to add our custom RouterAppContext to TanStack Router's createRouter generic
-  type Register = {
+  // oxlint-disable-next-line typescript/consistent-type-definitions -- TanStack Router merges this interface.
+  interface Register {
     router: ReturnType<typeof getRouter>;
-  };
+  }
 }

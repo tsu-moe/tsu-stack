@@ -22,6 +22,12 @@ vp run pack:check
 
 See [`.agents/cli.md`](../.agents/cli.md) for template compatibility, smoke coverage, adding variants, first-publication bootstrap, trusted-publisher configuration, and release recovery.
 
+The scaffold workflow builds the generated app and runs its Playwright suite. To
+run the same production smoke locally, prepare a disposable database and build
+the variant with the loopback URLs and fixture settings from
+[`ci.yml`](workflows/ci.yml). Set `PLAYWRIGHT_PRODUCTION_VARIANT` to the
+generated variant and run `vp exec playwright test` from `apps/web`.
+
 Maintainers release the package from a clean, current `main` with `vp run release [version]`. This validates the package, creates a release commit and annotated tag, then atomically pushes explicit `origin` refs; it does not require a branch upstream. A failed final push can be fixed and resumed by rerunning the command. The command changes Git and remote state, so it must not be used as local validation. The tag workflow publishes through npm trusted publishing; contributors and Renovate branches never publish packages or create release tags.
 
 ## Pull Request Process

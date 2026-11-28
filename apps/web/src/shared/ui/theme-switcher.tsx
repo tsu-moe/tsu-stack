@@ -1,7 +1,10 @@
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { type ComponentProps } from "react";
+import { flushSync } from "react-dom";
 
-import { type ButtonProps } from "@tsu-stack/ui/components/button";
+import { m } from "@tsu-stack/i18n/messages";
 import { Button } from "@tsu-stack/ui/components/button";
 export { ThemeProvider } from "next-themes";
 
@@ -19,40 +22,48 @@ export function ThemeInitializer() {
   return <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />;
 }
 
-type ThemeSwitcherProps = {
-  className?: string;
-} & ButtonProps;
+type ThemeSwitcherProps = Pick<
+  ComponentProps<typeof Button>,
+  "className" | "disabled" | "radius" | "ref" | "size" | "variant"
+>;
 
-export function ThemeSwitcher({ variant = "ghost", size = "icon", className }: ThemeSwitcherProps) {
-  const { theme, setTheme } = useTheme();
+export function ThemeSwitcher({ variant = "ghost", size = "icon", disabled, ...props }: ThemeSwitcherProps) {
+  const { resolvedTheme, setTheme } = useTheme();
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    root.setAttribute("data-theme-switching", "");
+    try {
+      flushSync(() => setTheme(resolvedTheme === "light" ? "dark" : "light"));
+      // Commit the new styles while motion is suppressed so restoring it cannot start a transition.
+      void root.offsetWidth;
+    } finally {
+      root.removeAttribute("data-theme-switching");
+    }
+  };
+  const shortcut = "D";
+  const label = m.ui__toggle_theme();
 
-  const changeThemeValue =
-    theme === "dark"
-      ? "light"
-      : theme === "light"
-        ? "dark"
-        : typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "light"
-          : "dark";
+  useHotkey(shortcut, toggleTheme, {
+    enabled: !disabled,
+    ignoreInputs: true,
+    requireReset: true,
+    meta: { name: label }
+  });
 
   return (
     <Button
+      {...props}
+      type="button"
+      disabled={disabled}
       variant={variant}
       size={size}
-      onClick={() => setTheme(changeThemeValue)}
-      aria-label="Toggle theme"
-      className={className}
+      onClick={toggleTheme}
+      aria-label={label}
+      aria-keyshortcuts={shortcut}
+      title={`${label} (${shortcut})`}
     >
-      <Sun
-        className="absolute scale-100 rotate-0 transition-all duration-50 dark:scale-0 dark:rotate-90"
-        size={18}
-        strokeWidth={2}
-      />
-      <Moon
-        className="absolute scale-0 rotate-90 transition-all duration-50 dark:scale-100 dark:rotate-0"
-        size={18}
-        strokeWidth={2}
-      />
+      <Sun aria-hidden="true" className="absolute scale-100 dark:scale-0" size={18} strokeWidth={2} />
+      <Moon aria-hidden="true" className="absolute scale-0 dark:scale-100" size={18} strokeWidth={2} />
     </Button>
   );
 }
