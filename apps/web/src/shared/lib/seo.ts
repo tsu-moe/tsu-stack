@@ -1,4 +1,6 @@
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
+import { m } from "@tsu-stack/i18n/messages";
+import { getLocale } from "@tsu-stack/i18n/runtime";
 import {
   generateTanStackStartSeo,
   type GenerateTanStackStartSeoParams,
@@ -9,13 +11,12 @@ import {
 import { appConfig } from "@/config/app.config";
 
 const site = {
-  applicationName: appConfig.site.longName,
+  applicationName: appConfig.site.shortName,
   basePath: appConfig.site.basePath,
   baseUrl: appConfig.site.baseUrl,
-  defaultDescription: appConfig.site.description,
   defaultImages: [
     {
-      alt: appConfig.site.longName,
+      alt: appConfig.site.shortName,
       height: 630,
       type: "image/png",
       url: resolvePublicAssetUrl(appConfig.site.url, "/og/index.png"),
@@ -23,7 +24,7 @@ const site = {
     }
   ],
   defaultTitle: appConfig.site.longName,
-  siteName: appConfig.site.longName,
+  siteName: appConfig.site.shortName,
   titleTemplate: `%s | ${appConfig.site.shortName}`
 } satisfies TanStackStartSeoSite;
 
@@ -32,6 +33,11 @@ type AppSeoOptions = Omit<GenerateTanStackStartSeoParams, "alternates" | "site">
 };
 
 export function generateAppSeo({ alternates, ...options }: AppSeoOptions) {
+  const locale = appConfig.i18n.locales.find((item) => item === alternates?.locale) ?? getLocale();
+  const defaultTitle =
+    locale === appConfig.i18n.baseLocale
+      ? site.defaultTitle
+      : m.site__seo_title({ siteName: appConfig.site.shortName }, { locale });
   return generateTanStackStartSeo({
     ...options,
     alternates: alternates
@@ -41,6 +47,11 @@ export function generateAppSeo({ alternates, ...options }: AppSeoOptions) {
           locales: appConfig.i18n.locales
         }
       : undefined,
-    site
+    site: {
+      ...site,
+      defaultDescription: m.site__seo_description(undefined, { locale }),
+      defaultTitle,
+      titleTemplate: options.title ? site.titleTemplate : undefined
+    }
   });
 }

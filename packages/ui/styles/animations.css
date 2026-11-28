@@ -15,3 +15,26 @@
     animation: spinner-leaf-fade 800ms linear infinite;
   }
 }
+
+@keyframes blur-fade {
+  from {
+    opacity: var(--blur-fade-opacity);
+    filter: blur(var(--blur-fade-radius));
+    transform: translate(var(--blur-fade-x), var(--blur-fade-y));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is([data-blur-fade="paint"], [data-blur-fade-state="entering"]):not(
+    [data-blur-fade-state="settled"],
+    :focus-within
+  ) {
+    animation: blur-fade var(--blur-fade-duration) var(--blur-fade-easing) var(--blur-fade-delay) backwards;
+  }
+
+  [data-blur-fade-state="pending"]:not(:focus-within) {
+    opacity: var(--blur-fade-opacity);
+    filter: blur(var(--blur-fade-radius));
+    transform: translate(var(--blur-fade-x), var(--blur-fade-y));
+  }
+}

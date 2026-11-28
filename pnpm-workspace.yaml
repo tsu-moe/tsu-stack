@@ -9,6 +9,7 @@ allowBuilds:
   workerd: true
 
 catalog:
+  "@base-ui/react": 1.9.0
   "@better-auth/drizzle-adapter": 1.7.26
   "@bprogress/react": 1.2.7
   "@commitlint/cli": 21.2.4
@@ -17,7 +18,6 @@ catalog:
   "@dotenvx/dotenvx": 2.38.2
   "@fontsource-variable/geist": 5.3.0
   "@fontsource-variable/geist-mono": 5.3.0
-  "@fontsource/instrument-serif": 5.3.0
   "@hono/node-server": 2.1.9
   "@inlang/cli": 3.6.0
   "@inlang/paraglide-js": 3.2.2
@@ -30,7 +30,6 @@ catalog:
   "@orpc/server": 2.0.0-beta.51
   "@orpc/tanstack-query": 2.0.0-beta.51
   "@orpc/zod": 2.0.0-beta.51
-  "@paper-design/shaders-react": 0.0.82
   "@t3-oss/env-core": 0.13.11
   "@tailwindcss/vite": 4.3.5
   "@tanstack/devtools-a11y": 0.2.3
@@ -39,6 +38,7 @@ catalog:
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/react-devtools": 0.10.14
   "@tanstack/react-form": 1.33.5
+  "@tanstack/react-hotkeys": 0.27.2
   "@tanstack/react-form-devtools": 0.2.34
   "@tanstack/react-query": 5.108.0
   "@tanstack/react-query-devtools": 5.108.0
@@ -75,7 +75,6 @@ catalog:
   react-dom: 19.3.1
   react-icons: 5.7.0
   sharp: 0.35.5
-  sonner: 2.0.8
   std-env: 4.3.0
   tailwindcss: 4.3.5
   tsx: 4.23.15
@@ -85,6 +84,10 @@ catalog:
   vite-plus: 1.8.0
   wrangler: 4.165.0
   zod: 4.6.7
+  motion: ^14.14.0
+  react-use-measure: ^2.1.7
+  tailwind-variants: ^4.0.2
+  ogl: 1.0.11
 
 catalogMode: prefer
 

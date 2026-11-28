@@ -8,7 +8,7 @@ import { log } from "@tsu-stack/logger/client";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@tsu-stack/ui/components/empty";
 
-import { CenteredLayout } from "@/widgets/layouts";
+import { CenteredLayout } from "@/shared/ui/centered-layout";
 
 const lastLoggedAt = new WeakMap<Error, number>();
 const ERROR_LOG_INTERVAL_MS = 30_000;
@@ -45,11 +45,9 @@ export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button light="skeuomorphic" asChild>
-              <Link to="/">
-                <Home data-icon="inline-start" />
-                {m.error_500__go_home()}
-              </Link>
+            <Button nativeLink render={<Link to="/" />}>
+              <Home data-icon="inline-start" />
+              {m.error_500__go_home()}
             </Button>
 
             <Button onClick={handleRefresh} variant="outline">

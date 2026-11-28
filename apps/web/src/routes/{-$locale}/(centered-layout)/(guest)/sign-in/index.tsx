@@ -26,7 +26,6 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/sign
 });
 
 function RouteComponent() {
-  const { redirect } = Route.useSearch();
-
-  return <SignInForm redirectTo={redirect} />;
+  const { redirectTo } = Route.useRouteContext();
+  return <SignInForm redirectTo={redirectTo} />;
 }
