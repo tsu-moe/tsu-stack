@@ -42,4 +42,4 @@ For `cloudflare-d1`, `--setup local` creates the local environment and applies l
 
 Generated projects include `.tsu-stack.jsonc` with their inputs, source branch, immutable commit SHA, and replay command. The CLI itself, its maintainer-only `.agents/cli.md`, and the inherited lockfile are removed before generation completes.
 
-Run `create-tsu-stack --help` for all options. Maintainer development and release details live in [the CLI agent guide](../../.agents/cli.md).
+Run `vpx create-tsu-stack@latest --help` for all options. Maintainer development and release details live in [the CLI agent guide](../../.agents/cli.md).

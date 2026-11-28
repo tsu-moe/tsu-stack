@@ -72,6 +72,6 @@ Examples:
   npm create tsu-stack@latest my-app
   vpx create-tsu-stack@latest my-app --variant cloudflare
   vpx create-tsu-stack@latest my-app --variant cloudflare-d1 --setup cloudflare
-  create-tsu-stack my-app --yes --no-install --no-git
-  create-tsu-stack . --yes --dry-run
+  vpx create-tsu-stack@latest my-app --yes --no-install --no-git
+  vpx create-tsu-stack@latest . --yes --dry-run
 `;

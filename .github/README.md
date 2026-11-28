@@ -71,7 +71,7 @@
 Use the dedicated [CLI Tool](https://github.com/tsu-moe/tsu-stack/tree/main/tools/create-tsu-stack) and answer the setup wizard questions:
 
 ```bash
-npm create tsu-stack@next my-app
+npm create tsu-stack@latest my-app
 cd my-app
 vp run dev
 ```

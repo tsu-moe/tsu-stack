@@ -34,7 +34,7 @@
   "home_page__faq_included_question": "What comes configured?",
   "home_page__faq_included_answer": "TanStack Start handles the web app, Hono and oRPC handle the API, Drizzle handles database access, and Better Auth handles sign-in and sessions. The repo also includes guides for coding agents.",
   "home_page__faq_start_question": "How do I create a project?",
-  "home_page__faq_start_answer": "Run npm create tsu-stack@next my-app. The CLI asks how you want to deploy and whether you want it to set up your local environment.",
+  "home_page__faq_start_answer": "Run npm create tsu-stack@latest my-app. The CLI asks how you want to deploy and whether you want it to set up your local environment.",
   "home_page__faq_styling_question": "Can I customize the UI?",
   "home_page__faq_styling_answer": "Yes. The shared UI package contains the component source and theme styles. Edit them directly in your project.",
   "home_page__faq_locales_question": "Can I add more languages?",
