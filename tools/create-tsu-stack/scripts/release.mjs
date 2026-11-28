@@ -193,12 +193,15 @@ async function main() {
   const remoteHead = await gitOutput(["rev-parse", `${remote}/${releaseBranch}`]);
   const existingRelease = await detectLocalRelease(remoteHead);
 
-  if (existingRelease?.state === "complete") {
+  if (
+    existingRelease?.state === "complete" &&
+    (!requestedVersion || requestedVersion === existingRelease.manifest.version)
+  ) {
     console.log(`${existingRelease.tag} is already present on ${remote}/${releaseBranch}; nothing to push.`);
     return;
   }
 
-  if (existingRelease) {
+  if (existingRelease && existingRelease.state !== "complete") {
     await assertRegistryBootstrap(existingRelease.manifest);
     console.log(`Resuming ${existingRelease.tag} from its validated local release commit.`);
     await runValidation();
