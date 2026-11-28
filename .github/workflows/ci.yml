@@ -47,33 +47,41 @@ jobs:
           test ! -e "$TARGET"
 
   scaffold:
-    if: >-
-      github.repository == 'tsu-moe/tsu-stack' &&
-      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    if: github.repository == 'tsu-moe/tsu-stack'
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            variant: separate
-            source-branch: main
-          - os: ubuntu-latest
-            variant: merged
-            source-branch: variant/merged
-          - os: ubuntu-latest
-            variant: cloudflare
-            source-branch: variant/merged-cloudflare
-          - os: ubuntu-latest
-            variant: cloudflare-d1
-            source-branch: variant/merged-cloudflare-d1
-          - os: windows-latest
-            variant: separate
-            source-branch: main
-          - os: macos-latest
-            variant: separate
-            source-branch: main
+        # Run the production smoke on the target branch's template.
+        source-branch: ["${{ github.base_ref || github.ref_name }}"]
+        variant:
+          - ${{ fromJSON('{"main":"separate","variant/merged":"merged","variant/merged-cloudflare":"cloudflare","variant/merged-cloudflare-d1":"cloudflare-d1"}')[github.base_ref || github.ref_name] }}
+        os: ${{ fromJSON((github.base_ref || github.ref_name) == 'main' && '["ubuntu-latest","windows-latest","macos-latest"]' || '["ubuntu-latest"]') }}
+        # Also check the CLI built from main against the other published templates.
+        include: >-
+          ${{ (github.base_ref || github.ref_name) == 'main' && fromJSON('[
+            {"os":"ubuntu-latest","variant":"merged","source-branch":"variant/merged"},
+            {"os":"ubuntu-latest","variant":"cloudflare","source-branch":"variant/merged-cloudflare"},
+            {"os":"ubuntu-latest","variant":"cloudflare-d1","source-branch":"variant/merged-cloudflare-d1"}
+          ]') || fromJSON('[]') }}
     runs-on: ${{ matrix.os }}
+    env:
+      VITE_WEB_URL: http://127.0.0.1:3000/web
+      VITE_SERVER_URL: ${{ matrix.variant == 'separate' && 'http://127.0.0.1:5000/server' || 'http://127.0.0.1:3000/web/server' }}
+      DATABASE_URL: ${{ matrix.variant != 'cloudflare-d1' && 'postgresql://postgres:smoke-only@127.0.0.1:5432/tsu_stack_smoke' || '' }}
+      BETTER_AUTH_SECRET: scaffold-smoke-only-fixture-secret
+      WRANGLER_SEND_METRICS: "false"
+    services:
+      postgres:
+        image: ${{ matrix.os == 'ubuntu-latest' && matrix.variant != 'cloudflare-d1' && matrix.source-branch == (github.base_ref || github.ref_name) && 'postgres:18-alpine' || '' }}
+        env:
+          POSTGRES_DB: tsu_stack_smoke
+          POSTGRES_PASSWORD: smoke-only
+        ports: ["127.0.0.1:5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U postgres -d tsu_stack_smoke"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
@@ -88,13 +96,13 @@ jobs:
       - name: Generate ${{ matrix.variant }} project
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          VARIANT: ${{ matrix.variant }}
           SOURCE_BRANCH: ${{ matrix.source-branch }}
+          TARGET_BRANCH: ${{ github.base_ref || github.ref_name }}
+          VARIANT: ${{ matrix.variant }}
         shell: bash
         run: |
-          if [[ "$VARIANT" == separate ]]; then
-            ref="$GITHUB_SHA"
-          else
+          ref="$GITHUB_SHA"
+          if [[ "$SOURCE_BRANCH" != "$TARGET_BRANCH" ]]; then
             ref="$(git ls-remote --exit-code https://github.com/tsu-moe/tsu-stack.git "refs/heads/$SOURCE_BRANCH" | cut -f1)"
           fi
           [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
@@ -102,68 +110,54 @@ jobs:
           node tools/create-tsu-stack/.output/index.mjs "$RUNNER_TEMP/tsu-$VARIANT" --yes --variant "$VARIANT" --no-install --no-git --setup none --ref "$ref"
       - name: Verify generated project
         env:
-          VARIANT: ${{ matrix.variant }}
-          SOURCE_BRANCH: ${{ matrix.source-branch }}
-        shell: bash
-        run: |
-          node - "$RUNNER_TEMP/tsu-$VARIANT" <<'NODE'
-          const assert = require("node:assert/strict");
-          const { existsSync, readFileSync } = require("node:fs");
-          const root = process.argv[2];
-          const { VARIANT, SOURCE_BRANCH, TEMPLATE_SHA } = process.env;
-          const metadata = JSON.parse(readFileSync(root + "/.tsu-stack.jsonc", "utf8"));
-          assert.equal(metadata.variant, VARIANT);
-          assert.equal(metadata.source.branch, SOURCE_BRANCH);
-          assert.equal(metadata.source.commit, TEMPLATE_SHA);
-          const api = JSON.parse(readFileSync(root + "/apps/server/package.json", "utf8"));
-          assert.equal(Boolean(api.scripts.build && api.scripts.start), VARIANT === "separate");
-          assert.equal(existsSync(root + "/apps/web/src/routes/server"), VARIANT !== "separate");
-          const workerPath = root + "/apps/web/wrangler.jsonc";
-          assert.equal(existsSync(workerPath), VARIANT.startsWith("cloudflare"));
-          if (existsSync(workerPath)) {
-            const config = readFileSync(workerPath, "utf8");
-            assert.match(config, /"main": "src\/server\.ts"/);
-            assert.equal(config.includes('"d1_databases"'), VARIANT === "cloudflare-d1");
-          }
-          NODE
-          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.tsu-stack.jsonc"
-          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/skills/sync-template/SKILL.md"
-          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/tools/create-tsu-stack"
-          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.agents/cli.md"
-          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/.github/scripts/scaffold"
-          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/playwright.config.ts"
-          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web/__e2e__/home.spec.ts"
-          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/src/routers/private/__tests__/index.test.ts"
-          test ! -e "$RUNNER_TEMP/tsu-${{ matrix.variant }}/pnpm-lock.yaml"
-          test -f "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/vite.config.ts"
-          node -e "const scripts = require(process.argv[1]).scripts; if (!scripts.dev.startsWith('vp run i18n:ensure && ')) process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/package.json"
-          node -e "const scripts = require(process.argv[1]).scripts; if (scripts['test:unit'] !== 'vp test') process.exit(1)" "$RUNNER_TEMP/tsu-${{ matrix.variant }}/packages/api/package.json"
+          SCAFFOLD_PROJECT: ${{ runner.temp }}/tsu-${{ matrix.variant }}
+          SCAFFOLD_SOURCE_BRANCH: ${{ matrix.source-branch }}
+          SCAFFOLD_VARIANT: ${{ matrix.variant }}
+        run: pnpm --filter create-tsu-stack exec vp test src/__tests__/generated-project.test.ts
 
       - name: Install and validate generated project
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name)
         working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}
         run: |
           cp packages/env/.env.example packages/env/.env
-          secret="$(openssl rand -hex 32)"
-          sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$secret\"|" packages/env/.env
           "$GITHUB_WORKSPACE/node_modules/.bin/vp" install
-          test ! -e packages/i18n/src/paraglide/runtime.js
-          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run check
-          test -f packages/i18n/src/paraglide/runtime.js
-          "$GITHUB_WORKSPACE/node_modules/.bin/vp" run test:unit:run
-      - name: Install browser for template smoke
-        if: matrix.os == 'ubuntu-latest'
-        shell: bash
+          pnpm exec vp run check
+          pnpm exec vp run test:unit:run
+
+      - name: Configure local Worker bindings
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name) && startsWith(matrix.variant, 'cloudflare')
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}/apps/web
         run: |
-          cd "$RUNNER_TEMP/tsu-${{ matrix.variant }}/apps/web"
-          "$GITHUB_WORKSPACE/node_modules/.bin/vp" exec playwright install --with-deps chromium
-      - name: Smoke generated production app
-        if: matrix.os == 'ubuntu-latest'
+          umask 077
+          printf 'VITE_WEB_URL=%s\nVITE_SERVER_URL=%s\nBETTER_AUTH_SECRET=%s\n' \
+            "$VITE_WEB_URL" "$VITE_SERVER_URL" "$BETTER_AUTH_SECRET" > .dev.vars
+          if [[ -n "$DATABASE_URL" ]]; then
+            printf 'DATABASE_URL=%s\n' "$DATABASE_URL" >> .dev.vars
+          fi
+
+      - name: Migrate PostgreSQL fixture
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name) && (matrix.variant == 'merged' || matrix.variant == 'cloudflare')
         working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}
+        run: pnpm exec vp run db:migrate
+
+      - name: Migrate local D1 fixture
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name) && matrix.variant == 'cloudflare-d1'
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}
+        run: pnpm exec vp run db:migrate:local
+
+      - name: Build generated production app
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name)
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}
+        run: pnpm exec vp run -r build
+
+      - name: Install Chromium
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name)
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}/apps/web
+        run: pnpm exec vp exec playwright install --with-deps chromium
+
+      - name: Smoke generated production app
+        if: matrix.os == 'ubuntu-latest' && matrix.source-branch == (github.base_ref || github.ref_name)
+        working-directory: ${{ runner.temp }}/tsu-${{ matrix.variant }}/apps/web
         env:
-          VARIANT: ${{ matrix.variant }}
-        shell: bash
-        run: |
-          bash "$GITHUB_WORKSPACE/.github/scripts/scaffold/smoke-generated-production.sh" \
-            "$VARIANT" "$GITHUB_WORKSPACE/node_modules/.bin/vp" \
-            "$GITHUB_WORKSPACE/.github/scripts/scaffold/verify-generated-production.mjs"
+          PLAYWRIGHT_PRODUCTION_VARIANT: ${{ matrix.variant }}
+        run: pnpm exec vp exec playwright test

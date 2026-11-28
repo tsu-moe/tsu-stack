@@ -24,7 +24,12 @@ export function generateTanStackStartSeo({
   title
 }: GenerateTanStackStartSeoParams): TanStackStartSeoHead {
   const resolvedDescription = description ?? site.defaultDescription;
-  const resolvedImages = images?.length ? images : site.defaultImages;
+  const resolvedImages = (images?.length ? images : site.defaultImages)?.map((image) => {
+    return {
+      ...image,
+      url: resolveRelativePathToAbsoluteUrl(image.url, { basePath: site.basePath, baseUrl: site.baseUrl })
+    };
+  });
   const resolvedTitle = title ?? site.defaultTitle;
   const formattedTitle = formatTanStackStartTitle({
     site,
@@ -106,10 +111,7 @@ export function generateTanStackStartSeo({
       content: openGraphType,
       property: "og:type"
     },
-    ...buildOpenGraphImageMeta({
-      baseUrl: site.baseUrl,
-      images: resolvedImages
-    }),
+    ...buildOpenGraphImageMeta(resolvedImages),
     {
       content: site.defaultTwitterCard ?? "summary_large_image",
       name: "twitter:card"
@@ -126,7 +128,7 @@ export function generateTanStackStartSeo({
       : undefined,
     primaryImage
       ? {
-          content: resolveRelativePathToAbsoluteUrl(primaryImage.url, { baseUrl: site.baseUrl }),
+          content: primaryImage.url,
           name: "twitter:image"
         }
       : undefined,

@@ -138,6 +138,49 @@ describe("operational rate limits", () => {
   });
 });
 
+it("skips session resolution for liveness and passes the session to protected procedures", async () => {
+  const { app } = await loadApp();
+  const { auth } = await import("@tsu-stack/auth/index");
+  const now = new Date();
+  const getSession = vi.spyOn(auth.api, "getSession").mockResolvedValue({
+    user: {
+      id: "user-1",
+      name: "Test User",
+      email: "test@example.com",
+      emailVerified: true,
+      createdAt: now,
+      updatedAt: now
+    },
+    session: {
+      id: "session-1",
+      userId: "user-1",
+      token: "test-session-token",
+      createdAt: now,
+      updatedAt: now,
+      expiresAt: now
+    }
+  });
+
+  try {
+    const headers = { cookie: "test-session-cookie=present" };
+    const liveResponse = await app.request("/server/health/live", { headers });
+    expect(liveResponse.status).toBe(200);
+    expect(await liveResponse.json()).toMatchObject({ status: "healthy" });
+    const rpcLiveResponse = await app.request("/server/rpc/health/live/", { headers, method: "POST" });
+    expect(rpcLiveResponse.status).toBe(200);
+    expect(await rpcLiveResponse.json()).toMatchObject({ json: { status: "healthy" } });
+    expect(getSession).not.toHaveBeenCalled();
+
+    const response = await app.request("/server/private/data", { headers });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ user: { id: "user-1", name: "Test User" } });
+    expect(getSession).toHaveBeenCalledTimes(1);
+    expect(new Headers(getSession.mock.calls[0]?.[0]?.headers).get("cookie")).toBe(headers.cookie);
+  } finally {
+    getSession.mockRestore();
+  }
+});
+
 it("allows the evlog browser transport to preflight log ingestion", async () => {
   const { app } = await loadApp();
   const response = await app.request("/server/_logs/ingest", {

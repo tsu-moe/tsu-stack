@@ -12,6 +12,7 @@ dist
 dist-ssr
 **/project.inlang/cache
 **/project.inlang/project_id
+/packages/i18n/.cache/paraglide/
 .env
 .env.*
 !.env*.example

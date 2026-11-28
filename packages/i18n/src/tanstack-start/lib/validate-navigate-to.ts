@@ -4,7 +4,8 @@ import { type LocalizedRouteInfo } from "#@/tanstack-start/lib/get-route-tree-pa
 import { getRouteTreePathsLocalized } from "#@/tanstack-start/lib/get-route-tree-paths-localized";
 import { type NavigateTo } from "#@/tanstack-start/types/index";
 
-type AbsoluteNavigateTo = Extract<NavigateTo, `/${string}`>;
+type AbsolutePath<Path extends string> = Path & `/${string}`;
+type AbsoluteNavigateTo = AbsolutePath<NavigateTo>;
 
 /**
  * Filter function that determines if a route should be included (like Array.filter)
