@@ -5,6 +5,7 @@ Keep starter coverage focused on trust boundaries, input validation, and critica
 - Unit tests cover deterministic logic, contracts, and isolated UI. Put `<source>.test.ts` directly in the nearest `src/**/__tests__/`.
 - Use [direct oRPC calls](orpc-testing.md) for procedure behavior. Use an integration test for real module interactions that a direct call cannot prove. Keep it in the owning package’s unit lane unless it needs a browser.
 - Keep browser specs in `__e2e__/**/*.spec.ts`. Use [the home spec](../apps/web/__e2e__/home.spec.ts) for role-based locators, URLs relative to `baseURL`, and same-origin traffic against an isolated preview.
+- Keep the home spec focused on stable public workflows such as navigation, localized routes, and the entry into authentication. Leave template copy, section order, styling, animation timings, and asset-loading details out of starter smoke coverage.
 
 ## Commands and setup
 

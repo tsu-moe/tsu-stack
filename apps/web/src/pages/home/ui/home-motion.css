@@ -1,0 +1,19 @@
+@keyframes setup-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-home-marquee] > [data-slot="marquee-track"] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  [data-home-marquee] [data-slot="marquee-group"]:not([data-copy]) {
+    width: 100%;
+  }
+}

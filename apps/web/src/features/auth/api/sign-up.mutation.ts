@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 import { authClient } from "@tsu-stack/auth/react/auth-client";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { m } from "@tsu-stack/i18n/messages";
+import { toast } from "@tsu-stack/ui/components/toast";
 
 export function useSignUpMutation(onSuccess: () => Promise<void>) {
   const queryClient = useQueryClient();
@@ -13,18 +13,18 @@ export function useSignUpMutation(onSuccess: () => Promise<void>) {
       const result = await authClient.signUp.email(values);
 
       if (!result.data) {
-        throw new Error(result.error?.message ?? m.auth__sign_up_failed());
+        throw new Error("Email sign-up failed");
       }
 
       return result;
     },
-    onError: (error: Error) => {
-      toast.error(error.message || m.auth__sign_up_failed());
+    onError: () => {
+      toast.error({ title: m.auth__sign_up_failed() });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries(getAuthUserQueryOptions());
       await onSuccess();
-      toast.success(m.auth__sign_up_successful());
+      toast.success({ title: m.auth__sign_up_successful() });
     }
   });
 }

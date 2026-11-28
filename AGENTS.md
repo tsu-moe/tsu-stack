@@ -2,15 +2,11 @@
 
 TanStack Start and Hono run in one Cloudflare Worker with Cloudflare D1, oRPC, Drizzle, Better Auth, and Paraglide.js.
 
-Use Vite+ (`vp` for packages and scripts, `vpx` for one-off CLIs). Run `vp run check` to validate and `vp run build` to build. Before substantial work, run `vpx @tanstack/intent@latest list` and load directly relevant installed skills.
+Use Vite+ with the pinned pnpm workspace (`vp` for scripts and packages, `vpx` for one-off CLIs). Run `vp run check` to validate and `vp run build` to build.
 
-Read the most specific guide first. Follow links when the task crosses domains.
+Ask about agent guidance only when the requested work conflicts with an existing convention in `AGENTS.md` or `.agents/`. Explain the conflict and wait for confirmation unless the user already explicitly resolved it. Proceed with routine changes and new conventions without prompting. Edit agent guidance when the user explicitly requests or approves the change.
 
-Use disposable local resources for validation. Confirm the effective target and get explicit user approval before changing an existing database, mutating remote infrastructure, deploying, or publishing. See [Human decisions](.agents/choice-flows.md).
-
-- Work and verification — [Workflow](.agents/workflow.md), [Vite+](.agents/vite-plus.md), [Testing](.agents/testing.md), [Human decisions](.agents/choice-flows.md).
-- Web — [UI](.agents/ui.md), [Routes and Query](.agents/data-flow.md), [API fetching](.agents/api-fetching-patterns.md), [Zustand](.agents/zustand.md), [i18n](.agents/i18n.md), [SEO](.agents/seo.md).
-- APIs and contracts — [oRPC](.agents/orpc.md), [Procedure tests](.agents/orpc-testing.md), [Auth](.agents/auth.md), [Core](.agents/core.md), [TypeScript](.agents/typescript.md).
-- Platform — [Database](.agents/database.md), [Environment and bindings](.agents/environment-variables.md), [Media uploads](.agents/media-storage.md), [Logging for business-critical features](.agents/logging.md).
-- [End-to-end features](.agents/end-to-end-features.md).
+- [Project organization](.agents/organization.md) for file ownership, layers, and imports.
+- [Workflow](.agents/workflow.md) for skills, verification, and operational approvals.
+- [Implementation guides](.agents/end-to-end-features.md) for web, API, and platform work.
 - [Scaffolding CLI](.agents/cli.md).

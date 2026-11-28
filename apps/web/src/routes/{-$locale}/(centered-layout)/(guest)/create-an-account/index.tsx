@@ -26,7 +26,6 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)/crea
 });
 
 function RouteComponent() {
-  const { redirect } = Route.useSearch();
-
-  return <CreateAnAccountForm redirectTo={redirect} />;
+  const { redirectTo } = Route.useRouteContext();
+  return <CreateAnAccountForm redirectTo={redirectTo} />;
 }

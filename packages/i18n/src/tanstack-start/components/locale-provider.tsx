@@ -1,7 +1,8 @@
 import { useLocation, useRouter } from "@tanstack/react-router";
 import * as React from "react";
 
-import { baseLocale, locales, localizeUrl, overwriteGetLocale } from "#@/paraglide/runtime";
+import { baseLocale, locales } from "#@/paraglide/runtime";
+import { stripLocalePrefix } from "#@/tanstack-start/lib/strip-locale-prefix";
 
 type Locale = (typeof locales)[number];
 
@@ -12,21 +13,9 @@ type LocaleContextValue = {
 
 const LocaleContext = React.createContext<LocaleContextValue | null>(null);
 
-let clientLocale: Locale | undefined;
-
 function getLocaleFromPathname(pathname: string): Locale {
   const segment = pathname.split("/").filter(Boolean)[0];
-
-  if (locales.includes(segment as Locale)) {
-    return segment as Locale;
-  }
-
-  return baseLocale;
-}
-
-function setClientLocale(locale: Locale) {
-  clientLocale = locale;
-  overwriteGetLocale(() => clientLocale ?? baseLocale);
+  return locales.find((locale) => locale === segment) ?? baseLocale;
 }
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
@@ -35,25 +24,20 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const locale = React.useMemo(() => getLocaleFromPathname(pathname), [pathname]);
 
   React.useEffect(() => {
-    setClientLocale(locale);
     document.documentElement.lang = locale;
   }, [locale]);
 
   const switchLocale = React.useCallback(
     (nextLocale: Locale) => {
-      if (typeof window === "undefined") {
+      if (typeof window === "undefined" || nextLocale === locale) {
         return;
       }
 
-      const nextUrl = localizeUrl(window.location.href, {
-        locale: nextLocale
-      });
-
-      setClientLocale(nextLocale);
-      document.documentElement.lang = nextLocale;
-      router.history.push(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+      const path = stripLocalePrefix(pathname);
+      const to = nextLocale === baseLocale ? path : `/${nextLocale}${path}`;
+      void router.navigate({ to, search: true, hash: true });
     },
-    [router]
+    [locale, pathname, router]
   );
 
   return <LocaleContext.Provider value={{ locale, switchLocale }}>{children}</LocaleContext.Provider>;

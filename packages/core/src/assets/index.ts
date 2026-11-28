@@ -1,1 +1,1 @@
-export * from "#@/assets/utils";
+export { resolvePublicAssetUrl } from "#@/assets/utils";

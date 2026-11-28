@@ -6,8 +6,6 @@ import { generateAppSeo } from "@/shared/lib/seo";
 
 import { HomePage } from "@/pages/home";
 
-import { appConfig } from "@/config/app.config";
-
 export const Route = createFileRoute("/{-$locale}/(root-layout)/")({
   head: ({ params }) =>
     generateAppSeo({
@@ -15,8 +13,7 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/")({
         canonicalPath: "/",
         locale: params.locale
       },
-      description: m.home_page__hero_description(),
-      title: appConfig.site.longName
+      description: m.home_page__hero_description()
     }),
   component: HomePage
 });

@@ -210,6 +210,8 @@ Last verified on November 10, 2026.
 
 ## Contributing
 
+See the [project organization guide](../.agents/organization.md) for where to put new web code and when to extract shared pieces.
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If there are any bugs, please open an issue.
 
 To get started, fork the repo, make your changes, add, commit, and push your changes to your fork. Then, open a pull request. If you're new to GitHub, [this tutorial](https://www.freecodecamp.org/news/how-to-make-your-first-pull-request-on-github-3) might help.

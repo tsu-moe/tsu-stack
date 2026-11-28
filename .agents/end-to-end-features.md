@@ -1,10 +1,9 @@
-# End-to-end features
+# Implementation guides
 
-Start at the lowest layer the feature actually changes, then work toward the UI.
+Read the guides for the boundaries your change touches.
 
-1. Update [SQLite schema and local D1 migrations](database.md) for new persisted data.
-2. Define shared schemas, enums, defaults, and helpers in [Core](core.md) when consumers cross package boundaries.
-3. Extend the [oRPC contract](orpc.md) or reuse an existing owner such as [Better Auth](auth.md). Include [logging](logging.md#business-critical-features) in business-critical work.
-4. Define [slice-local queries and mutations](api-fetching-patterns.md), including cache reconciliation and safe user-facing error mapping.
-5. Wire [routes and guards](data-flow.md), [page UI](ui.md), [copy](i18n.md), and [SEO](seo.md) as applicable.
-6. Run the scoped [fixes](workflow.md) and [tests](testing.md), including a regression at the boundary with the highest risk.
+- Web behavior and data — [Routes and Query](data-flow.md), [API fetching](api-fetching-patterns.md), [UI](ui.md), [Zustand](zustand.md), [i18n](i18n.md), and [SEO](seo.md).
+- Contracts and security — [TypeScript](typescript.md), [Core](core.md), [oRPC](orpc.md), [Procedure tests](orpc-testing.md), and [Auth](auth.md).
+- Platform — [D1 database](database.md), [Environment and bindings](environment-variables.md), [Media uploads](media-storage.md), and [Logging](logging.md).
+
+For work across runtime boundaries, identify the affected data, contracts, and trust boundaries. Update persistence and migrations when needed, reuse the API owner, and wire reads and writes through the route or UI. Instrument business-critical outcomes in the same change. Follow the [verification workflow](workflow.md) and test the highest-risk boundary.

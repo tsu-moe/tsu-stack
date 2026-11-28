@@ -3,6 +3,8 @@ import { type ImageProps as OhImageProps } from "@lonik/oh-image/react";
 import { Image as OhImage } from "@lonik/oh-image/react";
 import { isDevelopment } from "std-env";
 
+import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
+
 // #region Helper Types
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
@@ -47,8 +49,11 @@ export function Image(rawProps: ImageProps) {
     ...props
   } = rawProps;
 
-  const isImageRelative = typeof rawProps.src === "string" && rawProps.src.startsWith("/");
-  const src = isImageRelative && siteBaseUrl ? `${siteBaseUrl}${rawProps.src}` : rawProps.src;
+  const { src: imageSource } = rawProps;
+  const src =
+    siteBaseUrl && typeof imageSource === "string" && imageSource.startsWith("/") && !imageSource.startsWith("//")
+      ? resolvePublicAssetUrl(siteBaseUrl, imageSource)
+      : imageSource;
 
   if (isDevelopment || !imgProxyBaseUrl) {
     return <ImageWithPlaceholder {...props} src={src} placeholder={placeholder} />;

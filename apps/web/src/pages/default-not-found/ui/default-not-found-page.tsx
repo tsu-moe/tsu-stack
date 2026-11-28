@@ -5,7 +5,7 @@ import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
 import { Button } from "@tsu-stack/ui/components/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@tsu-stack/ui/components/empty";
 
-import { CenteredLayout } from "@/widgets/layouts";
+import { CenteredLayout } from "@/shared/ui/centered-layout";
 
 export function DefaultNotFoundPage() {
   return (
@@ -22,11 +22,9 @@ export function DefaultNotFoundPage() {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button light="skeuomorphic" size="lg" asChild>
-              <Link to="/">
-                <Home data-icon="inline-start" />
-                {m.error_404__go_home()}
-              </Link>
+            <Button size="lg" nativeLink render={<Link to="/" />}>
+              <Home data-icon="inline-start" />
+              {m.error_404__go_home()}
             </Button>
           </div>
         </EmptyContent>

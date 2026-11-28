@@ -34,7 +34,7 @@ export const Route = createFileRoute("/{-$locale}/(root-layout)/(auth)")({
     if (!user) {
       const currentHref = stripLocalePrefix(location.href);
       const redirectTo = validateNavigateTo({
-        fallbackTo: "/",
+        fallbackTo: "/dashboard",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
         to: currentHref
@@ -66,7 +66,7 @@ function RequiresAuthLayout() {
       }
 
       const redirectTo = validateNavigateTo({
-        fallbackTo: "/",
+        fallbackTo: "/dashboard",
         routeTree,
         shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
         to: stripLocalePrefix(location.href)
@@ -81,5 +81,5 @@ function RequiresAuthLayout() {
     }
   }, [user, navigate, location.href, location.pathname]);
 
-  return <Outlet />;
+  return user ? <Outlet /> : null;
 }
