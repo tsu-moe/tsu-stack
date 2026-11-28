@@ -62,7 +62,7 @@ export const setupSteps: readonly {
     title: m.home_page__setup_cli,
     description: m.home_page__setup_cli_description,
     lines: [
-      { text: "vpx create-tsu-stack@next", from: 0.04, typeUntil: 0.4, prompt: "$" },
+      { text: "vpx create-tsu-stack@latest", from: 0.04, typeUntil: 0.4, prompt: "$" },
       { text: m.home_page__setup_cli_directory_prompt, from: 0.5 },
       { text: "my-app", from: 0.62, typeUntil: 0.87, prompt: ">" }
     ]
