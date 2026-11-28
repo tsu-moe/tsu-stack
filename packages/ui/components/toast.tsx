@@ -6,7 +6,6 @@ import {
   type ToastObject as BaseToastObject
 } from "@base-ui/react/toast";
 import { AlertCircle, CheckCircle2, Info, LoaderCircle, TriangleAlert, X } from "lucide-react";
-import { useAnimate, useReducedMotion } from "motion/react";
 import * as React from "react";
 
 import { Button } from "@tsu-stack/ui/components/button";
@@ -383,8 +382,7 @@ function useToastMicrointeraction(toast: ToastData) {
   const type = (toast.type ?? "default") as ToastType;
   const updateKey = toast.updateKey ?? 0;
   const previousToastRef = React.useRef({ type, updateKey });
-  const [microinteractionRef, animate] = useAnimate<HTMLDivElement>();
-  const prefersReducedMotion = useReducedMotion();
+  const microinteractionRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const previousToast = previousToastRef.current;
@@ -393,22 +391,33 @@ function useToastMicrointeraction(toast: ToastData) {
 
     previousToastRef.current = { type, updateKey };
 
-    if (prefersReducedMotion || !microinteractionRef.current || (!becameError && !wasUpserted)) {
+    const element = microinteractionRef.current;
+    if (
+      !element?.animate ||
+      (!becameError && !wasUpserted) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return;
     }
 
-    void animate(
-      microinteractionRef.current,
+    const animation = element.animate(
       becameError
-        ? { x: [0, -4, 4, -2, 2, 0], y: 0, scale: 1 }
-        : { x: 0, y: [0, -3.5, 1, 0], scale: [1, 1.045, 0.985, 1] },
+        ? [0, -4, 4, -2, 2, 0].map((x) => {
+            return { transform: `translateX(${x}px)` };
+          })
+        : [
+            { transform: "translateY(0) scale(1)" },
+            { transform: "translateY(-3.5px) scale(1.045)", offset: 0.42 },
+            { transform: "translateY(1px) scale(0.985)", offset: 0.72 },
+            { transform: "translateY(0) scale(1)" }
+          ],
       {
-        duration: becameError ? 0.28 : 0.32,
-        times: becameError ? undefined : [0, 0.42, 0.72, 1],
-        ease: [0.22, 1, 0.36, 1]
+        duration: becameError ? 280 : 320,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)"
       }
     );
-  }, [animate, microinteractionRef, prefersReducedMotion, type, updateKey]);
+    return () => animation.cancel();
+  }, [type, updateKey]);
 
   return microinteractionRef;
 }
