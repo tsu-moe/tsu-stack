@@ -7,10 +7,10 @@ let parkedBackground: ReturnType<typeof mountOglBackground>;
 
 export function OglBackground({
   reuseOnNavigation = false,
-  waitForParentAnimation = false
+  deferUntilIdle = false
 }: {
   reuseOnNavigation?: boolean;
-  waitForParentAnimation?: boolean;
+  deferUntilIdle?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +25,9 @@ export function OglBackground({
     let importStarted = false;
     let attempted = false;
     let mountFrame = 0;
-    let waitingForAnimation = false;
+    let canStart = !deferUntilIdle;
+    let idleRequest = 0;
+    let fallbackTimer = 0;
     let mount: typeof mountOglBackground | undefined;
     let background: ReturnType<typeof mountOglBackground>;
 
@@ -67,7 +69,7 @@ export function OglBackground({
 
       const playing = visible && !document.hidden && !reducedMotion.matches;
       if (playing && !background) reuseBackground();
-      if (!reducedMotion.matches && nearby && !background && !importStarted) {
+      if (canStart && !reducedMotion.matches && nearby && !background && !importStarted) {
         importStarted = true;
         void import("@/shared/lib/ogl-background-renderer")
           .then((module) => {
@@ -86,24 +88,7 @@ export function OglBackground({
         return;
       }
 
-      if (!mount || attempted || mountFrame || waitingForAnimation) return;
-      if (waitForParentAnimation) {
-        const entrance = container.parentElement
-          ?.getAnimations?.()
-          .find(
-            (animation) =>
-              animation.playState === "running" && Number.isFinite(animation.effect?.getComputedTiming().endTime)
-          );
-        if (entrance) {
-          waitingForAnimation = true;
-          const afterEntrance = () => {
-            waitingForAnimation = false;
-            syncBackground();
-          };
-          void entrance.finished.then(afterEntrance, afterEntrance);
-          return;
-        }
-      }
+      if (!mount || attempted || mountFrame) return;
       const mountRenderer = mount;
       // Let the browser paint the static gradient before compiling shaders.
       mountFrame = requestAnimationFrame(() => {
@@ -132,12 +117,32 @@ export function OglBackground({
     });
     preloadObserver.observe(container);
     playbackObserver.observe(container);
+
+    const scheduleBackground = () => {
+      const start = () => {
+        canStart = true;
+        syncBackground();
+      };
+      if (typeof window.requestIdleCallback === "function") {
+        idleRequest = window.requestIdleCallback(start, { timeout: 1500 });
+      } else {
+        fallbackTimer = window.setTimeout(start, 150);
+      }
+    };
+    if (deferUntilIdle) {
+      if (document.readyState === "complete") scheduleBackground();
+      else window.addEventListener("load", scheduleBackground, { once: true });
+    }
+
     document.addEventListener("visibilitychange", syncBackground);
     reducedMotion.addEventListener("change", syncBackground);
 
     return () => {
       disposed = true;
       cancelAnimationFrame(mountFrame);
+      if (idleRequest) window.cancelIdleCallback(idleRequest);
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      window.removeEventListener("load", scheduleBackground);
       preloadObserver.disconnect();
       playbackObserver.disconnect();
       document.removeEventListener("visibilitychange", syncBackground);
@@ -149,7 +154,7 @@ export function OglBackground({
         background?.dispose();
       }
     };
-  }, [reuseOnNavigation, waitForParentAnimation]);
+  }, [reuseOnNavigation, deferUntilIdle]);
 
   return (
     <div ref={containerRef} aria-hidden="true" className="ogl-background pointer-events-none absolute inset-0 -z-10" />

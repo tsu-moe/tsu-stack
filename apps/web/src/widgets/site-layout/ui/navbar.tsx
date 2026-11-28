@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocation } from "@tanstack/react-router";
+import { Suspense, lazy } from "react";
 
 import { m } from "@tsu-stack/i18n/messages";
 import { Link } from "@tsu-stack/i18n/tanstack-start/components/link";
@@ -12,14 +13,17 @@ import { LocaleSwitcher } from "@/shared/ui/locale-switcher";
 import { Logo } from "@/shared/ui/logo";
 import { ThemeSwitcher } from "@/shared/ui/theme-switcher";
 
-import { AccountMenu } from "@/features/auth";
-
 import { useNavbarUserQuery } from "@/widgets/site-layout/api/navbar-user.query";
 
 import { appConfig } from "@/config/app.config";
 
 import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
+
+const AccountMenu = lazy(async () => {
+  const auth = await import("@/features/auth");
+  return { default: auth.AccountMenu };
+});
 
 export function Navbar() {
   const scrolled = useScroll(0);
@@ -46,7 +50,9 @@ export function Navbar() {
           <LocaleSwitcher />
           <ThemeSwitcher size="icon-sm" radius="full" />
           {user ? (
-            <AccountMenu user={user} />
+            <Suspense fallback={<span aria-hidden="true" className="size-8 shrink-0" />}>
+              <AccountMenu user={user} />
+            </Suspense>
           ) : (
             <>
               <Button

@@ -26,6 +26,21 @@ test("redirects guests from protected pages", async ({ page }) => {
   expect(new URL(page.url()).searchParams.get("redirect")).toBe("/dashboard");
 });
 
+test("keeps auth return destinations on allowed app routes", async ({ page, baseURL }) => {
+  for (const [requested, expected] of [
+    ["/privacy-policy", "/privacy-policy"],
+    ["https://example.test/terms-of-service", "/dashboard"],
+    ["42", "/dashboard"]
+  ] as const) {
+    const signIn = new URL("sign-in", baseURL);
+    signIn.searchParams.set("redirect", requested);
+    await page.goto(signIn.href);
+
+    const createAccount = await page.getByRole("link", { name: "Create one", exact: true }).getAttribute("href");
+    expect(new URL(createAccount!, signIn).searchParams.get("redirect")).toBe(expected);
+  }
+});
+
 test("keeps the public navbar usable while the mobile menu is open", async ({ page }) => {
   await page.setViewportSize({ width: 393, height: 850 });
   await page.goto("./");

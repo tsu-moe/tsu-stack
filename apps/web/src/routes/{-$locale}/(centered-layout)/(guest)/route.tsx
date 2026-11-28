@@ -1,7 +1,5 @@
 import { noop } from "@tanstack/react-query";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
-import { z } from "zod";
+import { Outlet, createFileRoute, type SearchSchemaInput } from "@tanstack/react-router";
 
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { redirect } from "@tsu-stack/i18n/tanstack-start/lib/redirect";
@@ -11,24 +9,25 @@ import { AuthLayout } from "@/widgets/auth-layout";
 
 import { routeTree } from "@/routeTree.gen";
 
-const guestSearchSchema = z.object({
-  redirect: z
-    .string()
-    .optional()
-    .catch(undefined)
-    .transform((val) =>
-      validateNavigateTo({
+export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
+  validateSearch: ({ redirect: requestedRedirect }: { redirect?: string } & SearchSchemaInput) => {
+    const safeRedirect =
+      typeof requestedRedirect === "string" &&
+      requestedRedirect.startsWith("/") &&
+      !requestedRedirect.startsWith("//") &&
+      !requestedRedirect.includes("\\")
+        ? requestedRedirect
+        : undefined;
+    return {
+      redirect: validateNavigateTo({
         fallbackTo: "/dashboard",
         routeTree,
         shouldIncludeRoute: (route) =>
           !route.id.includes("(guest)") && !route.path.startsWith("/_api") && !route.path.includes("."),
-        to: val?.startsWith("/") && !val.startsWith("//") && !val.includes("\\") ? val : undefined
+        to: safeRedirect
       })
-    )
-});
-
-export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
-  validateSearch: zodValidator(guestSearchSchema),
+    };
+  },
   component: GuestAuthLayout,
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.query({
@@ -37,7 +36,6 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
     });
     void context.queryClient.query(getAuthUserQueryOptions()).catch(noop);
 
-    // `redirect` is always NavigateTo (never undefined) thanks to schema transform & i18n path validation util
     const redirectTo = search.redirect;
 
     if (user) {
