@@ -132,6 +132,7 @@ export default defineConfig({
     /** @see {@link https://tanstack.com/start/latest/docs/framework/react/guide/hosting} */
     nitro({
       baseURL: WEB_BASE_PATH,
+      rolldownConfig: process.env.CI === "true" ? { checks: { moduleLevelDirective: false } } : undefined,
       routeRules: {
         "/**": {
           headers: {

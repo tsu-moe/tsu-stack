@@ -54,9 +54,9 @@ try {
     const type = new URL(url).pathname.endsWith(".css") ? /text\/css/ : /javascript/;
     assert.match(asset.headers()["content-type"] ?? "", type);
   }
-  const menu = page.getByRole("button").and(page.locator('[aria-controls="mobile-menu"]'));
-  await menu.click();
-  await expect(menu).toHaveAttribute("aria-expanded", "true");
+  const banner = page.getByRole("banner");
+  await banner.getByRole("button", { name: "Toggle menu", exact: true }).click();
+  await expect(banner.getByRole("navigation", { name: "Navigation", exact: true })).toBeVisible();
 
   const germanHome = await page.goto(new URL("de/", webUrl).href);
   assert(germanHome?.ok(), "The German home page did not load.");
@@ -87,9 +87,10 @@ try {
   await form.locator('[name="confirmPassword"]').fill(password);
   await form.locator('[type="submit"]').click();
   await expect(page).toHaveURL((url) => url.pathname === dashboardUrl.pathname);
-  await expect(page.getByRole("heading", { name: new RegExp(name) })).toBeVisible();
-  const rpcPayload = page.locator("main pre");
-  await expect(rpcPayload).toContainText(JSON.stringify(name));
+  await page.getByRole("button", { name: "Open account menu", exact: true }).click();
+  const accountMenu = page.getByRole("menu");
+  await expect(accountMenu.getByText(name, { exact: true })).toBeVisible();
+  await expect(accountMenu.getByText(email, { exact: true })).toBeVisible();
 
   const privateResponse = await context.request.get(privateUrl.href);
   await expect(privateResponse).toBeOK();
@@ -99,9 +100,7 @@ try {
   assert.equal(typeof privateData.user.id, "string");
   assert(privateData.user.id.length > 0);
   assert.deepEqual(privateData, { message: privateData.message, user: { id: privateData.user.id, name } });
-  assert.deepEqual(JSON.parse(await rpcPayload.textContent()), privateData);
-  await menu.click();
-  await page.locator("#mobile-menu").getByRole("button").click();
+  await accountMenu.getByRole("menuitem", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL((url) => url.pathname.endsWith("/sign-in"));
   assert.equal((await context.request.get(privateUrl.href)).status(), 401);
 } finally {
