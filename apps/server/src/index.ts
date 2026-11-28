@@ -49,7 +49,10 @@ const serverHostname = hostname();
 const OPERATIONAL_RATE_LIMIT_WINDOW_MS = 60_000;
 
 type AppEnv = HonoLogVariables & { Variables: ClientIpVariables };
-export const app: Hono<AppEnv> = new Hono<AppEnv>().basePath(new URL(ENV_SERVER.VITE_SERVER_URL).pathname);
+const serverBasePath = new URL(ENV_SERVER.VITE_SERVER_URL).pathname as `/${string}`;
+const rpcBasePath = join(serverBasePath, "rpc") as `/${string}`;
+const livenessPaths = new Set([join(serverBasePath, "health/live"), join(rpcBasePath, "health/live")]);
+export const app: Hono<AppEnv> = new Hono<AppEnv>().basePath(serverBasePath);
 
 app.use(
   "/*",
@@ -259,13 +262,14 @@ export const rpcHandler = new RPCHandler(appRouter, {
 app.use("/*", async (c, next) => {
   const context = await createContext({
     context: c,
-    logger: c.get("log") ?? createRequestLogger({ method: c.req.method, path: c.req.path })
+    logger: c.get("log") ?? createRequestLogger({ method: c.req.method, path: c.req.path }),
+    resolveSession: !livenessPaths.has(c.req.path.replace(/\/$/, ""))
   });
 
   // oRPC at /rpc/*
   const rpcResult = await rpcHandler.handle(c.req.raw, {
     context,
-    prefix: join(new URL(ENV_SERVER.VITE_SERVER_URL).pathname, "rpc") as `/${string}`
+    prefix: rpcBasePath
   });
 
   if (rpcResult.matched) {
@@ -275,7 +279,7 @@ app.use("/*", async (c, next) => {
   // OpenAPI REST API at /*
   const openApiResult = await openApiHandler.handle(c.req.raw, {
     context,
-    prefix: new URL(ENV_SERVER.VITE_SERVER_URL).pathname as `/${string}`
+    prefix: serverBasePath
   });
 
   if (openApiResult.matched) {

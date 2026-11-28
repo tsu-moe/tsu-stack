@@ -1,14 +1,60 @@
+@layer theme-switch;
 @import "@tsu-stack/ui/styles/globals.css";
-@source "./";
-
 @import "./fonts.css";
-@import "./theme.css";
 
-:root {
-  /**
-    * Adjust this according to your navbar height.
-    * It's used to calculate the correct height for the main content area
-    * and offsetting the content to center it vertically when using <CenteredLayout>
-    */
-  --navbar-height: 68px;
+@layer theme-switch {
+  :is(html[data-theme-switching], html[data-theme-switching] *),
+  :is(html[data-theme-switching], html[data-theme-switching] *)::before,
+  :is(html[data-theme-switching], html[data-theme-switching] *)::after,
+  html[data-theme-switching] *::backdrop {
+    transition: none !important;
+    /* Keep the playhead of existing animations so they resume without restarting. */
+    animation-play-state: paused !important;
+  }
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+}
+
+@utility home-container {
+  @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+}
+
+@layer components {
+  @media (width < 64rem) {
+    html:has([data-slot="mobile-site-nav"]:not([hidden])) {
+      overflow: hidden;
+    }
+
+    header:has([data-slot="mobile-site-nav"]:not([hidden])) ~ :is(main, footer) {
+      visibility: hidden;
+    }
+  }
+
+  .ogl-background {
+    background-color: #a34e35;
+    background-image:
+      radial-gradient(ellipse at 14% 2%, #f2b596, transparent 67%),
+      linear-gradient(135deg, #d88a68, #a34e35 51%, #170d09);
+  }
+
+  .ogl-background:has(> canvas) {
+    /* Composite the gradient and canvas together before the panel clips their rounded edges. */
+    mask-image: linear-gradient(black, black);
+  }
+
+  .ogl-background > canvas {
+    opacity: 0;
+  }
+
+  .ogl-background > canvas[data-ready] {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ogl-background > canvas:not([data-reused]) {
+    transition: opacity 240ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
 }

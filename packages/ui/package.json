@@ -11,14 +11,16 @@
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
     "@lonik/oh-image": "catalog:",
+    "@tsu-stack/core": "workspace:*",
     "class-variance-authority": "catalog:",
     "cn": "catalog:",
     "lucide-react": "catalog:",
-    "next-themes": "catalog:",
+    "motion": "catalog:",
     "radix-ui": "catalog:",
-    "sonner": "catalog:",
     "std-env": "catalog:",
+    "tailwind-variants": "catalog:",
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {

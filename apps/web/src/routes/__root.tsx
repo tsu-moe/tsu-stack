@@ -1,5 +1,4 @@
 import geistVariableLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
-import instrumentSerifLatin400 from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
 import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
@@ -12,9 +11,11 @@ import { Fragment } from "react";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
+import { m } from "@tsu-stack/i18n/messages";
 // oxfmt-ignore
 import { LocaleProvider, useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
-import { Toaster } from "@tsu-stack/ui/components/sonner";
+import { ToastProvider } from "@tsu-stack/ui/components/toast";
+import { TooltipProvider } from "@tsu-stack/ui/components/tooltip";
 
 import { generateAppSeo } from "@/shared/lib/seo";
 import { ProgressProvider } from "@/shared/providers/progress.provider";
@@ -63,13 +64,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
           rel: "preload",
           as: "font",
           type: "font/woff2",
-          href: instrumentSerifLatin400,
-          crossOrigin: "anonymous"
-        },
-        {
-          rel: "preload",
-          as: "font",
-          type: "font/woff2",
           href: geistVariableLatin,
           crossOrigin: "anonymous"
         },
@@ -101,8 +95,11 @@ function RootDocumentInner({ children }: { children: React.ReactNode }) {
         {/* We place the progress provider here otherwise we will get "Cannot render a <style> outside the main document" error */}
         <ThemeProvider attribute="class" defaultTheme="dark">
           <ProgressProvider>
-            <Fragment key={locale}>{children}</Fragment>
-            <Toaster richColors />
+            <TooltipProvider>
+              <ToastProvider closeLabel={m.ui__dismiss_notification()}>
+                <Fragment key={locale}>{children}</Fragment>
+              </ToastProvider>
+            </TooltipProvider>
             <TanStackDevtools
               plugins={[
                 {

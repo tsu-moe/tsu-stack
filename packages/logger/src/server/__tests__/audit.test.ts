@@ -1,11 +1,12 @@
 import { Hono } from "hono";
-import { expect, it, vi } from "vite-plus/test";
+import { beforeEach, expect, it, vi } from "vite-plus/test";
 
 import { honoLoggerMiddleware, type HonoLogVariables } from "#@/server/hono/middleware";
-import { initLogger, REQUEST_LOG_SAMPLING } from "#@/server/index";
+import { createLogger, initLogger, REQUEST_LOG_SAMPLING } from "#@/server/index";
 
 const drain = vi.fn();
 initLogger({ drain, sampling: REQUEST_LOG_SAMPLING, pretty: false });
+beforeEach(() => drain.mockClear());
 
 it("keeps native audits and serializes bigint without changing the response", async () => {
   const app = new Hono<HonoLogVariables>();
@@ -50,4 +51,34 @@ it("keeps native audits and serializes bigint without changing the response", as
       })
     })
   );
+});
+
+it("redacts exception text and causes in standalone and Hono events", async () => {
+  const privateText = "synthetic private diagnostic";
+  const error = new TypeError(privateText, { cause: new Error(privateText) });
+  const logger = createLogger({ operation: "user.sync" });
+  logger.error(error);
+  const event = logger.emit();
+  expect(event).toMatchObject({ level: "error", operation: "user.sync", error: { name: "TypeError" } });
+  expect(JSON.stringify(event)).not.toContain(privateText);
+
+  const app = new Hono<HonoLogVariables>();
+  app.use("/*", honoLoggerMiddleware());
+  app.onError((_error, c) => c.body(null, 500));
+  app.get("/failure", () => {
+    throw error;
+  });
+  expect((await app.request("/failure")).status).toBe(500);
+  expect(drain).toHaveBeenCalledTimes(2);
+  expect(drain).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      event: expect.objectContaining({
+        level: "error",
+        path: "/failure",
+        status: 500,
+        error: expect.objectContaining({ name: "TypeError" })
+      })
+    })
+  );
+  expect(JSON.stringify(drain.mock.calls)).not.toContain(privateText);
 });

@@ -2,11 +2,9 @@
 
 TanStack Router owns params, validated search, guards, and navigation. TanStack Query owns server data and its freshness. Use the installed Intent skills or `vp run tanstack search-docs "<topic>" --library <library> --json` for TanStack docs.
 
-## Routes and ownership
+## Routes
 
-- Keep routes to metadata, validation, guards, warming, and component wiring. Put full page UI in `pages/<slice>/ui/`, export the component through the slice barrel, and import the barrel from the route. Keep business logic and [query or mutation modules](api-fetching-patterns.md) in the owning slice.
-- Web FSD layers run from `routes/` through `pages/`, `widgets/`, `features/`, `entities/`, and `shared/`. Import downward through public barrels. Peer slices are independent. Use widgets or page composition to combine features.
-- Place public app pages under the current optional locale and root layout, like the [terms route](<../apps/web/src/routes/{-$locale}/(root-layout)/terms-of-service/index.tsx>). Pathless layout groups retain the public URL. Follow [Auth](auth.md) for protected and guest routes, [i18n](i18n.md) for navigation and copy, and [SEO](seo.md) for route metadata.
+- Place public app pages under the current optional locale and root layout. Pathless layout groups retain the public URL. Follow [Auth](auth.md) for protected and guest routes, [i18n](i18n.md) for navigation and copy, and [SEO](seo.md) for route metadata.
 - Regenerate the tracked route tree with the app’s TanStack Router generation when adding or moving routes. Check base and localized URLs. Keep existing prerender policy unless the route needs an explicit change.
 
 ## Reads

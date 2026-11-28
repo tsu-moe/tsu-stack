@@ -3,46 +3,41 @@ import { Check, Languages } from "lucide-react";
 import { m } from "@tsu-stack/i18n/messages";
 import { locales } from "@tsu-stack/i18n/runtime";
 import { useLocale } from "@tsu-stack/i18n/tanstack-start/components/locale-provider";
-import { type ButtonProps } from "@tsu-stack/ui/components/button";
 import { Button } from "@tsu-stack/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger
 } from "@tsu-stack/ui/components/dropdown-menu";
-import { cn } from "@tsu-stack/ui/lib/utils";
 
-type LocaleSwitcherProps = {
-  size?: ButtonProps["size"];
-  variant?: ButtonProps["variant"];
-  className?: string;
-};
-
-export function LocaleSwitcher({ size = "icon", variant = "ghost", className }: LocaleSwitcherProps) {
-  const { locale: currentLocale, switchLocale } = useLocale();
+export function LocaleSwitcher() {
+  const { locale, switchLocale } = useLocale();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button aria-label="Switch language" className={className} size={size} variant={variant}>
-          <Languages aria-hidden="true" size={18} />
-        </Button>
+      <DropdownMenuTrigger
+        aria-label={m.navbar__switch_language()}
+        render={<Button type="button" size="icon-sm" radius="full" variant="ghost" />}
+      >
+        <Languages aria-hidden="true" data-icon="inline-start" strokeWidth={2} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {locales.map((locale) => {
-          const isActive = locale === currentLocale;
-          return (
-            <DropdownMenuItem
-              key={locale}
-              className={cn("cursor-pointer gap-2", isActive && "bg-accent")}
-              onClick={() => switchLocale(locale)}
-            >
-              <span className="flex-1">{m.language_name(undefined, { locale })}</span>
-              {isActive && <Check aria-hidden="true" className="opacity-60" />}
-            </DropdownMenuItem>
-          );
-        })}
+        <DropdownMenuRadioGroup
+          value={locale}
+          activeIcon={<Check aria-hidden="true" />}
+          onValueChange={(value) => {
+            const nextLocale = locales.find((item) => item === value);
+            if (nextLocale) switchLocale(nextLocale);
+          }}
+        >
+          {locales.map((item) => (
+            <DropdownMenuRadioItem key={item} value={item} lang={item} closeOnClick>
+              {m.language_name(undefined, { locale: item })}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

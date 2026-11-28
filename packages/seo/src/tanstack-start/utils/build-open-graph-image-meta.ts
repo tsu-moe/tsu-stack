@@ -1,47 +1,39 @@
 import { type TanStackStartSeoImage, type TanStackStartSeoMetaTag } from "#@/tanstack-start/types";
 import { isDefined } from "#@/tanstack-start/utils/is-defined";
-import { resolveRelativePathToAbsoluteUrl } from "#@/tanstack-start/utils/resolve-relative-path-to-absolute-url";
 
-export function buildOpenGraphImageMeta({
-  baseUrl,
-  images
-}: {
-  baseUrl: string;
-  images?: TanStackStartSeoImage[];
-}): TanStackStartSeoMetaTag[] {
+export function buildOpenGraphImageMeta(images?: TanStackStartSeoImage[]): TanStackStartSeoMetaTag[] {
   if (!images?.length) {
     return [];
   }
 
   return images.flatMap((image) => {
-    const absoluteUrl = resolveRelativePathToAbsoluteUrl(image.url, { baseUrl });
-
+    const { alt, height, type, url, width } = image;
     return [
       {
-        content: absoluteUrl,
+        content: url,
         property: "og:image"
       },
-      image.alt
+      alt
         ? {
-            content: image.alt,
+            content: alt,
             property: "og:image:alt"
           }
         : undefined,
-      image.width
+      width
         ? {
-            content: `${image.width}`,
+            content: `${width}`,
             property: "og:image:width"
           }
         : undefined,
-      image.height
+      height
         ? {
-            content: `${image.height}`,
+            content: `${height}`,
             property: "og:image:height"
           }
         : undefined,
-      image.type
+      type
         ? {
-            content: image.type,
+            content: type,
             property: "og:image:type"
           }
         : undefined

@@ -8,15 +8,19 @@ import { type OrpcContext } from "#@/lib/context/types";
 export type CreateContextOptions = {
   context: HonoContext;
   logger: RequestLogger;
+  resolveSession?: boolean;
 };
 
-export async function createContext({ context, logger }: CreateContextOptions): Promise<OrpcContext> {
-  const session = await auth.api.getSession({
-    headers: context.req.raw.headers
-  });
+export async function createContext({
+  context,
+  logger,
+  resolveSession = true
+}: CreateContextOptions): Promise<OrpcContext> {
+  const requestHeaders = context.req.raw.headers;
+  const session = resolveSession ? await auth.api.getSession({ headers: requestHeaders }) : null;
   return {
     logger,
-    requestHeaders: context.req.raw.headers,
+    requestHeaders,
     session
   };
 }

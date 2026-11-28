@@ -7,6 +7,8 @@ import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/qu
 import { redirect } from "@tsu-stack/i18n/tanstack-start/lib/redirect";
 import { validateNavigateTo } from "@tsu-stack/i18n/tanstack-start/lib/validate-navigate-to";
 
+import { AuthLayout } from "@/widgets/auth-layout";
+
 import { routeTree } from "@/routeTree.gen";
 
 const guestSearchSchema = z.object({
@@ -16,17 +18,18 @@ const guestSearchSchema = z.object({
     .catch(undefined)
     .transform((val) =>
       validateNavigateTo({
-        fallbackTo: "/",
+        fallbackTo: "/dashboard",
         routeTree,
-        shouldIncludeRoute: (route) => !route.id.includes("(guest)"),
-        to: val
+        shouldIncludeRoute: (route) =>
+          !route.id.includes("(guest)") && !route.path.startsWith("/_api") && !route.path.includes("."),
+        to: val?.startsWith("/") && !val.startsWith("//") && !val.includes("\\") ? val : undefined
       })
     )
 });
 
 export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
   validateSearch: zodValidator(guestSearchSchema),
-  component: Outlet,
+  component: GuestAuthLayout,
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.query({
       ...getAuthUserQueryOptions(),
@@ -49,3 +52,11 @@ export const Route = createFileRoute("/{-$locale}/(centered-layout)/(guest)")({
     };
   }
 });
+
+function GuestAuthLayout() {
+  return (
+    <AuthLayout>
+      <Outlet />
+    </AuthLayout>
+  );
+}

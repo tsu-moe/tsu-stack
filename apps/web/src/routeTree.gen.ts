@@ -18,13 +18,13 @@ import { Route as ApiHealthLiveRouteImport } from './routes/[_]api/health/live'
 import { Route as Char123LocaleChar125centeredLayoutguestRouteRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/route'
 import { Route as Char123LocaleChar125rootLayoutIndexRouteImport } from './routes/{-$locale}/(root-layout)/index'
 import { Route as Char123LocaleChar125rootLayoutauthRouteRouteImport } from './routes/{-$locale}/(root-layout)/(auth)/route'
-import { Route as Char123LocaleChar125rootLayoutErrorIndexRouteImport } from './routes/{-$locale}/(root-layout)/error/index'
-import { Route as Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport } from './routes/{-$locale}/(root-layout)/playground/index'
-import { Route as Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport } from './routes/{-$locale}/(root-layout)/privacy-policy/index'
-import { Route as Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport } from './routes/{-$locale}/(root-layout)/terms-of-service/index'
+import { Route as Char123LocaleChar125rootLayoutlegalLayoutRouteRouteImport } from './routes/{-$locale}/(root-layout)/(legal-layout)/route'
 import { Route as Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/create-an-account/index'
 import { Route as Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/sign-in/index'
+import { Route as Char123LocaleChar125centeredLayoutguestSignInPasswordRouteImport } from './routes/{-$locale}/(centered-layout)/(guest)/sign-in/password'
 import { Route as Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport } from './routes/{-$locale}/(root-layout)/(auth)/dashboard/index'
+import { Route as Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRouteImport } from './routes/{-$locale}/(root-layout)/(legal-layout)/privacy-policy/index'
+import { Route as Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRouteImport } from './routes/{-$locale}/(root-layout)/(legal-layout)/terms-of-service/index'
 
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
@@ -73,28 +73,9 @@ const Char123LocaleChar125rootLayoutauthRouteRoute =
     id: '/(auth)',
     getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
-const Char123LocaleChar125rootLayoutErrorIndexRoute =
-  Char123LocaleChar125rootLayoutErrorIndexRouteImport.update({
-    id: '/error/',
-    path: '/error/',
-    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125rootLayoutPlaygroundIndexRoute =
-  Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport.update({
-    id: '/playground/',
-    path: '/playground/',
-    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute =
-  Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport.update({
-    id: '/privacy-policy/',
-    path: '/privacy-policy/',
-    getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
-  } as any)
-const Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute =
-  Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport.update({
-    id: '/terms-of-service/',
-    path: '/terms-of-service/',
+const Char123LocaleChar125rootLayoutlegalLayoutRouteRoute =
+  Char123LocaleChar125rootLayoutlegalLayoutRouteRouteImport.update({
+    id: '/(legal-layout)',
     getParentRoute: () => Char123LocaleChar125rootLayoutRouteRoute,
   } as any)
 const Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute =
@@ -111,39 +92,59 @@ const Char123LocaleChar125centeredLayoutguestSignInIndexRoute =
     path: '/sign-in/',
     getParentRoute: () => Char123LocaleChar125centeredLayoutguestRouteRoute,
   } as any)
+const Char123LocaleChar125centeredLayoutguestSignInPasswordRoute =
+  Char123LocaleChar125centeredLayoutguestSignInPasswordRouteImport.update({
+    id: '/sign-in/password',
+    path: '/sign-in/password',
+    getParentRoute: () => Char123LocaleChar125centeredLayoutguestRouteRoute,
+  } as any)
 const Char123LocaleChar125rootLayoutauthDashboardIndexRoute =
   Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport.update({
     id: '/dashboard/',
     path: '/dashboard/',
     getParentRoute: () => Char123LocaleChar125rootLayoutauthRouteRoute,
   } as any)
+const Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute =
+  Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRouteImport.update(
+    {
+      id: '/privacy-policy/',
+      path: '/privacy-policy/',
+      getParentRoute: () => Char123LocaleChar125rootLayoutlegalLayoutRouteRoute,
+    } as any,
+  )
+const Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute =
+  Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRouteImport.update(
+    {
+      id: '/terms-of-service/',
+      path: '/terms-of-service/',
+      getParentRoute: () => Char123LocaleChar125rootLayoutlegalLayoutRouteRoute,
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
-  '/{-$locale}': typeof Char123LocaleChar125rootLayoutauthRouteRouteWithChildren
+  '/{-$locale}': typeof Char123LocaleChar125rootLayoutlegalLayoutRouteRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_api/health/live': typeof ApiHealthLiveRoute
   '/{-$locale}/': typeof Char123LocaleChar125rootLayoutIndexRoute
-  '/{-$locale}/error/': typeof Char123LocaleChar125rootLayoutErrorIndexRoute
-  '/{-$locale}/playground/': typeof Char123LocaleChar125rootLayoutPlaygroundIndexRoute
-  '/{-$locale}/privacy-policy/': typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute
-  '/{-$locale}/terms-of-service/': typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute
+  '/{-$locale}/sign-in/password': typeof Char123LocaleChar125centeredLayoutguestSignInPasswordRoute
   '/{-$locale}/create-an-account/': typeof Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute
   '/{-$locale}/sign-in/': typeof Char123LocaleChar125centeredLayoutguestSignInIndexRoute
   '/{-$locale}/dashboard/': typeof Char123LocaleChar125rootLayoutauthDashboardIndexRoute
+  '/{-$locale}/privacy-policy/': typeof Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute
+  '/{-$locale}/terms-of-service/': typeof Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute
 }
 export interface FileRoutesByTo {
   '/{-$locale}': typeof Char123LocaleChar125rootLayoutIndexRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_api/health/live': typeof ApiHealthLiveRoute
-  '/{-$locale}/error': typeof Char123LocaleChar125rootLayoutErrorIndexRoute
-  '/{-$locale}/playground': typeof Char123LocaleChar125rootLayoutPlaygroundIndexRoute
-  '/{-$locale}/privacy-policy': typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute
-  '/{-$locale}/terms-of-service': typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute
+  '/{-$locale}/sign-in/password': typeof Char123LocaleChar125centeredLayoutguestSignInPasswordRoute
   '/{-$locale}/create-an-account': typeof Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute
   '/{-$locale}/sign-in': typeof Char123LocaleChar125centeredLayoutguestSignInIndexRoute
   '/{-$locale}/dashboard': typeof Char123LocaleChar125rootLayoutauthDashboardIndexRoute
+  '/{-$locale}/privacy-policy': typeof Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute
+  '/{-$locale}/terms-of-service': typeof Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -154,15 +155,15 @@ export interface FileRoutesById {
   '/{-$locale}/(root-layout)': typeof Char123LocaleChar125rootLayoutRouteRouteWithChildren
   '/{-$locale}/(centered-layout)/(guest)': typeof Char123LocaleChar125centeredLayoutguestRouteRouteWithChildren
   '/{-$locale}/(root-layout)/(auth)': typeof Char123LocaleChar125rootLayoutauthRouteRouteWithChildren
+  '/{-$locale}/(root-layout)/(legal-layout)': typeof Char123LocaleChar125rootLayoutlegalLayoutRouteRouteWithChildren
   '/_api/health/live': typeof ApiHealthLiveRoute
   '/{-$locale}/(root-layout)/': typeof Char123LocaleChar125rootLayoutIndexRoute
-  '/{-$locale}/(root-layout)/error/': typeof Char123LocaleChar125rootLayoutErrorIndexRoute
-  '/{-$locale}/(root-layout)/playground/': typeof Char123LocaleChar125rootLayoutPlaygroundIndexRoute
-  '/{-$locale}/(root-layout)/privacy-policy/': typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute
-  '/{-$locale}/(root-layout)/terms-of-service/': typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute
+  '/{-$locale}/(centered-layout)/(guest)/sign-in/password': typeof Char123LocaleChar125centeredLayoutguestSignInPasswordRoute
   '/{-$locale}/(centered-layout)/(guest)/create-an-account/': typeof Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute
   '/{-$locale}/(centered-layout)/(guest)/sign-in/': typeof Char123LocaleChar125centeredLayoutguestSignInIndexRoute
   '/{-$locale}/(root-layout)/(auth)/dashboard/': typeof Char123LocaleChar125rootLayoutauthDashboardIndexRoute
+  '/{-$locale}/(root-layout)/(legal-layout)/privacy-policy/': typeof Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute
+  '/{-$locale}/(root-layout)/(legal-layout)/terms-of-service/': typeof Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -172,26 +173,24 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_api/health/live'
     | '/{-$locale}/'
-    | '/{-$locale}/error/'
-    | '/{-$locale}/playground/'
-    | '/{-$locale}/privacy-policy/'
-    | '/{-$locale}/terms-of-service/'
+    | '/{-$locale}/sign-in/password'
     | '/{-$locale}/create-an-account/'
     | '/{-$locale}/sign-in/'
     | '/{-$locale}/dashboard/'
+    | '/{-$locale}/privacy-policy/'
+    | '/{-$locale}/terms-of-service/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/{-$locale}'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/_api/health/live'
-    | '/{-$locale}/error'
-    | '/{-$locale}/playground'
-    | '/{-$locale}/privacy-policy'
-    | '/{-$locale}/terms-of-service'
+    | '/{-$locale}/sign-in/password'
     | '/{-$locale}/create-an-account'
     | '/{-$locale}/sign-in'
     | '/{-$locale}/dashboard'
+    | '/{-$locale}/privacy-policy'
+    | '/{-$locale}/terms-of-service'
   id:
     | '__root__'
     | '/{-$locale}'
@@ -201,15 +200,15 @@ export interface FileRouteTypes {
     | '/{-$locale}/(root-layout)'
     | '/{-$locale}/(centered-layout)/(guest)'
     | '/{-$locale}/(root-layout)/(auth)'
+    | '/{-$locale}/(root-layout)/(legal-layout)'
     | '/_api/health/live'
     | '/{-$locale}/(root-layout)/'
-    | '/{-$locale}/(root-layout)/error/'
-    | '/{-$locale}/(root-layout)/playground/'
-    | '/{-$locale}/(root-layout)/privacy-policy/'
-    | '/{-$locale}/(root-layout)/terms-of-service/'
+    | '/{-$locale}/(centered-layout)/(guest)/sign-in/password'
     | '/{-$locale}/(centered-layout)/(guest)/create-an-account/'
     | '/{-$locale}/(centered-layout)/(guest)/sign-in/'
     | '/{-$locale}/(root-layout)/(auth)/dashboard/'
+    | '/{-$locale}/(root-layout)/(legal-layout)/privacy-policy/'
+    | '/{-$locale}/(root-layout)/(legal-layout)/terms-of-service/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,32 +283,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125rootLayoutauthRouteRouteImport
       parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
     }
-    '/{-$locale}/(root-layout)/error/': {
-      id: '/{-$locale}/(root-layout)/error/'
-      path: '/error'
-      fullPath: '/{-$locale}/error/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutErrorIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
-    }
-    '/{-$locale}/(root-layout)/playground/': {
-      id: '/{-$locale}/(root-layout)/playground/'
-      path: '/playground'
-      fullPath: '/{-$locale}/playground/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutPlaygroundIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
-    }
-    '/{-$locale}/(root-layout)/privacy-policy/': {
-      id: '/{-$locale}/(root-layout)/privacy-policy/'
-      path: '/privacy-policy'
-      fullPath: '/{-$locale}/privacy-policy/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
-    }
-    '/{-$locale}/(root-layout)/terms-of-service/': {
-      id: '/{-$locale}/(root-layout)/terms-of-service/'
-      path: '/terms-of-service'
-      fullPath: '/{-$locale}/terms-of-service/'
-      preLoaderRoute: typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRouteImport
+    '/{-$locale}/(root-layout)/(legal-layout)': {
+      id: '/{-$locale}/(root-layout)/(legal-layout)'
+      path: ''
+      fullPath: '/{-$locale}'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutRouteRouteImport
       parentRoute: typeof Char123LocaleChar125rootLayoutRouteRoute
     }
     '/{-$locale}/(centered-layout)/(guest)/create-an-account/': {
@@ -326,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125centeredLayoutguestSignInIndexRouteImport
       parentRoute: typeof Char123LocaleChar125centeredLayoutguestRouteRoute
     }
+    '/{-$locale}/(centered-layout)/(guest)/sign-in/password': {
+      id: '/{-$locale}/(centered-layout)/(guest)/sign-in/password'
+      path: '/sign-in/password'
+      fullPath: '/{-$locale}/sign-in/password'
+      preLoaderRoute: typeof Char123LocaleChar125centeredLayoutguestSignInPasswordRouteImport
+      parentRoute: typeof Char123LocaleChar125centeredLayoutguestRouteRoute
+    }
     '/{-$locale}/(root-layout)/(auth)/dashboard/': {
       id: '/{-$locale}/(root-layout)/(auth)/dashboard/'
       path: '/dashboard'
@@ -333,16 +318,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125rootLayoutauthDashboardIndexRouteImport
       parentRoute: typeof Char123LocaleChar125rootLayoutauthRouteRoute
     }
+    '/{-$locale}/(root-layout)/(legal-layout)/privacy-policy/': {
+      id: '/{-$locale}/(root-layout)/(legal-layout)/privacy-policy/'
+      path: '/privacy-policy'
+      fullPath: '/{-$locale}/privacy-policy/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutRouteRoute
+    }
+    '/{-$locale}/(root-layout)/(legal-layout)/terms-of-service/': {
+      id: '/{-$locale}/(root-layout)/(legal-layout)/terms-of-service/'
+      path: '/terms-of-service'
+      fullPath: '/{-$locale}/terms-of-service/'
+      preLoaderRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutRouteRoute
+    }
   }
 }
 
 interface Char123LocaleChar125centeredLayoutguestRouteRouteChildren {
+  Char123LocaleChar125centeredLayoutguestSignInPasswordRoute: typeof Char123LocaleChar125centeredLayoutguestSignInPasswordRoute
   Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute: typeof Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute
   Char123LocaleChar125centeredLayoutguestSignInIndexRoute: typeof Char123LocaleChar125centeredLayoutguestSignInIndexRoute
 }
 
 const Char123LocaleChar125centeredLayoutguestRouteRouteChildren: Char123LocaleChar125centeredLayoutguestRouteRouteChildren =
   {
+    Char123LocaleChar125centeredLayoutguestSignInPasswordRoute:
+      Char123LocaleChar125centeredLayoutguestSignInPasswordRoute,
     Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute:
       Char123LocaleChar125centeredLayoutguestCreateAnAccountIndexRoute,
     Char123LocaleChar125centeredLayoutguestSignInIndexRoute:
@@ -384,29 +386,38 @@ const Char123LocaleChar125rootLayoutauthRouteRouteWithChildren =
     Char123LocaleChar125rootLayoutauthRouteRouteChildren,
   )
 
+interface Char123LocaleChar125rootLayoutlegalLayoutRouteRouteChildren {
+  Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute
+  Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute
+}
+
+const Char123LocaleChar125rootLayoutlegalLayoutRouteRouteChildren: Char123LocaleChar125rootLayoutlegalLayoutRouteRouteChildren =
+  {
+    Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute:
+      Char123LocaleChar125rootLayoutlegalLayoutPrivacyPolicyIndexRoute,
+    Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute:
+      Char123LocaleChar125rootLayoutlegalLayoutTermsOfServiceIndexRoute,
+  }
+
+const Char123LocaleChar125rootLayoutlegalLayoutRouteRouteWithChildren =
+  Char123LocaleChar125rootLayoutlegalLayoutRouteRoute._addFileChildren(
+    Char123LocaleChar125rootLayoutlegalLayoutRouteRouteChildren,
+  )
+
 interface Char123LocaleChar125rootLayoutRouteRouteChildren {
   Char123LocaleChar125rootLayoutauthRouteRoute: typeof Char123LocaleChar125rootLayoutauthRouteRouteWithChildren
+  Char123LocaleChar125rootLayoutlegalLayoutRouteRoute: typeof Char123LocaleChar125rootLayoutlegalLayoutRouteRouteWithChildren
   Char123LocaleChar125rootLayoutIndexRoute: typeof Char123LocaleChar125rootLayoutIndexRoute
-  Char123LocaleChar125rootLayoutErrorIndexRoute: typeof Char123LocaleChar125rootLayoutErrorIndexRoute
-  Char123LocaleChar125rootLayoutPlaygroundIndexRoute: typeof Char123LocaleChar125rootLayoutPlaygroundIndexRoute
-  Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute: typeof Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute
-  Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute: typeof Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute
 }
 
 const Char123LocaleChar125rootLayoutRouteRouteChildren: Char123LocaleChar125rootLayoutRouteRouteChildren =
   {
     Char123LocaleChar125rootLayoutauthRouteRoute:
       Char123LocaleChar125rootLayoutauthRouteRouteWithChildren,
+    Char123LocaleChar125rootLayoutlegalLayoutRouteRoute:
+      Char123LocaleChar125rootLayoutlegalLayoutRouteRouteWithChildren,
     Char123LocaleChar125rootLayoutIndexRoute:
       Char123LocaleChar125rootLayoutIndexRoute,
-    Char123LocaleChar125rootLayoutErrorIndexRoute:
-      Char123LocaleChar125rootLayoutErrorIndexRoute,
-    Char123LocaleChar125rootLayoutPlaygroundIndexRoute:
-      Char123LocaleChar125rootLayoutPlaygroundIndexRoute,
-    Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute:
-      Char123LocaleChar125rootLayoutPrivacyPolicyIndexRoute,
-    Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute:
-      Char123LocaleChar125rootLayoutTermsOfServiceIndexRoute,
   }
 
 const Char123LocaleChar125rootLayoutRouteRouteWithChildren =
