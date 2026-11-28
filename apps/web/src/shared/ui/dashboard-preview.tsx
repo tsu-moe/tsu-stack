@@ -6,15 +6,14 @@ import { dashboardPreviews } from "@/shared/assets/dashboard-preview";
 export function DashboardPreview({
   alt,
   className,
-  priority = false
+  priority = false,
+  sizes
 }: {
   alt: string;
   className?: string;
   priority?: boolean;
+  sizes?: string;
 }) {
-  const loading = priority ? "eager" : "lazy";
-  const fetchPriority = priority ? "high" : undefined;
-
   return (
     <Card variant="inset" className={cn("border-none bg-background/15 p-2 shadow-xl dark:bg-white/8", className)}>
       <CardContent className="aspect-video overflow-hidden p-0">
@@ -22,20 +21,21 @@ export function DashboardPreview({
           alt={alt}
           className="block size-full dark:hidden"
           decoding="async"
-          fetchPriority={fetchPriority}
           height={1080}
-          loading={loading}
-          src={dashboardPreviews.light}
+          loading="lazy"
+          sizes={sizes}
+          {...dashboardPreviews.light}
           width={1920}
         />
         <img
           alt={alt}
           className="hidden size-full dark:block"
           decoding="async"
-          fetchPriority={fetchPriority}
+          fetchPriority={priority ? "high" : undefined}
           height={1080}
-          loading={loading}
-          src={dashboardPreviews.dark}
+          loading={priority ? "eager" : "lazy"}
+          sizes={sizes}
+          {...dashboardPreviews.dark}
           width={1920}
         />
       </CardContent>

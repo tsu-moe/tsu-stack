@@ -12,6 +12,9 @@ import { OglBackground } from "@/shared/ui/ogl-background";
 
 import { homeHeroReveal } from "@/pages/home/config/home-motion.config";
 
+const dashboardPreviewSizes =
+  "(min-width: 72rem) 62rem, (min-width: 64rem) calc(100vw - 10rem), (min-width: 40rem) calc(100vw - 8.5rem), calc(100vw - 5rem)";
+
 export function HeroSection() {
   return (
     <section aria-labelledby="home-hero-title" className="pt-14 sm:pt-22">
@@ -71,15 +74,10 @@ export function HeroSection() {
         </BlurFade>
       </div>
 
-      <BlurFade
-        {...homeHeroReveal}
-        delay={0.105}
-        duration={0.48}
-        className="relative isolate mt-11 overflow-hidden rounded-2xl p-3 sm:mt-14 sm:p-7 lg:p-10"
-      >
-        <OglBackground reuseOnNavigation waitForParentAnimation />
-        <DashboardPreview alt={m.home_page__hero_dashboard_preview()} priority />
-      </BlurFade>
+      <div className="relative isolate mt-11 overflow-hidden rounded-2xl p-3 sm:mt-14 sm:p-7 lg:p-10">
+        <OglBackground reuseOnNavigation deferUntilIdle />
+        <DashboardPreview alt={m.home_page__hero_dashboard_preview()} priority sizes={dashboardPreviewSizes} />
+      </div>
     </section>
   );
 }
