@@ -18,7 +18,9 @@ export function OglBackground({
     const container = containerRef.current;
     if (!container || typeof IntersectionObserver === "undefined") return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const animatedDesktop = window.matchMedia(
+      "(min-width: 64rem) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+    );
     let nearby = false;
     let visible = false;
     let disposed = false;
@@ -35,7 +37,7 @@ export function OglBackground({
       if (
         !reuseOnNavigation ||
         !parkedBackground ||
-        reducedMotion.matches ||
+        !animatedDesktop.matches ||
         document.hidden ||
         !container.clientWidth ||
         !container.clientHeight
@@ -57,7 +59,7 @@ export function OglBackground({
     const syncBackground = () => {
       if (disposed) return;
 
-      if (reducedMotion.matches) {
+      if (!animatedDesktop.matches) {
         background?.dispose();
         background = undefined;
         attempted = false;
@@ -67,9 +69,9 @@ export function OglBackground({
         }
       }
 
-      const playing = visible && !document.hidden && !reducedMotion.matches;
+      const playing = visible && !document.hidden && animatedDesktop.matches;
       if (playing && !background) reuseBackground();
-      if (canStart && !reducedMotion.matches && nearby && !background && !importStarted) {
+      if (canStart && animatedDesktop.matches && nearby && !background && !importStarted) {
         importStarted = true;
         void import("@/shared/lib/ogl-background-renderer")
           .then((module) => {
@@ -94,7 +96,7 @@ export function OglBackground({
       mountFrame = requestAnimationFrame(() => {
         mountFrame = requestAnimationFrame(() => {
           mountFrame = 0;
-          if (!visible || document.hidden || reducedMotion.matches) return;
+          if (!visible || document.hidden || !animatedDesktop.matches) return;
           attempted = true;
           background = mountRenderer(container);
           background?.setVisible(true);
@@ -135,7 +137,7 @@ export function OglBackground({
     }
 
     document.addEventListener("visibilitychange", syncBackground);
-    reducedMotion.addEventListener("change", syncBackground);
+    animatedDesktop.addEventListener("change", syncBackground);
 
     return () => {
       disposed = true;
@@ -146,7 +148,7 @@ export function OglBackground({
       preloadObserver.disconnect();
       playbackObserver.disconnect();
       document.removeEventListener("visibilitychange", syncBackground);
-      reducedMotion.removeEventListener("change", syncBackground);
+      animatedDesktop.removeEventListener("change", syncBackground);
       if (reuseOnNavigation && background?.park()) {
         parkedBackground?.dispose();
         parkedBackground = background;

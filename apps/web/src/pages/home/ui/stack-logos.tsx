@@ -54,8 +54,16 @@ function StackLogosMarquee() {
               translate: `0 ${offsetY}%`
             }}
           >
-            <img alt={name} src={src} className={dark ? "block size-full dark:hidden" : "block size-full"} />
-            {dark && <img alt={name} src={dark} className="hidden size-full dark:block" />}
+            <img
+              alt={name}
+              src={src}
+              className={dark ? "block size-full dark:hidden" : "block size-full"}
+              decoding="async"
+              loading="lazy"
+            />
+            {dark && (
+              <img alt={name} src={dark} className="hidden size-full dark:block" decoding="async" loading="lazy" />
+            )}
           </li>
         ))}
       </ul>

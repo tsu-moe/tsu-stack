@@ -49,6 +49,9 @@ export function Image(rawProps: ImageProps) {
     ...props
   } = rawProps;
 
+  // Bundled candidates already use the application's configured asset paths.
+  if (props.srcSet) return <ImageWithPlaceholder {...props} placeholder={placeholder} />;
+
   const { src: imageSource } = rawProps;
   const src =
     siteBaseUrl && typeof imageSource === "string" && imageSource.startsWith("/") && !imageSource.startsWith("//")

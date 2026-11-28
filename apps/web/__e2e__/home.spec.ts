@@ -47,6 +47,9 @@ test("keeps the public navbar usable while the mobile menu is open", async ({ pa
 
   const header = page.getByRole("banner");
   const menu = header.getByRole("navigation", { name: "Navigation" });
+  const preview = page.getByRole("img", { name: "Dashboard preview" });
+  await expect(preview).toBeVisible();
+  await expect.poll(() => preview.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   let toggle = header.getByRole("button", { name: "Toggle menu" });
   await toggle.press("Enter");
   await expect(menu).toBeVisible();
@@ -61,6 +64,7 @@ test("keeps the public navbar usable while the mobile menu is open", async ({ pa
   await expect(menu).toBeHidden();
   await expect(page.getByRole("main")).toBeVisible();
   await expect(toggle).toBeFocused();
+  await expect.poll(() => preview.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
 
   await toggle.click();
   await header.getByRole("button", { name: "Switch language" }).click();

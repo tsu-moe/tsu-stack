@@ -2,13 +2,12 @@ import geistVariableLatin from "@fontsource-variable/geist/files/geist-latin-wgh
 import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
-import { noop, type QueryClient } from "@tanstack/react-query";
+import { type QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Fragment } from "react";
 
-import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { resolvePublicAssetUrl } from "@tsu-stack/core/assets";
 import { ENV_WEB_ISOMORPHIC } from "@tsu-stack/env/web/env.isomorphic";
 import { m } from "@tsu-stack/i18n/messages";
@@ -32,15 +31,6 @@ type RouterAppContext = {
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   errorComponent: DefaultErrorPage,
   shellComponent: RootDocument,
-  // Consider removing this if you don't need the auth state everywhere
-  // An example of when to KEEP it is when you conditionally display a sign-up button in the header based on the auth state
-  beforeLoad: ({ context, preload }) => {
-    // Don't prefetch during preload to prevent spamming the server with getSession requests
-    if (!preload) {
-      // Prefetch (don't await) the user data on app load to have it ready for any route that needs it, and to set the auth state early
-      void context.queryClient.query(getAuthUserQueryOptions()).catch(noop);
-    }
-  },
   head: () => {
     const rootSeo = generateAppSeo({
       includeDocumentMeta: true

@@ -3,6 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 
 export function useNavbarUserQuery() {
-  // The prerendered public page can hydrate with a cached guest session.
-  return useQuery({ ...getAuthUserQueryOptions(), refetchOnMount: "always" });
+  // Public pages check the session on mount and recover on focus or reconnect.
+  return useQuery({ ...getAuthUserQueryOptions(), refetchOnMount: "always", retry: false });
 }

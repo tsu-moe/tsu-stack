@@ -1,14 +1,16 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { useAuth } from "@tsu-stack/auth/react/tanstack-start/hooks";
+import { getAuthUserQueryOptions } from "@tsu-stack/auth/react/tanstack-start/queries";
 import { clearIdentity, setIdentity } from "@tsu-stack/logger/client";
 
 export function LoggerProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { data: user, isError } = useQuery({ ...getAuthUserQueryOptions(), enabled: false });
+  const userId = isError ? undefined : user?.id;
 
   useEffect(() => {
-    if (user) {
-      setIdentity(user.id);
+    if (userId) {
+      setIdentity(userId);
     } else {
       clearIdentity();
     }
@@ -16,7 +18,7 @@ export function LoggerProvider({ children }: { children: React.ReactNode }) {
     return () => {
       clearIdentity();
     };
-  }, [user]);
+  }, [userId]);
 
   return children;
 }
