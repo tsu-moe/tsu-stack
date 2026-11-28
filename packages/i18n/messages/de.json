@@ -34,7 +34,7 @@
   "home_page__faq_included_question": "Was ist vorkonfiguriert?",
   "home_page__faq_included_answer": "TanStack Start kümmert sich um die Web-App, Hono und oRPC um die API und Drizzle um den Datenbankzugriff. Better Auth übernimmt Anmeldung und Sitzungen. Das Repository enthält auch Anleitungen für Coding-Agenten.",
   "home_page__faq_start_question": "Wie erstelle ich ein Projekt?",
-  "home_page__faq_start_answer": "Führen Sie npm create tsu-stack@next my-app aus. Die CLI fragt, wie Sie die App bereitstellen möchten und ob sie Ihre lokale Umgebung einrichten soll.",
+  "home_page__faq_start_answer": "Führen Sie npm create tsu-stack@latest my-app aus. Die CLI fragt, wie Sie die App bereitstellen möchten und ob sie Ihre lokale Umgebung einrichten soll.",
   "home_page__faq_styling_question": "Kann ich die Benutzeroberfläche anpassen?",
   "home_page__faq_styling_answer": "Ja. Das gemeinsame UI-Paket enthält den Quellcode der Komponenten und die Theme-Stile. Beides können Sie direkt in Ihrem Projekt ändern.",
   "home_page__faq_locales_question": "Kann ich weitere Sprachen hinzufügen?",
